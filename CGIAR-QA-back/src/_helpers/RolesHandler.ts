@@ -4,5 +4,7 @@ export enum RolesHandler {
     super = 'SUPER_ADM',
     crp = 'CRP',
     guest = 'GUEST',
-    assesor = 'ASSESSOR'
+    assesor = 'ASSESSOR',
+    t_pb = 'T-PB',
+    ppu = 'PPU'
 }

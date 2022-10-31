@@ -12,7 +12,7 @@ const parentDir = require('path').resolve(process.cwd(), '../');
 
 // Connects to the Database -> then starts the express
 createConnection()
-    .then(async connection => {
+    .then(() => {
         // Create a new express application instance
         const app = express();
         // Call midlewares

@@ -27,14 +27,9 @@ const { htmlToText } = require('html-to-text');
 
 
 class CommentController {
-
-
     static commentsCount = async (req: Request, res: Response) => {
         const { crp_id } = req.query;
         const userId = res.locals.jwtPayload.userId;
-
-
-
         const queryRunner = getConnection().createQueryBuilder();
         const userRepository = getRepository(QAUsers);
         let rawData;
@@ -220,7 +215,7 @@ class CommentController {
     }
 
     // create reply by comment
-    static createCommentReply = async (req: Request, res: Response) => { 
+    static createCommentReply = async (req: Request, res: Response) => {
 
         //Check if username and password are set
         const { detail, userId, commentId, crp_approved, approved, replyTypeId } = req.body;
@@ -288,7 +283,7 @@ class CommentController {
 
         try {
             let comment_ = await commentsRepository.findOneOrFail(id, { relations: ["tags"] });
-            if(is_deleted){
+            if (is_deleted) {
                 tagsRepository.remove(comment_.tags);
             }
             comment_.approved = approved;
@@ -484,7 +479,9 @@ class CommentController {
                     WHERE
                     commentId = qa_comments.id
                     AND is_deleted = 0
-                    ) AS replies_count
+                    ) AS replies_count,
+                highlight_comment,
+                highlightById
                 FROM
                 qa_comments
                 WHERE
@@ -525,11 +522,11 @@ class CommentController {
 
     // get comments replies
     static getCommentsReplies = async (req: Request, res: Response) => {
-        console.log('COMMENT_ID: ',req.params);
+        console.log('COMMENT_ID: ', req.params);
         const commentId = req.params.commentId;
-        
+
         // let queryRunner = getConnection().createQueryBuilder();
-        if(commentId != undefined && commentId != null) {
+        if (commentId != undefined && commentId != null) {
             try {
                 let replies = await getRepository(QACommentsReplies).find(
                     {
@@ -809,7 +806,7 @@ class CommentController {
                 { header: 'Indicator id', key: 'id' },
                 { header: 'Indicator Title', key: 'indicator_title' },
                 { header: 'Field', key: 'field' },
-                { header: 'Value', key: 'value'},
+                { header: 'Value', key: 'value' },
                 { header: 'User', key: 'user' },
                 { header: 'Comment', key: 'comment' },
                 { header: 'Cycle', key: 'cycle_stage' },
@@ -835,12 +832,12 @@ class CommentController {
 
     }
 
-    
+
     static toggleApprovedNoComments = async (req: Request, res: Response) => {
         console.time('toggle_approved');
 
         console.log('TOGGLE APPROVED NO COMMENTS');
-        
+
         //TODO - Improve performance
         const { evaluationId } = req.params;
         const { meta_array, userId, isAll, noComment } = req.body;
@@ -854,25 +851,25 @@ class CommentController {
         // console.log(meta_array)  
         try {
 
-        const comments = await commentsRepository
-                            .createQueryBuilder("qc")
-                            // .select("qc.metaId")
-                            .leftJoinAndSelect("qc.meta", "meta")
-                            .where("qc.evaluationId = :evaluationId", {evaluationId})
-                            .andWhere("qc.metaId IN (:meta_array)", {meta_array})
-                            .andWhere("qc.approved_no_comment IS NOT NULL")
-                            .getMany();
-        
-        
-        // await getConnection()
-        //     .createQueryBuilder()
-        //     .select("*")
-        //     .from(QAComments, "qc")
-        //     .where("evaluationId = :evaluationId", {evaluationId})
-        //     .andWhere("metaId IN (:meta_array)", {meta_array})
-        //     .andWhere("approved_no_comment IS NOT NULL")
-        //     .getMany();
-            
+            const comments = await commentsRepository
+                .createQueryBuilder("qc")
+                // .select("qc.metaId")
+                .leftJoinAndSelect("qc.meta", "meta")
+                .where("qc.evaluationId = :evaluationId", { evaluationId })
+                .andWhere("qc.metaId IN (:meta_array)", { meta_array })
+                .andWhere("qc.approved_no_comment IS NOT NULL")
+                .getMany();
+
+
+            // await getConnection()
+            //     .createQueryBuilder()
+            //     .select("*")
+            //     .from(QAComments, "qc")
+            //     .where("evaluationId = :evaluationId", {evaluationId})
+            //     .andWhere("metaId IN (:meta_array)", {meta_array})
+            //     .andWhere("approved_no_comment IS NOT NULL")
+            //     .getMany();
+
 
 
             // const [query, parameters] = await queryRunner.driver.escapeQueryWithParameters(
@@ -890,42 +887,42 @@ class CommentController {
             // );
             // comments = await queryRunner.query(query, parameters);
             // console.log(comments.length, meta_array)
-            console.log({comments})
+            console.log({ comments })
             let user = await userRepository.findOneOrFail({ where: { id: userId } });
             console.log(user);
 
             console.time('getEvaluation')
-            let evaluation = await evaluationsRepository.findOne({ where: { id: evaluationId }});
+            let evaluation = await evaluationsRepository.findOne({ where: { id: evaluationId } });
 
 
             // let evaluation = await evaluationsRepository.findOneOrFail({ where: { id: evaluationId }});
             // evaluationsRepository.queryRunner.connection.close;
             console.timeEnd('getEvaluation')
             console.log(evaluation);
-            
+
             let current_cycle = await cycleRepo
-            .createQueryBuilder("qa_cycle")
-            .select('*')
-            .where("DATE(qa_cycle.start_date) <= CURDATE()")
-            .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
-            .getRawOne();
-            console.log({current_cycle});
+                .createQueryBuilder("qa_cycle")
+                .select('*')
+                .where("DATE(qa_cycle.start_date) <= CURDATE()")
+                .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
+                .getRawOne();
+            console.log({ current_cycle });
 
 
             // TO-DO Assessed by per batch
             // if(current_cycle.id == 1) {
-                //INSERT ASSESSED BY
+            //INSERT ASSESSED BY
 
-                const assessed_by = await getConnection().createQueryBuilder()
+            const assessed_by = await getConnection().createQueryBuilder()
                 .select()
                 .from("qa_evaluations_assessed_by_qa_users", "qaed")
-                .where("qaEvaluationsId = :evaluationId", {evaluationId})
-                .andWhere("qaUsersId = :userId", {userId})
+                .where("qaEvaluationsId = :evaluationId", { evaluationId })
+                .andWhere("qaUsersId = :userId", { userId })
                 .execute();
 
-                console.log({assessed_by});
-                if(assessed_by.length <= 0) {
-                    const insertAssessedBy = await getConnection().createQueryBuilder()
+            console.log({ assessed_by });
+            if (assessed_by.length <= 0) {
+                const insertAssessedBy = await getConnection().createQueryBuilder()
                     .insert()
                     .into('qa_evaluations_assessed_by_qa_users')
                     .values({
@@ -933,12 +930,12 @@ class CommentController {
                         qaUsersId: userId
                     })
                     .execute();
-                }
+            }
 
-                
-                console.log(assessed_by);
-                
-                // evaluation.assessed_by.push(user);
+
+            console.log(assessed_by);
+
+            // evaluation.assessed_by.push(user);
             // } else {
             //     evaluation.assessed_by_second_round.push(user);
             // }
@@ -947,19 +944,19 @@ class CommentController {
             // console.log('ASSESSORS',evaluation.assessed_by);
             // evaluationsRepository.save(evaluation);
             console.log('evaluations saved');
-            
+
             let response = [];
 
 
             for (let index = 0; index < meta_array.length; index++) {
                 let comment_ = new QAComments();
                 // console.log(index, ' for cycle');
-                
+
                 // console.log(comments.length, comments.find(data => data.metaId == meta_array[index]))
                 if (comments && comments.find(comment => comment.meta.id == meta_array[index])) {
                     let existnCommt = comments.find(comment => comment.meta.id == meta_array[index]);
                     // console.log('Comment exists', {existnCommt});
-                    
+
                     existnCommt.approved = noComment;
                     existnCommt.is_deleted = !noComment;
                     existnCommt.evaluation = evaluation;
@@ -982,7 +979,7 @@ class CommentController {
                 response.push(comment_)
             }
             let result = await commentsRepository.save(response);
-            console.log({result});
+            console.log({ result });
 
             console.timeEnd('toggle_approved');
             res.status(200).send({ data: result, message: 'Comment toggle' });
@@ -1181,15 +1178,15 @@ class CommentController {
 
         let tag = await tagsRepository.findOne({
             where: [
-              { commentId: commentId, userId: userId },
+                { commentId: commentId, userId: userId },
             ]
-          });
-          console.log(tag);
-          if(tag) {
-              tagsRepository.remove(tag);
-              console.log(`Tag deleted`);
-          } else console.log(`The user hasn't previous tag for this comment`);
-        
+        });
+        console.log(tag);
+        if (tag) {
+            tagsRepository.remove(tag);
+            console.log(`Tag deleted`);
+        } else console.log(`The user hasn't previous tag for this comment`);
+
 
         try {
             let new_tag = await Util.createTag(userId, tagTypeId, commentId);
@@ -1542,7 +1539,7 @@ class CommentController {
         }
         let comments = await commentsRepository.find({
             where: whereClause,
-            relations: ['user', 'cycle', 'tags', 'replyType'],
+            relations: ['user', 'cycle', 'tags', 'replyType', 'highlight_by'],
             // relations: ['user'],
             order: {
                 createdAt: "ASC"
@@ -1557,55 +1554,55 @@ class CommentController {
         });
     }
 
-        //get QuickComments 
-        static getQuickComments = async (req: Request, res: Response) => {
-            let rawData;
-            const queryRunner = getConnection().createQueryBuilder();
-    
-            try {
-                const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                    `
+    //get QuickComments 
+    static getQuickComments = async (req: Request, res: Response) => {
+        let rawData;
+        const queryRunner = getConnection().createQueryBuilder();
+
+        try {
+            const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
+                `
                     SELECT * FROM qa_quick_comments
                     `,
-                    {},
-                    {}
-                );
-                rawData = await queryRunner.connection.query(query, parameters);
-                res.status(200).json({ message: "List of quick comments", data: rawData });
-            } catch (error) {
-                console.log(error);
-                res.status(404).json({ message: 'Could not get list of quick comments', data: error });
-            }
+                {},
+                {}
+            );
+            rawData = await queryRunner.connection.query(query, parameters);
+            res.status(200).json({ message: "List of quick comments", data: rawData });
+        } catch (error) {
+            console.log(error);
+            res.status(404).json({ message: 'Could not get list of quick comments', data: error });
         }
-    
-        //get batches 
-        static getBatches = async (req: Request, res: Response) => {
-            let rawData;
-            const queryRunner = getConnection().createQueryBuilder();
-    
-            try {
-                const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                    `
+    }
+
+    //get batches 
+    static getBatches = async (req: Request, res: Response) => {
+        let rawData;
+        const queryRunner = getConnection().createQueryBuilder();
+
+        try {
+            const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
+                `
                     SELECT * FROM qa_batch order by batch_name asc
                     `,
-                    {},
-                    {}
-                );
-                rawData = await queryRunner.connection.query(query, parameters);
-                console.log(rawData);
-                
-                let batches = [];
+                {},
+                {}
+            );
+            rawData = await queryRunner.connection.query(query, parameters);
+            console.log(rawData);
 
-                for (let i = 0; i < rawData.length; i++) {
-                    const element = {submission_date: rawData[i]};
-                    
-                }
-                res.status(200).json({ message: "batches data", data: rawData });
-            } catch (error) {
-                console.log(error);
-                res.status(404).json({ message: 'Could not get batches', data: error });
+            let batches = [];
+
+            for (let i = 0; i < rawData.length; i++) {
+                const element = { submission_date: rawData[i] };
+
             }
+            res.status(200).json({ message: "batches data", data: rawData });
+        } catch (error) {
+            console.log(error);
+            res.status(404).json({ message: 'Could not get batches', data: error });
         }
+    }
 }
 
 export default CommentController;

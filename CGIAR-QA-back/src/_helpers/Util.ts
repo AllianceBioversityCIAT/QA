@@ -547,7 +547,6 @@ class Util {
                 meta = await metaRepository.findOneOrFail({ where: { id: metaId } });
             let evaluation = await evaluationsRepository.findOneOrFail({ where: { id: evaluationId } });
 
-
             // Insert assessed by if not exists
 
             const assessed_by = await getConnection().createQueryBuilder()
@@ -559,7 +558,7 @@ class Util {
 
             console.log({ assessed_by });
             if (assessed_by.length <= 0) {
-                const insertAssessedBy = await getConnection().createQueryBuilder()
+                await getConnection().createQueryBuilder()
                     .insert()
                     .into('qa_evaluations_assessed_by_qa_users')
                     .values({
@@ -605,7 +604,7 @@ class Util {
             return null;
         }
     }
-
+    
     static createTag = async (userId, tagTypeId, commentId) => {
         const userRepository = getRepository(QAUsers);
         const commentsRepository = getRepository(QAComments);

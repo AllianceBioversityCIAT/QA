@@ -19,7 +19,7 @@ class AuthController {
         const { username, password } = req.body;
         try {
             const user = await Util.login(username, password);
-            res.status(200).json({ data: user })
+            res.status(200).json({ data: user })
         } catch (error) {
             console.log(error);
 
@@ -64,7 +64,7 @@ class AuthController {
             }
             let auth_token = r[0];
             let user = await Util.createOrReturnUser(auth_token);
-           
+
 
             res.status(200).json({ data: user, message: 'CRP Logged' })
 
@@ -174,7 +174,7 @@ class AuthController {
 
                 else {
                     console.log('Authentication failed!');
-                    
+
                     let err = {
                         'errno': 'INVALID_CREDENTIALS',
                         'description': 'The supplied credential is invalid'
