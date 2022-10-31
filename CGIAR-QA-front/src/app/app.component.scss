@@ -1,18 +1,75 @@
 .jumbotron {
   background-color: var(--white);
-  max-height: 100vh;
-  height: 100vh;
+  max-height      : 100vh;
+  height          : 100vh;
 }
+
 .test-env {
   background-color: #f02f17;
-  position: absolute;
-  text-align: center;
-  z-index: 99;
-  opacity: 0.5;
-  padding: 0.3em;
-  width: 30%;
+  position        : absolute;
+  text-align      : center;
+  z-index         : 99;
+  opacity         : 0.5;
+  padding         : 0.3em;
+  width           : 30%;
+
   h1 {
     font-size: 1rem;
-    margin: 0;
+    margin   : 0;
+  }
+}
+
+.highlight-section {
+  display        : flex;
+  justify-content: flex-end;
+
+  .highlighted-by {
+    background-color: rgb(251, 180, 0);
+    justify-content : center;
+    align-items     : center;
+    outline         : none;
+    border          : none;
+    display         : flex;
+    border-radius   : 5px;
+    height          : 50px;
+    width           : 50vh;
+    margin          : 10px;
+  }
+
+  button.highlight-icon {
+    background-color: rgb(251, 180, 0);
+    height          : 50px;
+    width           : 50px;
+    margin          : 10px;
+    border-radius   : 5px;
+    display         : flex;
+    justify-content : center;
+    align-items     : center;
+    outline         : none;
+    border          : none;
+
+    .loader {
+      pointer-events  : none;
+      width           : 30px;
+      height          : 30px;
+      border-radius   : 50px;
+      border          : 3px solid transparent;
+      border-top-color: #fff;
+      animation       : an1 1s ease infinite;
+    }
+
+    @keyframes a1 {
+      0% {
+        transform: rotate(0turn);
+      }
+
+      100% {
+        transform: rotate(1turn);
+      }
+    }
+
+    img {
+      height: 32px;
+    }
   }
 }

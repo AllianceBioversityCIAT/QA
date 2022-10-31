@@ -62,6 +62,16 @@
                                     </ng-container>
                                 </div>
                             </div>
+                            <div *ngIf="userIsLeader" class="highlight-section">
+                                <div class="highlighted-by">
+                                    <p>
+                                        Comment highlighted by {{ comment.highlight_by.username }}
+                                    </p>
+                                </div>
+                                <button class="highlight-icon">
+                                    <img src="assets/icons/bombillo.png" alt="" srcset="" />
+                                </button>
+                            </div>
                             <ngx-spinner [name]="spinner_replies" [fullScreen]="false">
                             </ngx-spinner>
                         </div>
@@ -207,8 +217,7 @@
     </div>
     <!-- ADD COMMENT -->
     <!-- dataFromItem.status !== statusHandler.Finalized && -->
-    <div *ngIf="!availableComment && !crpComment &&  currentUser.hasOwnProperty('cycle')"
-        class="add-comment-container">
+    <div *ngIf="!availableComment && !crpComment &&  currentUser.hasOwnProperty('cycle')" class="add-comment-container">
         <form [formGroup]="commentGroup">
             <!-- <p><span class="textarea" role="textbox" contenteditable maxlength="{{totalChar}}" formControlName="comment"></span></p> -->
             <textarea maxlength="{{totalChar}}" formControlName="comment"></textarea>
@@ -220,8 +229,9 @@
             </button>
             <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu"
                 aria-labelledby="button-animated">
-                <li  role="menuitem" *ngFor="let quickComment of quickComments">
-                    <a class="dropdown-item" (click)="setCommentValue($event,quickComment.comment)" href="#">{{quickComment.comment}}</a>
+                <li role="menuitem" *ngFor="let quickComment of quickComments">
+                    <a class="dropdown-item" (click)="setCommentValue($event,quickComment.comment)"
+                        href="#">{{quickComment.comment}}</a>
                     <div class="dropdown-divider"></div>
                 </li>
             </ul>

@@ -3,157 +3,182 @@
 
 
 .comments-container {
-  app-on-boarding{
+  app-on-boarding {
     border-radius: 10px;
   }
-  border: 1px solid var(--gray-primary);
-  padding: 20px;
-  position: relative;
-  display: flex;
+
+  border        : 1px solid var(--gray-primary);
+  padding       : 20px;
+  position      : relative;
+  display       : flex;
   flex-direction: column;
-  min-height: 200px;
-  margin-left: 1em;
+  min-height    : 200px;
+  margin-left   : 1em;
+
   .icon-close {
     margin-top: 1em;
   }
+
   .comment-body.approved,
   .reply-comment.approved {
     background-color: var(--green-tertiary) !important;
   }
+
   .comment-body.declined,
   .reply-comment.declined {
     background-color: var(--red-tertiary) !important;
   }
+
   .comment-body.clarification,
   .reply-comment.clarification {
     background-color: var(--blue-quaternary) !important;
   }
+
   .comment-body {
-    padding: 0.75em;
-    margin: 0.75em 0;
+    padding         : 0.75em;
+    margin          : 0.75em 0;
     background-color: var(--gray-primary);
+
     .comment-title {
-      display: flex;
+      display        : flex;
       justify-content: space-between;
-      margin: 0.5em;
+      margin         : 0.5em;
+
       div:first-child {
         width: 75%;
+
         span {
           font-size: $font-sm;
         }
+
         p {
-          font-size: $font-xs;
+          font-size    : $font-xs;
           margin-bottom: 0;
-          font-style: italic;
+          font-style   : italic;
         }
       }
+
       div:last-child {
         justify-content: space-between;
-        width: auto;
-        display: flex;
+        width          : auto;
+        display        : flex;
+
         i {
           height: 2em;
         }
       }
     }
+
     .comment {
-      padding: 1em;
-      margin: 0;
+      padding  : 1em;
+      margin   : 0;
       word-wrap: break-word;
     }
 
-    app-tags-bar{
-      width: 100%;
+    app-tags-bar {
+      width : 100%;
       height: auto;
     }
 
   }
+
   .replies-container {
     border: 1px solid var(--gray-primary);
   }
+
   .add-comment-container.reply-comment {
-    background-color: var(--gray-primary);
+    background-color : var(--gray-primary);
     // flex-direction: column;
-    padding: 10px 15px;
+    padding          : 10px 15px;
+
     .update-reminder {
-      margin: 1em 0;
+      margin    : 1em 0;
       font-style: italic;
-      font-size: $font-xs;
+      font-size : $font-xs;
       text-align: center;
     }
   }
+
   .add-comment-container {
-    display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
+    display        : flex;
+    flex-direction : column;
+    flex-wrap      : wrap;
     justify-content: space-evenly;
-    margin-bottom: 1em;
+    margin-bottom  : 1em;
+
     textarea {
-      width: 100%;
+      width : 100%;
       border: 1px solid var(--gray-primary);
       height: 8em;
     }
+
     button {
-      margin-top: 1em;
+      margin-top : 1em;
       // width: 20%;
-      font-size: $font-xs;
+      font-size  : $font-xs;
       font-weight: $semibold;
-      align-self: flex-end;
+      align-self : flex-end;
     }
 
 
     .accept {
-  background-color: var(--color-agree);
-  border: 2px solid var(--color-agree);
-    &:hover {
-      border: 2px solid var(--green-primary);
-    }
+      background-color: var(--color-agree);
+      border          : 2px solid var(--color-agree);
+
+      &:hover {
+        border: 2px solid var(--green-primary);
+      }
     }
 
     .disagree {
-    background-color: var(--color-disagree);
-    border: 2px solid var(--color-disagree);
-    &:hover {
-      border: 2px solid var(--red-secondary);
+      background-color: var(--color-disagree);
+      border          : 2px solid var(--color-disagree);
+
+      &:hover {
+        border: 2px solid var(--red-secondary);
+      }
     }
-  }
 
     .request-clarification {
-    background-color: var(--color-clarification);
-    border: 2px solid var(--color-clarification);
-    &:hover {
-      border: 2px solid var(--blue-tertiary);
-    }
+      background-color: var(--color-clarification);
+      border          : 2px solid var(--color-clarification);
+
+      &:hover {
+        border: 2px solid var(--blue-tertiary);
+      }
     }
   }
 
-   .accept-msg {
-    font-size: $font-sm;
+  .accept-msg {
+    font-size  : $font-sm;
     font-weight: $semibold;
-    color: var(--green-primary);
+    color      : var(--green-primary);
   }
+
   .icon-close {
-    height: 1em;
+    height    : 1em;
     align-self: flex-end;
   }
+
   h2 {
-    text-align: center;
+    text-align    : center;
     text-transform: uppercase;
-    font-size: $primary-fs;
+    font-size     : $primary-fs;
   }
 }
+
 .btn {
   &:hover {
     cursor: pointer;
   }
 }
 
-.pos-modal{
+.pos-modal {
   position: absolute;
-  top:10px;
+  top     : 10px;
 }
 
-.modal-body.text-center{
+.modal-body.text-center {
   form {
 
     textarea {
@@ -161,37 +186,41 @@
     }
   }
 }
-.options-comments{
-  width: 100%;
-  display: flex;
+
+.options-comments {
+  width          : 100%;
+  display        : flex;
   justify-content: space-between;
-  align-items: center;
+  align-items    : center;
 }
-.add-comment-container{
-  form{
+
+.add-comment-container {
+  form {
     .textarea {
-      display: block;
-      width: 100%;
-      overflow: hidden;
-      resize: both;
-      min-height: 40px;
-      height: 8em;
-      border: 1px solid var(--gray-primary);
+      display    : block;
+      width      : 100%;
+      overflow   : hidden;
+      resize     : both;
+      min-height : 40px;
+      height     : 8em;
+      border     : 1px solid var(--gray-primary);
       line-height: 20px;
     }
 
-    
+
     .textarea[contenteditable]:empty::before {
       content: "Placeholder still possible";
-      color: gray;
+      color  : gray;
     }
   }
-  footer{
-    display: flex;
+
+  footer {
+    display        : flex;
     justify-content: space-between;
-    align-items: flex-end;
-    height: max-content;
-    button{
+    align-items    : flex-end;
+    height         : max-content;
+
+    button {
       margin: 0;
     }
   }
@@ -200,26 +229,81 @@
 .dropdown-menu {
   max-height: 300px;
   overflow-y: scroll;
-  &::-webkit-scrollbar-track
-  {
-    box-shadow: inset 0 0 6px rgba(0,0,0,0.3);
-    border-radius: 10px;
+
+  &::-webkit-scrollbar-track {
+    box-shadow      : inset 0 0 6px rgba(0, 0, 0, 0.3);
+    border-radius   : 10px;
     background-color: #F5F5F5;
   }
-  &::-webkit-scrollbar
-  {
-    width: 12px;
+
+  &::-webkit-scrollbar {
+    width           : 12px;
     background-color: #F5F5F5;
   }
-  &::-webkit-scrollbar-thumb
-  {
-    border-radius: 10px;
-    box-shadow: inset 0 0 6px rgba(0,0,0,.3);
+
+  &::-webkit-scrollbar-thumb {
+    border-radius   : 10px;
+    box-shadow      : inset 0 0 6px rgba(0, 0, 0, .3);
     background-color: rgb(192, 189, 189);
   }
 }
 
 .dropdown-item {
-  max-width: 100%;
+  max-width  : 100%;
   white-space: pre-wrap;
+}
+
+.highlight-section {
+  display        : flex;
+  justify-content: flex-end;
+
+  .highlighted-by {
+    background-color: rgb(251, 180, 0);
+    justify-content : center;
+    align-items     : center;
+    outline         : none;
+    border          : none;
+    display         : flex;
+    border-radius   : 5px;
+    height          : 50px;
+    width           : 50vh;
+    margin          : 10px;
+  }
+
+  button.highlight-icon {
+    background-color: rgb(251, 180, 0);
+    height          : 50px;
+    width           : 50px;
+    margin          : 10px;
+    border-radius   : 5px;
+    display         : flex;
+    justify-content : center;
+    align-items     : center;
+    outline         : none;
+    border          : none;
+
+    .loader {
+      pointer-events  : none;
+      width           : 30px;
+      height          : 30px;
+      border-radius   : 50px;
+      border          : 3px solid transparent;
+      border-top-color: #fff;
+      animation       : an1 1s ease infinite;
+    }
+
+    @keyframes a1 {
+      0% {
+        transform: rotate(0turn);
+      }
+
+      100% {
+        transform: rotate(1turn);
+      }
+    }
+
+    img {
+      height: 32px;
+    }
+  }
 }
