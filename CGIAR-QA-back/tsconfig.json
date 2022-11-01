@@ -9,7 +9,7 @@
       "target": "es5",
       "allowJs": true,
       "moduleResolution": "node",
-      "outDir": "./build",
+      "outDir": "./dist",
       "esModuleInterop": true,
       "emitDecoratorMetadata": true,
       "strict": false,
