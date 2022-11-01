@@ -522,19 +522,24 @@ class CommentController {
     // TODO Updated highlight comment -----------------------------------------------------------------------------------------------------------------
     static patchHighlightComment = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
-        const userId = res.locals.jwtPayload.userId;
+        const userId = res.locals.jwtPayload;
         const { highlight_comment, id } = req.body;
-        console.log('Funciona...');
-        
+        let updated_comment;
+        let message: String;
+
         try {
             let comment_ = await commentsRepository.findOneOrFail(id);
-            console.log(comment_);
-
-            comment_.highlight_by = userId;
+            comment_.highlight_by = userId.userId;
             comment_.highlight_comment = highlight_comment;
 
-            let updated_comment = await commentsRepository.save(comment_);
-            res.status(201).send({ data: updated_comment, message: 'Highlight comment updated' });
+            if (highlight_comment != 0) {
+                updated_comment = await commentsRepository.save(comment_);
+                message = `Highlight mark by ${userId.username}`;
+            } else {
+                updated_comment = await commentsRepository.update(id, { highlight_by: null, highlight_comment: 0 });
+                message = `Highlight mark was removed in comment ${id} by ${userId.username}`;
+            }
+            res.status(201).send({ data: updated_comment, message: message });
         } catch (error) {
             console.log(error);
             res.status(500).json({ message: "Highlight comment can not be set.", data: error });
