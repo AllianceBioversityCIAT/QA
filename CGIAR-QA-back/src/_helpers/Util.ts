@@ -604,7 +604,7 @@ class Util {
             return null;
         }
     }
-    
+
     static createTag = async (userId, tagTypeId, commentId) => {
         const userRepository = getRepository(QAUsers);
         const commentsRepository = getRepository(QAComments);

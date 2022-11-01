@@ -517,7 +517,28 @@ class CommentController {
             console.log(error);
             res.status(404).json({ message: "Comments can not be retrived.", data: error });
         }
+    }
 
+    // TODO Updated highlight comment -----------------------------------------------------------------------------------------------------------------
+    static patchHighlightComment = async (req: Request, res: Response) => {
+        const commentsRepository = getRepository(QAComments);
+        const userId = res.locals.jwtPayload.userId;
+        const { highlight_comment, id } = req.body;
+        console.log('Funciona...');
+        
+        try {
+            let comment_ = await commentsRepository.findOneOrFail(id);
+            console.log(comment_);
+
+            comment_.highlight_by = userId;
+            comment_.highlight_comment = highlight_comment;
+
+            let updated_comment = await commentsRepository.save(comment_);
+            res.status(201).send({ data: updated_comment, message: 'Highlight comment updated' });
+        } catch (error) {
+            console.log(error);
+            res.status(500).json({ message: "Highlight comment can not be set.", data: error });
+        }
     }
 
     // get comments replies
