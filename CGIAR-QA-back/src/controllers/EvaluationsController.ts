@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 import { getRepository, getConnection } from "typeorm";
 
-import { QACrp } from "@entity/CRP";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QAUsers } from "@entity/User";
+import { QACrp } from "./../entity/CRP";
+import { QAEvaluations } from "./../entity/Evaluations";
+import { QAUsers } from "./../entity/User";
 
-import { RolesHandler } from "@helpers/RolesHandler";
-import Util from "@helpers/Util";
-import { StatusHandler } from "@helpers/StatusHandler";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import Util from "./../_helpers/Util";
+import { StatusHandler } from "./../_helpers/StatusHandler";
 
 
 class EvaluationsController {

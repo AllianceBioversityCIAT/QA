@@ -2,20 +2,20 @@ import { Request, Response, response } from "express";
 import { getRepository, createQueryBuilder, getConnection, Not } from "typeorm";
 import { validate } from "class-validator";
 
-import { QAUsers } from "@entity/User";
-import { QAIndicators } from "@entity/Indicators";
-import { QAIndicatorUser } from "@entity/IndicatorByUser";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QAIndicatorsMeta } from "@entity/IndicatorsMeta";
-import { QACommentsMeta } from "@entity/CommentsMeta";
+import { QAUsers } from "../entity/User";
+import { QAIndicators } from "../entity/Indicators";
+import { QAIndicatorUser } from "../entity/IndicatorByUser";
+import { QAEvaluations } from "../entity/Evaluations";
+import { QAIndicatorsMeta } from "../entity/IndicatorsMeta";
+import { QACommentsMeta } from "../entity/CommentsMeta";
 
-import { StatusHandlerMIS } from "@helpers/StatusHandler"
-import { RolesHandler } from "@helpers/RolesHandler"
-import Util from "@helpers/Util";
-import { GeneralIndicatorName } from "@helpers/GeneralIndicatorName";
-import { QABatch } from "@entity/Batch";
-import { QAComments } from "@entity/Comments";
-import { QACrp } from "@entity/CRP";
+import { StatusHandlerMIS } from "./../_helpers/StatusHandler"
+import { RolesHandler } from "./../_helpers/RolesHandler"
+import Util from "./../_helpers/Util";
+import { GeneralIndicatorName } from "./../_helpers/GeneralIndicatorName";
+import { QABatch } from "../entity/Batch";
+import { QAComments } from "../entity/Comments";
+import { QACrp } from "../entity/CRP";
 
 
 class IndicatorsController {

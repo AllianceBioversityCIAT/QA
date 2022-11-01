@@ -1,6 +1,6 @@
 import { Router } from "express";
-import AuthController from "@controllers/AuthController";
-import { RolesHandler } from "@helpers/RolesHandler";
+import AuthController from "./../controllers/AuthController";
+import { RolesHandler } from "./../_helpers/RolesHandler";
 
 import * as checkJwt_ from "../middlewares/CheckJwt";
 import * as checkRole_ from "../middlewares/CheckRole";

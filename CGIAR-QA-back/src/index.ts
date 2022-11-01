@@ -5,8 +5,8 @@ import express from "express";
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import cors from "cors";
-import Routes from "@routes/IndexRoute";
-import config from "@config/config";
+import Routes from "./routes/IndexRoute";
+import config from "./config/config";
 const { handleError } = require('./_helpers/ErrorHandler');
 const parentDir = require('path').resolve(process.cwd(), '../');
 

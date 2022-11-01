@@ -1,32 +1,32 @@
 
-import { StatusHandler, StatusHandlerLegacy, StatusHandlerMIS } from "@helpers/StatusHandler";
-const { ErrorHandler } = require("@helpers/ErrorHandler")
+import { StatusHandler, StatusHandlerLegacy, StatusHandlerMIS } from "./../_helpers/StatusHandler";
+const { ErrorHandler } = require("./../_helpers/ErrorHandler")
 
-import { DisplayTypeHandler } from "@helpers/DisplayTypeHandler";
-import { RolesHandler } from "@helpers/RolesHandler";
+import { DisplayTypeHandler } from "./../_helpers/DisplayTypeHandler";
+import { RolesHandler } from "./../_helpers/RolesHandler";
 import { getRepository, getConnection, createQueryBuilder, In } from "typeorm";
-import { QAUsers } from "@entity/User";
-import { QARoles } from "@entity/Roles";
-import { QACrp } from "@entity/CRP";
-import { QAGeneralConfiguration } from "@entity/GeneralConfig";
+import { QAUsers } from "./../entity/User";
+import { QARoles } from "./../entity/Roles";
+import { QACrp } from "./../entity/CRP";
+import { QAGeneralConfiguration } from "./../entity/GeneralConfig";
 import { config } from "process";
-import config_ from "@config/config";
-import { QAIndicators } from "@entity/Indicators";
-import { QAIndicatorsMeta } from "@entity/IndicatorsMeta";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QAIndicatorUser } from "@entity/IndicatorByUser";
+import config_ from "./../config/config";
+import { QAIndicators } from "./../entity/Indicators";
+import { QAIndicatorsMeta } from "./../entity/IndicatorsMeta";
+import { QAEvaluations } from "./../entity/Evaluations";
+import { QAIndicatorUser } from "./../entity/IndicatorByUser";
 
 import * as jwt from "jsonwebtoken";
 import * as excel from 'exceljs';
-import { QAComments } from "@entity/Comments";
-import { QACycle } from "@entity/Cycles";
-import { QATags } from "@entity/Tags";
-import { QATagType } from "@entity/TagType";
-import AuthController from "@controllers/AuthController";
+import { QAComments } from "./../entity/Comments";
+import { QACycle } from "./../entity/Cycles";
+import { QATags } from "./../entity/Tags";
+import { QATagType } from "./../entity/TagType";
+import AuthController from "./../controllers/AuthController";
 import { BaseError } from "./BaseError";
 import { HttpStatusCode } from "./Constants";
 import moment from "moment";
-import { QACommentsReplies } from "@entity/CommentsReplies";
+import { QACommentsReplies } from "./../entity/CommentsReplies";
 // const excel = require('exceljs');
 
 

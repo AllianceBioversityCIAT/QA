@@ -3,16 +3,16 @@ import * as jwt from "jsonwebtoken";
 import { getRepository, getConnection } from "typeorm";
 import { validate } from "class-validator";
 
-import config_ from "@config/config";
+import config_ from "./../config/config";
 
-import { QAUsers } from "@entity/User";
-import { QAGeneralConfiguration } from "@entity/GeneralConfig";
-import { RolesHandler } from "@helpers/RolesHandler";
-import Util from "@helpers/Util";
-import { QACycle } from "@entity/Cycles";
+import { QAUsers } from "./../entity/User";
+import { QAGeneralConfiguration } from "./../entity/GeneralConfig";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import Util from "./../_helpers/Util";
+import { QACycle } from "./../entity/Cycles";
 let ActiveDirectory = require('activedirectory');
 
-const { ErrorHandler } = require("@helpers/ErrorHandler")
+const { ErrorHandler } = require("./../_helpers/ErrorHandler")
 
 class AuthController {
     static login = async (req: Request, res: Response, next: NextFunction) => {

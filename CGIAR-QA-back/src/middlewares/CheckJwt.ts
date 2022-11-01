@@ -1,10 +1,10 @@
 import { Request, Response, NextFunction } from "express";
 import * as jwt from "jsonwebtoken";
-import config from "@config/config";
-import AuthController from "@controllers/AuthController";
-import Util from "@helpers/Util";
-import { BaseError } from "@helpers/BaseError";
-const { ErrorHandler } = require("@helpers/ErrorHandler")
+import config from "./../config/config";
+import AuthController from "./../controllers/AuthController";
+import Util from "./../_helpers/Util";
+import { BaseError } from "./../_helpers/BaseError";
+const { ErrorHandler } = require("./../_helpers/ErrorHandler")
 
 export const checkJwt = async (req: Request, res: Response, next: NextFunction) => {
 

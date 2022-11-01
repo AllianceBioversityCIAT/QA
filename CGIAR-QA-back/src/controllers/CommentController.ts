@@ -2,17 +2,17 @@ import e, { Request, Response } from "express";
 import { validate } from "class-validator";
 import { getRepository, In, getConnection, IsNull, Not, getTreeRepository } from "typeorm";
 
-import { QAUsers } from "@entity/User";
-import { QAComments } from "@entity/Comments";
-import { QACommentsMeta } from "@entity/CommentsMeta";
+import { QAUsers } from "./../entity/User";
+import { QAComments } from "./../entity/Comments";
+import { QACommentsMeta } from "./../entity/CommentsMeta";
 
-import Util from "@helpers/Util"
-import { QACommentsReplies } from "@entity/CommentsReplies";
-import { RolesHandler } from "@helpers/RolesHandler";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QACycle } from "@entity/Cycles";
-import { QATags } from "@entity/Tags";
-import { QAReplyType } from "@entity/ReplyType";
+import Util from "./../_helpers/Util"
+import { QACommentsReplies } from "./../entity/CommentsReplies";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import { QAEvaluations } from "./../entity/Evaluations";
+import { QACycle } from "./../entity/Cycles";
+import { QATags } from "./../entity/Tags";
+import { QAReplyType } from "./../entity/ReplyType";
 const { htmlToText } = require('html-to-text');
 
 // const vfile = require('to-vfile')
@@ -22,7 +22,7 @@ const { htmlToText } = require('html-to-text');
 // const toString = require('nlcst-to-string')
 
 
-// import { QAIndicatorsMeta } from "@entity/IndicatorsMeta";
+// import { QAIndicatorsMeta } from "./../entity/IndicatorsMeta";
 // import { createSecretKey } from "crypto";
 
 
