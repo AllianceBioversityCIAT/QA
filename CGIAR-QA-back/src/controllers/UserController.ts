@@ -2,10 +2,10 @@ import { Request, Response } from "express";
 import { getRepository, In } from "typeorm";
 import { validate, validateOrReject } from "class-validator";
 
-import { QAUsers } from "@entity/User";
-import { QARoles } from "@entity/Roles";
-import { QAPermissions } from "@entity/Permissions";
-import { QACrp } from "@entity/CRP";
+import { QAUsers } from "./../entity/User";
+import { QARoles } from "./../entity/Roles";
+import { QAPermissions } from "./../entity/Permissions";
+import { QACrp } from "./../entity/CRP";
 
 // import { QAPolicies } from "../entity/PoliciesView";
 
