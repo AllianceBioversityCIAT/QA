@@ -77,7 +77,7 @@ router.patch("/detail/comment/reply", [checkJwt, checkRole([RolesHandler.admin, 
 // get comment from indicator item
 router.get("/:evaluationId([0-9]+)/detail/comment/:metaId([0-9]+)", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getComments)
 
-// get replies by comment
+// ? get replies by comment
 router.get("/:evaluationId([0-9]+)/detail/comment/:commentId([0-9]+)/replies", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getCommentsReplies)
 
 // get Criteria By Indicator

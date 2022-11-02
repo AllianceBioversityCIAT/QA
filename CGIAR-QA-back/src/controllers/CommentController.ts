@@ -519,7 +519,7 @@ class CommentController {
         }
     }
 
-    // TODO Updated highlight comment -----------------------------------------------------------------------------------------------------------------
+    // * Updated highlight comment -----------------------------------------------------------------------------------------------------------------------
     static patchHighlightComment = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
         const userId = res.locals.jwtPayload;
