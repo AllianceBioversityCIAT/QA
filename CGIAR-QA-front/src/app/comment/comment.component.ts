@@ -25,8 +25,11 @@ import { CommentService } from "../services/comment.service";
 import { from } from "rxjs";
 import { WordCounterPipe } from "../pipes/word-counter.pipe";
 import { mergeMap } from "rxjs/operators";
+import { HttpClient } from "@angular/common/http";
 
 import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
+import { EvaluationsService } from "../services/evaluations.service";
+import { HighDensityScatterSeries } from "igniteui-angular-charts";
 
 @Component({
   selector: "app-comment",
@@ -47,6 +50,7 @@ export class CommentComponent implements OnInit {
   is_approved = false;
   replyTypes = ReplyTypes;
   currentY;
+  isActiveButton = false;
 
   spinner_replies = "spinner_Comment_Rply";
   spinner_comment = "spinner_Comment";
@@ -107,18 +111,49 @@ export class CommentComponent implements OnInit {
     }
   }
 
-  showHighlightedAlert() {
+  UpdateHighlightComment(commentId, isHighlighted) {
+    // console.log(validateFields);
+    // this.isActiveButton = true;
+    let params = {
+      id: commentId,
+      highlight_comment: !isHighlighted,
+    };
+    isHighlighted = !isHighlighted;
+    this.commentService.patchHighlightComment(params).subscribe((error) => {
+      console.log("updateComment", error);
+      this.getItemCommentData();
+      this.showSpinner(this.spinner_comment);
+
+      this.alertService.error(error);
+    });
+  }
+
+  showHighlightedAlert(commentHighlight: boolean, is_highlighted) {
+    console.log(this.commentsByCol);
+
     document.getElementById("showAlert").style.display = "contents";
     let params = {
-      evaluationId: this.dataFromItem.evaluation_id,
-      metaId: this.dataFromItem.field_id,
+      highlihgt_comment: this.commentsByCol.highlight_comment,
+      highlightById: this.commentsByCol.id,
     };
-    this.commentService.getDataComment(params).subscribe((res) => {
-      let id = res.data[0].id;
-      let id2 = res.data;
-      console.log(id);
-      console.log(id2);
+    console.log(params);
+
+    this.commentService.patchHighlightComment(params).subscribe((res) => {
+      console.log(res.data[0].id);
+      res.highlightById = this.currentUser.id;
+      console.log(res.highlightById);
+      params.highlightById = res.highlightById;
+
+      console.log(params.highlightById);
+
+      console.log(res.data);
+      console.log(res.commentHighlight);
+      console.log(this.currentUser);
+      is_highlighted = res.data.highlight_by;
+      console.log(is_highlighted);
+      commentHighlight;
     });
+    console.log(params);
   }
 
   getQuickComments() {

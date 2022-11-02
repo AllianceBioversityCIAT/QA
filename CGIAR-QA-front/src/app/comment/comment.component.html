@@ -107,19 +107,46 @@
               <ngx-spinner [name]="spinner_replies" [fullScreen]="false">
               </ngx-spinner>
             </div>
-            <div *ngIf="userIsLeader" class="highlight-section">
-              <div id="showAlert" style="display: none" class="highlighted-by">
-                <p>
-                  Comment highlighted by
-                  {{ comment.highlightById }}
-                </p>
-              </div>
-              <button (click)="showHighlightedAlert()" class="highlight-icon">
-                <img src="assets/icons/bombillo.png" alt="" srcset="" />
+          </div>
+          <div
+            *ngIf="
+              currentUser.roles[0].description === allRoles.admin ||
+              userIsLeader
+            "
+            class="highlight-section"
+          >
+            <div
+              *ngIf="comment.highlight_comment"
+              id="showAlert"
+              class="highlighted-by"
+            >
+              <a class="user-highlighted">
+                Comment highlighted by
+                {{ comment.highlight_by.name }}
+                <!-- {{ comment.highlight_comment }} -->
+              </a>
+            </div>
+            <button
+              *ngIf="comment.highlight_comment == false"
+              (click)="
+                UpdateHighlightComment(comment.id, comment.highlight_comment)
+              "
+              class="highlight-icon"
+            >
+              <img src="assets/icons/bombillo.png" alt="" srcset="" />
+            </button>
+
+            <div>
+              <button
+                *ngIf="comment.highlight_comment == !false"
+                (click)="
+                  UpdateHighlightComment(comment.id, comment.highlight_comment)
+                "
+                class="btn btn-danger"
+              >
+                <img src="assets/icons/letter-x-icon-256.png" />
+                Remove highlight
               </button>
-              <div *ngIf="commentsByCol.highlight_comment === '1'">
-                <button class="cancel-highlight">Remove highlight</button>
-              </div>
             </div>
           </div>
 
