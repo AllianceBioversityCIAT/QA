@@ -87,7 +87,8 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     general_comment_id: '',
     status_update: null,
     crp_id: '',
-    requires_second_assessment: false
+    requires_second_assessment: false,
+    is_highlight: ''
   };
   statusHandler = DetailedStatus;
   statusNames = StatusNames;
@@ -372,7 +373,8 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
           status_update: null,
           general_comment_updatedAt: this.detailedData[0].general_comment_updatedAt,
           general_comment_user: this.detailedData[0].general_comment_user,
-          requires_second_assessment: this.detailedData[0].require_second_assessment
+          requires_second_assessment: this.detailedData[0].require_second_assessment,
+          is_highlight: this.detailedData[0].is_highlight
         }
         // this.approveAllitems = (this.gnralInfo.status === this.statusHandler.Complete) ? false : true;
         this.approveAllitems = false;

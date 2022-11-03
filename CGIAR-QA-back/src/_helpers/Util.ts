@@ -702,6 +702,7 @@ class Util {
                 stage: element.hasOwnProperty('stage') ? element['stage'] : undefined,
                 fp: element.hasOwnProperty('fp') ? element['fp'] : undefined,
                 brief: element.hasOwnProperty('brief') ? element['brief'] : undefined, //TODO
+                is_highlight: element["is_highlight"]
             });
         } else {
             response = Object.assign(response, {
@@ -730,10 +731,11 @@ class Util {
                 count_accepted_with_comments: element['accepted_with_comments'],
                 original_field: element['original_field'],
                 hide_original_field: true,
+                is_highlight: element["is_highlight"]
             });
-
+            
         }
-
+        
         return response;
     }
 
