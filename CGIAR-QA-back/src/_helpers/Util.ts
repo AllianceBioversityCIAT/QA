@@ -677,6 +677,7 @@ class Util {
             comments_clarification_count: element["comments_clarification_count"],
             comments_count: element["comments_count"],
             evaluation_id: element["evaluation_id"],
+            is_core: element["is_core"],
             status: element["evaluations_status"],
             response_status: element["response_status"],
             evaluation_status: element["evaluation_status"],

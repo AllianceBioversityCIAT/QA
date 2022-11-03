@@ -755,6 +755,7 @@ class EvaluationsController {
                             meta.description AS meta_description,
                             meta.include_detail AS meta_include_detail,
                             meta.is_primay AS meta_is_primay,
+                            meta.is_core AS is_core,
                             evaluations.id AS evaluation_id,
                             evaluations.evaluation_status AS evaluation_status, 
                             crp.name AS crp_name,
