@@ -239,6 +239,7 @@
                                 </div>
 
                                 <!-- comments -->
+                                
                                 <div #commElement style="cursor: pointer;"
                                     *ngIf="validateCommentAvility(detailedData[i],true) && !summon.value.isChecked && gnralInfo.status != statusHandler.Autochecked"
                                     (click)="showComments(i, detailedData[i],commElement, $event); comment.updateData(detailedData[i],params)"
@@ -247,11 +248,15 @@
                                     <i #elRef *ngIf="!detailedData[i].loading" class="icon-message"></i>
                                     <span *ngIf="detailedData[i].loading"
                                         class="spinner-border spinner-border-sm mr-1"></span>
-
+                                        <div *ngIf="detailedData[i].is_highlight" class="highlighted-icon">                                    
+                                            <img src="../../../assets/icons/bombillo.png" alt="">
+                                        </div>
                                     <div *ngIf="detailedData[i].replies_count != '0'" class="replies-count">
                                         {{detailedData[i].replies_count}}
                                     </div>
                                 </div>
+
+                                
 
                                 <div *ngIf="!validateCommentAvility(detailedData[i]) || summon.value.isChecked"
                                     class="activate-messages-container">
@@ -263,6 +268,7 @@
                                         {{detailedData[i].replies_count}}
                                     </div>
                                 </div>
+                                
                             </div>
 
                         </ng-container>
