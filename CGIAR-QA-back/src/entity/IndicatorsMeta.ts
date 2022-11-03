@@ -68,4 +68,11 @@ export class QAIndicatorsMeta {
     @Column()
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @Column({
+        nullable : true,
+        type: 'tinyint',
+        default: 0
+    })
+    is_core: number;
 }
