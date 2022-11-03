@@ -36,7 +36,7 @@ router.get("/:id([0-9]+)", [checkJwt, checkRole([RolesHandler.admin, RolesHandle
 // get list evaluations by user
 router.post("/:id([0-9]+)/list", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], EvaluationsController.getListEvaluationsDash);
 
-// get detailed evaluations by user
+// * get detailed evaluations by user
 router.post("/:id([0-9]+)/detail", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], EvaluationsController.getDetailedEvaluationDash);
 
 // update detailed evaluations by user
@@ -77,7 +77,7 @@ router.patch("/detail/comment/reply", [checkJwt, checkRole([RolesHandler.admin, 
 // get comment from indicator item
 router.get("/:evaluationId([0-9]+)/detail/comment/:metaId([0-9]+)", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getComments)
 
-// ? get replies by comment
+//  get replies by comment
 router.get("/:evaluationId([0-9]+)/detail/comment/:commentId([0-9]+)/replies", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getCommentsReplies)
 
 // get Criteria By Indicator
