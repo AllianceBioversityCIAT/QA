@@ -31,25 +31,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
   providers: [UrlTransformPipe, WordCounterPipe],
   animations: [
     trigger(
-      'inOutAnimation', 
+      'inOutAnimation',
       [
         transition(
-          ':enter', 
-          [
-            style({
-            backgroundColor: '#cfeaf3',
-            padding: '1em',
-            marginBottom: '0.5em',
-            borderRadius: '5px',
-            fontStyle: 'italic',
-            fontSize: '$font-xs',
-            opacity: 0 }),
-            animate('0.5s ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
+          ':enter',
           [
             style({
               backgroundColor: '#cfeaf3',
@@ -58,9 +43,26 @@ import { animate, style, transition, trigger } from '@angular/animations';
               borderRadius: '5px',
               fontStyle: 'italic',
               fontSize: '$font-xs',
-              opacity: 1 }),
-            animate('0.1s ease-in', 
-                    style({ opacity: 0 }))
+              opacity: 0
+            }),
+            animate('0.5s ease-out',
+              style({ opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave',
+          [
+            style({
+              backgroundColor: '#cfeaf3',
+              padding: '1em',
+              marginBottom: '0.5em',
+              borderRadius: '5px',
+              fontStyle: 'italic',
+              fontSize: '$font-xs',
+              opacity: 1
+            }),
+            animate('0.1s ease-in',
+              style({ opacity: 0 }))
           ]
         )
       ]
@@ -137,12 +139,12 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private evaluationService: EvaluationsService,
     private sanitizer: DomSanitizer,
-    ) {
+  ) {
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
         this.currentUser = x;
         console.log(this.currentUser);
-        
+
       });
       this.indicatorType = routeParams.type;
 
@@ -195,7 +197,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
           isChecked: x.approved_no_comment ? true : false
         })
       )
-      if(!x.approved_no_comment ){
+      if (!x.approved_no_comment) {
         this.approveAllitems
       }
     });
@@ -218,7 +220,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     let availableData = this.detailedData.filter(data => data.enable_comments)
     // console.log('update Eval',  commented_row, checked_row,  availableData.length, this.statusHandler, this.gnralInfo, this.currentUser)
     if (this.gnralInfo.status !== this.statusHandler.Pending && this.gnralInfo.status !== this.statusHandler.Finalized && this.currentUser.hasOwnProperty('cycle')) {
-    // if (this.gnralInfo.status !== this.statusHandler.Complete) {
+      // if (this.gnralInfo.status !== this.statusHandler.Complete) {
       if ((checked_row.length + commented_row.length) == availableData.length) {
         this.gnralInfo.status_update = this.statusHandler.Complete;
         this.updateEvaluation('status', this.detailedData)
@@ -235,8 +237,8 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     if (field) {
       let noComment = (e.target.checked) ? true : false;
       field.loading = true
-      console.log('HI',field.evaluation_id);
-      
+      console.log('HI', field.evaluation_id);
+
 
       this.commentService.toggleApprovedNoComments({ meta_array: [field.field_id], isAll: false, userId: this.currentUser.id, noComment }, field.evaluation_id).subscribe(
         res => {
@@ -256,7 +258,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
 
   onChangeSelectAll(e) {
     console.log('Change SELECT ALL', this.approveAllitems);
-    
+
     let selected_meta = [];
     let noComment;
     if (e) {
@@ -290,64 +292,68 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   checkAllIsApproved() {
     let statusByField = [];
     this.formTickData.controls.forEach((value, i) => {
-      statusByField.push({display_name: this.detailedData[i].display_name, value:  (this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false) ? true : false});
+      statusByField.push({ display_name: this.detailedData[i].display_name, value: (this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false) ? true : false });
     });
-    this.approveAllitems = statusByField.find(e => e.value == false) ?  false : true;
+    this.approveAllitems = statusByField.find(e => e.value == false) ? false : true;
     return this.approveAllitems;
   }
 
   validateAllFieldsAssessed() {
     console.log('VALIDATING AFTER COMMENT');
-    
+
     let initialStatus = this.gnralInfo.status;
     let allFieldsAssessed: boolean = false;
     let statusByField = [];
     this.formTickData.controls.forEach((value, i) => {
       console.log(this.detailedData[i]);
-      
-      
-      statusByField.push({display_name: this.detailedData[i].display_name, value:  (this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false) ? true : false});
+
+
+      statusByField.push({ display_name: this.detailedData[i].display_name, value: (this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false) ? true : false });
     });
     let fieldWithoutAssessed = statusByField.find(e => e.value == false);
     // existNotAssessed = existNotAssessed.value;
-    
-    if(fieldWithoutAssessed == undefined) {
+
+    if (fieldWithoutAssessed == undefined) {
       allFieldsAssessed = true;
       this.gnralInfo.status_update = this.statusHandler.Finalized;
       this.updateEvaluation('status', this.detailedData)
     } else {
       allFieldsAssessed = false;
       this.gnralInfo.status_update = this.statusHandler.Pending;
-      if(initialStatus != this.statusHandler.Pending) {
-        console.log({initialStatus}, this.statusHandler.Pending);
-        
+      if (initialStatus != this.statusHandler.Pending) {
+        console.log({ initialStatus }, this.statusHandler.Pending);
+
         this.updateEvaluation('status', this.detailedData)
       }
     }
     console.log(this.detailedData);
+
+    console.log({ fieldWithoutAssessed, statusByField, allFieldsAssessed });
+
+  }
+  updateHighlight(e) { 
+    console.log(e, 'Event --------------------');
     
-    console.log({fieldWithoutAssessed,statusByField,allFieldsAssessed});
-    
-  }  
+  }
 
   getDetailedData() {
     console.log(this.currentUser.id, this.params);
-    
+
     this.evaluationService.getDataEvaluation(this.currentUser.id, this.params).subscribe(
       res => {
-        console.log('detaileedData',res)
+        console.log('detaileedData', res)
         this.detailedData = res.data.filter(field => {
           // console.log(field.value);
           if (typeof field.value === 'number') field.value = String(field.value)
-          if(field.value) {
-            field.value = field.value.replace("´","'");
-            if(field.value.includes('<table>')){
+          if (field.value) {
+            field.value = field.value.replace("´", "'");
+            if (field.value.includes('<table>')) {
               field.value = field.value.replace(new RegExp('<p>', 'g'), "");
               field.value = field.value.replace(new RegExp('</p>', 'g'), " ");
               field.value = field.value.replace(new RegExp('<td>', 'g'), `<td><p class="p-styles">`);
               field.value = field.value.replace(new RegExp('</td>', 'g'), "</p></td>");
               field.value = field.value.replace(new RegExp('\n', 'g'), " ");
-            } else{
+            } else {
               field.value = field.value.replace(new RegExp('\n', 'g'), "<br />");
             }
             field.value = field.value.replace(new RegExp('<a', 'g'), '<a target="_blank"');
@@ -376,10 +382,10 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
             console.log(res.data[0]);
             this.assessed_by_r1 = res.data.assessed_r1;
             this.assessed_by_r2 = res.data.assessed_r2;
-            if(this.assessed_by_r1) {
+            if (this.assessed_by_r1) {
               this.currentUserHasAssessed = this.assessed_by_r1.indexOf(this.currentUser.username) >= 0 ? true : false;
             }
-            
+
           }, error => {
             console.log("getAssessorsByEvaluation", error);
             this.hideSpinner('spinner1');
@@ -397,7 +403,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
         this.alertService.error(error);
       }
     )
-    
+
   }
 
   getCommentsExcel(evaluation) {
@@ -439,9 +445,9 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     this.evaluationService.getCriteriaByIndicator(id).subscribe(
       res => {
         this.criteriaData = res.data[0];
-        console.log("CRITERIA DATA",this.criteriaData);
-        console.log("CRITERIA DATA",res.message);
-        
+        console.log("CRITERIA DATA", this.criteriaData);
+        console.log("CRITERIA DATA", res.message);
+
         this.criteria_loading = false;
       },
       error => {
@@ -463,15 +469,15 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   }
 
 
-//Emitted from comment component
+  //Emitted from comment component
   hideComments(index: number, field: any, e?) {
     this.fieldIndex = index;
     field.clicked = !field.clicked;
     this.activeCommentArr[index] = !this.activeCommentArr[index];
     console.log('HIDE COMMENTS');
-    if(this.actualComment){
-          
-      this.actualComment.scrollIntoView({ block: 'center',  behavior: 'smooth', inline: 'nearest' });
+    if (this.actualComment) {
+
+      this.actualComment.scrollIntoView({ block: 'center', behavior: 'smooth', inline: 'nearest' });
     }
     // this.commentsElem.nativeElement.scrollIntoView({ behavior: "smooth"});
     // if(!this.activeCommentArr[index]) this.validateAllFieldsAssessed();
@@ -488,15 +494,15 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
       setTimeout(() => {
         let parentPos = this.getPosition(this.containerElement.nativeElement);
         let yPosition = this.getPosition(elementRef)
-        console.log({parentPos});
-        console.log({yPosition});
-        
+        console.log({ parentPos });
+        console.log({ yPosition });
+
         this.currentY = yPosition.y - parentPos.y;
         this.renderComments = this.activeCommentArr[index];
         this.actualComment = elementRef;
-        elementRef.scrollIntoView({ block: 'start',  behavior: 'smooth' });
-    
-        
+        elementRef.scrollIntoView({ block: 'start', behavior: 'smooth' });
+
+
         // setTimeout(()=> {window.scrollBy({top: -10, behavior: 'smooth'})},500);
       }, 100);
 
@@ -530,14 +536,14 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     };
   }
 
-  updateNumCommnts({length, validateFields}, detailedData, ) {
+  updateNumCommnts({ length, validateFields }, detailedData,) {
     detailedData.replies_count = length;
-    if(validateFields) this.validateAllFieldsAssessed();
+    if (validateFields) this.validateAllFieldsAssessed();
   }
 
   updateEvaluation(type: string, data: any) {
     console.log('Actualizando evaluación');
-    
+
     let evaluationData = {
       evaluation_id: data[0].evaluation_id,
       status: data[0].status,
@@ -569,7 +575,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
       res => {
         console.log(res, 'EVAL UPDATE')
         this.alertService.success(res.message);
-        
+
         this.getDetailedData();
       },
       error => {
@@ -585,15 +591,15 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     console.log('This item should be assessed again.');
     this.showSpinner('spinner1')
 
-    this.evaluationService.updateRequireSecondAssessmentEvaluation(this.gnralInfo.evaluation_id, {require_second_assessment: !this.gnralInfo.requires_second_assessment})
-    .subscribe(res => {
-      this.hideSpinner('spinner1');
-      this.gnralInfo.requires_second_assessment = !this.gnralInfo.requires_second_assessment;
-    },
-    error => {
-      this.hideSpinner('spinner1');
-      this.alertService.error(error);
-    })
+    this.evaluationService.updateRequireSecondAssessmentEvaluation(this.gnralInfo.evaluation_id, { require_second_assessment: !this.gnralInfo.requires_second_assessment })
+      .subscribe(res => {
+        this.hideSpinner('spinner1');
+        this.gnralInfo.requires_second_assessment = !this.gnralInfo.requires_second_assessment;
+      },
+        error => {
+          this.hideSpinner('spinner1');
+          this.alertService.error(error);
+        })
   }
 
   validateCommentAvility(field, is_embed?) {
@@ -604,13 +610,13 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
         avility = field.enable_comments ? true : false;
         break;
       case Role.asesor:
-        if(this.gnralInfo.status === this.statusHandler.Pending){
-          avility = field.enable_assessor ?  field.enable_comments : field.enable_assessor
+        if (this.gnralInfo.status === this.statusHandler.Pending) {
+          avility = field.enable_assessor ? field.enable_comments : field.enable_assessor
         }
-        else{
-          avility = field.enable_assessor ?  field.enable_comments : field.enable_assessor
+        else {
+          avility = field.enable_assessor ? field.enable_comments : field.enable_assessor
         }
-        
+
         // else if (this.gnralInfo.status === this.statusHandler.Finalized){
         //   avility = true;
         // }
@@ -682,20 +688,20 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     )
   }
 
-  parseGeneralStatus(status){
+  parseGeneralStatus(status) {
     let statusParse;
     switch (status) {
       case this.statusHandler.Pending:
-        statusParse = 'Pending'     
+        statusParse = 'Pending'
         break;
       case this.statusHandler.Autochecked:
-        statusParse = 'Automatically Validated'     
+        statusParse = 'Automatically Validated'
         break;
       case this.statusHandler.Complete:
-        statusParse = 'Assessed 1st round'     
+        statusParse = 'Assessed 1st round'
         break;
       case this.statusHandler.Finalized:
-         statusParse = 'Assessed 2nd round'
+        statusParse = 'Assessed 2nd round'
         break;
       default:
         break;

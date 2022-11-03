@@ -430,7 +430,8 @@
                 <app-comment [isCRP]="false" [userIsLeader]="isLeadAssessor"
                     [original_field]="detailedData[fieldIndex]?.value || null" #comment
                     (parentFun)="hideComments(fieldIndex, detailedData[fieldIndex])"
-                    (updateNumCommnts)="updateNumCommnts($event, detailedData[fieldIndex]);"></app-comment>
+                    (updateNumCommnts)="updateNumCommnts($event, detailedData[fieldIndex]);"
+                    (is_highlight)="updateHighlight($event)"></app-comment>
             </div>
         </div>
 

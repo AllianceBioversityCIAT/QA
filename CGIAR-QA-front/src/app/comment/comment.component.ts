@@ -70,7 +70,7 @@ export class CommentComponent implements OnInit {
   validateAllFieldsAssessed: EventEmitter<any> = new EventEmitter();
   @Output("updateNumCommnts") updateNumCommnts: EventEmitter<any> =
     new EventEmitter();
-
+  @Output("is_highlight") is_highlight = new EventEmitter<any>();
   @ViewChild("commentContainer") private commentContainer: ElementRef;
   allRoles = Role;
 
@@ -111,7 +111,7 @@ export class CommentComponent implements OnInit {
     }
   }
 
-  UpdateHighlightComment(commentId, isHighlighted) {
+  UpdateHighlightComment(commentId: Number, isHighlighted: Boolean) {
     // console.log(validateFields);
     // this.isActiveButton = true;
     let params = {
@@ -123,8 +123,10 @@ export class CommentComponent implements OnInit {
       console.log("updateComment", error);
       this.getItemCommentData();
       this.showSpinner(this.spinner_comment);
-
       this.alertService.error(error);
+    });
+    this.is_highlight.emit({
+      is_highlight: isHighlighted,
     });
   }
 
@@ -434,9 +436,8 @@ export class CommentComponent implements OnInit {
     this.modalRef = this.modalService.show(template, {
       class: "pos-modal modal-sm",
     });
-    document.querySelector("body").style.cssText = `--position-top: ${
-      this.currentY - 300
-    }px`;
+    document.querySelector("body").style.cssText = `--position-top: ${this.currentY - 300
+      }px`;
     // const modal = this.elem.nativeElement.querySelector('.modal-content');
     // console.log(modal);
     // console.log(template.elementRef.nativeElement);
