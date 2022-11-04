@@ -9,6 +9,7 @@ import {
   ElementRef,
   Renderer2,
   Inject,
+  ChangeDetectionStrategy,
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
@@ -36,6 +37,7 @@ import { HighDensityScatterSeries } from "igniteui-angular-charts";
   templateUrl: "./comment.component.html",
   styleUrls: ["./comment.component.scss"],
   providers: [WordCounterPipe],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentComponent implements OnInit {
   dataFromItem: any = {};
@@ -119,12 +121,18 @@ export class CommentComponent implements OnInit {
       highlight_comment: !isHighlighted,
     };
     isHighlighted = !isHighlighted;
-    this.commentService.patchHighlightComment(params).subscribe((error) => {
-      console.log("updateComment", error);
+    this.commentService.patchHighlightComment(params).subscribe((res) => {
+      this.alertService.success(res.message);
+      this.getItemCommentData(true);
+      this.showSpinner(this.spinner_comment);
+
+    }, (error) => {
+      console.log("updateComment", error.message);
       this.getItemCommentData();
       this.showSpinner(this.spinner_comment);
-      this.alertService.error(error);
+      // this.alertService.error(error.message);
     });
+    // console.log('dataaaa', this.detailedData )
     this.is_highlight.emit({
       is_highlight: isHighlighted,
     });
@@ -310,7 +318,6 @@ export class CommentComponent implements OnInit {
       return;
     }
     console.log(data);
-
     data[type] = !data[type];
     delete data.user.replies;
     delete data.user.crps;
