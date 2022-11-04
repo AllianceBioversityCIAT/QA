@@ -12,7 +12,7 @@ import {
   providedIn: "root",
 })
 export class CommentService {
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   // get comment stats by crp
   getCommentCRPStats(params) {

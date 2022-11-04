@@ -15,6 +15,9 @@
   justify-content: space-between;
   .field-title{
     display: flex;
+    .core-field{
+        margin: 0px 10px;
+      }
   }
   .field-checkbox{
     display: flex;
@@ -432,6 +435,7 @@
           }
         }
       }
+      
     }
     .data-row {
       margin: 1em 0;
@@ -505,11 +509,16 @@
         background-color: orange;
         border-radius: 50%;
         position: absolute;
-        height: 20px;
-        width: 20px;
         margin-right: 30px;
+        height: 1.5em;
+        width: 1.5em;
+        opacity: 80%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         img{
           height: 17px;
+          margin:auto;
           align-items: center;
           display: flex;
         }

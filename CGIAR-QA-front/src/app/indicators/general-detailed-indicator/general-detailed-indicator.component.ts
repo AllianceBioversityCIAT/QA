@@ -332,9 +332,9 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     console.log({ fieldWithoutAssessed, statusByField, allFieldsAssessed });
 
   }
-  updateHighlight(e) { 
+  updateHighlight(e) {
     console.log(e, 'Event --------------------');
-    
+
   }
 
   getDetailedData() {

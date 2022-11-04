@@ -146,7 +146,11 @@
                                 <div class="col data-value">
                                     <!-- checkbox -->
                                     <div class="row field">
+                                        <!-- catch icon -->
+                                        
                                         <div class="field-title">
+
+
                                             <h2 *ngIf="validateCommentAvility(detailedData[i]) && detailedData[i].replies_count == '0' || (summon.value.isChecked && detailedData[i].enable_comments) && gnralInfo.status !== statusHandler.Complete"
                                                 [innerHTML]="detailedData[i].display_name | markdown"></h2>
 
@@ -154,10 +158,14 @@
                                             <h2 *ngIf="!validateCommentAvility(detailedData[i]) || detailedData[i].replies_count != '0' && !summon.value.isChecked "
                                                 [innerHTML]="detailedData[i].display_name | markdown">
                                             </h2>
-
+                                            <!-- Core icon where is_core = 1 -->
+                                            <div class="core-field" *ngIf="detailedData[i].is_core">
+                                                 <img src="../../../assets/icons/icon-core.svg" alt="">
+                                            </div>
 
                                             <!-- <h2 *ngIf="!validateCommentAvility(detailedData[i]) || detailedData[i].replies_count != '0' && !summon.value.isChecked ">
                                                 {{detailedData[i].display_name}}</h2> -->
+                                                
 
                                             <div *ngIf="detailedData[i].meta_description && false">
                                                 <i [tooltip]="popTemplate" container="body" placement="top"
@@ -202,6 +210,7 @@
                                         *ngIf="!detailedData[i].hide_original_field" [@inOutAnimation] [innerHTML]="detailedData[i].original_field">
                                     </div>
                                     <!-- data value -->
+                                        
                                     <div class="field-container"
                                         *ngIf="detailedData[i].value && (detailedData[i].col_name !== 'outcome_description' && detailedData[i].col_name !== 'OICR'  )"
                                         [innerHTML]="detailedData[i].value | markdown">
@@ -222,6 +231,7 @@
                                     <!-- <p *ngIf="!detailedData[i].value" class="empty-value">Data not provided.</p> -->
 
                                 </div>
+                                
                                 <div *ngIf="gnralInfo.status != statusHandler.Autochecked" class="check-container">
                                     <div class="check-area">
                                         <input
