@@ -2,6 +2,7 @@ import "reflect-metadata";
 require('module-alias/register')
 import { createConnection, ConnectionManager, Connection } from "typeorm";
 import express from "express";
+import {Response } from "express";
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import cors from "cors";
@@ -21,20 +22,23 @@ createConnection()
             { frameguard: false }
         ));
         app.use(bodyParser.json());
-        app.use(express.static(parentDir + '/CGIAR-QA-front/dist/qa-app'));
+        // app.use(express.static(parentDir + '/CGIAR-QA-front/dist/qa-app'));
 
 
 
         //Set all routes from routes folder
         app.use("/api", Routes);
-        app.get('/', (req, res) => {
-            res.sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html")
+        app.get("/", (req,res) => {
+            res.status(200).json({msg: 'Welcome to QA API! 🖥'});
         });
-        // 404 catch 
-        app.all('*', (req: any, res: any) => {
-            console.log(`[TRACE] Server 404 request: ${req.originalUrl}`);
-            res.status(200).sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html");
-        });
+        // app.get('/', (req, res) => {
+        //     res.sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html")
+        // });
+        // // 404 catch 
+        // app.all('*', (req: any, res: any) => {
+        //     console.log(`[TRACE] Server 404 request: ${req.originalUrl}`);
+        //     res.status(200).sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html");
+        // });
 
         //Handle Errors
         app.use((err, req, res, next) => {
