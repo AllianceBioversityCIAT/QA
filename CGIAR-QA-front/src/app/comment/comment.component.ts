@@ -120,11 +120,12 @@ export class CommentComponent implements OnInit {
       id: commentId,
       highlight_comment: !isHighlighted,
     };
+    this.showSpinner(this.spinner_comment);
+
     isHighlighted = !isHighlighted;
     this.commentService.patchHighlightComment(params).subscribe((res) => {
       this.alertService.success(res.message);
       this.getItemCommentData(true);
-      this.showSpinner(this.spinner_comment);
 
     }, (error) => {
       console.log("updateComment", error.message);
