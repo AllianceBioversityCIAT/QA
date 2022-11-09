@@ -334,6 +334,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   }
   updateHighlight(e) {
     console.log(e, 'Event --------------------');
+    this.updateEvaluation('status', this.detailedData)
 
   }
 

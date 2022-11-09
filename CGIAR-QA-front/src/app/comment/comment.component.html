@@ -110,13 +110,14 @@
           </div>
           <div
             *ngIf="
+              dataFromItem.is_core ||
               currentUser.roles[0].description === allRoles.admin ||
               userIsLeader
             "
             class="highlight-section"
           >
             <div
-              *ngIf="comment.highlight_comment"
+              *ngIf="comment.highlight_comment && dataFromItem.is_core"
               id="showAlert"
               class="highlighted-by"
             >
@@ -127,7 +128,7 @@
               </a>
             </div>
             <button
-              *ngIf="comment.highlight_comment == false"
+              *ngIf="comment.highlight_comment == false && dataFromItem.is_core"
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
               "
