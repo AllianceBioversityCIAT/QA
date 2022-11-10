@@ -112,60 +112,25 @@ export class CommentComponent implements OnInit {
   }
 
   UpdateHighlightComment(commentId: Number, isHighlighted: Boolean) {
-    // console.log(validateFields);
-    // this.isActiveButton = true;
     let params = {
       id: commentId,
       highlight_comment: !isHighlighted,
     };
     this.showSpinner(this.spinner_comment);
-
+    // console.log()
     isHighlighted = !isHighlighted;
     this.commentService.patchHighlightComment(params).subscribe((res) => {
       this.alertService.success(res.message);
-      this.getItemCommentData(true);
+      this.getItemCommentData();
 
     }, (error) => {
-      console.log("updateComment", error.message);
-      this.getItemCommentData(true);
+      // console.log("updateComment", error.message);
+      this.getItemCommentData();
       this.showSpinner(this.spinner_comment);
-      // this.alertService.error(error.message);
     });
-    // console.log('dataaaa', this.detailedData )
     this.is_highlight.emit({
       is_highlight: isHighlighted,
-      // if(updateData)
-      // console.log();
-
     });
-  }
-
-  showHighlightedAlert(commentHighlight: boolean, is_highlighted) {
-    console.log(this.commentsByCol);
-
-    document.getElementById("showAlert").style.display = "contents";
-    let params = {
-      highlihgt_comment: this.commentsByCol.highlight_comment,
-      highlightById: this.commentsByCol.id,
-    };
-    console.log(params);
-
-    this.commentService.patchHighlightComment(params).subscribe((res) => {
-      console.log(res.data[0].id);
-      res.highlightById = this.currentUser.id;
-      console.log(res.highlightById);
-      params.highlightById = res.highlightById;
-
-      console.log(params.highlightById);
-
-      console.log(res.data);
-      console.log(res.commentHighlight);
-      console.log(this.currentUser);
-      is_highlighted = res.data.highlight_by;
-      console.log(is_highlighted);
-      commentHighlight;
-    });
-    console.log(params);
   }
 
   getQuickComments() {
