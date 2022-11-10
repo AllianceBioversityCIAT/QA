@@ -129,13 +129,16 @@ export class CommentComponent implements OnInit {
 
     }, (error) => {
       console.log("updateComment", error.message);
-      this.getItemCommentData();
+      this.getItemCommentData(true);
       this.showSpinner(this.spinner_comment);
       // this.alertService.error(error.message);
     });
     // console.log('dataaaa', this.detailedData )
     this.is_highlight.emit({
       is_highlight: isHighlighted,
+      // if(updateData)
+      // console.log();
+
     });
   }
 

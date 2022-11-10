@@ -23,6 +23,7 @@ import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 
 import * as moment from 'moment';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-general-detailed-indicator',
@@ -70,6 +71,7 @@ import { animate, style, transition, trigger } from '@angular/animations';
   ]
 })
 export class GeneralDetailedIndicatorComponent implements OnInit {
+  suscription: Subscription;
   indicatorType: string;
   currentUser: User;
   detailedData: any[] = [];
@@ -176,11 +178,16 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     })
   }
 
-  ngOnInit() {
+  ngOnInit(): void {
     this.chatRooms = {
       general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/am16H1Vlj?username=${this.currentUser.name}`),
     }
+
+    this.suscription = this.commentService.refresh$.subscribe(() => {
+      this.getDetailedData()
+    })
   }
+
 
   // convenience getter for easy access to form fields
   get formData() { return this.generalCommentGroup.controls; }
@@ -334,8 +341,6 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   }
   updateHighlight(e) {
     console.log(e, 'Event --------------------');
-    this.updateEvaluation('status', this.detailedData)
-
   }
 
   getDetailedData() {
@@ -538,6 +543,11 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
       y: yPos
     };
   }
+
+  // updateHighlightt() {
+  //   dataFromItem.length = lenght;
+  //   if (validateFields) this.validateAllFieldsAssessed()
+  // }
 
   updateNumCommnts({ length, validateFields }, detailedData,) {
     detailedData.replies_count = length;

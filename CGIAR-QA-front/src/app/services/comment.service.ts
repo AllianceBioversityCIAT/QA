@@ -7,12 +7,20 @@ import {
   GeneralStatus,
   GeneralIndicatorName,
 } from "../_models/general-status.model";
+import { Subject } from "rxjs";
+import { tap } from "rxjs/operators";
 
 @Injectable({
   providedIn: "root",
 })
 export class CommentService {
+
+  private _refresh$ = new Subject<void>();
   constructor(private http: HttpClient) { }
+
+  get refresh$() {
+    return this._refresh$;
+  }
 
   // get comment stats by crp
   getCommentCRPStats(params) {
@@ -41,7 +49,11 @@ export class CommentService {
     return this.http.patch<any>(
       `${environment.apiUrl}/evaluation/detail/comment`,
       params
-    );
+    ).pipe(
+      tap(() => {
+        this._refresh$.next()
+      })
+    )
   }
 
   // create comment data for evaluation
@@ -188,6 +200,10 @@ export class CommentService {
     return this.http.patch<any>(
       `${environment.apiUrl}/evaluation/highlight-comment`,
       params
+    ).pipe(
+      tap(() => {
+        this._refresh$.next()
+      })
     );
   }
 }
