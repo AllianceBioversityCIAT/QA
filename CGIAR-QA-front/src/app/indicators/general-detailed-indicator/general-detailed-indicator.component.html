@@ -367,7 +367,7 @@
                     *ngIf="
                       detailedData[i].value &&
                       detailedData[i].col_name !== 'outcome_description' &&
-                        detailedData[i].col_name !== 'OICR'
+                      detailedData[i].col_name !== 'OICR'
                     "
                     [innerHTML]="detailedData[i].value | markdown"
                   ></div>
@@ -465,9 +465,7 @@
                   ></span>
                   <div
                     *ngIf="detailedData[i].is_highlight"
-                    class="highlighted-icon {{
-                      detailedData[i].replies_count == '0' ? '' : 'active'
-                    }}"
+                    class="highlighted-icon"
                   >
                     <img src="../../../assets/icons/bombillo.png" alt="" />
                   </div>
@@ -643,8 +641,8 @@
                     *ngIf="
                       detailedData[i].value &&
                       detailedData[i].col_name !== 'evidence_link' &&
-                        detailedData[i].col_name !== 'outcome_description' &&
-                        detailedData[i].col_name !== 'OICR'
+                      detailedData[i].col_name !== 'outcome_description' &&
+                      detailedData[i].col_name !== 'OICR'
                     "
                     [innerHTML]="detailedData[i].value.replace | markdown"
                   ></div>
