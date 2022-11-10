@@ -9,7 +9,6 @@ import {
   ElementRef,
   Renderer2,
   Inject,
-  ChangeDetectionStrategy,
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
@@ -37,7 +36,6 @@ import { HighDensityScatterSeries } from "igniteui-angular-charts";
   templateUrl: "./comment.component.html",
   styleUrls: ["./comment.component.scss"],
   providers: [WordCounterPipe],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommentComponent implements OnInit {
   dataFromItem: any = {};
