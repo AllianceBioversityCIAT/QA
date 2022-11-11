@@ -211,6 +211,7 @@ export class CommentComponent implements OnInit {
       );
   }
 
+  // addComment(commentId: Number, requiere_changes: Boolean) {
   addComment() {
     console.log("ADDING COMMENT");
     // this.validateAllFieldsAssessed.emit();
@@ -244,6 +245,22 @@ export class CommentComponent implements OnInit {
           this.alertService.error(error);
         }
       );
+
+    var element = <HTMLInputElement>document.getElementById("changes");
+    var ischecked = element.checked
+    if (ischecked) {
+      // let params ={
+      //   id: commentId,
+      //   changes: !requiere_changes, 
+      // };
+      // this.showSpinner(this.spinner_comment);
+      // this.commentService.requiereChanges(params).subscribe((res)=>{
+      // this.getItemCommentData()
+      // },(error) =>{
+      //   this.alertService.error(error)
+      // })
+      alert('checked')
+    }
   }
 
   updateComment(type, data: any) {

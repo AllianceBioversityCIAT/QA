@@ -9,8 +9,14 @@
     "
   >
     <h2 class="title-section">COMMENTS ON {{ dataFromItem.display_name }}</h2>
+    <div>
+      <!-- <a>Comment highlighted by {{ dataFromItem }}</a> -->
+    </div>
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
+        <!-- <div>
+          <p>Comment highlighted by {{ comment.highlight_by.name }}</p>
+        </div> -->
         <div
           class="comment-body {{
             comment.replyType?.id === 1 || comment.replyType?.id === 4
@@ -369,6 +375,14 @@
   </div>
   <!-- ADD COMMENT -->
   <!-- dataFromItem.status !== statusHandler.Finalized && -->
+  <!-- Requieres changees -->
+  <div>
+    <label class="checkbox-label" for="changes">
+      <input class="checkbox-style" type="checkbox" id="changes" />
+      Requires changes in the result reported
+    </label>
+  </div>
+
   <div
     *ngIf="
       !availableComment && !crpComment && currentUser.hasOwnProperty('cycle')
