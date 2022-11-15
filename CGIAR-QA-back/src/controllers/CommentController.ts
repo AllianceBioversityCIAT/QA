@@ -39,7 +39,7 @@ class CommentController {
             user = await userRepository.findOneOrFail(userId);
             let role = user.roles[0].description;
 
-            // console.log(crp_id)
+            // // console.log(crp_id)
             if (crp_id !== undefined && crp_id !== 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `
@@ -88,7 +88,7 @@ class CommentController {
                     { crp_id },
                     {}
                 );
-                // console.log('role === RolesHandler.crp', query, parameters)
+                // // console.log('role === RolesHandler.crp', query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
             } else {
 
@@ -139,7 +139,7 @@ class CommentController {
                     {},
                     {}
                 );
-                // console.log('=== undefined', query)
+                // // console.log('=== undefined', query)
                 rawData = await queryRunner.connection.query(query, parameters);
 
                 /* 
@@ -168,7 +168,7 @@ class CommentController {
                          { crp_id },
                          {}
                      );
-                     console.log('!== undefined', query)
+                    //  console.log('!== undefined', query)
                      rawData = await queryRunner.connection.query(query, parameters);
                      // res.status(200).json({ data: Util.parseCommentData(rawData, 'indicator_view_name'), message: 'Comments by crp' });
                  }
@@ -197,7 +197,7 @@ class CommentController {
                          {},
                          {}
                      );
-                     console.log('=== undefined', query)
+                    //  console.log('=== undefined', query)
                      rawData = await queryRunner.connection.query(query, parameters);
                  }
                  */
@@ -206,11 +206,11 @@ class CommentController {
             res.status(200).json({ data: Util.groupBy(rawData, 'indicator_view_name'), message: 'Comments statistics' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not access to comments statistics." });
         }
 
-        // console.log( crp_id, id)
+        // // console.log( crp_id, id)
         // res.status(200).send()
     }
 
@@ -246,11 +246,11 @@ class CommentController {
             //     comment.approved = approved;
             //     comment = await commentsRepository.save(comment);
             // }
-            // console.log(new_replay)
+            // // console.log(new_replay)
             res.status(200).send({ data: new_replay, message: 'Comment created' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Comment can not be created.", data: error });
         }
     }
@@ -267,7 +267,7 @@ class CommentController {
             res.status(200).send({ data: new_comment, message: 'Comment created' });
 
         } catch (error) {
-            // console.log(error);
+            // // console.log(error);
             res.status(404).json({ message: "Comment can not be created.", data: error });
         }
     }
@@ -301,7 +301,7 @@ class CommentController {
             res.status(200).send({ data: updated_comment, message: 'Comment updated' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Comment can not be updated.", data: error });
         }
     }
@@ -324,7 +324,7 @@ class CommentController {
                 reply_.user = userId;
             if (reply_.is_deleted) {
                 const commentsRepository = await getRepository(QAComments);
-                console.log(reply_)
+                // console.log(reply_)
                 let comment = await commentsRepository.findOneOrFail(reply_.comment.id);
                 comment.crp_approved = null;
                 comment.replyType = null;
@@ -337,7 +337,7 @@ class CommentController {
             res.status(200).send({ data: updated_comment, message: 'Reply updated' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Reply can not be updated.", data: error });
         }
     }
@@ -347,7 +347,7 @@ class CommentController {
     static getAllIndicatorTags = async (req: Request, res: Response) => {
         //TODO
         const { crp_id } = req.query;
-        console.log({ crp_id });
+        // console.log({ crp_id });
 
         let queryRunner = getConnection().createQueryBuilder();
         try {
@@ -394,7 +394,7 @@ class CommentController {
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Tags by indicators can not be retrived.", data: error });
         }
     }
@@ -455,7 +455,7 @@ class CommentController {
             res.status(200).send({ data: tags, message: 'All new tags order by date (desc)' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Recent tags can not be retrived.", data: error });
         }
     }
@@ -514,7 +514,7 @@ class CommentController {
             res.status(200).send({ data: comments, message: 'All comments' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Comments can not be retrived.", data: error });
         }
     }
@@ -539,16 +539,17 @@ class CommentController {
                 updated_comment = await commentsRepository.update(id, { highlight_by: null, highlight_comment: 0 });
                 message = `Highlight mark was removed in comment ${id} by ${userId.username}`;
             }
+            
             res.status(201).send({ data: updated_comment, message: message });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(500).json({ message: "Highlight comment can not be set.", data: error });
         }
     }
 
     // get comments replies
     static getCommentsReplies = async (req: Request, res: Response) => {
-        console.log('COMMENT_ID: ', req.params);
+        // console.log('COMMENT_ID: ', req.params);
         const commentId = req.params.commentId;
 
         // let queryRunner = getConnection().createQueryBuilder();
@@ -568,11 +569,11 @@ class CommentController {
                 )
                 res.status(200).send({ data: replies, message: 'All comments replies' });
             } catch (error) {
-                console.log(error);
+                // console.log(error);
                 res.status(404).json({ message: "Comment can not be retrived.", data: error });
             }
         } else {
-            console.log('CRASHED');
+            // console.log('CRASHED');
 
             res.status(404).json({ message: "Comment can not be retrieved. Comment ID not provided", data: null });
         }
@@ -614,7 +615,7 @@ class CommentController {
 
             res.status(200).send({ data: response, message: 'Comments meta created' });
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             //If not found, send a 404 response
             res.status(404).json({ message: 'Comment meta was not created.', data: error });
             // throw new ErrorHandler(404, 'User not found.');
@@ -643,9 +644,9 @@ class CommentController {
                 .where("qa_comments_meta.indicatorId=:indicatorId", { indicatorId: id })
                 // .getSql()
                 .getRawOne()
-            // console.log(commentMeta, enable, isActive)
+            // // console.log(commentMeta, enable, isActive)
             commentMeta[enable] = isActive;
-            // console.log(commentMeta, 'after')
+            // // console.log(commentMeta, 'after')
 
             //Validade if the parameters are ok
             const errors = await validate(commentMeta);
@@ -656,10 +657,10 @@ class CommentController {
 
             // update indicator by user
             commentMeta = await commentMetaRepository.save(commentMeta);
-            // console.log(commentMeta)
+            // // console.log(commentMeta)
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             //If not found, send a 404 response
             res.status(404).json({ message: 'User indicator not found.', data: error });
             // throw new ErrorHandler(404, 'User not found.');
@@ -677,7 +678,7 @@ class CommentController {
         const { evaluationId } = req.params;
         const { userId, name, crp_id, indicatorName } = req.query;
         let queryRunner = getConnection().createQueryBuilder();
-        // console.log('getCommentsExcel')
+        // // console.log('getCommentsExcel')
 
         let comments;
         try {
@@ -690,7 +691,7 @@ class CommentController {
                 ]
             });
             let currentRole = user.roles.map(role => { return role.description })[0];
-            // console.log(evaluationId,indicatorName)
+            // // console.log(evaluationId,indicatorName)
             if (evaluationId == undefined || evaluationId == 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `
@@ -733,7 +734,7 @@ class CommentController {
                     {}
                 );
 
-                // console.log(parameters)
+                // // console.log(parameters)
                 comments = await queryRunner.connection.query(query, parameters);
             } else {
 
@@ -778,7 +779,7 @@ class CommentController {
                         {}
                     );
 
-                    // console.log(parameters)
+                    // // console.log(parameters)
                     comments = await queryRunner.connection.query(query, parameters);
                 }
                 else {
@@ -822,7 +823,7 @@ class CommentController {
                         {}
                     );
 
-                    // console.log(parameters)
+                    // // console.log(parameters)
                     comments = await queryRunner.connection.query(query, parameters);
                 }
             }
@@ -850,7 +851,7 @@ class CommentController {
             res.status(200).send(stream);
             // res.status(200).send({ data: stream, message: 'File download' });
         } catch (error) {
-            console.log('excel error', error)
+            // console.log('excel error', error)
             res.status(404).json({ message: 'Comments not found.', data: error });
         }
 
@@ -862,7 +863,7 @@ class CommentController {
     static toggleApprovedNoComments = async (req: Request, res: Response) => {
         console.time('toggle_approved');
 
-        console.log('TOGGLE APPROVED NO COMMENTS');
+        // console.log('TOGGLE APPROVED NO COMMENTS');
 
         //TODO - Improve performance
         const { evaluationId } = req.params;
@@ -874,7 +875,7 @@ class CommentController {
         const commentsRepository = getRepository(QAComments);
         const cycleRepo = getRepository(QACycle);
 
-        // console.log(meta_array)  
+        // // console.log(meta_array)  
         try {
 
             const comments = await commentsRepository
@@ -912,10 +913,10 @@ class CommentController {
             //     {}
             // );
             // comments = await queryRunner.query(query, parameters);
-            // console.log(comments.length, meta_array)
-            console.log({ comments })
+            // // console.log(comments.length, meta_array)
+            // console.log({ comments })
             let user = await userRepository.findOneOrFail({ where: { id: userId } });
-            console.log(user);
+            // console.log(user);
 
             console.time('getEvaluation')
             let evaluation = await evaluationsRepository.findOne({ where: { id: evaluationId } });
@@ -924,7 +925,7 @@ class CommentController {
             // let evaluation = await evaluationsRepository.findOneOrFail({ where: { id: evaluationId }});
             // evaluationsRepository.queryRunner.connection.close;
             console.timeEnd('getEvaluation')
-            console.log(evaluation);
+            // console.log(evaluation);
 
             let current_cycle = await cycleRepo
                 .createQueryBuilder("qa_cycle")
@@ -932,7 +933,7 @@ class CommentController {
                 .where("DATE(qa_cycle.start_date) <= CURDATE()")
                 .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
                 .getRawOne();
-            console.log({ current_cycle });
+            // console.log({ current_cycle });
 
 
             // TO-DO Assessed by per batch
@@ -946,7 +947,7 @@ class CommentController {
                 .andWhere("qaUsersId = :userId", { userId })
                 .execute();
 
-            console.log({ assessed_by });
+            // console.log({ assessed_by });
             if (assessed_by.length <= 0) {
                 const insertAssessedBy = await getConnection().createQueryBuilder()
                     .insert()
@@ -959,29 +960,29 @@ class CommentController {
             }
 
 
-            console.log(assessed_by);
+            // console.log(assessed_by);
 
             // evaluation.assessed_by.push(user);
             // } else {
             //     evaluation.assessed_by_second_round.push(user);
             // }
-            // console.log('ASSESSORS',evaluation.assessed_by);
+            // // console.log('ASSESSORS',evaluation.assessed_by);
             // evaluation.assessed_by.push(user);
-            // console.log('ASSESSORS',evaluation.assessed_by);
+            // // console.log('ASSESSORS',evaluation.assessed_by);
             // evaluationsRepository.save(evaluation);
-            console.log('evaluations saved');
+            // console.log('evaluations saved');
 
             let response = [];
 
 
             for (let index = 0; index < meta_array.length; index++) {
                 let comment_ = new QAComments();
-                // console.log(index, ' for cycle');
+                // // console.log(index, ' for cycle');
 
-                // console.log(comments.length, comments.find(data => data.metaId == meta_array[index]))
+                // // console.log(comments.length, comments.find(data => data.metaId == meta_array[index]))
                 if (comments && comments.find(comment => comment.meta.id == meta_array[index])) {
                     let existnCommt = comments.find(comment => comment.meta.id == meta_array[index]);
-                    // console.log('Comment exists', {existnCommt});
+                    // // console.log('Comment exists', {existnCommt});
 
                     existnCommt.approved = noComment;
                     existnCommt.is_deleted = !noComment;
@@ -1001,17 +1002,17 @@ class CommentController {
                     if (current_cycle == undefined) throw new Error('Could not created comment')
                     comment_.cycle = current_cycle;
                 }
-                // console.log(comment_);
+                // // console.log(comment_);
                 response.push(comment_)
             }
             let result = await commentsRepository.save(response);
-            console.log({ result });
+            // console.log({ result });
 
             console.timeEnd('toggle_approved');
             res.status(200).send({ data: result, message: 'Comment toggle' });
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(404).json({ message: 'Comments not setted as approved.', data: error });
         }
 
@@ -1027,7 +1028,7 @@ class CommentController {
         const userRepository = getRepository(QAUsers);
 
         try {
-            console.log(crp_id, '>>> getRawCommentsData')
+            // console.log(crp_id, '>>> getRawCommentsData')
 
             if (crp_id !== undefined && crp_id !== 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -1189,7 +1190,7 @@ class CommentController {
 
             res.status(200).json({ message: "Comments raw data", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Comments raw data error', data: error });
         }
     }
@@ -1207,11 +1208,13 @@ class CommentController {
                 { commentId: commentId, userId: userId },
             ]
         });
-        console.log(tag);
+        // console.log(tag);
         if (tag) {
             tagsRepository.remove(tag);
-            console.log(`Tag deleted`);
-        } else console.log(`The user hasn't previous tag for this comment`);
+            // console.log(`Tag deleted`);
+        } else {
+            // console.log(`The user hasn't previous tag for this comment`);
+        }
 
 
         try {
@@ -1220,7 +1223,6 @@ class CommentController {
             res.status(200).send({ data: new_tag, message: 'Tag created' });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Tag can not be created.", data: error });
         }
     }
@@ -1276,7 +1278,7 @@ class CommentController {
     //get raw comments excel
     static getRawCommentsExcel = async (req: Request, res: Response) => {
         const { crp_id } = req.params;
-        console.log(crp_id, '>>> getRawCommentsExcel')
+        // console.log(crp_id, '>>> getRawCommentsExcel')
         // const userId = res.locals.jwtPayload.userId;
         let rawData;
         const queryRunner = getConnection().createQueryBuilder();
@@ -1332,7 +1334,7 @@ class CommentController {
                     { crp_id },
                     {}
                 );
-                // console.log(query)
+                // // console.log(query)
                 rawData = await queryRunner.connection.query(query, parameters);
             } else {
 
@@ -1386,7 +1388,7 @@ class CommentController {
                 );
                 rawData = await queryRunner.connection.query(query, parameters);
             }
-            // console.log(rawData)
+            // // console.log(rawData)
             const stream: Buffer = await Util.createRawCommentsExcel([
                 { header: 'CRP', key: 'crp_acronym' },
                 { header: 'Comment id', key: 'comment_id' },
@@ -1412,7 +1414,7 @@ class CommentController {
             return;
             // res.status(200).json({ message: "Comments raw excel", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Comments raw data error', data: error });
         }
     }
@@ -1433,7 +1435,7 @@ class CommentController {
             rawData = await queryRunner.query(query, parameters);
             res.status(200).json({ message: "Cycles data", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Could not get cycles', data: error });
         }
     }
@@ -1457,12 +1459,12 @@ class CommentController {
             rawData[0].end_date = end_date;
             rawData[0].start_date = start_date;
 
-            // console.log(rawData)
-            // console.log(r)
+            // // console.log(rawData)
+            // // console.log(r)
             let r = await cycleRepo.save(rawData[0]);
             res.status(200).json({ message: "Cycle updated", data: r });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Could not update cycle', data: error });
         }
     }
@@ -1485,7 +1487,7 @@ class CommentController {
         const userRepository = getRepository(QAUsers);
 
         try {
-            console.log(crp_id, '>>> getIndicatorKeywords')
+            // console.log(crp_id, '>>> getIndicatorKeywords')
 
             if (crp_id !== undefined && crp_id !== 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -1538,7 +1540,7 @@ class CommentController {
 
             res.status(200).json({ message: "Comments keywords data", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Comments keywords data error', data: error });
         }
     }
@@ -1596,7 +1598,7 @@ class CommentController {
             rawData = await queryRunner.connection.query(query, parameters);
             res.status(200).json({ message: "List of quick comments", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Could not get list of quick comments', data: error });
         }
     }
@@ -1615,7 +1617,7 @@ class CommentController {
                 {}
             );
             rawData = await queryRunner.connection.query(query, parameters);
-            console.log(rawData);
+            // console.log(rawData);
 
             let batches = [];
 
@@ -1625,7 +1627,7 @@ class CommentController {
             }
             res.status(200).json({ message: "batches data", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Could not get batches', data: error });
         }
     }

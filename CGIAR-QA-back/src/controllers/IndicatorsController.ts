@@ -37,7 +37,7 @@ class IndicatorsController {
             res.status(200).json({ data: indicators, message: "All indicators" });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not access to indicators." });
         }
     };
@@ -52,7 +52,7 @@ class IndicatorsController {
             res.status(200).json({ data: crp, message: `CRP ${crp.id} - ${crp.acronym} loaded.` });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not access to indicators." });
         }
     };
@@ -73,10 +73,10 @@ class IndicatorsController {
             let isAdmin = user.roles.find(x => x.description == RolesHandler.admin);
 
             let isCRP = user.crps.length > 0 ? true : false;
-            console.log({ user });
+            // console.log({ user });
 
-            // console.log('getIndicatorsByUser')
-            // console.log('isAdmin', isAdmin)
+            // // console.log('getIndicatorsByUser')
+            // // console.log('isAdmin', isAdmin)
             if (isAdmin) {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `
@@ -160,7 +160,7 @@ class IndicatorsController {
             }
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(200).json({ data: [], message: "User indicators." });
         }
     }
@@ -296,10 +296,10 @@ class IndicatorsController {
 
                 }
                 let res_ = await indicatorbyUsrRepository.save(savePromises);
-                // console.log(hasAssignedIndicators)
+                // // console.log(hasAssignedIndicators)
                 res.status(200).json({ message: "Indicator by user saved", data: res_ })
             } catch (error) {
-                console.log(error)
+                // console.log(error)
             }
 
         } else {
@@ -318,7 +318,7 @@ class IndicatorsController {
                 }
 
             } catch (error) {
-                console.log(error)
+                // console.log(error)
                 res.status(404).json({ message: "User / Indicator not found" });
                 return;
             }
@@ -330,7 +330,7 @@ class IndicatorsController {
             try {
                 userbyIndicator = await indicatorbyUsrRepository.save(userbyIndicator);
                 // res_ = await Util.createEvaluations(userbyIndicator, selectedIndicator);
-                // console.log("res_", res_)
+                // // console.log("res_", res_)
                 res.status(200).json({ message: "Indicator by user saved", data: res_ })
                 res.status(200).json({ message: "Indicator by user saved", data: userbyIndicator })
 
@@ -379,7 +379,7 @@ class IndicatorsController {
                    AND qim.enable_comments <> 0
                    AND qim.include_detail = 1
                    AND qi.view_name like :indicator`;
-                console.log('query with crp_id', { queryMetas });
+                // console.log('query with crp_id', { queryMetas });
             } else {
                 queryMetas = `SELECT col_name, display_name, indicatorId, qi.view_name,
                     (SELECT count(*) FROM qa_evaluations qe WHERE qe.indicator_view_name = qi.view_name AND qe.phase_year = actual_phase_year() AND qe.status <> 'autochecked') AS total
@@ -397,7 +397,7 @@ class IndicatorsController {
                 {}
             );
             let allMetas = await qrMetas.connection.query(query, parameters);
-            console.log('TOTALES', allMetas);
+            // console.log('TOTALES', allMetas);
             let queryRunnerNotApplicable = getConnection().createQueryBuilder();
 
             for (const meta of allMetas) {
@@ -430,14 +430,14 @@ class IndicatorsController {
 
                     totalEvaluationsByIndicator[meta.view_name][meta.display_name]['pending'] -= +notApplicableCount[0].count;
                 } catch (error) {
-                    console.log(error);
+                    // console.log(error);
 
                 }
             }
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "All items status by indicators can not be retrived.", data: error });
         }
 
@@ -522,13 +522,13 @@ class IndicatorsController {
 
 
             }
-            console.log(totalEvaluationsByIndicator['qa_slo']);
+            // console.log(totalEvaluationsByIndicator['qa_slo']);
             totalEvaluationsByIndicator[indicator] = Object.values(totalEvaluationsByIndicator[indicator]);
             res.status(200).send({ data: totalEvaluationsByIndicator[indicator], message: 'Items by indicator' });
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Item status by indicators can not be retrived.", data: error });
         }
     }
@@ -564,13 +564,13 @@ class IndicatorsController {
                 {}
             );
             let allMetas = await qrMetas.connection.query(query, parameters);
-            console.log('TOTALES', allMetas);
+            // console.log('TOTALES', allMetas);
 
             allMetas.forEach(meta => {
                 totalEvaluationsByIndicator[meta.view_name][meta.display_name] = { item: meta.display_name, pending: meta.total, approved_without_comment: 0, assessment_with_comments: 0 };
             });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "items by indicators can not be retrived.", data: error });
         }
 
@@ -620,13 +620,13 @@ class IndicatorsController {
                         break;
                 }
             }
-            console.log(totalEvaluationsByIndicator['qa_slo']);
+            // console.log(totalEvaluationsByIndicator['qa_slo']);
 
             res.status(200).send({ data: totalEvaluationsByIndicator, message: 'All items by indicator' });
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "items by indicators can not be retrived.", data: error });
         }
     }
@@ -724,11 +724,11 @@ class IndicatorsController {
 
             
             // queryRunner.close();
-            // console.log('Connection closed.');
+            // // console.log('Connection closed.');
 
             res.status(200).send({ data: data, message: `List of ${indicator_view_name[0].view_name.split('qa_')[1]} indicator items` })
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             
             res.status(404).json({ message: "Items for MIS cannot be retrieved", data: error })
         }
@@ -844,11 +844,11 @@ class IndicatorsController {
             }
 
             // queryRunner.close();
-            // console.log('Connection closed.');
+            // // console.log('Connection closed.');
 
             res.status(200).send({ data: data, message: `Item ${data.id} of  ${indicator_view_name[0].view_name.split('qa_')[1]} indicator.` })
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             
             res.status(404).json({ message: "Items for MIS cannot be retrieved", data: error })
         }
