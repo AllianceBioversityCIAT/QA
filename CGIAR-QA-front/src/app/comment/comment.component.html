@@ -116,9 +116,10 @@
           </div>
           <div
             *ngIf="
-              dataFromItem.is_core ||
-              currentUser.roles[0].description === allRoles.admin ||
-              userIsLeader
+              (dataFromItem.is_core ||
+                currentUser.roles[0].description === allRoles.admin ||
+                userIsLeader) &&
+              comment.replies.replies_count > '0'
             "
             class="highlight-section"
           >
