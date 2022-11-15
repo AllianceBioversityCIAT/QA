@@ -687,7 +687,8 @@ class Util {
             crp_rejected: element["crp_rejected"],
             assessment_status: element["assessment_status"],
             require_second_assessment: element["require_second_assessment"],
-            is_highlight: element["is_highlight"]
+            is_highlight: element["is_highlight"],
+            highligth_by: element["highligth_by"]
         }
         if (!type) {
             response = Object.assign(response, {
@@ -702,7 +703,8 @@ class Util {
                 stage: element.hasOwnProperty('stage') ? element['stage'] : undefined,
                 fp: element.hasOwnProperty('fp') ? element['fp'] : undefined,
                 brief: element.hasOwnProperty('brief') ? element['brief'] : undefined, //TODO
-                is_highlight: element["is_highlight"]
+                is_highlight: element["is_highlight"],
+                highligth_by: element["highligth_by"]
             });
         } else {
             response = Object.assign(response, {
@@ -731,7 +733,8 @@ class Util {
                 count_accepted_with_comments: element['accepted_with_comments'],
                 original_field: element['original_field'],
                 hide_original_field: true,
-                is_highlight: element["is_highlight"]
+                is_highlight: element["is_highlight"],
+                highligth_by: element["highligth_by"]
             });
             
         }
