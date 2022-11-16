@@ -96,4 +96,7 @@ export class QAComments {
 
     @ManyToOne(type => QAUsers, user => user.comments, { nullable: true })
     highlight_by: QAUsers;
+
+    @Column({ nullable: true, type: 'tinyint', default: 0 })
+    require_changes: number;
 } 
