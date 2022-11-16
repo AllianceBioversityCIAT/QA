@@ -4,6 +4,7 @@
   app-on-boarding {
     border-radius: 10px;
   }
+
   border: 1px solid var(--gray-primary);
   padding: 20px;
   position: relative;
@@ -14,6 +15,25 @@
   .icon-close {
     margin-top: 1em;
   }
+
+  .highlight-view-section {
+    display: flex;
+    justify-content: center;
+    margin: 0px;
+    align-items: center;
+  }
+  img {
+    height: 25px;
+  }
+  p.highligt-header {
+    color: rgb(251, 180, 0);
+    align-items: center;
+    justify-content: center;
+    display: contents;
+    font-weight: bold;
+    font-size: 12px;
+  }
+
   .comment-body.approved,
   .reply-comment.approved {
     background-color: var(--green-tertiary) !important;

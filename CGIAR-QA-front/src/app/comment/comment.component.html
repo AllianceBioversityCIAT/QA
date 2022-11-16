@@ -14,9 +14,12 @@
     </div>
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
-        <!-- <div>
-          <p>Comment highlighted by {{ comment.highlight_by.name }}</p>
-        </div> -->
+        <div class="highlight-view-section" *ngIf="comment.highlight_comment">
+          <img src="assets/icons/highlight.svg" alt="" srcset="" />
+          <p class="highligt-header">
+            Comment highlighted by {{ comment.highlight_by.name }}
+          </p>
+        </div>
         <div
           class="comment-body {{
             comment.replyType?.id === 1 || comment.replyType?.id === 4
@@ -378,8 +381,13 @@
   <!-- dataFromItem.status !== statusHandler.Finalized && -->
   <!-- Requieres changees -->
   <div>
-    <label class="checkbox-label" for="changes">
-      <input class="checkbox-style" type="checkbox" id="changes" />
+    <label class="checkbox-label" for="changes" class="valor">
+      <input
+        class="checkbox-style"
+        type="checkbox"
+        id="require_changes"
+        [checked]="true"
+      />
       Requires changes in the result reported
     </label>
   </div>
@@ -432,6 +440,7 @@
       <button type="button" class="btn btn-agree" (click)="addComment()">
         ADD
       </button>
+      <div>requieres changes</div>
     </footer>
   </div>
   <ngx-spinner [name]="spinner_comment" [fullScreen]="false"> </ngx-spinner>

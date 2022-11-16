@@ -251,7 +251,6 @@ export class CommentComponent implements OnInit {
     if (ischecked) {
       // let params ={
       //   id: commentId,
-      //   changes: !requiere_changes, 
       // };
       // this.showSpinner(this.spinner_comment);
       // this.commentService.requiereChanges(params).subscribe((res)=>{
