@@ -24,8 +24,11 @@ export class QAIndicatorUser {
     @ManyToOne(type => QAIndicators, indicator => indicator.user_indicator, { eager: true })
     indicator: QAIndicators;
 
-    @Column({default: false})
+    @Column({ default: false })
     isLeader: boolean;
+
+    @Column({ default: false })
+    isTPB: boolean;
 
     @Column()
     @CreateDateColumn()
