@@ -260,6 +260,7 @@ class CommentController {
         // approved
         //Check if username and password are set
         const { detail, approved, userId, metaId, evaluationId, original_field, require_changes } = req.body;
+        console.log("🚀 ~ file: CommentController.ts ~ line 263 ~ CommentController ~ createComment= ~ req.body", req.body)
 
         try {
             let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes);
