@@ -30,6 +30,7 @@ import { HttpClient } from "@angular/common/http";
 import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
 import { EvaluationsService } from "../services/evaluations.service";
 import { HighDensityScatterSeries } from "igniteui-angular-charts";
+import { convertToObject } from "typescript";
 
 @Component({
   selector: "app-comment",
@@ -64,6 +65,7 @@ export class CommentComponent implements OnInit {
   // @ViewChild('commentsElem', { static: false }) commentsElem: ElementRef;
   @Input() original_field;
   @Input() userIsLeader: boolean;
+  @Input() userIsTPB: boolean;
   @Input() isCRP;
   @Output("parentFun") parentFun: EventEmitter<any> = new EventEmitter();
   @Output("validateAllFieldsAssessed")
@@ -211,14 +213,15 @@ export class CommentComponent implements OnInit {
       );
   }
 
-  // addComment(commentId: Number, requiere_changes: Boolean) {
   addComment() {
     console.log("ADDING COMMENT");
-    // this.validateAllFieldsAssessed.emit();
     if (this.commentGroup.invalid) {
       this.alertService.error("comment is required", false);
       return;
     }
+    var element = <HTMLInputElement>document.getElementById("require_changes");
+    var checked = element.checked;
+
     this.showSpinner(this.spinner_comment);
     console.log(this.original_field);
 
@@ -230,11 +233,11 @@ export class CommentComponent implements OnInit {
         metaId: this.dataFromItem.field_id,
         approved: true,
         original_field: this.original_field,
+        require_changes: checked
       })
       .subscribe(
         (res) => {
           console.log("COMMENT ADDED");
-
           this.getItemCommentData(true);
           this.formData.comment.reset();
           this.validateAllFieldsAssessed.emit();
@@ -245,21 +248,6 @@ export class CommentComponent implements OnInit {
           this.alertService.error(error);
         }
       );
-
-    var element = <HTMLInputElement>document.getElementById("changes");
-    var ischecked = element.checked
-    if (ischecked) {
-      // let params ={
-      //   id: commentId,
-      // };
-      // this.showSpinner(this.spinner_comment);
-      // this.commentService.requiereChanges(params).subscribe((res)=>{
-      // this.getItemCommentData()
-      // },(error) =>{
-      //   this.alertService.error(error)
-      // })
-      alert('checked')
-    }
   }
 
   updateComment(type, data: any) {
