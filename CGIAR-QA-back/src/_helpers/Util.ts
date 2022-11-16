@@ -533,7 +533,7 @@ class Util {
 
     }
 
-    static createComment = async (detail, approved, userId, metaId, evaluationId, original_field = null) => {
+    static createComment = async (detail, approved, userId, metaId, evaluationId, require_changes, original_field = null) => {
         const userRepository = getRepository(QAUsers);
         const metaRepository = getRepository(QAIndicatorsMeta);
         const evaluationsRepository = getRepository(QAEvaluations);
@@ -594,6 +594,7 @@ class Util {
             comment_.evaluation = evaluation;
             comment_.user = user;
             comment_.cycle = current_cycle;
+            comment_.require_changes = require_changes;
             if (original_field)
                 comment_.original_field = original_field;
             let new_comment = await commentsRepository.save(comment_);
@@ -688,7 +689,8 @@ class Util {
             assessment_status: element["assessment_status"],
             require_second_assessment: element["require_second_assessment"],
             is_highlight: element["is_highlight"],
-            highligth_by: element["highligth_by"]
+            highligth_by: element["highligth_by"],
+            require_changes: element["require_changes"],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -704,7 +706,8 @@ class Util {
                 fp: element.hasOwnProperty('fp') ? element['fp'] : undefined,
                 brief: element.hasOwnProperty('brief') ? element['brief'] : undefined, //TODO
                 is_highlight: element["is_highlight"],
-                highligth_by: element["highligth_by"]
+                highligth_by: element["highligth_by"],
+                require_changes: element["require_changes"],
             });
         } else {
             response = Object.assign(response, {
@@ -734,11 +737,12 @@ class Util {
                 original_field: element['original_field'],
                 hide_original_field: true,
                 is_highlight: element["is_highlight"],
-                highligth_by: element["highligth_by"]
+                highligth_by: element["highligth_by"],
+                require_changes: element["require_changes"],
             });
-            
+
         }
-        
+
         return response;
     }
 

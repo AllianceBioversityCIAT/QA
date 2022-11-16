@@ -259,10 +259,10 @@ class CommentController {
     static createComment = async (req: Request, res: Response) => {
         // approved
         //Check if username and password are set
-        const { detail, approved, userId, metaId, evaluationId, original_field } = req.body;
+        const { detail, approved, userId, metaId, evaluationId, original_field, require_changes } = req.body;
 
         try {
-            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field);
+            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes);
             if (new_comment == null) throw new Error('Could not created comment');
             res.status(200).send({ data: new_comment, message: 'Comment created' });
 
@@ -551,6 +551,7 @@ class CommentController {
     static getCommentsReplies = async (req: Request, res: Response) => {
         // console.log('COMMENT_ID: ', req.params);
         const commentId = req.params.commentId;
+        console.log("🚀 ~ file: CommentController.ts ~ line 554 ~ CommentController ~ getCommentsReplies= ~ commentId", commentId)
 
         // let queryRunner = getConnection().createQueryBuilder();
         if (commentId != undefined && commentId != null) {
