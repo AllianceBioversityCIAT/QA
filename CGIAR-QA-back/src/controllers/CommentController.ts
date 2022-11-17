@@ -520,6 +520,25 @@ class CommentController {
         }
     }
 
+    // TODO Updated require changes ---------------------------------------------------------------------------------------------------------------------
+    static patchRequireChanges = async (req: Request, res: Response) => {
+        const commentsRepository = getRepository(QAComments);
+        const { require_changes, id } = req.body;
+        let message: String;
+
+        try {
+            let comment_ = await commentsRepository.findOneOrFail(id);
+            comment_.require_changes = require_changes;
+            const changes = await commentsRepository.save(comment_);
+            console.log("🚀 ~ file: CommentController.ts ~ line 533 ~ CommentController ~ patchRequireChanges= ~ changes", changes)
+            res.status(202).json({ data: changes, message: 'Require changes was marked' });
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({ message: 'An error ocurred when try to mark require changes' });
+        }
+
+    }
+
     // * Updated highlight comment -----------------------------------------------------------------------------------------------------------------------
     static patchHighlightComment = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
@@ -540,7 +559,7 @@ class CommentController {
                 updated_comment = await commentsRepository.update(id, { highlight_by: null, highlight_comment: 0 });
                 message = `Highlight mark was removed in comment ${id} by ${userId.username}`;
             }
-            
+
             res.status(201).send({ data: updated_comment, message: message });
         } catch (error) {
             // console.log(error);
