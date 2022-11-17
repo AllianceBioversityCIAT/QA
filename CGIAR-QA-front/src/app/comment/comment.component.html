@@ -380,7 +380,7 @@
   <!-- ADD COMMENT -->
   <!-- dataFromItem.status !== statusHandler.Finalized && -->
   <!-- Requieres changees -->
-  <div>
+  <div *ngIf="currentUser.indicators[0].isTPB">
     <label class="checkbox-label" for="changes" class="valor">
       <input
         class="checkbox-style"
