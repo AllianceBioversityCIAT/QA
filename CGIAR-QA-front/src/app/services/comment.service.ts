@@ -206,4 +206,9 @@ export class CommentService {
       })
     );
   }
+
+  patchRequireChanges(params) {
+    return this.http.patch<any>(`${environment.apiUrl}/evaluation/require-changes`, params);
+  }
+
 }

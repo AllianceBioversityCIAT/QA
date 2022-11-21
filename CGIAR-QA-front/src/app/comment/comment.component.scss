@@ -21,12 +21,16 @@
     justify-content: center;
     margin: 0px;
     align-items: center;
+    background-color: rgb(251, 180, 0);
+    border-radius: 15px;
+    height: 35px;
+    text-align: center;
   }
   img {
     height: 25px;
   }
   p.highligt-header {
-    color: rgb(251, 180, 0);
+    color: rgb(255, 255, 255);
     align-items: center;
     justify-content: center;
     display: contents;
@@ -157,6 +161,16 @@
     text-transform: uppercase;
     font-size: $primary-fs;
   }
+
+  .require-changes-set {
+    font-size: smaller;
+    display: flex;
+    justify-content: end;
+
+    .require-changes-img {
+      height: 20px;
+    }
+  }
 }
 .btn {
   &:hover {
@@ -247,11 +261,11 @@
     text-align: center;
   }
   .highlighted-by {
-    background-color: rgb(251, 180, 0);
+    // background-color: rgb(251, 180, 0);
     justify-content: center;
     align-items: center;
     outline: none;
-    border: none;
+    // border: 5px rgb(251, 180, 0);
     display: flex;
     border-radius: 5px;
     height: 50px;
@@ -279,7 +293,7 @@
     border: none;
     margin: 10px;
     color: black;
-    width: 110px;
+    width: 16vh;
     height: 50px;
     white-space: normal;
     align-items: center;

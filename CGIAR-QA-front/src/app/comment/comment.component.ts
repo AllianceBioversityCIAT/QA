@@ -31,6 +31,8 @@ import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
 import { EvaluationsService } from "../services/evaluations.service";
 import { HighDensityScatterSeries } from "igniteui-angular-charts";
 import { convertToObject } from "typescript";
+import { notDeepStrictEqual } from "assert";
+import { not } from "@angular/compiler/src/output/output_ast";
 
 @Component({
   selector: "app-comment",
@@ -44,6 +46,7 @@ export class CommentComponent implements OnInit {
   totalChar = 6500;
   statusHandler = DetailedStatus;
   commentsByCol: any = [];
+  commentsByColSelected: any;
   commentsByColReplies: any = [];
   currentUser: User;
   availableComment = false;
@@ -52,6 +55,7 @@ export class CommentComponent implements OnInit {
   replyTypes = ReplyTypes;
   currentY;
   isActiveButton = false;
+  // require_changes = false;
 
   spinner_replies = "spinner_Comment_Rply";
   spinner_comment = "spinner_Comment";
@@ -66,6 +70,7 @@ export class CommentComponent implements OnInit {
   @Input() original_field;
   @Input() userIsLeader: boolean;
   @Input() isCRP;
+  // @Input() require_changes: boolean
   @Output("parentFun") parentFun: EventEmitter<any> = new EventEmitter();
   @Output("validateAllFieldsAssessed")
   validateAllFieldsAssessed: EventEmitter<any> = new EventEmitter();
@@ -110,6 +115,8 @@ export class CommentComponent implements OnInit {
     if (!this.isCRP) {
       this.getQuickComments();
     }
+    // this.validateTrueComment()
+    this.getRequireChanges()
   }
 
   UpdateHighlightComment(commentId: Number, isHighlighted: Boolean) {
@@ -117,6 +124,9 @@ export class CommentComponent implements OnInit {
       id: commentId,
       highlight_comment: !isHighlighted,
     };
+
+    console.log(params, '<===id')
+
     this.showSpinner(this.spinner_comment);
     // console.log()
     isHighlighted = !isHighlighted;
@@ -132,6 +142,24 @@ export class CommentComponent implements OnInit {
     this.is_highlight.emit({
       is_highlight: isHighlighted,
     });
+  }
+
+  UpdateRequireChanges(commentId: Number, requireChanges: boolean) {
+    var element = <HTMLInputElement>document.getElementById("require_changes");
+    var requireChanges = element.checked;
+    console.log(requireChanges, 'check')
+    let params = {
+      id: commentId,
+      require_changes: requireChanges
+    }
+    console.log("🚀 ~ line ~ params", params)
+    console.log(commentId, '<===id')
+
+    this.showSpinner(this.spinner_comment);
+    this.commentService.patchRequireChanges(params).subscribe((res) => {
+      console.log(res, '<-- response require changes');
+      this.getItemCommentData();
+    })
   }
 
   getQuickComments() {
@@ -221,6 +249,10 @@ export class CommentComponent implements OnInit {
     var element = <HTMLInputElement>document.getElementById("require_changes");
     var checked = element.checked;
 
+    // if (checked) {
+    //   this.require_changes = !this.require_changes;
+    // }
+
     this.showSpinner(this.spinner_comment);
     console.log(this.original_field);
 
@@ -247,6 +279,8 @@ export class CommentComponent implements OnInit {
           this.alertService.error(error);
         }
       );
+
+    // UpdateRequireChanges(this.commentsByCol.id, this.commentsByCol.require_changes);
   }
 
   updateComment(type, data: any) {
@@ -364,6 +398,18 @@ export class CommentComponent implements OnInit {
             comment.isCollapsed = true;
             this.getCommentReplies(comment);
           }
+
+        });
+        // I can iterate in reverse order
+        this.commentsByCol.forEach(element => {
+          console.log(element.is_deleted);
+          let found = false;
+          if (found === false) {
+            if (!element.is_deleted) {
+              this.commentsByColSelected = element;
+              found = true;
+            }
+          }
         });
       },
       (error) => {
@@ -372,6 +418,19 @@ export class CommentComponent implements OnInit {
         this.alertService.error(error);
       }
     );
+  }
+
+  getRequireChanges() {
+    this.commentsByCol.forEach(element => {
+      console.log(element, '<===elementttt');
+      // let found = false;
+      // if (found === false) {
+      // if (!element.is_deleted) {
+      //   this.commentsByColSelected = element;
+      //   found = true;
+      // }
+      // }
+    });
   }
 
   getCommentReplies(comment) {

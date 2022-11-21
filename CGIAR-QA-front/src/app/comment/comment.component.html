@@ -126,7 +126,7 @@
             "
             class="highlight-section"
           >
-            <div
+            <!-- <div
               *ngIf="comment.highlight_comment && dataFromItem.is_core"
               id="showAlert"
               class="highlighted-by"
@@ -134,9 +134,8 @@
               <a class="user-highlighted">
                 Comment highlighted by
                 {{ comment.highlight_by.name }}
-                <!-- {{ comment.highlight_comment }} -->
               </a>
-            </div>
+            </div> -->
             <button
               *ngIf="comment.highlight_comment == false && dataFromItem.is_core"
               (click)="
@@ -371,7 +370,6 @@
       </ng-container>
     </div>
   </div>
-
   <!-- NO COMMENTS -->
   <div *ngIf="!commentsByCol.length && !availableComment">
     <h2>COMMENTS ON {{ dataFromItem.display_name }}</h2>
@@ -380,21 +378,32 @@
   <!-- ADD COMMENT -->
   <!-- dataFromItem.status !== statusHandler.Finalized && -->
   <!-- Requieres changees -->
-  <div *ngIf="currentUser.indicators[0].isTPB">
-    <label class="checkbox-label" for="changes" class="valor">
-      <input
-        class="checkbox-style"
-        type="checkbox"
-        id="require_changes"
-        [checked]="true"
-      />
+  <!-- commentsByColSelected?.require_changes == false && -->
+  <div
+    *ngIf="
+      currentUser.indicators[0]?.isTPB ||
+      currentUser.roles[0].description === allRoles.admin
+    "
+  >
+    <!-- <p>hi {{ commentsByColSelected?.require_changes }}</p> -->
+    <!-- <p>hi {{ dataFromItem.require_changes }}</p> -->
+    <label
+      *ngIf="dataFromItem.require_changes != 1"
+      class="checkbox-label"
+      for="changes"
+      class="valor"
+    >
+      <input class="checkbox-style" type="checkbox" id="require_changes" />
       Requires changes in the result reported
     </label>
   </div>
 
   <div
     *ngIf="
-      !availableComment && !crpComment && currentUser.hasOwnProperty('cycle')
+      !availableComment &&
+      !crpComment &&
+      currentUser.hasOwnProperty('cycle') &&
+      dataFromItem.require_changes != 1
     "
     class="add-comment-container"
   >
@@ -437,11 +446,36 @@
       <span class="wordCount"
         >{{ getWordCount(formData.comment.value) }} / 1000 words</span
       >
-      <button type="button" class="btn btn-agree" (click)="addComment()">
+      <button
+        type="button"
+        class="btn btn-agree"
+        (click)="addComment()"
+        (click)="
+          UpdateRequireChanges(
+            commentsByColSelected.id,
+            commentsByCol.require_changes
+          )
+        "
+      >
         ADD
       </button>
-      <div>requieres changes</div>
     </footer>
+  </div>
+  <div
+    class="require-changes-set"
+    *ngIf="
+      currentUser.indicators[0]?.isTPB ||
+      (currentUser.roles[0].description === allRoles.admin &&
+        dataFromItem.require_changes == 1)
+    "
+  >
+    <img
+      class="require-changes-img"
+      src="assets/icons/require_changes.svg"
+      alt="require changes"
+    />
+    requires changes
   </div>
   <ngx-spinner [name]="spinner_comment" [fullScreen]="false"> </ngx-spinner>
 </div>
+<!-- // UpdateRequireChanges(; -->
