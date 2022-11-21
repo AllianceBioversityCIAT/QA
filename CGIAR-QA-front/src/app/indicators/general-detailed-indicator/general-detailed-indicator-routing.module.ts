@@ -14,7 +14,7 @@ const routes: Routes = [
         component: GeneralDetailedIndicatorComponent,
         canActivate: [AuthGuard],
         data: { roles: [Role.asesor, Role.admin] },
-       
+
     },
 ];
 
