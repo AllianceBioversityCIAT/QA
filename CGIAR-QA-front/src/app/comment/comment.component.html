@@ -145,19 +145,19 @@
             >
               <img src="assets/icons/bombillo.png" alt="" srcset="" />
             </button>
+          </div>
 
-            <div>
-              <button
-                *ngIf="comment.highlight_comment == !false"
-                (click)="
-                  UpdateHighlightComment(comment.id, comment.highlight_comment)
-                "
-                class="btn btn-danger"
-              >
-                <img src="assets/icons/letter-x-icon-256.png" />
-                Remove highlight
-              </button>
-            </div>
+          <div class="btn-danger-section">
+            <button
+              *ngIf="comment.highlight_comment == !false"
+              (click)="
+                UpdateHighlightComment(comment.id, comment.highlight_comment)
+              "
+              class="btn btn-danger btn-block"
+            >
+              <img src="assets/icons/apagado.png" />
+              Remove highlight
+            </button>
           </div>
 
           <div

@@ -255,7 +255,14 @@
 
 .highlight-section {
   display: flex;
-  justify-content: flex-end;
+  justify-content: end;
+  // position: absolute;
+  .btn-danger-section {
+    // display: inline-flex;
+    // width: 100%;
+  }
+
+  // width: auto;
   a.user-highlighted {
     font-size: smaller;
     text-align: center;
@@ -287,21 +294,15 @@
       height: 32px;
     }
   }
-  .btn-danger {
-    background-color: #ff6c63;
-    outline: none;
-    border: none;
-    margin: 10px;
-    color: black;
-    width: 16vh;
-    height: 50px;
-    white-space: normal;
-    align-items: center;
-    display: flex;
-    margin: 10px 0 0 5px;
-    font-size: 14px;
-    img {
-      height: 17px;
-    }
+}
+.btn-danger {
+  background-color: #ff6c63;
+  outline: none;
+  border: none;
+  color: black;
+  height: 50px;
+  margin: 10px 0 0 0;
+  img {
+    height: 25px;
   }
 }
