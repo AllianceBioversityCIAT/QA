@@ -51,7 +51,7 @@ router.get("/crp/indicators", [checkJwt, checkRole([RolesHandler.admin])], Evalu
 // * Update highlight comment status
 router.patch("/highlight-comment", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], CommentController.patchHighlightComment);
 
-// TODO Update require changes status
+// * Update require changes status
 router.patch("/require-changes", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], CommentController.patchRequireChanges);
 
 //TAGS

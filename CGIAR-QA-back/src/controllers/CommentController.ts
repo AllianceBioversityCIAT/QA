@@ -521,17 +521,25 @@ class CommentController {
         }
     }
 
-    // TODO Updated require changes ---------------------------------------------------------------------------------------------------------------------
+    // * Updated require changes ---------------------------------------------------------------------------------------------------------------------
     static patchRequireChanges = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
         const { require_changes, id } = req.body;
+        let update_require_changes;
         let message: String;
 
         try {
             let comment_ = await commentsRepository.findOneOrFail(id);
             comment_.require_changes = require_changes;
-            const changes = await commentsRepository.save(comment_);
-            res.status(202).json({ data: changes, message: 'Require changes was marked' });
+
+            if (require_changes != 0) {
+                update_require_changes = await commentsRepository.save(comment_);
+                message = `Require changes was marked`;
+            } else {
+                update_require_changes = await commentsRepository.update(id, { require_changes: 0 });
+                message = 'Require changes was removed';
+            }
+            res.status(202).json({ data: update_require_changes, message: message });
         } catch (error) {
             console.log(error);
             res.status(400).json({ message: 'An error ocurred when try to mark require changes' });
