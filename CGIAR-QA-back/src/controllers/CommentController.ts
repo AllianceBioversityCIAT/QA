@@ -278,7 +278,7 @@ class CommentController {
     static updateComment = async (req: Request, res: Response) => {
 
         //Check if username and password are set
-        const { approved, is_visible, is_deleted, id, detail, userId } = req.body;
+        const { approved, is_visible, is_deleted, id, detail, userId, require_changes } = req.body;
         const commentsRepository = getRepository(QAComments);
         const tagsRepository = getRepository(QATags);
 
@@ -290,6 +290,7 @@ class CommentController {
             comment_.approved = approved;
             comment_.is_deleted = is_deleted;
             comment_.is_visible = is_visible;
+            comment_.require_changes = require_changes;
             if (detail)
                 comment_.detail = detail;
             if (userId)
@@ -530,7 +531,6 @@ class CommentController {
             let comment_ = await commentsRepository.findOneOrFail(id);
             comment_.require_changes = require_changes;
             const changes = await commentsRepository.save(comment_);
-            console.log("🚀 ~ file: CommentController.ts ~ line 533 ~ CommentController ~ patchRequireChanges= ~ changes", changes)
             res.status(202).json({ data: changes, message: 'Require changes was marked' });
         } catch (error) {
             console.log(error);
