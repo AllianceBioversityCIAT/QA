@@ -46,7 +46,7 @@ export class CommentComponent implements OnInit {
   totalChar = 6500;
   statusHandler = DetailedStatus;
   commentsByCol: any = [];
-  commentsByColSelected: any;
+  commentsByColSelected: any = null;
   commentsByColReplies: any = [];
   currentUser: User;
   availableComment = false;
@@ -77,6 +77,7 @@ export class CommentComponent implements OnInit {
   @Output("updateNumCommnts") updateNumCommnts: EventEmitter<any> =
     new EventEmitter();
   @Output("is_highlight") is_highlight = new EventEmitter<any>();
+  // @Output("require_change") require_change = new EventEmitter<any>();
   @ViewChild("commentContainer") private commentContainer: ElementRef;
   allRoles = Role;
 
@@ -144,10 +145,10 @@ export class CommentComponent implements OnInit {
     });
   }
 
+
   UpdateRequireChanges(commentId: Number, requireChanges: boolean) {
-    var element = <HTMLInputElement>document.getElementById("require_changes");
-    var requireChanges = element.checked;
-    console.log(requireChanges, 'check')
+
+    console.log(requireChanges, 'checked')
     let params = {
       id: commentId,
       require_changes: requireChanges
@@ -160,7 +161,27 @@ export class CommentComponent implements OnInit {
       console.log(res, '<-- response require changes');
       this.getItemCommentData();
     })
+
+    if (requireChanges) {
+      var _requireCha = requireChanges
+      return _requireCha
+      // console.log(requireChanges, '<-- response require') // true
+      // let prm = {
+      //   id: commentId,
+      //   require_changes: false,
+      // }
+      // console.log("🚀 ~ file: comment.component.ts ~ line 172 ~ CommentComponent ~ UpdateRequireChanges ~ prm", prm)
+
+      // this.commentService.patchRequireChanges(prm).subscribe((res) => {
+      //   console.log("🚀 ~~ resss if requ_chan = true", res)
+      // })
+    }
   }
+
+  // removereqChan() {
+  //   var changes = this.UpdateRequireChanges(this.commentsByColSelected, false)
+  //   console.log(changes, 'changesss');
+  // }
 
   getQuickComments() {
     this.commentService.getQuickComments().subscribe(
@@ -174,7 +195,9 @@ export class CommentComponent implements OnInit {
   }
 
   updateData(data: any, params: any) {
+
     console.log(data);
+    console.log("🚀 ~ file: comment.component.ts ~ line 201 ~ CommentComponent ~ updateData ~ data", data)
     Object.assign(this.dataFromItem, data, params);
     this.availableComment = false;
     this.showSpinner(this.spinner_comment);
@@ -240,18 +263,15 @@ export class CommentComponent implements OnInit {
       );
   }
 
-  addComment() {
+  addComment(parentCommentId: number) {
     console.log("ADDING COMMENT");
     if (this.commentGroup.invalid) {
       this.alertService.error("comment is required", false);
       return;
     }
-    var element = <HTMLInputElement>document.getElementById("require_changes");
-    var checked = element.checked;
+    let element = <HTMLInputElement>document.getElementById("require_changes");
+    let checked = element.checked;
 
-    // if (checked) {
-    //   this.require_changes = !this.require_changes;
-    // }
 
     this.showSpinner(this.spinner_comment);
     console.log(this.original_field);
@@ -272,6 +292,9 @@ export class CommentComponent implements OnInit {
           this.getItemCommentData(true);
           this.formData.comment.reset();
           this.validateAllFieldsAssessed.emit();
+          if (checked && this.commentsByColSelected != null) {
+            this.UpdateRequireChanges(parentCommentId, checked)
+          }
         },
         (error) => {
           console.log("getEvaluationsList", error);
@@ -283,7 +306,8 @@ export class CommentComponent implements OnInit {
     // UpdateRequireChanges(this.commentsByCol.id, this.commentsByCol.require_changes);
   }
 
-  updateComment(type, data: any) {
+  updateComment(type, data: any, parentCommentId) {
+    // updateComment(type, data: any, commentId: number) {
     let canUpdate = this.validComment(type, data);
     if (!canUpdate.is_valid) {
       this.alertService.error(canUpdate.message);
@@ -298,12 +322,14 @@ export class CommentComponent implements OnInit {
       id: data.id,
       detail: data.detail,
       userId: data.user.id,
+      require_changes: false
     };
-    // console.log(data)
+    console.log(params)
     this.showSpinner(this.spinner_comment);
 
     this.commentService.updateDataComment(params).subscribe(
       (res) => {
+        this.UpdateRequireChanges(parentCommentId, false)
         this.getItemCommentData(true);
       },
       (error) => {
@@ -313,6 +339,16 @@ export class CommentComponent implements OnInit {
         this.alertService.error(error);
       }
     );
+
+    // let prm = {
+    //   id: commentId,
+    //   require_changes: 0
+    // }
+    // console.log(prm, 'prm to set in false require_changes')
+    // this.commentService.patchRequireChanges(prm).subscribe((res) => {
+    //   console.log("🚀 ~ res", res)
+
+    // })
   }
 
   updateCommentReply(type, data) {
@@ -402,6 +438,8 @@ export class CommentComponent implements OnInit {
         });
         // I can iterate in reverse order
         this.commentsByCol.forEach(element => {
+          // const reverse = element.reverse()
+          // console.log(reverse, 'reverse')
           console.log(element.is_deleted);
           let found = false;
           if (found === false) {

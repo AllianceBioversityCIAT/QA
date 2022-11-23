@@ -50,9 +50,21 @@
                     comment.replies.replies_count == '0' &&
                     !crpComment
                   "
-                  (click)="updateComment('is_deleted', comment)"
+                  (click)="
+                    updateComment(
+                      'is_deleted',
+                      comment,
+                      dataFromItem.general_comment_id
+                    )
+                  "
                   class="icon-remove"
                 ></i>
+                <!-- (click)="
+                    UpdateRequireChanges(
+                      dataFromItem.general_comment_id,
+                      commentsByCol.require_changes
+                    )
+                  " -->
               </div>
             </div>
             <hr style="margin: 0" />
@@ -449,26 +461,13 @@
       <button
         type="button"
         class="btn btn-agree"
-        (click)="addComment()"
-        (click)="
-          UpdateRequireChanges(
-            commentsByColSelected.id,
-            commentsByCol.require_changes
-          )
-        "
+        (click)="addComment(commentsByColSelected?.id)"
       >
         ADD
       </button>
     </footer>
   </div>
-  <div
-    class="require-changes-set"
-    *ngIf="
-      currentUser.indicators[0]?.isTPB ||
-      (currentUser.roles[0].description === allRoles.admin &&
-        dataFromItem.require_changes == 1)
-    "
-  >
+  <div class="require-changes-set" *ngIf="dataFromItem.require_changes == 1">
     <img
       class="require-changes-img"
       src="assets/icons/require_changes.svg"
