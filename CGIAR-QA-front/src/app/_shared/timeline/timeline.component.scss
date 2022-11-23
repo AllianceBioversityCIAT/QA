@@ -1,98 +1,173 @@
 @import "../../../assets/variables.scss";
-*{
-    box-sizing: border-box;
-    margin: 0;
+* {
+  box-sizing: border-box;
+  margin: 0;
 }
 
-
-
-.timeline-container{
-    padding: 3em 1em;
-    width: 100%;
-    height: 350px;
+.timeline-container {
+  padding: 3em 1em;
+  width: 100%;
+  height: 350px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  background-color: whitesmoke;
+  border-radius: 5px 5px 0 0;
+  h1,
+  h3 {
+    font-family: "Poppins";
+  }
+  h1 {
+    letter-spacing: 5px;
+    font-weight: $bold;
+  }
+  header {
     display: flex;
+    justify-content: center;
+    align-items: center;
     flex-direction: column;
+    gap: 0.5em;
+  }
+  .line {
+    width: 80%;
+    height: 8px;
+    border-radius: 5px;
+    background-color: var(--yellow-primary); // yellow
+    display: flex;
     justify-content: space-between;
     align-items: center;
-    background-color: whitesmoke;
-    border-radius: 5px 5px 0 0;
-    h1, h3 {
-        font-family: 'Poppins';
-    }
-    h1{
-        letter-spacing: 5px;
-        font-weight: $bold;
-    }
-    header{
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        gap: 0.5em;
-    }
-    .line{
-        width: 80%;
-        height: 8px;
+    .event {
+      height: 20px;
+      width: 20px;
+      border-radius: 50%;
+      background-color: white;
+      border: 4px solid var(--color-not-sure); //bluesito
+      cursor: pointer;
+      position: relative;
+      transition: all 0.4s cubic-bezier(0.215, 0.61, 0.355, 1);
+      &:hover {
+        transform: scale(1.3);
+      }
+      .info-event {
+        position: absolute;
+        width: max-content;
+        height: 95px;
+        top: -7em;
+        left: -100px;
         border-radius: 5px;
-        background-color: var(--yellow-primary); // yellow 
-        display: flex;
-        justify-content: space-between;
         align-items: center;
-        .event{
-            height: 20px;
-            width: 20px;
-            border-radius: 50%;
-            background-color: white;
-            border: 4px solid var(--color-not-sure); //bluesito
-            cursor: pointer;
-            position: relative;
-            transition: all 0.4s cubic-bezier(0.215, 0.610, 0.355, 1);
-            &:hover{
-                transform: scale(1.3);
-            }
-            .info-event{
-                position: absolute;
-                width: max-content;
-                height: 80px;
-                top: -6em;
-                left: -100px;
-                border-radius: 5px;
-                // border: 1px solid var(--gray-secondary);
-                padding: 0;
+        // border: 1px solid var(--gray-secondary);
+        padding: 0;
 
-                .date {
-                    border-radius: 5px 5px 0px 0px ;
-                    background: linear-gradient(135deg,#6253E1,#04BEFE);
-                    text-align: center;
-                    font-size: $primary-fs; // $primary-fs: 16px;
-                    font-weight: $regular;
-                    width: 100%;
-                    padding: 0.5em;
-                    color: var(--white);
-                    font-family: 'Poppins';
-                    margin-bottom: .7em;
-                }
-                p{
-                    font-family: 'Poppins';
-                    font-size: $font-xs; // $font-xs: 12px;
-                    padding: 0  1em;
-                }
-            }
+        .date {
+          border-radius: 5px 5px 0px 0px;
+          background: linear-gradient(135deg, #6253e1, #04befe);
+          text-align: center;
+          font-size: $primary-fs; // $primary-fs: 16px;
+          font-weight: $regular;
+          width: 100%;
+          padding: 0.5em;
+          color: var(--white);
+          font-family: "Poppins";
+          margin-bottom: 0.7em;
         }
+        p {
+          font-family: "Poppins";
+          font-size: $font-xs; // $font-xs: 12px;
+          padding: 0 1em;
+        }
+      }
     }
+  }
 }
-footer{
-    width: 100%;
-    height: 40px;
+footer {
+  width: 100%;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  padding: 0 1em;
+  .next-batch {
+    width: auto;
     display: flex;
-    align-items: center;
-    padding: 0 1em;
-    .next-batch{
-        width: auto;
-        display: flex;
-        p{
-            font-family: 'Poppins';
-            font-size: $font-sm; // $font-sm: 14px;
-        }
+    p {
+      font-family: "Poppins";
+      font-size: $font-sm; // $font-sm: 14px;
     }
+  }
 }
+// * {
+//   font-family: "Verdana", sans-serif;
+//   -moz-box-sizing: border-box;
+//   box-sizing: border-box;
+//   letter-spacing: 0px;
+//   -webkit-font-smoothing: antialiased;
+//   -moz-osx-font-smoothing: grayscale;
+//   scroll-behavior: smooth;
+//   margin: 0;
+//   //   color: #fff;
+// }
+
+// .timeline-container {
+//   padding: 3em 1em;
+//   width: 100%;
+//   height: 350px;
+//   display: flex;
+//   flex-direction: column;
+//   justify-content: space-between;
+//   align-items: center;
+//   background-color: whitesmoke;
+//   border-radius: 5px 5px 0 0;
+
+//   .content {
+//     width: 450px;
+//   }
+//   .line {
+//     display: grid;
+//     grid-auto-flow: column;
+//     scroll-behavior: auto;
+//     gap: 1.2rem;
+//     overflow-y: auto;
+//     overscroll-behavior-x: contain;
+//     scroll-snap-type: x mandatory;
+//     scrollbar-width: none;
+//   }
+//   .line::-webkit-scrollbar {
+//     display: none;
+//   }
+//   .info-event {
+//     scroll-snap-align: start;
+//     border-radius: 30px;
+//     min-height: 200px;
+//     min-width: 300px;
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//   }
+//   .info-event:nth-child(1) {
+//     background-color: linear-gradient(-229deg, #fbd52d, #ef3a7b);
+//   }
+//   .info-event:nth-child(2) {
+//     background: linear-gradient(-229deg, #ff70af, #5fa8f5);
+//   }
+
+//   .info-event:nth-child(3) {
+//     background: linear-gradient(-229deg, #0cebeb, #29ffc6);
+//   }
+
+//   .info-event:nth-child(4) {
+//     background: linear-gradient(-229deg, #88f7f9, #048fff);
+//   }
+
+//   .info-event:nth-child(5) {
+//     background: linear-gradient(-229deg, #0093e9, #80d0c7);
+//   }
+
+//   .info-event:nth-child(6) {
+//     background: linear-gradient(-229deg, #cf91ff, #5782f5);
+//   }
+
+//   .info-event:nth-child(7) {
+//     background: linear-gradient(-229deg, #642b73, #c6426e);
+//   }
+// }
