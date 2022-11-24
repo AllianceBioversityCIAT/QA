@@ -46,7 +46,7 @@ class IndicatorsController {
         const { crp_id } = req.params;
         try {
             const crpRepository = getRepository(QACrp);
-            const crp: QACrp = await crpRepository.findOne({crp_id});
+            const crp: QACrp = await crpRepository.findOne({ crp_id });
 
             //Send the crp object
             res.status(200).json({ data: crp, message: `CRP ${crp.id} - ${crp.acronym} loaded.` });
@@ -136,7 +136,8 @@ class IndicatorsController {
                         indicators.order AS indicator_order,
                         indicators.view_name AS view_name,
                         meta.enable_assessor as enable_assessor,
-                        qa_indicator_user.isLeader as is_leader
+                        qa_indicator_user.isLeader as is_leader,
+                        qa_indicator_user.isTPB as is_tpb
                     FROM
                         qa_indicator_user qa_indicator_user
                     LEFT JOIN qa_indicators indicators ON indicators.id = qa_indicator_user.indicatorId
@@ -712,7 +713,7 @@ class IndicatorsController {
             const evaluations = await queryRunner.query(query, parameters);
 
             const batches = await batchesRepository.find({ where: { phase_year: AR } });
-                
+
             const data = evaluations.map(e => ({
                 indicator_name: e.indicator_view_name.split('qa_')[1],
                 id: e.indicator_view_id,
@@ -722,14 +723,14 @@ class IndicatorsController {
             })
             );
 
-            
+
             // queryRunner.close();
             // // console.log('Connection closed.');
 
             res.status(200).send({ data: data, message: `List of ${indicator_view_name[0].view_name.split('qa_')[1]} indicator items` })
         } catch (error) {
             // console.log(error);
-            
+
             res.status(404).json({ message: "Items for MIS cannot be retrieved", data: error })
         }
 
@@ -759,7 +760,7 @@ class IndicatorsController {
         const indicatorRepository = getRepository(QAIndicators);
         const batchesRepository = getRepository(QABatch);
 
-       
+
         let queryRunner = getConnection().createQueryBuilder().connection;
 
         try {
@@ -826,13 +827,13 @@ class IndicatorsController {
 
             const [query, parameters] = await queryRunner.driver.escapeQueryWithParameters(
                 sql,
-                { indicator_view_name: indicator_view_name[0].view_name, crp_id, indicator_view_id: item_id,AR },
+                { indicator_view_name: indicator_view_name[0].view_name, crp_id, indicator_view_id: item_id, AR },
                 {}
             );
 
             let item = await queryRunner.query(query, parameters);
             item = item[0];
-            
+
             const batches = await batchesRepository.find({ where: { phase_year: AR } });
 
             const data = {
@@ -849,7 +850,7 @@ class IndicatorsController {
             res.status(200).send({ data: data, message: `Item ${data.id} of  ${indicator_view_name[0].view_name.split('qa_')[1]} indicator.` })
         } catch (error) {
             // console.log(error);
-            
+
             res.status(404).json({ message: "Items for MIS cannot be retrieved", data: error })
         }
 
