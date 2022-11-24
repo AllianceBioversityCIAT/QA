@@ -99,4 +99,7 @@ export class QAComments {
 
     @Column({ nullable: true, type: 'tinyint', default: 0 })
     require_changes: number;
+
+    @Column({ nullable: true, type: 'tinyint', default: 0 })
+    tpb: number;
 } 
