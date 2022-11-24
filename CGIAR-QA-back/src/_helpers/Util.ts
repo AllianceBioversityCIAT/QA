@@ -533,7 +533,7 @@ class Util {
 
     }
 
-    static createComment = async (detail, approved, userId, metaId, evaluationId, original_field = null, require_changes) => {
+    static createComment = async (detail, approved, userId, metaId, evaluationId, original_field = null, require_changes, tpb) => {
         const userRepository = getRepository(QAUsers);
         const metaRepository = getRepository(QAIndicatorsMeta);
         const evaluationsRepository = getRepository(QAEvaluations);
@@ -595,6 +595,7 @@ class Util {
             comment_.user = user;
             comment_.cycle = current_cycle;
             comment_.require_changes = require_changes;
+            comment_.tpb = tpb;
             if (original_field)
                 comment_.original_field = original_field;
             let new_comment = await commentsRepository.save(comment_);

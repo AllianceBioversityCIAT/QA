@@ -259,11 +259,11 @@ class CommentController {
     static createComment = async (req: Request, res: Response) => {
         // approved
         //Check if username and password are set
-        const { detail, approved, userId, metaId, evaluationId, original_field, require_changes } = req.body;
+        const { detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb } = req.body;
         console.log("🚀 ~ file: CommentController.ts ~ line 263 ~ CommentController ~ createComment= ~ req.body", req.body)
 
         try {
-            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes);
+            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb);
             if (new_comment == null) throw new Error('Could not created comment');
             res.status(200).send({ data: new_comment, message: 'Comment created' });
 
@@ -278,7 +278,7 @@ class CommentController {
     static updateComment = async (req: Request, res: Response) => {
 
         //Check if username and password are set
-        const { approved, is_visible, is_deleted, id, detail, userId, require_changes } = req.body;
+        const { approved, is_visible, is_deleted, id, detail, userId, require_changes, tpb } = req.body;
         const commentsRepository = getRepository(QAComments);
         const tagsRepository = getRepository(QATags);
 
@@ -291,6 +291,7 @@ class CommentController {
             comment_.is_deleted = is_deleted;
             comment_.is_visible = is_visible;
             comment_.require_changes = require_changes;
+            comment_.tpb = tpb;
             if (detail)
                 comment_.detail = detail;
             if (userId)
