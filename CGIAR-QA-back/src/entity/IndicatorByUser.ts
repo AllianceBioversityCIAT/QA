@@ -30,6 +30,9 @@ export class QAIndicatorUser {
     @Column({ default: false })
     isTPB: boolean;
 
+    @Column({ default: false })
+    isPPU: boolean;
+
     @Column()
     @CreateDateColumn()
     createdAt: Date;
