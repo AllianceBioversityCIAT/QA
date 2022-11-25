@@ -72,6 +72,7 @@
               (tagEvent)="toggleTag($event)"
             ></app-tags-bar>
 
+            <!-- currentUser.indicators.isTPB != 1 -->
             <a
               *ngIf="comment.replies.replies_count != '0'"
               style="cursor: pointer"
@@ -397,12 +398,14 @@
     <!-- <p>hi {{ dataFromItem.require_changes }}</p> -->
     <label
       *ngIf="
-        dataFromItem.require_changes != 1 && dataFromItem.replies_count > 0
+        dataFromItem.require_changes != 1 &&
+        commentsByColSelected?.replies.replies_count > 0
       "
       class="checkbox-label"
       for="changes"
       class="valor"
     >
+      <!-- dataFromItem.require_changes != 1 && dataFromItem.replies_count > 0 -->
       <input class="checkbox-style" type="checkbox" id="require_changes" />
       Requires changes in the result reported
     </label>
@@ -413,7 +416,7 @@
       !availableComment &&
       !crpComment &&
       currentUser.hasOwnProperty('cycle') &&
-      dataFromItem?.require_changes != 1
+      dataFromItem.require_changes != 1
     "
     class="add-comment-container"
   >
