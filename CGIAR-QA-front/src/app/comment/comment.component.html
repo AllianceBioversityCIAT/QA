@@ -27,7 +27,7 @@
               : ''
           }} {{ comment.replyType?.id === 2 ? 'declined' : '' }} {{
             comment.replyType?.id === 3 ? 'clarification' : ''
-          }}"
+          }}{{ comment.tpb === 1 ? 'tpb' : '' }}"
           *ngIf="!comment.is_deleted && comment.is_visible"
         >
           <div>
@@ -59,12 +59,6 @@
                   "
                   class="icon-remove"
                 ></i>
-                <!-- (click)="
-                    UpdateRequireChanges(
-                      dataFromItem.general_comment_id,
-                      commentsByCol.require_changes
-                    )
-                  " -->
               </div>
             </div>
             <hr style="margin: 0" />
@@ -239,7 +233,8 @@
             [ngClass]="{
               approved: comment.replyTypeId == 1,
               declined: comment.replyTypeId == 2,
-              clarification: comment.replyTypeId == 3
+              clarification: comment.replyTypeId == 3,
+              tpb_comment: comment.tpb == 1
             }"
           >
             <h2
@@ -250,6 +245,7 @@
             >
               REQUEST {{ replyTypes[comment.replyTypeId] }} ABOUT COMMENT
             </h2>
+
             <h2
               *ngIf="
                 comment.replyTypeId != undefined &&
@@ -400,7 +396,9 @@
     <!-- <p>hi {{ commentsByColSelected?.require_changes }}</p> -->
     <!-- <p>hi {{ dataFromItem.require_changes }}</p> -->
     <label
-      *ngIf="dataFromItem.require_changes != 1"
+      *ngIf="
+        dataFromItem.require_changes != 1 && dataFromItem.replies_count > 0
+      "
       class="checkbox-label"
       for="changes"
       class="valor"
@@ -415,7 +413,7 @@
       !availableComment &&
       !crpComment &&
       currentUser.hasOwnProperty('cycle') &&
-      dataFromItem.require_changes != 1
+      dataFromItem?.require_changes != 1
     "
     class="add-comment-container"
   >
