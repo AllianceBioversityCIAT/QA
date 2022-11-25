@@ -522,6 +522,36 @@ class CommentController {
         }
     }
 
+    // * Updated ppu status ---------------------------------------------------------------------------------------------------------------------
+    static patchPpuChanges = async (req: Request, res: Response) => {
+        const commentsRepository = getRepository(QAComments);
+        const { require_changes, commentId, commentReplyId } = req.body;
+        let message: String;
+
+        try {
+            let commentId_ = await commentsRepository.findOneOrFail(commentId);
+            let commentReplyId_ = await commentsRepository.findOneOrFail(commentReplyId);
+            commentId_.require_changes = require_changes;
+            commentReplyId_.require_changes = require_changes;
+
+            if (require_changes != 0) {
+                const commentId = await commentsRepository.save(commentId_);
+                const commentReplyId = await commentsRepository.save(commentReplyId_);
+                message = `Require changes was marked done`;
+                res.status(202).json({ original_comment: commentId, reply_comment: commentReplyId, message: message });
+            } else {
+                const commentId = await commentsRepository.save(commentId_);
+                const commentReplyId = await commentsRepository.save(commentReplyId_);
+                message = 'Require changes was removed';
+                res.status(202).json({ original_comment: commentId, reply_comment: commentReplyId, message: message });
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({ message: 'An error ocurred when try to mark require changes' });
+        }
+
+    }
+
     // * Updated require changes ---------------------------------------------------------------------------------------------------------------------
     static patchRequireChanges = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
