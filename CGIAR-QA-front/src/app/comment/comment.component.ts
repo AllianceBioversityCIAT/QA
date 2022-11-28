@@ -269,8 +269,9 @@ export class CommentComponent implements OnInit {
       this.alertService.error("comment is required", false);
       return;
     }
+
     let element = <HTMLInputElement>document.getElementById("require_changes");
-    let checked = element.checked;
+    let checked = element?.checked;
 
 
     this.showSpinner(this.spinner_comment);
@@ -284,7 +285,8 @@ export class CommentComponent implements OnInit {
         metaId: this.dataFromItem.field_id,
         approved: true,
         original_field: this.original_field,
-        require_changes: checked
+        require_changes: checked,
+        tpb: checked
       })
       .subscribe(
         (res) => {

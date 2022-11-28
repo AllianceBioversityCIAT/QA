@@ -211,4 +211,8 @@ export class CommentService {
     return this.http.patch<any>(`${environment.apiUrl}/evaluation/require-changes`, params);
   }
 
+  patchPpuChanges(params) {
+    return this.http.patch<any>(`${environment.apiUrl}/ppu`, params);
+  }
+
 }

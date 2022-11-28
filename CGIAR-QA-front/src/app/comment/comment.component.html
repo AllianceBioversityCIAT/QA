@@ -27,7 +27,7 @@
               : ''
           }} {{ comment.replyType?.id === 2 ? 'declined' : '' }} {{
             comment.replyType?.id === 3 ? 'clarification' : ''
-          }}"
+          }}{{ comment.tpb === 1 ? 'tpb' : '' }}"
           *ngIf="!comment.is_deleted && comment.is_visible"
         >
           <div>
@@ -59,12 +59,6 @@
                   "
                   class="icon-remove"
                 ></i>
-                <!-- (click)="
-                    UpdateRequireChanges(
-                      dataFromItem.general_comment_id,
-                      commentsByCol.require_changes
-                    )
-                  " -->
               </div>
             </div>
             <hr style="margin: 0" />
@@ -78,6 +72,7 @@
               (tagEvent)="toggleTag($event)"
             ></app-tags-bar>
 
+            <!-- currentUser.indicators.isTPB != 1 -->
             <a
               *ngIf="comment.replies.replies_count != '0'"
               style="cursor: pointer"
@@ -239,7 +234,8 @@
             [ngClass]="{
               approved: comment.replyTypeId == 1,
               declined: comment.replyTypeId == 2,
-              clarification: comment.replyTypeId == 3
+              clarification: comment.replyTypeId == 3,
+              tpb_comment: comment.tpb == 1
             }"
           >
             <h2
@@ -250,6 +246,7 @@
             >
               REQUEST {{ replyTypes[comment.replyTypeId] }} ABOUT COMMENT
             </h2>
+
             <h2
               *ngIf="
                 comment.replyTypeId != undefined &&
@@ -400,11 +397,15 @@
     <!-- <p>hi {{ commentsByColSelected?.require_changes }}</p> -->
     <!-- <p>hi {{ dataFromItem.require_changes }}</p> -->
     <label
-      *ngIf="dataFromItem.require_changes != 1"
+      *ngIf="
+        dataFromItem.require_changes != 1 &&
+        commentsByColSelected?.replies.replies_count > 0
+      "
       class="checkbox-label"
       for="changes"
       class="valor"
     >
+      <!-- dataFromItem.require_changes != 1 && dataFromItem.replies_count > 0 -->
       <input class="checkbox-style" type="checkbox" id="require_changes" />
       Requires changes in the result reported
     </label>

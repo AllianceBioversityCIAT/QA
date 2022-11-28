@@ -13,13 +13,13 @@
   display: flex;
   width: 100%;
   justify-content: space-between;
-  .field-title{
+  .field-title {
     display: flex;
-    .core-field{
-        margin: 0px 10px;
-      }
+    .core-field {
+      margin: 0px 10px;
+    }
   }
-  .field-checkbox{
+  .field-checkbox {
     display: flex;
   }
 }
@@ -31,14 +31,13 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  .check-area{
+  .check-area {
     width: auto;
     height: auto;
   }
 }
 
 .custom-control-label {
- 
   // display: grid;
   // place-items: center;
   // width: 50px;
@@ -58,7 +57,7 @@
   left: 0;
   width: 24px;
   height: 24px;
-  &:hover{
+  &:hover {
     cursor: pointer;
   }
 }
@@ -123,12 +122,12 @@
   font-weight: $semibold;
   font-style: italic;
   margin-top: 0;
-  &:hover{
+  &:hover {
     text-decoration: underline;
     cursor: pointer;
   }
 }
-.hide{
+.hide {
   visibility: hidden;
   opacity: 0;
   transition: visibility 0s linear 300ms, opacity 300ms;
@@ -146,7 +145,6 @@
   font-style: italic;
   font-size: $font-xs;
   max-width: 100%;
-
 }
 
 .comment-accepted {
@@ -156,7 +154,7 @@
 .comment-accepted-with-comment {
   background: var(--color-agree-wc);
   border: #005004 2px solid;
-  color:white;
+  color: white;
 }
 .comment-disagree {
   background: var(--color-disagree);
@@ -196,7 +194,6 @@
   display: flex;
   justify-content: space-between;
   margin: auto 1em;
-
 }
 .badge.badge-blue {
   // margin: auto 1.6em;
@@ -234,14 +231,14 @@
     background: var(--red-tertiary);
   }
 }
-.btn{
+.btn {
   // margin-right: 1.5em;
-
 }
 .btn-primary:hover {
   background-color: var(--yellow-secondary);
 }
-.btn-check, .btn-agree-previous {
+.btn-check,
+.btn-agree-previous {
   background-color: var(--color-agree);
   color: var(--blue-tertiary);
   border: 1px solid var(--blue-tertiary);
@@ -250,7 +247,7 @@
   transition: all 0.1s ease;
   height: max-content;
   margin: 0;
-  &:hover{
+  &:hover {
     transform: scale(1.005);
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.3);
   }
@@ -263,7 +260,7 @@
   font-weight: $semibold;
   transition: all 0.1s ease;
   margin: 0;
-  &:hover{
+  &:hover {
     transform: scale(1.005);
     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.3);
   }
@@ -283,10 +280,11 @@
     border: 1px solid var(--gray-primary);
     border-radius: 0.2em;
     padding: 20px;
-    margin: 0 0.5em 2em;
+    margin: 0 0.2em 2em;
     min-height: 200px;
 
-    .assessment-info, .assessment-info-r2 {
+    .assessment-info,
+    .assessment-info-r2 {
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -306,13 +304,13 @@
           align-content: center;
           height: max-content;
         }
-        p{
+        p {
           margin: 0 0.5em;
           align-content: center;
           height: max-content;
         }
-        
-        .btn-progress{
+
+        .btn-progress {
           background-color: var(--color-clarification);
           font-weight: $semibold;
           color: white;
@@ -322,7 +320,7 @@
         display: flex;
         gap: 0.5em;
         align-items: center;
-        margin:0 0 0 1em;
+        margin: 0 0 0 1em;
         font-size: $font-sm;
         font-weight: 500;
         .checkbox-description {
@@ -333,11 +331,11 @@
             filter: grayscale(1);
             margin-left: 0.5em;
           }
-          transition: all .4s ease-in; 
+          transition: all 0.4s ease-in;
           color: var(--gray-secondary);
           &.requires-second-assessment {
             color: black;
-            i{
+            i {
               filter: none;
             }
           }
@@ -349,14 +347,13 @@
           height: 15px;
           cursor: pointer;
 
-          input{
+          input {
             &:hover {
               cursor: pointer;
             }
             opacity: 0;
             width: 0;
             height: 0;
-            
           }
 
           .slider {
@@ -367,9 +364,9 @@
             right: 0;
             bottom: 0;
             border-radius: 34px;
-            background-color:var(--gray-tertiary);
-            -webkit-transition: .4s;
-            transition: .4s;
+            background-color: var(--gray-tertiary);
+            -webkit-transition: 0.4s;
+            transition: 0.4s;
             &:before {
               position: absolute;
               content: "";
@@ -377,14 +374,13 @@
               width: 20px;
               left: -2px;
               bottom: -2px;
-              background-color:var(--gray-secondary);
-              -webkit-transition: .4s;
-              transition: .4s;
+              background-color: var(--gray-secondary);
+              -webkit-transition: 0.4s;
+              transition: 0.4s;
               box-sizing: border-box;
               border: 5px solid white;
               border-radius: 50%;
             }
-          
           }
 
           input:checked + .slider {
@@ -398,12 +394,10 @@
             box-sizing: border-box;
             border: 5px solid var(--color-blue);
           }
-
         }
       }
 
       .right-side {
-
       }
     }
 
@@ -435,7 +429,6 @@
           }
         }
       }
-      
     }
     .data-row {
       margin: 1em 0;
@@ -505,7 +498,7 @@
           margin-top: $size-25;
         }
       }
-      div.highlighted-icon{
+      div.highlighted-icon {
         background-color: orange;
         border-radius: 50%;
         position: absolute;
@@ -516,9 +509,9 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        img{
+        img {
           height: 17px;
-          margin:auto;
+          margin: auto;
           align-items: center;
           display: flex;
         }
@@ -534,28 +527,23 @@
   position: fixed;
   right: 2em;
   bottom: 4em;
-  z-index:10;
+  z-index: 10;
   border-radius: 10px;
-  box-shadow:
-  0 1.1px 2.2px rgba(0, 0, 0, 0.059),
-  0 2.9px 5.5px rgba(0, 0, 0, 0.084),
-  0 5.8px 11.2px rgba(0, 0, 0, 0.106),
-  0 12px 23px rgba(0, 0, 0, 0.131),
-  0 33px 63px rgba(0, 0, 0, 0.19)
-;
+  box-shadow: 0 1.1px 2.2px rgba(0, 0, 0, 0.059),
+    0 2.9px 5.5px rgba(0, 0, 0, 0.084), 0 5.8px 11.2px rgba(0, 0, 0, 0.106),
+    0 12px 23px rgba(0, 0, 0, 0.131), 0 33px 63px rgba(0, 0, 0, 0.19);
 
-  iframe{
+  iframe {
     width: 100%;
     height: 700px;
-    border:none;
+    border: none;
     border-radius: 10px;
   }
-  
 }
 
-  .hide {
-    display: none !important;
-  }
+.hide {
+  display: none !important;
+}
 
 .btn-assessors-chat {
   position: fixed;
@@ -572,21 +560,20 @@
   display: grid;
   place-items: center;
   border-radius: 15px;
-  &:hover{
+  &:hover {
     cursor: pointer;
   }
 }
 
-.field-container{
+.field-container {
   max-width: 100%;
-  p{
+  p {
     max-width: 60% !important;
-    a{
+    a {
       max-width: 60% !important;
       color: yellow !important;
     }
   }
-
 }
 
 .border-red {
@@ -627,9 +614,9 @@
 
 .dropdown-item {
   display: flex;
-    justify-content:flex-start;
-    align-items: center;
-    cursor: pointer;
+  justify-content: flex-start;
+  align-items: center;
+  cursor: pointer;
   i {
     width: 24px;
     margin-right: 0.5em;
