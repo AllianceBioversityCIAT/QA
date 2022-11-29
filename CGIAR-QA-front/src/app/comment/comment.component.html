@@ -133,16 +133,6 @@
             "
             class="highlight-section"
           >
-            <!-- <div
-              *ngIf="comment.highlight_comment && dataFromItem.is_core"
-              id="showAlert"
-              class="highlighted-by"
-            >
-              <a class="user-highlighted">
-                Comment highlighted by
-                {{ comment.highlight_by.name }}
-              </a>
-            </div> -->
             <button
               *ngIf="comment.highlight_comment == false && dataFromItem.is_core"
               (click)="
@@ -232,6 +222,13 @@
             >
               <img src="../../assets/icons/done.svg" alt="" />
               Done
+            </button>
+          </div>
+
+          <div *ngIf="comment.tpb == 1" class="implemented-changes">
+            <button class="btn btn-danger btn-block">
+              <img src="assets/icons/apagado.png" />
+              Implemented changes
             </button>
           </div>
 
@@ -398,7 +395,19 @@
   </div>
   <!-- ADD COMMENT -->
 
-  <div *ngIf="currentUser.roles[0].description === allRoles.admin || tpbUser">
+  <div
+    class="main-required"
+    *ngIf="currentUser.roles[0].description === allRoles.admin || tpbUser"
+  >
+    <input
+      *ngIf="
+        dataFromItem.require_changes != 1 &&
+        commentsByColSelected?.replies.replies_count > 0
+      "
+      class="checkbox-style"
+      type="checkbox"
+      id="require_changes"
+    />
     <label
       *ngIf="
         dataFromItem.require_changes != 1 &&
@@ -407,9 +416,9 @@
       class="checkbox-label"
       for="changes"
       class="valor"
+      for="require_changes"
     >
       <!-- dataFromItem.require_changes != 1 && dataFromItem.replies_count > 0 -->
-      <input class="checkbox-style" type="checkbox" id="require_changes" />
       Requires changes in the result reported
     </label>
   </div>
