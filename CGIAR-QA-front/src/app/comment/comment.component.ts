@@ -48,13 +48,16 @@ export class CommentComponent implements OnInit {
   commentsByCol: any = [];
   commentsByColSelected: any = null;
   commentsByColReplies: any = [];
+  mainComment: any = null;
   currentUser: User;
+  tpbUser: any = false;
   availableComment = false;
   crpComment = false;
   is_approved = false;
   replyTypes = ReplyTypes;
   currentY;
   isActiveButton = false;
+
   // require_changes = false;
 
   spinner_replies = "spinner_Comment_Rply";
@@ -105,6 +108,7 @@ export class CommentComponent implements OnInit {
     });
     this.dataFromItem = [];
     console.log("IS_CRP", this.isCRP);
+    this.istpbUser()
 
     if (
       this.isCRP &&
@@ -116,8 +120,15 @@ export class CommentComponent implements OnInit {
     if (!this.isCRP) {
       this.getQuickComments();
     }
-    // this.validateTrueComment()
     this.getRequireChanges()
+  }
+
+  istpbUser() {
+    const found = this.currentUser.indicators.find(element => {
+      return element?.isTPB === true
+    })
+    console.log(found, '🔥 🔥');
+    this.tpbUser = found
   }
 
   UpdateHighlightComment(commentId: Number, isHighlighted: Boolean) {
@@ -136,7 +147,6 @@ export class CommentComponent implements OnInit {
       this.getItemCommentData();
 
     }, (error) => {
-      // console.log("updateComment", error.message);
       this.getItemCommentData();
       this.showSpinner(this.spinner_comment);
     });
@@ -161,27 +171,33 @@ export class CommentComponent implements OnInit {
       console.log(res, '<-- response require changes');
       this.getItemCommentData();
     })
-
-    if (requireChanges) {
-      var _requireCha = requireChanges
-      return _requireCha
-      // console.log(requireChanges, '<-- response require') // true
-      // let prm = {
-      //   id: commentId,
-      //   require_changes: false,
-      // }
-      // console.log("🚀 ~ file: comment.component.ts ~ line 172 ~ CommentComponent ~ UpdateRequireChanges ~ prm", prm)
-
-      // this.commentService.patchRequireChanges(prm).subscribe((res) => {
-      //   console.log("🚀 ~~ resss if requ_chan = true", res)
-      // })
-    }
   }
 
-  // removereqChan() {
-  //   var changes = this.UpdateRequireChanges(this.commentsByColSelected, false)
-  //   console.log(changes, 'changesss');
-  // }
+  implementedChange(commentId: number, commentByTpb) {
+    const test = this.commentsByCol.find(fDelete => {
+      return fDelete.is_deleted === false
+      // alert(fDelete)
+    })
+    console.log(test, 'testing first delete in false')
+    commentId = test.id;
+    // commentId = this.mainComment = test.id;
+    console.log(this.mainComment);
+
+    let params = {
+      id: commentId,
+      require_changes: false,
+      commentReplyId: commentByTpb
+    }
+    console.log(params, '<-- implemented changes by PPU')
+    this.commentService.patchPpuChanges(params).subscribe((res) => {
+      console.log(res);
+      this.getItemCommentData(true)
+    })
+
+    this.commentService.updateDataComment(params).subscribe((res) => {
+      console.log(res, 'resssssss')
+    })
+  }
 
   getQuickComments() {
     this.commentService.getQuickComments().subscribe(
@@ -341,16 +357,6 @@ export class CommentComponent implements OnInit {
         this.alertService.error(error);
       }
     );
-
-    // let prm = {
-    //   id: commentId,
-    //   require_changes: 0
-    // }
-    // console.log(prm, 'prm to set in false require_changes')
-    // this.commentService.patchRequireChanges(prm).subscribe((res) => {
-    //   console.log("🚀 ~ res", res)
-
-    // })
   }
 
   updateCommentReply(type, data) {
@@ -440,8 +446,6 @@ export class CommentComponent implements OnInit {
         });
         // I can iterate in reverse order
         this.commentsByCol.forEach(element => {
-          // const reverse = element.reverse()
-          // console.log(reverse, 'reverse')
           console.log(element.is_deleted);
           let found = false;
           if (found === false) {
