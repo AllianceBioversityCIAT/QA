@@ -1,15 +1,16 @@
 export class User {
+    [x: string]: any;
     id: number;
     username: string;
     email: string;
     password: string;
-    roles:any[];
-    config:any[];
-    cycle:any;
-    indicators:any[];
-    crp:any;
+    roles: any[];
+    config: any[];
+    cycle: any;
+    indicators: any[];
+    crp: any;
     name: string;
-    cycle_ended:any;
+    cycle_ended: any;
     token: string;
 
     // constructor(id, name, crp_id, acronym, is_marlo) {

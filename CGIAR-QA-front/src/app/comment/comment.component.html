@@ -66,7 +66,7 @@
               {{ comment.detail }}
             </p>
             <app-tags-bar
-              *ngIf="currentUser.roles[0].id != 3"
+              *ngIf="currentUser.roles[0].id != 3 && comment.tpb != 1"
               [comment]="comment"
               [currentUser]="currentUser"
               (tagEvent)="toggleTag($event)"
@@ -154,7 +154,7 @@
             </button>
           </div>
 
-          <div class="btn-danger-section">
+          <div *ngIf="!crpComment" class="btn-danger-section">
             <button
               *ngIf="comment.highlight_comment == !false"
               (click)="
@@ -168,7 +168,9 @@
           </div>
 
           <div
-            *ngIf="crpComment && comment.crp_approved === null"
+            *ngIf="
+              crpComment && comment.crp_approved === null && comment.tpb == 0
+            "
             style="flex-direction: row"
             class="add-comment-container"
           >
@@ -221,6 +223,16 @@
                             class="btn request-clarification"
                             (click)="answerComment(false,replyTypes.clarification,comment)">CLARIFICATION
                             NEEDED</button> -->
+          </div>
+          <!-- *ngIf="crpComment" -->
+          <div class="done-button" *ngIf="comment.tpb == 1">
+            <button
+              (click)="implementedChange(comment.id, commentsByColSelected?.id)"
+              primary
+            >
+              <img src="../../assets/icons/done.svg" alt="" />
+              Done
+            </button>
           </div>
 
           <div
@@ -385,17 +397,8 @@
     <p>No comments made</p>
   </div>
   <!-- ADD COMMENT -->
-  <!-- dataFromItem.status !== statusHandler.Finalized && -->
-  <!-- Requieres changees -->
-  <!-- commentsByColSelected?.require_changes == false && -->
-  <div
-    *ngIf="
-      currentUser.indicators[0]?.isTPB ||
-      currentUser.roles[0].description === allRoles.admin
-    "
-  >
-    <!-- <p>hi {{ commentsByColSelected?.require_changes }}</p> -->
-    <!-- <p>hi {{ dataFromItem.require_changes }}</p> -->
+
+  <div *ngIf="currentUser.roles[0].description === allRoles.admin || tpbUser">
     <label
       *ngIf="
         dataFromItem.require_changes != 1 &&
