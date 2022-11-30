@@ -152,12 +152,12 @@
       <!-- NEW COLUMNS -->
       <th
         scope="col"
-        [class.active]="order === 'crp_acronym'"
-        (click)="setOrder('crp_acronym')"
+        [class.active]="order === 'initiatives'"
+        (click)="setOrder('initiatives')"
       >
         <div class="header-row">
           INITIATIVES
-          <div class="order-icon" *ngIf="order === 'crp_acronym'">
+          <div class="order-icon" *ngIf="order === 'initiatives'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
           </div>
@@ -573,9 +573,9 @@
             : 0
         }}
       </td>
-      <td>NUMBERS</td>
-      <td>NUMBERS</td>
-      <td>NUMBERS</td>
+      <td>{{ item.comments_replies_count }}</td>
+      <td>{{ item.comments_accepted_count }}</td>
+      <td>{{ item.comments_disagreed_count }}</td>
       <td>NUMBERS</td>
       <td>NUMBERS</td>
       <td>NUMBERS</td>
