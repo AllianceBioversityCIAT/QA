@@ -215,19 +215,26 @@
                             NEEDED</button> -->
           </div>
           <!-- *ngIf="crpComment" -->
-          <div class="done-button" *ngIf="comment.tpb == 1">
+          <div class="done-button" *ngIf="comment.tpb == 1 && crpComment">
             <button
+              class="done-button"
               (click)="implementedChange(comment.id, commentsByColSelected?.id)"
               primary
             >
+              <!-- <span class="tooltiptext"
+                >make sure you have made the changes!
+              </span> -->
               <img src="../../assets/icons/done.svg" alt="" />
               Done
             </button>
           </div>
 
-          <div *ngIf="comment.tpb == 1" class="implemented-changes">
-            <button class="btn btn-danger btn-block">
-              <img src="assets/icons/apagado.png" />
+          <div *ngIf="comment.tpb == 1" class="remove-implemented-changes">
+            <button class="btn remove-implemented-changes btn-block">
+              <span class="tooltiptext"
+                >Changes have not yet been implemented?</span
+              >
+              <img src="assets/icons/marked-done.svg" />
               Implemented changes
             </button>
           </div>
