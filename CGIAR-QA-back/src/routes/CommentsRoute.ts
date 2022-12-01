@@ -41,7 +41,7 @@ router.get("/cycles", [checkJwt, checkRole([RolesHandler.admin])], CommentContro
 // get cycles data
 router.patch("/cycles/update", [checkJwt, checkRole([RolesHandler.admin])], CommentController.updateCycle);
 
-// TODO Update ppu status
+// * Update ppu status
 router.patch("/ppu", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], CommentController.patchPpuChanges);
 
 // get batches data

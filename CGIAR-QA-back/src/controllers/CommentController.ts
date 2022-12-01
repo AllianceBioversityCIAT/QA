@@ -525,16 +525,16 @@ class CommentController {
     // * Updated ppu status ---------------------------------------------------------------------------------------------------------------------
     static patchPpuChanges = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
-        const { require_changes, commentId, commentReplyId } = req.body;
+        const { ppu, commentId, commentReplyId } = req.body;
         let message: String;
 
         try {
             let commentId_ = await commentsRepository.findOneOrFail(commentId);
             let commentReplyId_ = await commentsRepository.findOneOrFail(commentReplyId);
-            commentId_.require_changes = require_changes;
-            commentReplyId_.require_changes = require_changes;
+            commentId_.ppu = ppu;
+            commentReplyId_.ppu = ppu;
 
-            if (require_changes != 0) {
+            if (ppu != 0) {
                 const commentId = await commentsRepository.save(commentId_);
                 const commentReplyId = await commentsRepository.save(commentReplyId_);
                 message = `Require changes was marked done`;
