@@ -398,6 +398,18 @@ input[type="checkbox"]:checked:after {
   }
 }
 
+.btn-danger:hover {
+  background-color: #ff584f;
+  outline: none;
+  border: none;
+  color: black;
+  height: 50px;
+  margin: 10px 0 0 0;
+  img {
+    height: 25px;
+  }
+}
+
 .remove-implemented-changes {
   background-color: #13086b;
   color: white;
@@ -439,6 +451,10 @@ input[type="checkbox"]:checked:after {
     left: 50%;
     transform: translate(-50%) rotate(45deg);
   }
+}
+
+.remove-implemented-changes:hover {
+  background-color: #09004a;
 }
 @media (max-width: 1242px) {
   .comments-container {
@@ -498,6 +514,7 @@ input[type="checkbox"]:checked:after {
     }
     .btn.remove-implemented-changes:hover .tooltiptext {
       visibility: visible;
+      width: 50%;
     }
 
     .btn.remove-implemented-changes:hover .tooltiptext:before {

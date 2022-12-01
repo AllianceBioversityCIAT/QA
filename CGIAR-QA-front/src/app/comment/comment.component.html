@@ -15,7 +15,12 @@
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
         <div class="highlight-view-section" *ngIf="comment.highlight_comment">
-          <img src="assets/icons/highlight.svg" alt="" srcset="" />
+          <img
+            class="fa-shake"
+            src="assets/icons/highlight.svg"
+            alt=""
+            srcset=""
+          />
           <p class="highligt-header">
             Comment highlighted by {{ comment.highlight_by.name }}
           </p>
@@ -229,7 +234,10 @@
             </button>
           </div>
 
-          <div *ngIf="comment.tpb == 1" class="remove-implemented-changes">
+          <div
+            *ngIf="comment.tpb == 1 && crpComment"
+            class="remove-implemented-changes"
+          >
             <button class="btn remove-implemented-changes btn-block">
               <span class="tooltiptext"
                 >Changes have not yet been implemented?</span
