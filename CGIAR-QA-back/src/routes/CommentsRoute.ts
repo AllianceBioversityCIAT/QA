@@ -42,7 +42,7 @@ router.get("/cycles", [checkJwt, checkRole([RolesHandler.admin])], CommentContro
 router.patch("/cycles/update", [checkJwt, checkRole([RolesHandler.admin])], CommentController.updateCycle);
 
 // * Update ppu status
-router.patch("/ppu", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], CommentController.patchPpuChanges);
+router.patch("/ppu", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.patchPpuChanges);
 
 // get batches data
 router.get("/batches", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getBatches);
