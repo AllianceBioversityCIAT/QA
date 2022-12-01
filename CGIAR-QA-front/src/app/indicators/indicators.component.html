@@ -82,6 +82,35 @@
   >
     Further assessment
   </button> -->
+  <div class="filter-by-column">
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="checkbox"
+        (change)="onChange($event, 'one')"
+        id="highlighted"
+      />
+      <label for="highlighted"> Highlighted comments </label>
+    </div>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="checkbox"
+        (change)="onChange($event, 'two')"
+        id="tpb"
+      />
+      <label for="tpb"> Tpb instructions </label>
+    </div>
+    <div class="form-check">
+      <input
+        type="checkbox"
+        class="checkbox"
+        (change)="onChange($event, 'three')"
+        id="implemented"
+      />
+      <label for="implemented"> Implemented Decisions </label>
+    </div>
+  </div>
   <div class="removed-filter">
     <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
       <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
@@ -274,6 +303,7 @@
         </div>
       </th>
       <th
+        class="one"
         scope="col"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
@@ -290,6 +320,7 @@
         </div>
       </th>
       <th
+        class="two"
         scope="col"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
@@ -306,6 +337,7 @@
         </div>
       </th>
       <th
+        class="three"
         scope="col"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
@@ -576,9 +608,9 @@
       <td>{{ item.comments_replies_count }}</td>
       <td>{{ item.comments_accepted_count }}</td>
       <td>{{ item.comments_disagreed_count }}</td>
-      <td>NUMBERS</td>
-      <td>NUMBERS</td>
-      <td>NUMBERS</td>
+      <td class="one">NUMBERS</td>
+      <td class="two">NUMBERS</td>
+      <td class="three">NUMBERS</td>
       <td *ngIf="item" (click)="exportComments(item)">
         <a target="_blank">
           <div
