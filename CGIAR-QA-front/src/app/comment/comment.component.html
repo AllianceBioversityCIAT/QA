@@ -220,10 +220,15 @@
                             NEEDED</button> -->
           </div>
           <!-- *ngIf="crpComment" -->
-          <div class="done-button" *ngIf="comment.tpb == 1 && crpComment">
+          <div
+            class="done-button"
+            *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 0"
+          >
             <button
               class="done-button"
-              (click)="implementedChange(comment.id, commentsByColSelected?.id)"
+              (click)="
+                implementedChange(commentsByColSelected?.id, comment.ppu)
+              "
               primary
             >
               <!-- <span class="tooltiptext"
@@ -235,10 +240,15 @@
           </div>
 
           <div
-            *ngIf="comment.tpb == 1 && crpComment"
+            *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 1"
             class="remove-implemented-changes"
           >
-            <button class="btn remove-implemented-changes btn-block">
+            <button
+              class="btn remove-implemented-changes btn-block"
+              (click)="
+                implementedChange(commentsByColSelected?.id, comment.ppu)
+              "
+            >
               <span class="tooltiptext"
                 >Changes have not yet been implemented?</span
               >

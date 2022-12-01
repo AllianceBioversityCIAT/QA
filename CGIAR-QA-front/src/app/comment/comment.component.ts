@@ -120,7 +120,6 @@ export class CommentComponent implements OnInit {
     if (!this.isCRP) {
       this.getQuickComments();
     }
-    this.getRequireChanges()
   }
 
   istpbUser() {
@@ -173,25 +172,17 @@ export class CommentComponent implements OnInit {
     })
   }
 
-  implementedChange(commentId: number, commentByTpb) {
-    const test = this.commentsByCol.find(fDelete => {
-      return fDelete.is_deleted === false
-      // alert(fDelete)
-    })
-    console.log(test, 'testing first delete in false')
-    commentId = test.id;
-    // commentId = this.mainComment = test.id;
-    console.log(this.mainComment);
+  implementedChange(commentByTpb, implementedChanges: boolean) {
 
     let params = {
-      id: commentId,
-      require_changes: false,
-      commentReplyId: commentByTpb
+      // id: commentId,
+      commentReplyId: commentByTpb,
+      ppu: !implementedChanges
     }
     console.log(params, '<-- implemented changes by PPU')
     this.commentService.patchPpuChanges(params).subscribe((res) => {
       console.log(res);
-      this.getItemCommentData(true)
+      this.getItemCommentData()
     })
 
     this.commentService.updateDataComment(params).subscribe((res) => {
@@ -464,18 +455,7 @@ export class CommentComponent implements OnInit {
     );
   }
 
-  getRequireChanges() {
-    this.commentsByCol.forEach(element => {
-      console.log(element, '<===elementttt');
-      // let found = false;
-      // if (found === false) {
-      // if (!element.is_deleted) {
-      //   this.commentsByColSelected = element;
-      //   found = true;
-      // }
-      // }
-    });
-  }
+
 
   getCommentReplies(comment) {
     if (comment.isCollapsed) {
