@@ -29,22 +29,44 @@ h2 {
   margin-bottom: 1em;
   // font-size: $font-sm;
 
-  .filter-by-column {
-    position: relative;
-    display: flex;
-    input {
-      height: 1em;
-      width: 1em;
-      cursor: pointer;
-    }
-    .checkbox {
-      margin: 0 5px;
+  .filters {
+    .filter-by-column1 {
+      position: relative;
+      display: flex;
+      justify-content: center;
+      input {
+        height: 1em;
+        width: 1em;
+        cursor: pointer;
+      }
+      .checkbox {
+        margin: 0 5px;
+      }
+
+      .form-check {
+        align-items: center;
+        display: flex;
+        padding: 5px;
+      }
     }
 
-    .form-check {
-      align-items: center;
+    .filter-by-column {
+      position: relative;
       display: flex;
-      padding: 5px;
+      input {
+        height: 1em;
+        width: 1em;
+        cursor: pointer;
+      }
+      .checkbox {
+        margin: 0 5px;
+      }
+
+      .form-check {
+        align-items: center;
+        display: flex;
+        padding: 5px;
+      }
     }
   }
 
@@ -74,11 +96,15 @@ h2 {
     // border: 1px solid blue;
   }
   .removed-filter {
+    display: flex;
+    align-items: center;
     .removed-inactive {
       background-color: #fff;
     }
   }
   .form-group {
+    display: flex;
+    align-items: center;
     flex: auto;
   }
 }

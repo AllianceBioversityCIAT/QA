@@ -82,33 +82,55 @@
   >
     Further assessment
   </button> -->
-  <div class="filter-by-column">
-    <div class="form-check">
-      <input
-        type="checkbox"
-        class="checkbox"
-        (change)="onChange($event, 'one')"
-        id="highlighted"
-      />
-      <label for="highlighted"> Highlighted comments </label>
+  <div class="filters">
+    <div class="filter-by-column1">
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="checkbox"
+          (change)="onChange($event, 'one')"
+          id="acepted"
+        />
+        <label for="acepted"> Acepted comments </label>
+      </div>
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="checkbox"
+          (change)="onChange($event, 'two')"
+          id="disagree"
+        />
+        <label for="disagree"> Disagree comments </label>
+      </div>
     </div>
-    <div class="form-check">
-      <input
-        type="checkbox"
-        class="checkbox"
-        (change)="onChange($event, 'two')"
-        id="tpb"
-      />
-      <label for="tpb"> Tpb instructions </label>
-    </div>
-    <div class="form-check">
-      <input
-        type="checkbox"
-        class="checkbox"
-        (change)="onChange($event, 'three')"
-        id="implemented"
-      />
-      <label for="implemented"> Implemented Decisions </label>
+    <div class="filter-by-column">
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="checkbox"
+          (change)="onChange($event, 'three')"
+          id="highlighted"
+        />
+        <label for="highlighted"> Highlighted comments </label>
+      </div>
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="checkbox"
+          (change)="onChange($event, 'four')"
+          id="tpb"
+        />
+        <label for="tpb"> Tpb instructions </label>
+      </div>
+      <div class="form-check">
+        <input
+          type="checkbox"
+          class="checkbox"
+          (change)="onChange($event, 'five')"
+          id="implemented"
+        />
+        <label for="implemented"> Implemented Decisions </label>
+      </div>
     </div>
   </div>
   <div class="removed-filter">
@@ -271,6 +293,7 @@
       <!-- ACCEPTED COMMENTS COLUMN -->
 
       <th
+        class="one tabCol"
         scope="col"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
@@ -288,6 +311,7 @@
       </th>
       <th
         scope="col"
+        class="two tabCol"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
       >
@@ -303,7 +327,7 @@
         </div>
       </th>
       <th
-        class="one"
+        class="three tabCol"
         scope="col"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
@@ -320,7 +344,7 @@
         </div>
       </th>
       <th
-        class="two"
+        class="four tabCol"
         scope="col"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
@@ -337,7 +361,7 @@
         </div>
       </th>
       <th
-        class="three"
+        class="five tabCol"
         scope="col"
         [class.active]="order === 'comments_count'"
         (click)="setOrder('comments_count')"
@@ -606,11 +630,11 @@
         }}
       </td>
       <td>{{ item.comments_replies_count }}</td>
-      <td>{{ item.comments_accepted_count }}</td>
-      <td>{{ item.comments_disagreed_count }}</td>
-      <td class="one">NUMBERS</td>
-      <td class="two">NUMBERS</td>
-      <td class="three">NUMBERS</td>
+      <td class="one tabCol">{{ item.comments_accepted_count }}</td>
+      <td class="two tabCol">{{ item.comments_disagreed_count }}</td>
+      <td class="three tabCol">NUMBERS</td>
+      <td class="four tabCol">NUMBERS</td>
+      <td class="five tabCol">NUMBERS</td>
       <td *ngIf="item" (click)="exportComments(item)">
         <a target="_blank">
           <div
