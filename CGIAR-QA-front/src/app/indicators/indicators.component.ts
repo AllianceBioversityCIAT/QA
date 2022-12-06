@@ -87,6 +87,11 @@ export class IndicatorsComponent implements OnInit {
   criteria_loading = false;
 
   submission_dates: any[] = [];
+  showAcceptedComments = false;
+  showDisagreedComments = false
+  showHighlightedComments = false;
+  showTpbComments = false;
+  showImplementedDecisions = false;
 
   constructor(private activeRoute: ActivatedRoute,
     private router: Router,
@@ -186,22 +191,6 @@ export class IndicatorsComponent implements OnInit {
 
     console.log('NEW INDICATOR');
 
-  }
-
-  onChange(e: any, index: any) {
-    console.log(e.target.checked);
-    var colv = document.getElementsByClassName(index)
-    if (!e.target.checked) {
-      console.log(index);
-      for (let i = 0; i < colv.length; i++) {
-        colv[i].classList.add('tabCol');
-      }
-    } else {
-      for (let i = 0; i < colv.length; i++) {
-        colv[i].classList.remove('tabCol');
-      }
-
-    }
   }
 
 

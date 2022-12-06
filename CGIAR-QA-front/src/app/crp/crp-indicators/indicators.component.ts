@@ -67,6 +67,12 @@ export class CRPIndicatorsComponent implements OnInit {
   submission_dates = [];
   rsaFilter: boolean = false;
 
+  showAcceptedComments = false;
+  showDisagreedComments = false
+  showHighlightedComments = false;
+  showTpbComments = false;
+  showImplementedDecisions = false;
+
 
   constructor(private activeRoute: ActivatedRoute,
     private router: Router,
@@ -104,11 +110,6 @@ export class CRPIndicatorsComponent implements OnInit {
     //   this.verifyIfOrderByStatus();
     // }, 1000);
   }
-
-  onChange(e: any, index: any) {
-
-  }
-
 
   getEvaluationsList(params) {
     this.showSpinner(this.spinner_name);

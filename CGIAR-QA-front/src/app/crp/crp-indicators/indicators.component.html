@@ -107,27 +107,50 @@
           <div class="form-check">
             <input
               type="checkbox"
-              (change)="onChange($event, 'one')"
               name=""
-              id="highlighted"
+              id="accepted"
+              [(ngModel)]="showAcceptedComments"
+              [value]="!showAcceptedComments"
             />
-            <label for="highlighted"> Highlighted comments </label>
+            <label for="accepted"> Accepted </label>
           </div>
           <div class="form-check">
             <input
               type="checkbox"
-              (change)="onChange($event, 'two')"
               name=""
-              id="tpb"
+              id="disagreed"
+              [(ngModel)]="showDisagreedComments"
+              [value]="!showDisagreedComments"
             />
-            <label for="tpb"> Tpb instructions </label>
+            <label for="disagreed"> Disagreed </label>
           </div>
-          <div>
+          <div class="form-check">
             <input
               type="checkbox"
-              (change)="onChange($event, 'three')"
+              name=""
+              id="highlight"
+              [(ngModel)]="showHighlightedComments"
+              [value]="!showHighlightedComments"
+            />
+            <label for="highlight"> Highlighted comments </label>
+          </div>
+          <div class="form-check">
+            <input
+              type="checkbox"
+              name=""
+              id="tpb"
+              [(ngModel)]="showTpbComments"
+              [value]="!showTpbComments"
+            />
+            <label for="tpb"> T-pb instructions </label>
+          </div>
+          <div class="form-check">
+            <input
+              type="checkbox"
               name=""
               id="implemented"
+              [(ngModel)]="showImplementedDecisions"
+              [value]="!showImplementedDecisions"
             />
             <label for="implemented"> Implemented Decisions </label>
           </div>
@@ -250,6 +273,91 @@
                 </div>
               </div>
             </th>
+            <th
+              *ngIf="showAcceptedComments"
+              scope="col"
+              [class.active]="order === 'comments_accepted_count'"
+              (click)="setOrder('comments_accepted_count')"
+            >
+              <div class="header-row">
+                Accepted Comments
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_accepted_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showDisagreedComments"
+              scope="col"
+              [class.active]="order === 'comments_disagreed_count'"
+              (click)="setOrder('comments_disagreed_count')"
+            >
+              <div class="header-row">
+                Disagreed comments
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_disagreed_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showHighlightedComments"
+              scope="col"
+              [class.active]="order === 'comments_disagreed_count'"
+              (click)="setOrder('comments_disagreed_count')"
+            >
+              <div class="header-row">
+                Pending highlighted comments
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_disagreed_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showTpbComments"
+              scope="col"
+              [class.active]="order === 'comments_disagreed_count'"
+              (click)="setOrder('comments_disagreed_count')"
+            >
+              <div class="header-row">
+                T-pb instructions
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_disagreed_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showImplementedDecisions"
+              scope="col"
+              [class.active]="order === 'comments_disagreed_count'"
+              (click)="setOrder('comments_disagreed_count')"
+            >
+              <div class="header-row">
+                Implemeted Decisions
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_disagreed_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
             <th scope="col">
               <div class="header-row">Export comments</div>
             </th>
@@ -278,11 +386,11 @@
           <tr
             *ngFor="
               let item of evaluationList
-                | customFilter: evalStatusFilter:'evaluation_status'
-                | filter: searchText
-                | dateFilter: submission_dates:'submission_date'
-                | filterBoolean: rsaFilter:'require_second_assessment'
-                | slice: currentPage.startItem:currentPage.endItem;
+                | customFilter : evalStatusFilter : 'evaluation_status'
+                | filter : searchText
+                | dateFilter : submission_dates : 'submission_date'
+                | filterBoolean : rsaFilter : 'require_second_assessment'
+                | slice : currentPage.startItem : currentPage.endItem;
               let i = index
             "
           >
@@ -340,14 +448,33 @@
                 {{ item.title }}
               </div>
             </td>
+            <!-- type -->
             <td *ngIf="item.hasOwnProperty('stage')">
               {{ item.stage ? item.stage : notProviedText }}
             </td>
+            <!-- CRP -->
             <td *ngIf="item.hasOwnProperty('fp')">
               {{ item.fp ? item.fp : notProviedText }}
             </td>
             <td>{{ item.comments_replies_count }}</td>
             <td>{{ item.comments_count }}</td>
+
+            <td *ngIf="showAcceptedComments">
+              {{ item.comments_accepted_count }}
+            </td>
+
+            <td *ngIf="showDisagreedComments">
+              {{ item.comments_disagreed_count }}
+            </td>
+            <td *ngIf="showHighlightedComments">
+              {{ item.comments_disagreed_count }}
+            </td>
+            <td *ngIf="showTpbComments">
+              {{ item.comments_disagreed_count }}
+            </td>
+            <td *ngIf="showImplementedDecisions">
+              {{ item.comments_disagreed_count }}
+            </td>
             <td (click)="exportComments(item)">
               <a target="_blank">
                 <div
@@ -395,10 +522,10 @@
         {{
           (
             evaluationList
-            | customFilter: evalStatusFilter:"evaluation_status"
-            | filter: searchText
-            | dateFilter: submission_dates:"submission_date"
-            | filterBoolean: rsaFilter:"require_second_assessment"
+            | customFilter : evalStatusFilter : "evaluation_status"
+            | filter : searchText
+            | dateFilter : submission_dates : "submission_date"
+            | filterBoolean : rsaFilter : "require_second_assessment"
           ).length
         }}
       </div>
@@ -411,10 +538,10 @@
           [totalItems]="
             (
               evaluationList
-              | customFilter: evalStatusFilter:'evaluation_status'
-              | filter: searchText
-              | dateFilter: submission_dates:'submission_date'
-              | filterBoolean: rsaFilter:'require_second_assessment'
+              | customFilter : evalStatusFilter : 'evaluation_status'
+              | filter : searchText
+              | dateFilter : submission_dates : 'submission_date'
+              | filterBoolean : rsaFilter : 'require_second_assessment'
             ).length
           "
           [maxSize]="5"
