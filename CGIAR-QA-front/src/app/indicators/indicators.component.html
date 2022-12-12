@@ -642,7 +642,9 @@
       <td [ngClass]="{ 'one tabCol': !showDisagreedComments }">
         {{ item.comments_disagreed_count }}
       </td>
-      <td *ngIf="showHighlightedComments">NUMBERS</td>
+      <td *ngIf="showHighlightedComments">
+        {{ item.comments_highlight_count }}
+      </td>
       <td *ngIf="showTpbComments">NUMBERS tpb</td>
       <td *ngIf="showImplementedDecisions">NUMBERS</td>
       <td *ngIf="item" (click)="exportComments(item)">
