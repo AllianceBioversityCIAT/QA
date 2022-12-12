@@ -692,6 +692,7 @@ class Util {
             is_highlight: element["is_highlight"],
             highligth_by: element["highligth_by"],
             require_changes: element["require_changes"],
+            comments_highlight_count: element["comments_highlight_count"]
         }
         if (!type) {
             response = Object.assign(response, {
@@ -709,6 +710,7 @@ class Util {
                 is_highlight: element["is_highlight"],
                 highligth_by: element["highligth_by"],
                 require_changes: element["require_changes"],
+                comments_highlight_count: element["comments_highlight_count"]
             });
         } else {
             response = Object.assign(response, {
@@ -740,6 +742,7 @@ class Util {
                 is_highlight: element["is_highlight"],
                 highligth_by: element["highligth_by"],
                 require_changes: element["require_changes"],
+                comments_highlight_count: element["comments_highlight_count"]
             });
 
         }
