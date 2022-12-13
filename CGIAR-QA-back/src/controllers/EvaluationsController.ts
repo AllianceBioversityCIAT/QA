@@ -442,6 +442,32 @@ class EvaluationsController {
                                 AND is_visible = 1
                                 LIMIT 1
                         ) AS comments_highlight_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND tpb = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_tpb_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND ppu = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_ppu_count,
                     ( SELECT COUNT(id) FROM qa_comments_replies WHERE commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) AND is_deleted = 0 ) AS comments_replies_count,
 
                     ${levelQuery.view_sql}
@@ -520,6 +546,19 @@ class EvaluationsController {
                             -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                         ) AS comments_count,
 
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND approved_no_comment IS NULL
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                AND replyTypeId = 2
+                        ) AS comments_disagreed_count,
 
                         (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
@@ -536,6 +575,32 @@ class EvaluationsController {
                                 AND is_visible = 1
                                 LIMIT 1
                         ) AS comments_highlight_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND tpb = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_tpb_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND ppu = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_ppu_count,
                         ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 ) AND is_deleted = 0 ) AS comments_replies_count,
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
@@ -656,6 +721,32 @@ class EvaluationsController {
                                 AND is_visible = 1
                                 LIMIT 1
                         ) AS comments_highlight_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND tpb = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_tpb_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND ppu = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_ppu_count,
 
                         (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,

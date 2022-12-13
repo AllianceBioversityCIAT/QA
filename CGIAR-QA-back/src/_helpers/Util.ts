@@ -692,7 +692,9 @@ class Util {
             is_highlight: element["is_highlight"],
             highligth_by: element["highligth_by"],
             require_changes: element["require_changes"],
-            comments_highlight_count: element["comments_highlight_count"]
+            comments_highlight_count: element["comments_highlight_count"],
+            comments_tpb_count: element["comments_tpb_count"],
+            comments_ppu_count: element["comments_ppu_count"]
         }
         if (!type) {
             response = Object.assign(response, {
@@ -710,7 +712,10 @@ class Util {
                 is_highlight: element["is_highlight"],
                 highligth_by: element["highligth_by"],
                 require_changes: element["require_changes"],
-                comments_highlight_count: element["comments_highlight_count"]
+                comments_highlight_count: element["comments_highlight_count"],
+                comments_tpb_count: element["comments_tpb_count"],
+                comments_ppu_count: element["comments_ppu_count"],
+                comments_disagreed_count: element["comments_disagreed_count"],
             });
         } else {
             response = Object.assign(response, {
@@ -742,7 +747,9 @@ class Util {
                 is_highlight: element["is_highlight"],
                 highligth_by: element["highligth_by"],
                 require_changes: element["require_changes"],
-                comments_highlight_count: element["comments_highlight_count"]
+                comments_highlight_count: element["comments_highlight_count"],
+                comments_tpb_count: element["comments_tpb_count"],
+                comments_ppu_count: element["comments_ppu_count"]
             });
 
         }
