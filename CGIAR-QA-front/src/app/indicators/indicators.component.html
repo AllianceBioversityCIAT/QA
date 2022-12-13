@@ -334,15 +334,15 @@
       <th
         *ngIf="showHighlightedComments"
         scope="col"
-        [class.active]="order === 'comments_count'"
-        (click)="setOrder('comments_count')"
+        [class.active]="order === 'highlight_comments_count'"
+        (click)="setOrder('highlight_comments_count')"
       >
         <div class="header-row">
-          Pending Highlighted comments on core fields
+          Highlighted comments on core fields
           <div *ngIf="currentUser.cycle.cycle_stage == 2" class="flag">
             2nd round
           </div>
-          <div class="order-icon" *ngIf="order === 'comments_count'">
+          <div class="order-icon" *ngIf="order === 'highlight_comments_count'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
           </div>
@@ -645,8 +645,8 @@
       <td *ngIf="showHighlightedComments">
         {{ item.comments_highlight_count }}
       </td>
-      <td *ngIf="showTpbComments">NUMBERS tpb</td>
-      <td *ngIf="showImplementedDecisions">NUMBERS</td>
+      <td *ngIf="showTpbComments">{{ item.comments_tpb_count }}</td>
+      <td *ngIf="showImplementedDecisions">{{ item.comments_ppu_count }}</td>
       <td *ngIf="item" (click)="exportComments(item)">
         <a target="_blank">
           <div

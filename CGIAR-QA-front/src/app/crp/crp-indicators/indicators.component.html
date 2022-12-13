@@ -467,13 +467,13 @@
               {{ item.comments_disagreed_count }}
             </td>
             <td *ngIf="showHighlightedComments">
-              {{ item.comments_disagreed_count }}
+              {{ item.comments_highlight_count }}
             </td>
             <td *ngIf="showTpbComments">
-              {{ item.comments_disagreed_count }}
+              {{ item.comments_tpb_count }}
             </td>
             <td *ngIf="showImplementedDecisions">
-              {{ item.comments_disagreed_count }}
+              {{ item.comments_ppu_count }}
             </td>
             <td (click)="exportComments(item)">
               <a target="_blank">
