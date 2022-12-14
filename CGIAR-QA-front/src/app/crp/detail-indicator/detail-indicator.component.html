@@ -25,7 +25,7 @@
     }}{{ params.type.charAt(1).toUpperCase() }}-{{ params.indicatorId }}
   </p>
   <div class="col status" *ngIf="currentUser.hasOwnProperty('cycle')">
-    <div class="assessment-status">
+    <!-- <div class="assessment-status">
       <p>Assessment Status:</p>
       <div class="status">
         <i
@@ -39,7 +39,7 @@
         </i>
         {{ statusNames[gnralInfo.status] }}
       </div>
-    </div>
+    </div> -->
     <div class="response-status">
       <p>Response Status:</p>
       <div class="status">
@@ -92,7 +92,7 @@
                 <i class="icon-public-link"></i> 
             </div>
         </a> -->
-    <div class="btn-mis">
+    <!-- <div class="btn-mis">
       <a
         tooltip="{{ tooltips.editable_link_mel }}"
         *ngIf="crpsMEL.hasOwnProperty(detailedData[0].crp_acronym)"
@@ -112,7 +112,7 @@
       >
         <i class="icon-marlo"></i>
       </a>
-    </div>
+    </div> -->
   </div>
 </div>
 
@@ -202,8 +202,8 @@
               *ngIf="
                 detailedData[i].value &&
                 detailedData[i].col_name !== 'evidence_link' &&
-                  detailedData[i].col_name !== 'outcome_description' &&
-                  detailedData[i].col_name !== 'OICR'
+                detailedData[i].col_name !== 'outcome_description' &&
+                detailedData[i].col_name !== 'OICR'
               "
               [innerHTML]="detailedData[i].value | markdown"
             ></div>
@@ -394,7 +394,7 @@
               *ngIf="
                 detailedData[i].value &&
                 detailedData[i].col_name !== 'outcome_description' &&
-                  detailedData[i].col_name !== 'OICR'
+                detailedData[i].col_name !== 'OICR'
               "
               [innerHTML]="detailedData[i].value | markdown"
             ></div>

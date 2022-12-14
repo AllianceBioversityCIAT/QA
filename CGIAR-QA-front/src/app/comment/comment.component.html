@@ -40,7 +40,7 @@
               <div>
                 <span>ADDED BY {{ comment.user.username }} </span>
                 <div>
-                  <p>On {{ comment.updatedAt | date: "long" }}</p>
+                  <p>On {{ comment.updatedAt | date : "long" }}</p>
                   <!-- <p *ngIf="comment.cycle"> {{comment.cycle.cycle_name}}:
                                         <strong>{{comment.cycle.cycle_stage}} </strong>
                                     </p> -->
@@ -107,7 +107,7 @@
                           *ngIf="comment.replyType?.id != replyTypes.accepted"
                           >ADDED BY {{ reply.user.username }}
                         </span>
-                        <p>On {{ reply.updatedAt | date: "long" }}</p>
+                        <p>On {{ reply.updatedAt | date : "long" }}</p>
                       </div>
 
                       <i
@@ -134,12 +134,17 @@
               (dataFromItem.is_core ||
                 currentUser.roles[0].description === allRoles.admin ||
                 userIsLeader) &&
-              comment.replies.replies_count > '0'
+              comment.replies.replies_count > '0' &&
+              !crpComment
             "
             class="highlight-section"
           >
             <button
-              *ngIf="comment.highlight_comment == false && dataFromItem.is_core"
+              *ngIf="
+                comment.highlight_comment == false &&
+                dataFromItem.is_core &&
+                currentUser.cycle.cycle_stage == 2
+              "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
               "
@@ -151,7 +156,10 @@
 
           <div *ngIf="!crpComment" class="btn-danger-section">
             <button
-              *ngIf="comment.highlight_comment == !false"
+              *ngIf="
+                comment.highlight_comment == !false &&
+                currentUser.cycle.cycle_stage == 2
+              "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
               "
@@ -185,7 +193,7 @@
                 <h5>Do you want to ACCEPT this comment?</h5>
                 <p>
                   Before you accept this comment, please make sure you have
-                  updated the information in MARLO/MEL
+                  updated the information in PRMS reporting
                 </p>
                 <form [formGroup]="commentGroup">
                   <textarea
@@ -222,7 +230,12 @@
           <!-- *ngIf="crpComment" -->
           <div
             class="done-button"
-            *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 0"
+            *ngIf="
+              comment.tpb == 1 &&
+              crpComment &&
+              comment.ppu == 0 &&
+              currentUser.cycle.cycle_stage == 2
+            "
           >
             <button
               class="done-button"
@@ -343,7 +356,7 @@
               <div>
                 <span>ADDED BY {{ comment.user.username }} </span>
                 <div>
-                  <p>On {{ comment.updatedAt | date: "long" }}</p>
+                  <p>On {{ comment.updatedAt | date : "long" }}</p>
                   <p *ngIf="comment.cycle">
                     {{ comment.cycle.cycle_name }}:
                     <strong>{{ comment.cycle.cycle_stage }} </strong>
@@ -386,7 +399,7 @@
                           *ngIf="comment.replyType?.id == replyTypes.accepted"
                           >ADDED BY {{ reply.user.username }}
                         </span>
-                        <p>On {{ reply.updatedAt | date: "long" }}</p>
+                        <p>On {{ reply.updatedAt | date : "long" }}</p>
                       </div>
                       <i
                         style="height: 2em"
@@ -427,7 +440,8 @@
     <input
       *ngIf="
         dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.replies.replies_count > 0
+        commentsByColSelected?.replies.replies_count > 0 &&
+        currentUser.cycle.cycle_stage == 2
       "
       class="checkbox-style"
       type="checkbox"
@@ -436,7 +450,8 @@
     <label
       *ngIf="
         dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.replies.replies_count > 0
+        commentsByColSelected?.replies.replies_count > 0 &&
+        currentUser.cycle.cycle_stage == 2
       "
       class="checkbox-label"
       for="changes"

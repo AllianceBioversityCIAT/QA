@@ -8,8 +8,8 @@ import { AlertService } from '../../services/alert.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 import { User } from '../../_models/user.model';
-import { DetailedStatus, GeneralIndicatorName, GeneralStatus, StatusNames, StatusNamesCRP } from "../../_models/general-status.model" 
-import { crpMEL  } from "../../_models/crp.model" ;
+import { DetailedStatus, GeneralIndicatorName, GeneralStatus, StatusNames, StatusNamesCRP } from "../../_models/general-status.model"
+import { crpMEL } from "../../_models/crp.model";
 import { Role } from 'src/app/_models/roles.model';
 import { Title } from '@angular/platform-browser';
 import { CommentService } from 'src/app/services/comment.service';
@@ -27,25 +27,10 @@ import { animate, style, transition, trigger } from '@angular/animations';
   providers: [UrlTransformPipe, WordCounterPipe],
   animations: [
     trigger(
-      'inOutAnimation', 
+      'inOutAnimation',
       [
         transition(
-          ':enter', 
-          [
-            style({
-            backgroundColor: '#cfeaf3',
-            padding: '1em',
-            marginBottom: '0.5em',
-            borderRadius: '5px',
-            fontStyle: 'italic',
-            fontSize: '$font-xs',
-            opacity: 0 }),
-            animate('0.5s ease-out', 
-                    style({opacity: 1 }))
-          ]
-        ),
-        transition(
-          ':leave', 
+          ':enter',
           [
             style({
               backgroundColor: '#cfeaf3',
@@ -54,9 +39,26 @@ import { animate, style, transition, trigger } from '@angular/animations';
               borderRadius: '5px',
               fontStyle: 'italic',
               fontSize: '$font-xs',
-              opacity: 1 }),
-            animate('0.1s ease-in', 
-                    style({ opacity: 0 }))
+              opacity: 0
+            }),
+            animate('0.5s ease-out',
+              style({ opacity: 1 }))
+          ]
+        ),
+        transition(
+          ':leave',
+          [
+            style({
+              backgroundColor: '#cfeaf3',
+              padding: '1em',
+              marginBottom: '0.5em',
+              borderRadius: '5px',
+              fontStyle: 'italic',
+              fontSize: '$font-xs',
+              opacity: 1
+            }),
+            animate('0.1s ease-in',
+              style({ opacity: 0 }))
           ]
         )
       ]
@@ -87,7 +89,7 @@ export class DetailIndicatorComponent implements OnInit {
   crpsMEL = crpMEL;
   generalCommentGroup: FormGroup;
   currentType = '';
-  isCRP= true;
+  isCRP = true;
   general_comment_reply;
   statusNames = StatusNames;
   statusNamesCRP = StatusNamesCRP;
@@ -106,7 +108,7 @@ export class DetailIndicatorComponent implements OnInit {
   tickGroup: FormGroup;
   tooltips = {
     public_link: '',
-    editable_link_marlo: 'Click here to access the item in MARLO',
+    // editable_link_marlo: 'Click here to access the item in MARLO',
     editable_link_mel: 'Click here to access the item in MEL',
     download_excel: 'Click here to download all comments in an excel file.',
     all_approved: 'Setting this option true, will approved all items without comments.'
@@ -156,7 +158,7 @@ export class DetailIndicatorComponent implements OnInit {
 
   ngOnInit() {
     console.log(this.crpsMEL);
-    
+
   }
 
   getDetailedData() {
@@ -164,15 +166,15 @@ export class DetailIndicatorComponent implements OnInit {
       res => {
         this.detailedData = res.data.filter(field => {
           if (typeof field.value === 'number') field.value = String(field.value)
-          if(field.value) {
-            field.value = field.value.replace("´","'");
-            if(field.value.includes('<table>')){
+          if (field.value) {
+            field.value = field.value.replace("´", "'");
+            if (field.value.includes('<table>')) {
               field.value = field.value.replace(new RegExp('<p>', 'g'), "");
               field.value = field.value.replace(new RegExp('</p>', 'g'), " ");
               field.value = field.value.replace(new RegExp('<td>', 'g'), `<td><p class="p-styles">`);
               field.value = field.value.replace(new RegExp('</td>', 'g'), "</p></td>");
               field.value = field.value.replace(new RegExp('\n', 'g'), " ");
-            } else{
+            } else {
               field.value = field.value.replace(new RegExp('\n', 'g'), "<br />");
             }
             field.value = field.value.replace(new RegExp('<a', 'g'), '<a target="_blank"');
@@ -182,7 +184,7 @@ export class DetailIndicatorComponent implements OnInit {
         });
 
         console.log(this.detailedData);
-        
+
         // this.generalCommentGroup.patchValue({ general_comment: this.detailedData[0].general_comment });
         this.gnralInfo = {
           evaluation_id: this.detailedData[0].evaluation_id,
@@ -196,7 +198,7 @@ export class DetailIndicatorComponent implements OnInit {
           requires_second_assessment: this.detailedData[0].require_second_assessment
         }
         console.log(this.gnralInfo);
-        
+
         this.activeCommentArr = Array<boolean>(this.detailedData.length).fill(false);
 
         this.hideSpinner(this.spinner1);
@@ -309,56 +311,56 @@ export class DetailIndicatorComponent implements OnInit {
 
   // convenience getter for easy access to form fields
   get formData() { return this.generalCommentGroup.controls; }
-//Emitted from comment component
-hideComments(index: number, field: any, e?) {
-  this.fieldIndex = index;
-  field.clicked = !field.clicked;
-  this.activeCommentArr[index] = !this.activeCommentArr[index];
-  // this.renderComments = this.activeCommentArr[index];
+  //Emitted from comment component
+  hideComments(index: number, field: any, e?) {
+    this.fieldIndex = index;
+    field.clicked = !field.clicked;
+    this.activeCommentArr[index] = !this.activeCommentArr[index];
+    // this.renderComments = this.activeCommentArr[index];
 
-  console.log('HIDE COMMENTS');
-  if(this.actualComment){
-        
-    // this.actualComment.scrollIntoView({ block: 'center',  behavior: 'instant', inline: 'nearest' });
+    console.log('HIDE COMMENTS');
+    if (this.actualComment) {
+
+      // this.actualComment.scrollIntoView({ block: 'center',  behavior: 'instant', inline: 'nearest' });
+    }
+    // this.commentsElem.nativeElement.scrollIntoView({ behavior: "smooth"});
+    // if(!this.activeCommentArr[index]) this.validateAllFieldsAssessed();
   }
-  // this.commentsElem.nativeElement.scrollIntoView({ behavior: "smooth"});
-  // if(!this.activeCommentArr[index]) this.validateAllFieldsAssessed();
-}
 
-showComments(index: number, field: any, elementRef: any, e?) {
-  this.fieldIndex = index;
-  field.clicked = !field.clicked;
-  this.activeCommentArr[index] = !this.activeCommentArr[index];
-  console.log('SHOW_COMMENTS');
+  showComments(index: number, field: any, elementRef: any, e?) {
+    this.fieldIndex = index;
+    field.clicked = !field.clicked;
+    this.activeCommentArr[index] = !this.activeCommentArr[index];
+    console.log('SHOW_COMMENTS');
 
-  // this.commentsElem.nativeElement.scrollIntoView({ behavior: "smooth"});
-  if (e) {
-    setTimeout(() => {
-      let parentPos = this.getPosition(this.containerElement.nativeElement);
-      let yPosition = this.getPosition(elementRef)
-      console.log({parentPos});
-      console.log({yPosition});
-      
-      this.currentY = yPosition.y - parentPos.y;
-      this.renderComments = this.activeCommentArr[index];
-      this.actualComment = elementRef;
-      // elementRef.scrollIntoView({ block: 'start',  behavior: 'smooth' });
-  
-      // setTimeout(()=> {window.scrollBy({top: -15, behavior: 'smooth'})});
-    }, 100);
+    // this.commentsElem.nativeElement.scrollIntoView({ behavior: "smooth"});
+    if (e) {
+      setTimeout(() => {
+        let parentPos = this.getPosition(this.containerElement.nativeElement);
+        let yPosition = this.getPosition(elementRef)
+        console.log({ parentPos });
+        console.log({ yPosition });
 
+        this.currentY = yPosition.y - parentPos.y;
+        this.renderComments = this.activeCommentArr[index];
+        this.actualComment = elementRef;
+        // elementRef.scrollIntoView({ block: 'start',  behavior: 'smooth' });
+
+        // setTimeout(()=> {window.scrollBy({top: -15, behavior: 'smooth'})});
+      }, 100);
+
+    }
+    // if(!this.activeCommentArr[index]) this.validateAllFieldsAssessed();
   }
-  // if(!this.activeCommentArr[index]) this.validateAllFieldsAssessed();
-}
-  updateNumCommnts({length, replies_count, validateFields}, detailedData) {
+  updateNumCommnts({ length, replies_count, validateFields }, detailedData) {
     // console.log('updateNumCommnts', event, event[0].replies.replies_count)
     //  event[0].replies.replies_count;
     console.log(detailedData);
-    
+
     detailedData.replies_count = length;
     let repls_count = 0;
     console.log(replies_count);
-    
+
     repls_count = replies_count;
     // event.forEach(element => {
     //   repls_count += parseInt(element.replies.replies_count)
