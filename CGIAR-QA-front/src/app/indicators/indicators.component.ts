@@ -49,6 +49,8 @@ export class IndicatorsComponent implements OnInit {
     qa_capdev: 1,
     qa_milestones: 1,
     qa_slo: 1,
+    qa_impact_contribution: 1,
+    qa_knowledge_product: 1,
   };
   stageHeaderText = {
     policies: 'Stage',
@@ -196,9 +198,9 @@ export class IndicatorsComponent implements OnInit {
 
   getEvaluationsList(params) {
     this.showSpinner();
+
     this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column).subscribe(
       res => {
-
 
         // console.log(res)
         if (this.indicatorType == 'slo') {
@@ -211,6 +213,7 @@ export class IndicatorsComponent implements OnInit {
 
         this.collectionSize = this.evaluationList.length;
         this.returnedArray = this.evaluationList.slice(0, 10);
+        console.log("🚀 ~ file: indicators.component.ts:215 ~ IndicatorsComponent ~ getEvaluationsList ~ returnedArray", this.returnedArray)
         this.returnedArrayHasStage = this.returnedArray.find(e => e.stage != null)
         // console.log('RETURNED_ARRAY', this.returnedArray);
 
@@ -331,7 +334,7 @@ export class IndicatorsComponent implements OnInit {
     )
   }
 
-
+  // * Para darle nombre a la columna primaria
   returnListName(indicator: string, type: string) {
     let r;
     if (type === 'header') {

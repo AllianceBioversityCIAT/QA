@@ -8,4 +8,6 @@ export enum GeneralIndicatorName {
     qa_milestones= 'Milestones',
     qa_outcomes= 'Outcomes',
     qa_slo= 'SLOs',
+    qa_impact_contribution= 'Impact Contribution',
+    qa_knowledge_product= 'Knowledge Product',
 }

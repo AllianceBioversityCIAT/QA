@@ -232,8 +232,8 @@
           </div>
         </div>
       </th>
-      <th
-        *ngIf="returnedArray && returnedArrayHasStage"
+      <!-- <th
+        *ngIf="returnedArray"
         scope="col"
         [class.active]="order === 'stage'"
         (click)="setOrder('stage')"
@@ -245,7 +245,7 @@
             <span [hidden]="!reverse">▲</span>
           </div>
         </div>
-      </th>
+      </th> -->
       <th
         *ngIf="returnedArray && returnedArray[0].fp"
         scope="col"
@@ -514,8 +514,6 @@
         let item of evaluationList
           | customFilter : evalStatusFilter : 'evaluation_status'
           | filter : searchText
-          | dateFilter : submission_dates : 'submission_date'
-          | filterBoolean : rsaFilter : 'require_second_assessment'
           | slice : currentPageList.startItem : currentPageList.endItem;
         let i = index
       "

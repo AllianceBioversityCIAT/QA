@@ -44,6 +44,8 @@ export class HeaderBarComponent implements OnInit {
     { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
     { name: 'CapDevs', viewname: 'qa_capdev' },
     { name: 'MELIAs', viewname: 'qa_melia' },
+    { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
+    { name: 'Knoledge Product', viewname: 'qa_knowledge_product' },
     // { name: 'Indicator Contrib', viewname: 'qa_aiccra_indicators_contrib' },
     // qa_outcomes: 'Outcomes',
   ]

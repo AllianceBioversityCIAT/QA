@@ -23,7 +23,9 @@ export class IndicatorsService {
     qa_capdev: 1,
     qa_milestones: 1,
     qa_slo: 1,
-    qa_aiccra_indicators_contrib: 1
+    qa_aiccra_indicators_contrib: 1,
+    qa_impact_contribution: 1,
+    qa_knowledge_product: 1,
   }
   constructor(private http: HttpClient) { }
 
