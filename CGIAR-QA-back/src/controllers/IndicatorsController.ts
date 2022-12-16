@@ -546,7 +546,9 @@ class IndicatorsController {
             qa_capdev: {},
             qa_milestones: {},
             qa_outcomes: {},
-            qa_slo: {}
+            qa_slo: {},
+            qa_impact_contribution: {},
+            qa_knowledge_product: {},
         };
         const indicators = Object.keys(GeneralIndicatorName);
 
