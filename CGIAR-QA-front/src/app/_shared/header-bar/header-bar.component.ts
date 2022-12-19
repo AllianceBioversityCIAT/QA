@@ -42,10 +42,10 @@ export class HeaderBarComponent implements OnInit {
     { name: 'Innovations', viewname: 'qa_innovations' },
     { name: 'Milestones', viewname: 'qa_milestones' },
     { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    { name: 'CapDevs', viewname: 'qa_capdev' },
+    { name: 'CapDevs', viewname: 'qa_capdev_old' },
     { name: 'MELIAs', viewname: 'qa_melia' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
     { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
-    { name: 'Knoledge Product', viewname: 'qa_knowledge_product' },
     // { name: 'Indicator Contrib', viewname: 'qa_aiccra_indicators_contrib' },
     // qa_outcomes: 'Outcomes',
   ]

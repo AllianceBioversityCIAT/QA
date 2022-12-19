@@ -50,6 +50,7 @@ export class CrpComponent implements OnInit {
 
   ngOnInit() {
     this.indicators = JSON.parse(localStorage.getItem('indicatorsCRP')) || [];
+    console.log("🚀 ~ file: crp.component.ts:53 ~ CrpComponent ~ ngOnInit ~ this.indicators", this.indicators)
     // if (this.indicators = [])
     //   this.getCRPIndicators();
   }
@@ -85,6 +86,7 @@ export class CrpComponent implements OnInit {
       this.indicatorService.getIndicators()
         .subscribe(
           res => {
+            console.log("🚀 ~ file: crp.component.ts:103 ~ CrpComponent ~ getCRPIndicators ~ res", res)
 
             this.indicators = res.data.sort((a, b) => a.order - b.order);
             //TO-DO
@@ -98,7 +100,7 @@ export class CrpComponent implements OnInit {
             console.log("getCRPIndicators", error);
             this.alertService.error(error);
           }
-        );
+          );
     }
   }
 

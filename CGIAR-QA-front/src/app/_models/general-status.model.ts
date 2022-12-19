@@ -15,12 +15,12 @@ export enum GeneralIndicatorName {
     qa_publications= 'Peer Reviewed Papers',
     qa_oicr= 'OICRs',
     qa_melia= 'MELIAs',
-    qa_capdev= 'CapDevs',
+    qa_capdev_old= 'CapDevs-Old',
     qa_milestones= 'Milestones',
     qa_slo= 'SLOs',
     qa_aiccra_indicators_contrib = 'AICCRA Indicators Contrib',
-    qa_impact_contribution = 'Impact Contribution',
     qa_knowledge_product = 'Knowledge Product',
+    qa_capdev = 'CapDev',
     // qa_outcomes= 'Outcomes',
 }
 
@@ -30,10 +30,11 @@ export enum IndicatorsID {
     publications= 3,
     oicr= 4,
     melia= 5,
-    capdev= 6,
+    capdev_old= 6,
     milestones= 7,
     slo= 8,
-    impact_contribution = 10
+    knowledge_product = 10,
+    capdev = 11
 }
 
 export enum TagMessage {

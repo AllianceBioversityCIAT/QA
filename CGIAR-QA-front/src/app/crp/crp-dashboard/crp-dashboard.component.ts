@@ -38,9 +38,11 @@ export class CrpDashboardComponent implements OnInit {
     qa_publications: [],
     qa_oicr: [],
     qa_melia: [],
-    qa_capdev: [],
+    qa_capdev_old: [],
     qa_milestones: [],
-    qa_slo: []
+    qa_slo: [],
+    qa_knoledge_product: [],
+    qa_capdev: [],
   }
   totalPendings = {
     qa_policies: 0,
@@ -48,9 +50,11 @@ export class CrpDashboardComponent implements OnInit {
     qa_publications: 0,
     qa_oicr: 0,
     qa_melia: 0,
-    qa_capdev: 0,
+    qa_capdev_old: 0,
     qa_milestones: 0,
-    qa_slo: 0
+    qa_slo: 0,
+    qa_knowledge_product: 0,
+    qa_capdev: 0,
   }
   dashboardCommentsData: any[];
 
