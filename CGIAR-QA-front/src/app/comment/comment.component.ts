@@ -183,6 +183,7 @@ export class CommentComponent implements OnInit {
     this.commentService.patchPpuChanges(params).subscribe((res) => {
       console.log(res);
       this.getItemCommentData()
+      this.showSpinner(this.spinner_comment)
     })
 
     this.commentService.updateDataComment(params).subscribe((res) => {
