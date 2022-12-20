@@ -538,7 +538,7 @@
           }}"
           style="display: none"
         >
-          {{ item.evaluation_status }}gggg
+          {{ item.evaluation_status }}
         </div>
         <a
           (click)="savePageList()"
@@ -579,7 +579,7 @@
       <!-- CRP/PTF - DEBE SER DE TYPE -->
       <td>{{ item.crp_acronym }}</td>
       <!-- COMMENTS -->
-      <td>{{ item.comments_count }} comentarios en total</td>
+      <td>{{ item.comments_count }}</td>
       <!-- Type -->
 
       <td *ngIf="item.hasOwnProperty('stage')">
@@ -606,16 +606,16 @@
       <!-- Answered comments -->
 
       <td *ngIf="showAcceptedComments">
-        {{ item.comments_accepted_count }} aceptados
+        {{ item.comments_accepted_count }}
       </td>
       <td *ngIf="showHighlightedComments">
-        {{ item.comments_highlight_count }} higk
+        {{ item.comments_highlight_count }}
       </td>
       <td *ngIf="showTpbComments">
         {{ item.comments_tpb_count }}
       </td>
       <td *ngIf="showImplementedDecisions">
-        {{ item.comments_ppu_count }}decisiones implementadas
+        {{ item.comments_ppu_count }}
       </td>
       <td
         *ngIf="
@@ -628,10 +628,9 @@
             ? item.comments_accepted_with_comment_count
             : 0
         }}
-        aceptados con comentarios
       </td>
       <td *ngIf="showDisagreedComments">
-        {{ item.comments_disagreed_count }} eu sou desagree
+        {{ item.comments_disagreed_count }}
       </td>
 
       <td *ngIf="item" (click)="exportComments(item)">
