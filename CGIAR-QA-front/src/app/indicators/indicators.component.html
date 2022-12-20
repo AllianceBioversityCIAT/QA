@@ -102,7 +102,7 @@
           [(ngModel)]="showDisagreedComments"
           [value]="!showDisagreedComments"
         />
-        <label for="disagree"> Disagree comments </label>
+        <label for="disagree"> Disagreed comments </label>
       </div>
     </div>
     <div class="filter-by-column">
@@ -314,23 +314,23 @@
           </div>
         </div>
       </th>
-      <th
+      <!-- <th
         *ngIf="showDisagreedComments"
         scope="col"
         [class.active]="order === 'comments_disagreed_count'"
         (click)="setOrder('comments_disagreed_count')"
-      >
-        <div class="header-row">
-          Disagreed comments
-          <!-- <div *ngIf="currentUser.cycle.cycle_stage == 2" class="flag">
+      > -->
+      <!-- <div class="header-row"> -->
+      <!-- Disagreed comments -->
+      <!-- <div *ngIf="currentUser.cycle.cycle_stage == 2" class="flag">
             2nd round
           </div> -->
-          <div class="order-icon" *ngIf="order === 'comments_disagreed_count'">
+      <!-- <div class="order-icon" *ngIf="order === 'comments_disagreed_count'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
           </div>
         </div>
-      </th>
+      </th> -->
       <th
         *ngIf="showHighlightedComments"
         scope="col"
@@ -382,17 +382,25 @@
       <!-- FINAL ANSWERED COMMENTS COLUMN -->
 
       <!-- Do not show Replies count & accepted comments columns -->
-      <!-- <th *ngIf="returnedArray && returnedArray[0].comments_replies_count && currentUser.cycle.cycle_stage == 2" scope="col"
-                [class.active]="order === 'comments_replies_count'" (click)="setOrder('comments_replies_count')">
-                <div class="header-row">
-                    Replies count
-                    {{returnedArray[0].comments_replies_count}}
-                    <div class="order-icon" *ngIf="order === 'comments_replies_count'">
-                        <span [hidden]="reverse">▼</span>
-                        <span [hidden]="!reverse">▲</span>
-                    </div>
-                </div>
-            </th> -->
+      <!-- <th
+        *ngIf="
+          returnedArray &&
+          returnedArray[0].comments_replies_count &&
+          currentUser.cycle.cycle_stage == 2
+        "
+        scope="col"
+        [class.active]="order === 'comments_replies_count'"
+        (click)="setOrder('comments_replies_count')"
+      >
+        <div class="header-row">
+          Replies count
+          {{ returnedArray[0].comments_replies_count }}
+          <div class="order-icon" *ngIf="order === 'comments_replies_count'">
+            <span [hidden]="reverse">▼</span>
+            <span [hidden]="!reverse">▲</span>
+          </div>
+        </div>
+      </th> -->
       <th
         *ngIf="
           returnedArray &&
@@ -420,7 +428,7 @@
         *ngIf="
           returnedArray &&
           returnedArray[0].comments_disagreed_count &&
-          currentUser.cycle.cycle_stage == 2
+          showDisagreedComments
         "
         scope="col"
         [class.active]="order === 'comments_disagreed_count'"
@@ -435,7 +443,7 @@
           </div>
         </div>
       </th>
-      <th
+      <!-- <th
         *ngIf="
           returnedArray &&
           returnedArray[0].comments_clarification_count &&
@@ -456,7 +464,7 @@
             <span [hidden]="!reverse">▲</span>
           </div>
         </div>
-      </th>
+      </th> -->
 
       <th scope="col">
         <div class="header-row">Export comments</div>
@@ -530,7 +538,7 @@
           }}"
           style="display: none"
         >
-          {{ item.evaluation_status }}
+          {{ item.evaluation_status }}gggg
         </div>
         <a
           (click)="savePageList()"
@@ -563,42 +571,52 @@
         <div *ngIf="returnedArray[0].brief" class="div">{{ item.title }}</div>
       </td>
       <!-- NEW DATA ROWS -->
-      <!-- <td>
-        <div
-          *ngIf="item.evaluation_status && item.evaluation_status !== 'New'"
-          class="evaluation-status {{
-            item.evaluation_status ? item.evaluation_status.toLowerCase() : ''
-          }}"
-          style="display: none"
-        >
-          {{ item.evaluation_status }}
-        </div>
-        <a
-          (click)="savePageList()"
-          *ngIf="!item.brief"
-          rel="noopener noreferrer"
-          [routerLinkActive]="['active']"
-          routerLink="./detail/{{ item.id }}"
-        >
-          {{ fixAccent(item.title) }}</a
-        >
-        <div *ngIf="returnedArray[0].brief" class="div">{{ item.title }}</div>
-      </td> -->
+
       <!-- FINALIZED INITIATIVES FIELD -->
       <!-- INITIATIVES SHOULD BE DISPLAYED IN NEXT LINE -->
-
+      <!-- DEBE SER INICIATIVA -->
       <td>{{ item.crp_acronym }}</td>
-      <!-- CRP/PTF -->
+      <!-- CRP/PTF - DEBE SER DE TYPE -->
       <td>{{ item.crp_acronym }}</td>
+      <!-- COMMENTS -->
+      <td>{{ item.comments_count }} comentarios en total</td>
       <!-- Type -->
+
       <td *ngIf="item.hasOwnProperty('stage')">
         {{ item.stage ? item.stage : notProviedText }}
       </td>
       <td *ngIf="item.hasOwnProperty('fp')">
         {{ item.fp ? item.fp : notProviedText }}
       </td>
-      <!-- COMMENTS -->
-      <td>{{ item.comments_count }}</td>
+
+      <td>{{ item.comments_replies_count }}</td>
+
+      <!-- <td
+        *ngIf="
+          item.hasOwnProperty('comments_clarification_count') &&
+          currentUser.cycle.cycle_stage == 2
+        "
+      >
+        {{
+          item.comments_clarification_count
+            ? item.comments_clarification_count
+            : 0
+        }}
+      </td> -->
+      <!-- Answered comments -->
+
+      <td *ngIf="showAcceptedComments">
+        {{ item.comments_accepted_count }} aceptados
+      </td>
+      <td *ngIf="showHighlightedComments">
+        {{ item.comments_highlight_count }} higk
+      </td>
+      <td *ngIf="showTpbComments">
+        {{ item.comments_tpb_count }}
+      </td>
+      <td *ngIf="showImplementedDecisions">
+        {{ item.comments_ppu_count }}decisiones implementadas
+      </td>
       <td
         *ngIf="
           item.hasOwnProperty('comments_accepted_with_comment_count') &&
@@ -610,41 +628,12 @@
             ? item.comments_accepted_with_comment_count
             : 0
         }}
+        aceptados con comentarios
+      </td>
+      <td *ngIf="showDisagreedComments">
+        {{ item.comments_disagreed_count }} eu sou desagree
       </td>
 
-      <td
-        *ngIf="
-          item.hasOwnProperty('comments_disagreed_count') &&
-          currentUser.cycle.cycle_stage == 2
-        "
-      >
-        {{ item.comments_disagreed_count ? item.comments_disagreed_count : 0 }}
-      </td>
-      <td
-        *ngIf="
-          item.hasOwnProperty('comments_clarification_count') &&
-          currentUser.cycle.cycle_stage == 2
-        "
-      >
-        {{
-          item.comments_clarification_count
-            ? item.comments_clarification_count
-            : 0
-        }}
-      </td>
-      <!-- Answered comments -->
-      <td>{{ item.comments_replies_count }}</td>
-      <td [ngClass]="{ 'one tabCol': !showAcceptedComments }">
-        {{ item.comments_accepted_count }}
-      </td>
-      <td [ngClass]="{ 'one tabCol': !showDisagreedComments }">
-        {{ item.comments_disagreed_count }}
-      </td>
-      <td *ngIf="showHighlightedComments">
-        {{ item.comments_highlight_count }}
-      </td>
-      <td *ngIf="showTpbComments">{{ item.comments_tpb_count }}</td>
-      <td *ngIf="showImplementedDecisions">{{ item.comments_ppu_count }}</td>
       <td *ngIf="item" (click)="exportComments(item)">
         <a target="_blank">
           <div

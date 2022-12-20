@@ -2,17 +2,17 @@
   <!-- <p>timeline works!</p>
     <div>{{batches[1].startDateAssessors}}</div> -->
   <header>
-    <h1>QA 2021 - TIMELINE</h1>
+    <h1>QA 2022 - TIMELINE</h1>
     <h3>
       Batch {{ batches[2].batch_name }} - Annual Report data submission:
-      <strong>{{ batches[2].submission_date | date: "mediumDate" }}</strong>
+      <strong>{{ batches[2].submission_date | date : "mediumDate" }}</strong>
     </h3>
   </header>
   <div class="line">
     <div class="event">
       <div class="info-event shadow-sm mb-5 bg-white rounded">
         <div class="date">
-          {{ batches[2].assessors_start_date | date: "MMM d, yyyy" }} - 00:00
+          {{ batches[2].assessors_start_date | date : "MMM d, yyyy" }} - 00:00
           CET
         </div>
         <p>QA Platform opens for assessors</p>
@@ -22,7 +22,7 @@
     <div class="event">
       <div class="info-event shadow-sm mb-5 bg-white rounded">
         <div class="date">
-          {{ batches[2].assessors_end_date | date: "MMM d, yyyy" }} - 23:59 CET
+          {{ batches[2].assessors_end_date | date : "MMM d, yyyy" }} - 23:59 CET
         </div>
         <p>QA Platform opens for IDT’s</p>
         <p>QA Platform closes for IDT’s</p>
@@ -31,7 +31,8 @@
     <div class="event">
       <div class="info-event shadow-sm mb-5 bg-white rounded">
         <div class="date">
-          {{ batches[2].programs_start_date | date: "MMM d, yyyy" }} - 00:00 CET
+          {{ batches[2].programs_start_date | date : "MMM d, yyyy" }} - 00:00
+          CET
         </div>
         <p>QA Platform opens for Lead assessor</p>
         <p>QA Platform closes for Lead assessor</p>
@@ -40,7 +41,7 @@
     <div class="event">
       <div class="info-event shadow-sm mb-5 bg-white rounded">
         <div class="date">
-          {{ batches[2].programs_end_date | date: "MMM d, yyyy" }} - 23:59 CET
+          {{ batches[2].programs_end_date | date : "MMM d, yyyy" }} - 23:59 CET
         </div>
         <p>QA Platform opens for TP-Broker</p>
         <p>QA Platform closes for TP-Broker</p>
@@ -49,7 +50,7 @@
     <div class="event">
       <div class="info-event shadow-sm mb-5 bg-white rounded">
         <div class="date">
-          {{ batches[2].assessors_start_date | date: "MMM d, yyyy" }} - 00:00
+          {{ batches[2].assessors_start_date | date : "MMM d, yyyy" }} - 00:00
           CET
         </div>
         <p>QA Platform opens for PPU</p>
