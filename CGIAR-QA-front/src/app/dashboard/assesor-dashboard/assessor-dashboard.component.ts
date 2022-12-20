@@ -60,7 +60,8 @@ export class AssessorDashboardComponent implements OnInit {
     qa_melia: 0,
     qa_capdev: 0,
     qa_milestones: 0,
-    qa_slo: 0
+    qa_slo: 0,
+    qa_knowledge_product: 0,
   }
 
 
@@ -73,6 +74,7 @@ export class AssessorDashboardComponent implements OnInit {
     { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
     { name: 'CapDevs', viewname: 'qa_capdev' },
     { name: 'MELIAs', viewname: 'qa_melia' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
     // qa_outcomes: 'Outcomes',
   ]
 
@@ -116,7 +118,7 @@ export class AssessorDashboardComponent implements OnInit {
     ]);
     responses.subscribe(
       res => {
-        const [dashData, 
+        const [dashData,
           commentsStats,
           allTags,
           // feedTags,
@@ -124,9 +126,9 @@ export class AssessorDashboardComponent implements OnInit {
         ] = res;
 
         //dashData
-        if(dashData.data) {
-          console.log({dashData});
-          
+        if (dashData.data) {
+          console.log({ dashData });
+
           this.dashboardData = this.dashService.groupData(dashData.data);
           console.log(this.dashboardData);
           // this.selectedIndicator = Object.keys(this.dashboardData)[0]
@@ -134,29 +136,29 @@ export class AssessorDashboardComponent implements OnInit {
         }
 
         //commentsStats
-        if(commentsStats) {
+        if (commentsStats) {
           this.dashboardCommentsData = this.dashService.groupData(commentsStats.data);
-          console.log('COUNT COMMENTS',this.dashboardCommentsData);
+          console.log('COUNT COMMENTS', this.dashboardCommentsData);
         }
-        
+
 
         //allTags
-        if(allTags)
-        this.indicatorsTags = this.commentService.groupTags(allTags.data);;
+        if (allTags)
+          this.indicatorsTags = this.commentService.groupTags(allTags.data);;
 
         //feedTags
         // if(feedTags)
         // this.feedList = feedTags.data;
 
         //assessmentByField
-        if(assessmentByField)
-        this.itemStatusByIndicator = assessmentByField.data;
+        if (assessmentByField)
+          this.itemStatusByIndicator = assessmentByField.data;
         console.log(this.itemStatusByIndicator);
-        
+
 
         //UPDATE CHARTS
-        if(dashData.data && commentsStats.data && allTags.data)
-        this.updateDataCharts();
+        if (dashData.data && commentsStats.data && allTags.data)
+          this.updateDataCharts();
 
         this.hideSpinner();
       }
@@ -192,8 +194,8 @@ export class AssessorDashboardComponent implements OnInit {
       res => {
         const [
           // feedTags,
-           assessmentByField
-          ] = res;
+          assessmentByField
+        ] = res;
         //feedTags
         // this.feedList = feedTags.data;
 
@@ -301,7 +303,7 @@ export class AssessorDashboardComponent implements OnInit {
     if (complete) complete.name = 'Assessed 1st round';
     let finalized = dataset.find(item => item.name == 'finalized');
     if (finalized) finalized.name = 'Quality Assessed';
-    
+
     let autochecked = dataset.find(item => item.name == 'autochecked');
     if (autochecked) {
       this.indicator_status = 'publications_status';
@@ -408,13 +410,13 @@ export class AssessorDashboardComponent implements OnInit {
         pdf_url = this.currentUser.config[0][`assessors_guideline`];
         break;
       default:
-        
+
         break;
     }
     window.open(pdf_url, "_blank");
   }
   openChart(template: TemplateRef<any>, e) {
-    this.modalRef = this.modalService.show(template, {class: 'modal-xl'});
+    this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
   }
 
 

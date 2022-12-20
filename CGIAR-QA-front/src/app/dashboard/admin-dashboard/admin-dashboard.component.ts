@@ -37,7 +37,7 @@ export class AdminDashboardComponent implements OnInit {
   dashboardCyclesData: any[];
   configurationData: any[];
   selectedProgramName: string;
-  selectedProg:any = 'All';
+  selectedProg: any = 'All';
   settingsForm: FormGroup;
   programsForm: FormGroup;
   generalStatus = GeneralStatus;
@@ -55,6 +55,7 @@ export class AdminDashboardComponent implements OnInit {
       qa_milestones: false,
       qa_slo: true,
       qa_outcomes: false,
+      qa_knowledge_product: false,
     }
   }
 
@@ -69,9 +70,11 @@ export class AdminDashboardComponent implements OnInit {
     { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
     { name: 'CapDevs', viewname: 'qa_capdev' },
     { name: 'MELIAs', viewname: 'qa_melia' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
+
     // qa_outcomes: 'Outcomes',
   ];
-  
+
   activeCompleteDash = true;
 
   indicatorsAvailable;
@@ -129,7 +132,7 @@ export class AdminDashboardComponent implements OnInit {
   yAxisLabel: string = '# of comments';
   animations: boolean = true;
 
-  showSideMenu:boolean = false;
+  showSideMenu: boolean = false;
 
   colorScheme = {
     domain: ['#67be71', '#F1B7B7']
@@ -262,10 +265,10 @@ export class AdminDashboardComponent implements OnInit {
     return this.indicatorService.getAllItemStatusByIndicator().pipe();
   }
 
-    //Assessment by field and by indicator
-    getItemStatusByIndicatorService(indicator: string, crp_id? : string): Observable<any> {
-      return this.indicatorService.getItemStatusByIndicator(indicator, crp_id).pipe();
-    }
+  //Assessment by field and by indicator
+  getItemStatusByIndicatorService(indicator: string, crp_id?: string): Observable<any> {
+    return this.indicatorService.getItemStatusByIndicator(indicator, crp_id).pipe();
+  }
 
 
   getAllTags(crp_id?): Observable<any> {
@@ -355,7 +358,7 @@ export class AdminDashboardComponent implements OnInit {
     }
 
     return { dataset, brushes };
-  } 
+  }
 
   formatIndicatorTags() {
 
@@ -443,12 +446,12 @@ export class AdminDashboardComponent implements OnInit {
 
 
   onProgramChange({ target }, value) {
-    if(value)
-    this.selectedProgramName = (value.acronym === '' || value.acronym === ' ') ? value.name : value.acronym;
+    if (value)
+      this.selectedProgramName = (value.acronym === '' || value.acronym === ' ') ? value.name : value.acronym;
 
-    this.selectedProgramName = this.selectedProgramName? this.selectedProgramName : 'All';
+    this.selectedProgramName = this.selectedProgramName ? this.selectedProgramName : 'All';
     let crp_id;
-    if(!value){
+    if (!value) {
       this.selectedProg = 'All';
       crp_id = null;
     } else {
@@ -466,7 +469,7 @@ export class AdminDashboardComponent implements OnInit {
         this.getAllTags(crp_id),
         // this.getFeedTags(this.selectedIndicator),
         // this.getAllItemStatusByIndicator()
-        this.getItemStatusByIndicatorService(this.selectedIndicator,crp_id)
+        this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id)
       ]);
 
       responses.subscribe(res => {
@@ -476,16 +479,16 @@ export class AdminDashboardComponent implements OnInit {
         console.log('DASH keys', Object.keys(this.dashboardData));
         this.selectedIndicator = Object.keys(this.dashboardData)[0];
         this.indicatorsAvailable = this.indicatorsNameDropdwon;
-        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData );
+        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData);
         console.log('INDICATORS', this.indicatorsAvailable);
-        
-        
+
+
         this.dataSelected = this.dashboardData[this.selectedIndicator];
 
         this.dashboardCommentsData = this.dashService.groupData(commentsStats.data);
-        console.log('RESPONSES',commentsStats.data);
+        console.log('RESPONSES', commentsStats.data);
         console.log('RESPONSES', this.dashboardCommentsData);
-        
+
 
         this.indicatorsTags = this.commentService.groupTags(allTags.data);
         // this.feedList = feedTags.data;
@@ -510,16 +513,16 @@ export class AdminDashboardComponent implements OnInit {
       ]);
 
       responses.subscribe(res => {
-        const [dashData, commentsStats, allTags,  assessmentByField] = res;
+        const [dashData, commentsStats, allTags, assessmentByField] = res;
         this.dashboardData = this.dashService.groupData(dashData.data);
         console.log('DASH DATA', this.dashboardData);
         this.selectedIndicator = Object.keys(this.dashboardData)[0];
         console.log('DASH DATA', this.selectedIndicator);
         this.indicatorsAvailable = this.indicatorsNameDropdwon;
-        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData );
+        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData);
         console.log('INDICATORS', this.indicatorsAvailable);
-        
-        
+
+
         this.dataSelected = this.dashboardData[this.selectedIndicator];
         this.dashboardCommentsData = this.dashService.groupData(commentsStats.data);
         this.indicatorsTags = this.commentService.groupTags(allTags.data);
@@ -572,8 +575,8 @@ export class AdminDashboardComponent implements OnInit {
       // this.crps.unshift(new CRP( 0, 'All', 'undefined',  '0', false ) )
       // this.selectedProgramName = this.crps[0]['acronym'];
       this.selectedProgramName = 'All';
-      console.log('PROGRAM NAME',this.selectedProgramName);
-      
+      console.log('PROGRAM NAME', this.selectedProgramName);
+
       this.configurationData = indicatorsByCrps.data;
       // console.log(this.configurationData)
 
@@ -740,7 +743,7 @@ export class AdminDashboardComponent implements OnInit {
     this.showSpinner();
     // console.log(this.selectedProg)
     let crp_id = this.selectedProg['crp_id'];
-   console.log(this.selectedProg);
+    console.log(this.selectedProg);
 
     let filename = `QA-COMMENTS-${this.selectedProg.hasOwnProperty('acronym') && this.selectedProg['acronym'] !== 'All' ? '(' + this.selectedProg['acronym'] + ')' : ''}${moment().format('YYYYMMDD:HHmm')}`
     if (this.authenticationService.getBrowser() === 'Safari')
@@ -950,7 +953,7 @@ export class AdminDashboardComponent implements OnInit {
 
 
     // template.elementRef.nativeElement.style.top = `${this.currentY}px`;
-    this.modalRef = this.modalService.show(template, {class: 'modal-xl'});
+    this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
 
     // const modal = this.elem.nativeElement.querySelector('.modal-content');
     // console.log(modal);
