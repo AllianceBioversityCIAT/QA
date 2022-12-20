@@ -219,7 +219,7 @@
           </div>
         </div>
       </th>
-      <th
+      <!-- <th
         scope="col"
         [class.active]="order === 'crp_acronym'"
         (click)="setOrder('crp_acronym')"
@@ -231,7 +231,7 @@
             <span [hidden]="!reverse">▲</span>
           </div>
         </div>
-      </th>
+      </th> -->
       <!-- <th
         *ngIf="returnedArray"
         scope="col"
@@ -574,10 +574,10 @@
 
       <!-- FINALIZED INITIATIVES FIELD -->
       <!-- INITIATIVES SHOULD BE DISPLAYED IN NEXT LINE -->
-      <!-- DEBE SER INICIATIVA -->
-      <td>{{ item.crp_acronym }}</td>
       <!-- CRP/PTF - DEBE SER DE TYPE -->
-      <td>{{ item.crp_acronym }}</td>
+      <td>{{ item.initiative }}-{{ item.short_name }}</td>
+      <!-- DEBE SER INICIATIVA -->
+      <!-- <td>{{ item.crp_acronym }}</td> -->
       <!-- COMMENTS -->
       <td>{{ item.comments_count }}</td>
       <!-- Type -->
