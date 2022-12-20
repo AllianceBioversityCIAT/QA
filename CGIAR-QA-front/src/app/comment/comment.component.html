@@ -71,7 +71,7 @@
               {{ comment.detail }}
             </p>
             <app-tags-bar
-              *ngIf="currentUser.roles[0].id != 3 && comment.tpb != 1"
+              *ngIf="currentUser.roles[0].id != 3 && comment.tpb"
               [comment]="comment"
               [currentUser]="currentUser"
               (tagEvent)="toggleTag($event)"
@@ -141,9 +141,11 @@
           >
             <button
               *ngIf="
-                comment.highlight_comment == false &&
-                dataFromItem.is_core &&
-                currentUser.cycle.cycle_stage == 2
+                (comment.highlight_comment == false &&
+                  dataFromItem.is_core &&
+                  currentUser.cycle.cycle_stage == 2 &&
+                  currentUser.roles[0].description === allRoles.admin) ||
+                tpbUser?.isTPB == false
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
@@ -157,8 +159,10 @@
           <div *ngIf="!crpComment" class="btn-danger-section">
             <button
               *ngIf="
-                comment.highlight_comment == !false &&
-                currentUser.cycle.cycle_stage == 2
+                (comment.highlight_comment == !false &&
+                  currentUser.cycle.cycle_stage == 2 &&
+                  currentUser.roles[0].description === allRoles.admin) ||
+                tpbUser?.isTPB == false
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
@@ -479,7 +483,11 @@
         formControlName="comment"
       ></textarea>
     </form>
-    <div *ngIf="!this.isCRP" class="btn-group w-100" dropdown>
+    <div
+      *ngIf="!this.isCRP && tpbUser?.isTPB == false"
+      class="btn-group w-100"
+      dropdown
+    >
       <button
         id="button-animated"
         dropdownToggle
