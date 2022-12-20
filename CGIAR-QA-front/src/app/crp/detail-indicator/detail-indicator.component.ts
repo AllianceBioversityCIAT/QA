@@ -202,7 +202,7 @@ export class DetailIndicatorComponent implements OnInit {
         this.activeCommentArr = Array<boolean>(this.detailedData.length).fill(false);
 
         this.hideSpinner(this.spinner1);
-        this.getCommentReplies();
+        // this.getCommentReplies();
         // console.log(res)
       },
       error => {
