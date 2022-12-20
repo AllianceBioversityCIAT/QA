@@ -402,7 +402,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
         )
         this.hideSpinner('spinner1');
         this.tickGroup.reset();
-        this.getCommentReplies();
+        this.getCommentReplies(); // carga desde un componente que no deberia de esperar respuestas
         this.addCheckboxes();
       },
       error => {
@@ -694,9 +694,6 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
       },
       error => {
         console.log("getCommentReplies", error);
-        // this.hideSpinner('spinner1');
-        if (error !== 'OK')
-          this.alertService.error(error);
       }
     )
   }
