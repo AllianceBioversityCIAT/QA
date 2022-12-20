@@ -310,14 +310,14 @@
             <th
               *ngIf="showHighlightedComments"
               scope="col"
-              [class.active]="order === 'comments_disagreed_count'"
-              (click)="setOrder('comments_disagreed_count')"
+              [class.active]="order === 'comments_highlight_count'"
+              (click)="setOrder('comments_highlight_count')"
             >
               <div class="header-row">
                 Pending highlighted comments
                 <div
                   class="order-icon"
-                  *ngIf="order === 'comments_disagreed_count'"
+                  *ngIf="order === 'comments_highlight_count'"
                 >
                   <span [hidden]="reverse">▼</span>
                   <span [hidden]="!reverse">▲</span>
@@ -327,15 +327,12 @@
             <th
               *ngIf="showTpbComments"
               scope="col"
-              [class.active]="order === 'comments_disagreed_count'"
-              (click)="setOrder('comments_disagreed_count')"
+              [class.active]="order === 'comments_tpb_count'"
+              (click)="setOrder('comments_tpb_count')"
             >
               <div class="header-row">
                 T-pb instructions
-                <div
-                  class="order-icon"
-                  *ngIf="order === 'comments_disagreed_count'"
-                >
+                <div class="order-icon" *ngIf="order === 'comments_tpb_count'">
                   <span [hidden]="reverse">▼</span>
                   <span [hidden]="!reverse">▲</span>
                 </div>
@@ -344,15 +341,12 @@
             <th
               *ngIf="showImplementedDecisions"
               scope="col"
-              [class.active]="order === 'comments_disagreed_count'"
-              (click)="setOrder('comments_disagreed_count')"
+              [class.active]="order === 'comments_ppu_count'"
+              (click)="setOrder('comments_ppu_count')"
             >
               <div class="header-row">
                 Implemeted Decisions
-                <div
-                  class="order-icon"
-                  *ngIf="order === 'comments_disagreed_count'"
-                >
+                <div class="order-icon" *ngIf="order === 'comments_ppu_count'">
                   <span [hidden]="reverse">▼</span>
                   <span [hidden]="!reverse">▲</span>
                 </div>
