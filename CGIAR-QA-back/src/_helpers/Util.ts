@@ -497,7 +497,7 @@ class Util {
                     }
                     let row = {
                         id: rows[i].id,
-                        crp_acronym: rows[i].crp_acronym,
+                        short_name: rows[i].short_name,
                         indicator_title: rows[i].indicator_title,
                         createdAt: rows[i].createdAt,
                         updatedAt: rows[i].updatedAt,
@@ -684,7 +684,7 @@ class Util {
             response_status: element["response_status"],
             evaluation_status: element["evaluation_status"],
             crp_name: element["crp_name"],
-            crp_acronym: element["crp_acronym"],
+            short_name: element["short_name"],
             crp_accepted: element["crp_accepted"],
             crp_rejected: element["crp_rejected"],
             assessment_status: element["assessment_status"],
@@ -694,7 +694,8 @@ class Util {
             require_changes: element["require_changes"],
             comments_highlight_count: element["comments_highlight_count"],
             comments_tpb_count: element["comments_tpb_count"],
-            comments_ppu_count: element["comments_ppu_count"]
+            comments_ppu_count: element["comments_ppu_count"],
+            initiative: element["initiative"]
         }
         if (!type) {
             response = Object.assign(response, {
@@ -716,6 +717,7 @@ class Util {
                 comments_tpb_count: element["comments_tpb_count"],
                 comments_ppu_count: element["comments_ppu_count"],
                 comments_disagreed_count: element["comments_disagreed_count"],
+                initiative: element["initiative"]
             });
         } else {
             response = Object.assign(response, {
@@ -749,9 +751,9 @@ class Util {
                 require_changes: element["require_changes"],
                 comments_highlight_count: element["comments_highlight_count"],
                 comments_tpb_count: element["comments_tpb_count"],
-                comments_ppu_count: element["comments_ppu_count"]
+                comments_ppu_count: element["comments_ppu_count"],
+                initiative: element["initiative"]
             });
-
         }
 
         return response;
