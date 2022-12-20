@@ -142,7 +142,7 @@
               [(ngModel)]="showTpbComments"
               [value]="!showTpbComments"
             />
-            <label for="tpb"> T-pb instructions </label>
+            <label for="tpb"> Third party broker instructions </label>
           </div>
           <div class="form-check">
             <input
@@ -331,7 +331,7 @@
               (click)="setOrder('comments_tpb_count')"
             >
               <div class="header-row">
-                T-pb instructions
+                Third party broker instructions
                 <div class="order-icon" *ngIf="order === 'comments_tpb_count'">
                   <span [hidden]="reverse">▼</span>
                   <span [hidden]="!reverse">▲</span>

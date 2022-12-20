@@ -39,6 +39,12 @@ h2 {
   margin-bottom: 1em;
   align-items: center;
   // font-size: $font-sm;
+
+  .form-check {
+    label {
+      margin: 0 5px;
+    }
+  }
   .date-filter {
     position: relative;
     span {
