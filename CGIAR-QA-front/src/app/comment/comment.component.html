@@ -40,7 +40,7 @@
               <div>
                 <span>ADDED BY {{ comment.user.username }} </span>
                 <div>
-                  <p>On {{ comment.updatedAt | date : "long" }}</p>
+                  <p>On {{ comment.createdAt | date : "long" }}</p>
                   <!-- <p *ngIf="comment.cycle"> {{comment.cycle.cycle_name}}:
                                         <strong>{{comment.cycle.cycle_stage}} </strong>
                                     </p> -->
@@ -71,7 +71,11 @@
               {{ comment.detail }}
             </p>
             <app-tags-bar
-              *ngIf="currentUser.roles[0].id != 3 && comment.tpb"
+              *ngIf="
+                (currentUser.roles[0].id != 3 &&
+                  currentUser.roles[0].description === allRoles.admin) ||
+                tpbUser?.isTPB == false
+              "
               [comment]="comment"
               [currentUser]="currentUser"
               (tagEvent)="toggleTag($event)"
