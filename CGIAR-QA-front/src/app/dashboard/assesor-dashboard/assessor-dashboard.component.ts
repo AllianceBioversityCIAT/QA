@@ -32,7 +32,7 @@ export class AssessorDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = 'qa_slo';
+  selectedIndicator = 'qa_knowledge_product';
   dataSelected: any;
   indicatorData: any;
   feedList: [];
