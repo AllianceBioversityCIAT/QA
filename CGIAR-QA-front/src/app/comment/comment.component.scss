@@ -373,8 +373,8 @@ input[type="checkbox"]:checked:after {
   }
   button.highlight-icon {
     background-color: rgb(251, 180, 0);
-    height: 50px;
-    width: 50px;
+    height: 43px;
+    width: auto;
     margin: 10px;
     border-radius: 5px;
     display: flex;
@@ -382,8 +382,10 @@ input[type="checkbox"]:checked:after {
     align-items: center;
     outline: none;
     border: none;
+    font-size: 12px;
     img {
-      height: 32px;
+      height: 30px;
+      margin: 0 5px;
     }
   }
 }
