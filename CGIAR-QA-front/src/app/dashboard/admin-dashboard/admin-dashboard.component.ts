@@ -82,7 +82,7 @@ export class AdminDashboardComponent implements OnInit {
   descriptionCharts = {
     generalStatus: "This shows the progress of assessment of a specific indicator. ",
     assessorsInteractions: "This presents assessors' interactions with existing comments on an item being already evaluated by other assessors. ",
-    responseToComments: "This shows the status of CRP responses to comments made by assessors during the first round.",
+    responseToComments: "This shows the status of Initiatives responses to comments made by assessors during the first round.",
     assessmentByField: "This shows the status of assessment for each field of an item.",
   }
 
@@ -114,7 +114,7 @@ export class AdminDashboardComponent implements OnInit {
   itemStatusByIndicator = {};
 
   enableQATooltip: string = 'Enable the assessment process so Quality Assessors can start the process of providing recommendations. If this option is disabled, they cannot provide any comments.';
-  enableCommentsTooltip: string = 'If this option is enabled, CRPs and PTFs will be able to see all comments provided by the Quality Assessors in MARLO and MEL; and also will be able to react to the comments.';
+  enableCommentsTooltip: string = 'If this option is enabled, Initiatives will be able to see all comments provided by the Quality Assessors in PRMS Reporting tool; and also will be able to react to the comments.';
 
   modalRef: BsModalRef;
   multi = [];
