@@ -51,11 +51,13 @@ export class AdminDashboardComponent implements OnInit {
       qa_publications: false,
       qa_oicr: false,
       qa_melia: false,
-      qa_capdev: false,
+      // qa_capdev: false,
       qa_milestones: false,
       qa_slo: true,
       qa_outcomes: false,
+      qa_capdev: false,
       qa_knowledge_product: false,
+      qa_innovation_dev: false,
     }
   }
 
@@ -68,9 +70,11 @@ export class AdminDashboardComponent implements OnInit {
     { name: 'Innovations', viewname: 'qa_innovations' },
     { name: 'Milestones', viewname: 'qa_milestones' },
     { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    { name: 'CapDevs', viewname: 'qa_capdev' },
+    // { name: 'CapDevs', viewname: 'qa_capdev' },
     { name: 'MELIAs', viewname: 'qa_melia' },
+    { name: 'Capacity Sharing Developmet', viewname: 'qa_capdev' },
     { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
+    { name: 'innovation Development', viewname: 'qa_innovation_dev' },
 
     // qa_outcomes: 'Outcomes',
   ];

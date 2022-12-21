@@ -58,10 +58,13 @@ export class AssessorDashboardComponent implements OnInit {
     qa_publications: 0,
     qa_oicr: 0,
     qa_melia: 0,
-    qa_capdev: 0,
+    // qa_capdev: 0,
     qa_milestones: 0,
     qa_slo: 0,
     qa_knowledge_product: 0,
+    qa_capdev: 0,
+    qa_innovation_dev: 0,
+
   }
 
 
@@ -72,9 +75,12 @@ export class AssessorDashboardComponent implements OnInit {
     { name: 'Innovations', viewname: 'qa_innovations' },
     { name: 'Milestones', viewname: 'qa_milestones' },
     { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    { name: 'CapDevs', viewname: 'qa_capdev' },
+    // { name: 'CapDevs', viewname: 'qa_capdev' },
     { name: 'MELIAs', viewname: 'qa_melia' },
+    { name: 'Capacity Sharing Developmet', viewname: 'qa_capdev' },
     { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
+    { name: 'innovation Development', viewname: 'qa_innovation_dev' },
+
     // qa_outcomes: 'Outcomes',
   ]
 
