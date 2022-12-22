@@ -208,12 +208,12 @@
       <!-- NEW COLUMNS -->
       <th
         scope="col"
-        [class.active]="order === 'initiatives'"
-        (click)="setOrder('initiatives')"
+        [class.active]="order === 'initiative'"
+        (click)="setOrder('initiative')"
       >
         <div class="header-row">
           INITIATIVES
-          <div class="order-icon" *ngIf="order === 'initiatives'">
+          <div class="order-icon" *ngIf="order === 'initiative'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
           </div>
@@ -579,12 +579,12 @@
       <!-- DEBE SER INICIATIVA -->
       <!-- <td>{{ item.crp_acronym }}</td> -->
       <!-- COMMENTS -->
-      <td>{{ item.comments_count }}</td>
+      <td>{{ item.comments_count }} counter comments</td>
       <!-- Type -->
 
-      <td *ngIf="item.hasOwnProperty('stage')">
+      <!-- <td *ngIf="item.hasOwnProperty('stage')">
         {{ item.stage ? item.stage : notProviedText }}
-      </td>
+      </td> -->
       <td *ngIf="item.hasOwnProperty('fp')">
         {{ item.fp ? item.fp : notProviedText }}
       </td>

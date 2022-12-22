@@ -133,23 +133,33 @@
               </ngx-spinner>
             </div>
           </div>
+          <!-- (comment.highlight_comment === false ||
+            comment.highlight_comment == 0) &&
+          ((dataFromItem.is_core &&
+            currentUser.roles[0].description === allRoles.admin) ||
+            userIsLeader) &&
+          comment.replies.replies_count > 0 &&
+          !crpComment -->
           <div
             *ngIf="
-              (dataFromItem.is_core ||
-                currentUser.roles[0].description === allRoles.admin ||
-                userIsLeader) &&
-              comment.replies.replies_count > '0' &&
-              !crpComment
+              !tpbUser?.isTPB &&
+              (currentUser.roles[0].description === allRoles.admin ||
+                userIsLeader)
             "
             class="highlight-section"
           >
+            <!-- *ngIf="
+            (comment.highlight_comment == false ||
+              comment.highlight_comment == 0) &&
+            dataFromItem.is_core &&
+            currentUser.cycle.cycle_stage == 2 &&
+            currentUser.roles[0].description === allRoles.admin
+          " -->
             <button
               *ngIf="
-                (comment.highlight_comment == false &&
-                  dataFromItem.is_core &&
-                  currentUser.cycle.cycle_stage == 2 &&
-                  currentUser.roles[0].description === allRoles.admin) ||
-                tpbUser?.isTPB == false
+                !tpbUser?.isTPB &&
+                comment.highlight_comment == false &&
+                currentUser.cycle.cycle_stage == 2
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
@@ -162,12 +172,15 @@
           </div>
 
           <div *ngIf="!crpComment" class="btn-danger-section">
+            <!-- comment.highlight_comment == !false ||
+            (comment.highlight_comment == '1' &&
+              currentUser.cycle.cycle_stage == 2 &&
+              currentUser.roles[0].description === allRoles.admin) -->
             <button
               *ngIf="
-                (comment.highlight_comment == !false &&
-                  currentUser.cycle.cycle_stage == 2 &&
-                  currentUser.roles[0].description === allRoles.admin) ||
-                tpbUser?.isTPB == false
+                !tpbUser?.isTPB &&
+                comment.highlight_comment == true &&
+                currentUser.cycle.cycle_stage == 2
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
