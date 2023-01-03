@@ -159,7 +159,8 @@
               *ngIf="
                 !tpbUser?.isTPB &&
                 comment.highlight_comment == false &&
-                currentUser.cycle.cycle_stage == 2
+                currentUser.cycle.cycle_stage == 2 &&
+                comment.replies.replies_count > 0
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
@@ -487,13 +488,16 @@
 
   <div
     *ngIf="
-      !availableComment &&
-      !crpComment &&
-      currentUser.hasOwnProperty('cycle') &&
-      dataFromItem.require_changes != 1
+      (!availableComment &&
+        !crpComment &&
+        currentUser.hasOwnProperty('cycle') &&
+        dataFromItem.require_changes != 1 &&
+        tpbUser?.isTPB != true) ||
+      commentsByCol.length > 0
     "
     class="add-comment-container"
   >
+    <!-- commentsByCol?.replies.replies_count > 0 -->
     <form [formGroup]="commentGroup">
       <!-- <p><span class="textarea" role="textbox" contenteditable maxlength="{{totalChar}}" formControlName="comment"></span></p> -->
       <textarea
