@@ -208,7 +208,10 @@ export class CommentService {
   }
 
   patchRequireChanges(params) {
-    return this.http.patch<any>(`${environment.apiUrl}/evaluation/require-changes`, params);
+    return this.http.patch<any>(`${environment.apiUrl}/evaluation/require-changes`, params).
+      pipe(tap(() => {
+        this._refresh$.next()
+      }));
   }
 
   patchPpuChanges(params) {
