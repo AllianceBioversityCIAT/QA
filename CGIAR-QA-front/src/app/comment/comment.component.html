@@ -443,8 +443,9 @@
     <input
       *ngIf="
         dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.replies.replies_count > 0 &&
-        currentUser.cycle.cycle_stage == 2
+        commentsByColSelected?.require_changes != 1 &&
+        currentUser.cycle.cycle_stage == 2 &&
+        commentsByCol.length > 0
       "
       class="checkbox-style"
       type="checkbox"
@@ -453,8 +454,9 @@
     <label
       *ngIf="
         dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.replies.replies_count > 0 &&
-        currentUser.cycle.cycle_stage == 2
+        commentsByColSelected?.require_changes != 1 &&
+        currentUser.cycle.cycle_stage == 2 &&
+        commentsByCol.length > 0
       "
       class="checkbox-label"
       for="changes"
@@ -473,7 +475,7 @@
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
         !tpbUser?.isTPB) ||
-      commentsByColSelected?.require_changes != 1
+      (commentsByColSelected?.require_changes != 1 && commentsByCol.length > 0)
     "
     class="add-comment-container"
   >
@@ -530,7 +532,11 @@
       </button>
     </footer>
   </div>
-  <div class="require-changes-set" *ngIf="dataFromItem.require_changes == 1">
+  <!-- <div class="require-changes-set" *ngIf="dataFromItem.require_changes == 1"> -->
+  <div
+    class="require-changes-set"
+    *ngIf="commentsByColSelected?.require_changes && commentsByCol.length > 0"
+  >
     <img
       class="require-changes-img"
       src="assets/icons/require_changes.svg"
