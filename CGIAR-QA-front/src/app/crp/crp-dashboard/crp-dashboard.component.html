@@ -81,7 +81,7 @@
             class="btn btn-red-secondary btn-response-pending disabled"
             title="Indicator isn't enable"
           >
-            This indicator is closed for CRPs/PTFs
+            This indicator is closed for initiatives
           </button>
         </div>
         <div class="chart comments-chart" class="chart pending-responses">
@@ -89,7 +89,7 @@
             *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
             class="total-pending"
           >
-            {{ totalPendings[indicator.key] }} !
+            <!-- {{ totalPendings[indicator.key] }}  -->X
           </div>
           <div
             *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
@@ -102,14 +102,14 @@
             class="btn btn-primary btn-response-pending"
             (click)="goToPendingItems(indicator.key)"
           >
-            Click here to respond pending comments
+            Pending third party broker decisions
           </button>
           <button
             *ngIf="!indicatorIsEnable(indicator.key)"
             class="btn btn-red-secondary btn-response-pending disabled"
             title="Indicator isn't enable"
           >
-            Pending third party broker decisions
+            This indicator is closed for initiatives
           </button>
         </div>
       </div>
