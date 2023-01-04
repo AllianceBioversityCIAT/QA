@@ -174,7 +174,7 @@
               currentUser.roles[0].description === allRoles.admin) -->
             <button
               *ngIf="
-                !tpbUser?.isTPB &&
+                tpbUser?.isTPB &&
                 comment.highlight_comment == true &&
                 currentUser.cycle.cycle_stage == 2
               "
