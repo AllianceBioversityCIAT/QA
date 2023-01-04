@@ -475,6 +475,8 @@
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
         !tpbUser?.isTPB) ||
+      currentUser.roles[0].description === allRoles.admin ||
+      userIsLeader ||
       (commentsByColSelected?.require_changes != 1 && commentsByCol.length > 0)
     "
     class="add-comment-container"
