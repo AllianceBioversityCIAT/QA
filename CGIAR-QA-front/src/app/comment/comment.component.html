@@ -436,7 +436,9 @@
 
   <div
     class="main-required"
-    *ngIf="currentUser.roles[0].description === allRoles.admin || tpbUser"
+    *ngIf="
+      currentUser.roles[0].description === allRoles.admin || tpbUser?.isTPB
+    "
   >
     <input
       *ngIf="
@@ -470,8 +472,8 @@
         !crpComment &&
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
-        tpbUser?.isTPB != true) ||
-      commentsByCol.length > 0
+        !tpbUser?.isTPB) ||
+      commentsByColSelected?.require_changes != 1
     "
     class="add-comment-container"
   >
@@ -484,7 +486,7 @@
       ></textarea>
     </form>
     <div
-      *ngIf="!this.isCRP && tpbUser?.isTPB == false"
+      *ngIf="!this.isCRP && !tpbUser?.isTPB"
       class="btn-group w-100"
       dropdown
     >
