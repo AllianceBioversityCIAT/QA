@@ -140,7 +140,7 @@
             *ngIf="
               currentUser.roles[0].description === allRoles.admin ||
               tpbUser?.isTPB ||
-              userIsLeader
+              (userIsLeader && dataFromItem.is_core)
             "
             class="highlight-section"
           >
