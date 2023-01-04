@@ -71,11 +71,7 @@
               {{ comment.detail }}
             </p>
             <app-tags-bar
-              *ngIf="
-                (currentUser.roles[0].id != 3 &&
-                  currentUser.roles[0].description === allRoles.admin) ||
-                tpbUser?.isTPB == false
-              "
+              *ngIf="currentUser.roles[0].id != 3"
               [comment]="comment"
               [currentUser]="currentUser"
               (tagEvent)="toggleTag($event)"
@@ -142,9 +138,9 @@
           !crpComment -->
           <div
             *ngIf="
-              !tpbUser?.isTPB &&
-              (currentUser.roles[0].description === allRoles.admin ||
-                userIsLeader)
+              currentUser.roles[0].description === allRoles.admin ||
+              tpbUser?.isTPB ||
+              userIsLeader
             "
             class="highlight-section"
           >
@@ -157,7 +153,6 @@
           " -->
             <button
               *ngIf="
-                !tpbUser?.isTPB &&
                 comment.highlight_comment == false &&
                 currentUser.cycle.cycle_stage == 2 &&
                 comment.replies.replies_count > 0
