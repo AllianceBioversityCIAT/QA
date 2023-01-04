@@ -10,31 +10,27 @@ export enum GeneralStatus {
 }
 
 export enum GeneralIndicatorName {
-    qa_policies = 'Policies',
-    qa_innovations = 'Innovations',
-    qa_publications = 'Peer Reviewed Papers',
-    qa_oicr = 'OICRs',
-    qa_melia = 'MELIAs',
-    qa_capdev_old = 'CapDevs-Old',
-    qa_milestones = 'Milestones',
-    qa_slo = 'SLOs',
-    qa_aiccra_indicators_contrib = 'AICCRA Indicators Contrib',
-    qa_knowledge_product = 'Knowledge Product',
+    qa_impact_contribution = 'Impact Contribution',
+    qa_capacity_change = 'Capacity Change',
+    qa_other_outcome = 'Other Outcome',
+    qa_other_output = 'Other Output',
     qa_capdev = 'CapDev',
-    // qa_outcomes= 'Outcomes',
+    qa_knowledge_product = 'Knowledge Product',
+    qa_innovation_development = 'Innovation Development',
+    qa_policy_change = 'Policy Change',
+    qa_innovation_use = 'Innovation Use'
 }
 
 export enum IndicatorsID {
-    innovations = 1,
-    policies = 2,
-    publications = 3,
-    oicr = 4,
-    melia = 5,
-    capdev_old = 6,
-    milestones = 7,
-    slo = 8,
-    knowledge_product = 10,
-    capdev = 11
+    impact_contribution = 1,
+    capacity_change = 2,
+    other_outcome = 3,
+    other_output = 4,
+    capdev = 5,
+    knowledge_product = 6, 
+    innovation_development = 7, 
+    policy_change = 8,
+    innovation_use = 9 
 }
 
 export enum TagMessage {

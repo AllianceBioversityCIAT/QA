@@ -32,7 +32,7 @@ export class AssessorDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = 'qa_knowledge_product';
+  selectedIndicator = 'qa_impact_contribution';
   dataSelected: any;
   indicatorData: any;
   feedList: [];
@@ -53,35 +53,28 @@ export class AssessorDashboardComponent implements OnInit {
     assessmentByField: null
   }
   totalPendings = {
-    qa_policies: 0,
-    qa_innovations: 0,
-    qa_publications: 0,
-    qa_oicr: 0,
-    qa_melia: 0,
-    // qa_capdev: 0,
-    qa_milestones: 0,
-    qa_slo: 0,
-    qa_knowledge_product: 0,
+    qa_impact_contribution: 0,
+    qa_capacity_change: 0,
+    qa_other_outcome: 0,
+    qa_other_output: 0,
     qa_capdev: 0,
-    qa_innovation_dev: 0,
-
+    qa_knowledge_product: 0,
+    qa_innovation_development: 0,
+    qa_policy_change: 0,
+    qa_innovation_use: 0
   }
 
 
   indicatorsNameDropdwon = [
-    { name: 'SLOs', viewname: 'qa_slo' },
-    { name: 'Policies', viewname: 'qa_policies' },
-    { name: 'OICRs', viewname: 'qa_oicr' },
-    { name: 'Innovations', viewname: 'qa_innovations' },
-    { name: 'Milestones', viewname: 'qa_milestones' },
-    { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    // { name: 'CapDevs', viewname: 'qa_capdev' },
-    { name: 'MELIAs', viewname: 'qa_melia' },
-    { name: 'Capacity Sharing Developmet', viewname: 'qa_capdev' },
+    { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
+    { name: 'Capacity Change', viewname: 'qa_capacity_change' },
+    { name: 'Other Outcome', viewname: 'qa_other_outcome' },
+    { name: 'Other Output', viewname: 'qa_other_output' },
+    { name: 'CapDev', viewname: 'qa_capdev' },
     { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
-    { name: 'innovation Development', viewname: 'qa_innovation_dev' },
-
-    // qa_outcomes: 'Outcomes',
+    { name: 'Innovation Development', viewname: 'qa_innovation_development' },
+    { name: 'Policy Change', viewname: 'qa_policy_change' },
+    { name: 'Innovation Use', viewname: 'qa_innovation_use' },
   ]
 
   constructor(private dashService: DashboardService,

@@ -41,16 +41,15 @@ export class IndicatorsComponent implements OnInit {
     endItem: 10
   }
   currentPage = {
-    qa_policies: 1,
-    qa_innovations: 1,
-    qa_publications: 1,
-    qa_oicr: 1,
-    qa_melia: 1,
-    qa_capdev_old: 1,
-    qa_milestones: 1,
-    qa_slo: 1,
-    qa_knowledge_product: 1,
+    qa_impact_contribution: 1,
+    qa_capacity_change: 1,
+    qa_other_outcome: 1,
+    qa_other_output: 1,
     qa_capdev: 1,
+    qa_knowledge_product: 1,
+    qa_innovation_development: 1,
+    qa_policy_change: 1,
+    qa_innovation_use: 1
   };
   stageHeaderText = {
     policies: 'Stage',

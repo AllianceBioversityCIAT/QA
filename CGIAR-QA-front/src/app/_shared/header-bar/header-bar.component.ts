@@ -36,18 +36,15 @@ export class HeaderBarComponent implements OnInit {
   }
 
   indicatorsName = [
-    { name: 'SLOs', viewname: 'qa_slo' },
-    { name: 'Policies', viewname: 'qa_policies' },
-    { name: 'OICRs', viewname: 'qa_oicr' },
-    { name: 'Innovations', viewname: 'qa_innovations' },
-    { name: 'Milestones', viewname: 'qa_milestones' },
-    { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    { name: 'CapDevs', viewname: 'qa_capdev_old' },
-    { name: 'MELIAs', viewname: 'qa_melia' },
-    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
     { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
-    // { name: 'Indicator Contrib', viewname: 'qa_aiccra_indicators_contrib' },
-    // qa_outcomes: 'Outcomes',
+    { name: 'Capacity Change', viewname: 'qa_capacity_change' },
+    { name: 'Other Outcome', viewname: 'qa_other_outcome' },
+    { name: 'Other Output', viewname: 'qa_other_output' },
+    { name: 'CapDev', viewname: 'qa_capdev' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
+    { name: 'Innovation Development', viewname: 'qa_innovation_development' },
+    { name: 'Policy Change', viewname: 'qa_policy_change' },
+    { name: 'Innovation Use', viewname: 'qa_innovation_use' },
   ]
 
   constructor(private activeRoute: ActivatedRoute,

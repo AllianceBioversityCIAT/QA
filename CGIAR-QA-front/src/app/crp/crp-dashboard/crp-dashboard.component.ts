@@ -28,33 +28,31 @@ import { IndicatorsService } from 'src/app/services/indicators.service';
 
 
 export class CrpDashboardComponent implements OnInit {
-  crp=null;
+  crp = null;
   dashboardData: any[];
   statusNames = { complete: 0, pending: 0 }
   indicators = [];
   statusChartData = {
-    qa_policies: [],
-    qa_innovations: [],
-    qa_publications: [],
-    qa_oicr: [],
-    qa_melia: [],
-    qa_capdev_old: [],
-    qa_milestones: [],
-    qa_slo: [],
-    qa_knoledge_product: [],
+    qa_impact_contribution: [],
+    qa_capacity_change: [],
+    qa_other_outcome: [],
+    qa_other_output: [],
     qa_capdev: [],
+    qa_knowledge_product: [],
+    qa_innovation_development: [],
+    qa_policy_change: [],
+    qa_innovation_use: []
   }
   totalPendings = {
-    qa_policies: 0,
-    qa_innovations: 0,
-    qa_publications: 0,
-    qa_oicr: 0,
-    qa_melia: 0,
-    qa_capdev_old: 0,
-    qa_milestones: 0,
-    qa_slo: 0,
-    qa_knowledge_product: 0,
+    qa_impact_contribution: 0,
+    qa_capacity_change: 0,
+    qa_other_outcome: 0,
+    qa_other_output: 0,
     qa_capdev: 0,
+    qa_knowledge_product: 0,
+    qa_innovation_development: 0,
+    qa_policy_change: 0,
+    qa_innovation_use: 0
   }
   dashboardCommentsData: any[];
 
@@ -127,13 +125,13 @@ export class CrpDashboardComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private indicatorService: IndicatorsService) {
     this.activeRoute.params.subscribe(routeParams => {
-      console.log({routeParams});
-      
+      console.log({ routeParams });
+
       this.authenticationService.currentUser.subscribe(x => {
         // console.log(routeParams, x)
         this.currentUser = x;
         console.log(this.currentUser);
-        
+
         this.getEvaluationsStats();
         this.getCommentStats();
       });
@@ -373,7 +371,7 @@ export class CrpDashboardComponent implements OnInit {
     }
     let dataset = [];
     let brushes = { domain: [] };
-// console.log('CRP_REPLIES',data);
+    // console.log('CRP_REPLIES',data);
 
     if (data) {
       let comments_accepted_with_comment = data.find(item => item.comments_accepted_with_comment != '0');
