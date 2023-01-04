@@ -355,15 +355,15 @@ class IndicatorsController {
         const indicator = req.params.indicator;
         const crp_id = req.query.crp_id;
         let totalEvaluationsByIndicator = {
-            qa_innovations: {},
-            qa_policies: {},
-            qa_publications: {},
-            qa_oicr: {},
-            qa_melia: {},
+            qa_impact_contribution: {},
+            qa_capacity_change: {},
+            qa_other_outcome: {},
+            qa_other_output: {},
             qa_capdev: {},
-            qa_milestones: {},
-            qa_outcomes: {},
-            qa_slo: {}
+            qa_knowledge_product: {},
+            qa_innovation_development: {},
+            qa_policy_change: {},
+            qa_innovation_use: {}
         };
         const indicators = Object.keys(GeneralIndicatorName);
 
@@ -538,17 +538,15 @@ class IndicatorsController {
     //ALL
     static getAllItemStatusByIndicator = async (req: Request, res: Response) => {
         let totalEvaluationsByIndicator = {
-            qa_innovations: {},
-            qa_policies: {},
-            qa_publications: {},
-            qa_oicr: {},
-            qa_melia: {},
-            qa_capdev: {},
-            qa_milestones: {},
-            qa_outcomes: {},
-            qa_slo: {},
             qa_impact_contribution: {},
+            qa_capacity_change: {},
+            qa_other_outcome: {},
+            qa_other_output: {},
+            qa_capdev: {},
             qa_knowledge_product: {},
+            qa_innovation_development: {},
+            qa_policy_change: {},
+            qa_innovation_use: {}
         };
         const indicators = Object.keys(GeneralIndicatorName);
 

@@ -807,8 +807,8 @@ class EvaluationsController {
             innovations_stage: '',
         }
         switch (view_name) {
-            case 'qa_innovations':
-                response.view_sql = "(SELECT stage FROM qa_innovations innovations WHERE innovations.id = evaluations.indicator_view_id) AS stage,"
+            case 'qa_indicato':
+                response.view_sql = "(SELECT stage FROM qa_indicato innovations WHERE innovations.id = evaluations.indicator_view_id) AS stage,"
                 // response.innovations_stage = "qa_innovations.stage,"
                 break;
             case 'qa_policies':
