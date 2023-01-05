@@ -62,6 +62,7 @@ class EvaluationsController {
             );
             // // console.log( query, parameters)
             let rawData = await queryRunner.connection.query(query, parameters);
+            console.log("🚀 ~ file: EvaluationsController.ts:66 ~ EvaluationsController ~ getEvaluationsDash= ~ rawData", rawData)
             // console.log('rawData');
             // console.log(rawData);
 
@@ -76,7 +77,8 @@ class EvaluationsController {
                     value: element['count'],
                     label: `${element['count']}`,
                     primary_field: element["primary_field"],
-                    order: element['indicator_order']
+                    order: element['indicator_order'],
+                    tpb_count: element['tpb_count'],
                     // total: element['sum'],
                 })
 
@@ -84,6 +86,7 @@ class EvaluationsController {
 
 
             let result = Util.groupBy(response, 'indicator_view_name');
+            console.log("🚀 ~ file: EvaluationsController.ts:90 ~ EvaluationsController ~ getEvaluationsDash= ~ result", result)
             // // console.log('result')
             // // console.log(result)
             res.status(200).json({ data: result, message: "User evaluations" });
@@ -122,7 +125,8 @@ class EvaluationsController {
                         (SELECT enable_crp FROM qa_comments_meta comments_meta WHERE comments_meta.indicatorId = indicator.id) AS indicator_status,
                         indicator.order AS indicator_order, 
                         COUNT(DISTINCT evaluations.id) AS count,
-                        evaluations.status AS evaluations_status
+                        evaluations.status AS evaluations_status,
+                        (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 0) AS tpb_count
                 FROM
                     qa_evaluations evaluations
                 LEFT JOIN qa_indicators indicator ON indicator.view_name = evaluations.indicator_view_name
@@ -165,7 +169,8 @@ class EvaluationsController {
                     indicator.view_name AS indicator_view_name,
                     indicator.primary_field AS primary_field,
                     indicator.order AS indicator_order,
-                    COUNT(DISTINCT evaluations.id) AS count
+                    COUNT(DISTINCT evaluations.id) AS count,
+                    (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 0) AS tpb_count
                 FROM
                     qa_indicator_user qa_indicator_user
                 
@@ -190,6 +195,7 @@ class EvaluationsController {
                 // // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: EvaluationsController.ts:195 ~ EvaluationsController ~ getAllEvaluationsDash= ~ rawData", rawData)
             }
 
             let response = []
@@ -205,7 +211,8 @@ class EvaluationsController {
                     crp_id: (crp_id) ? element['crp_id'] : null,
                     label: `${element['count']}`,
                     primary_field: element["primary_field"],
-                    order: element['indicator_order']
+                    order: element['indicator_order'],
+                    tpb_count: element['tpb_count'],
                 })
 
             }
@@ -422,7 +429,7 @@ class EvaluationsController {
                         AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                     ) AS comments_count,
                     (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
-                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 1) AS comments_accepted_count,
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
                     (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                     NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 4) AS comments_accepted_with_comment_count,
 					(SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS

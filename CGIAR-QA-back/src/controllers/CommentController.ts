@@ -606,7 +606,6 @@ class CommentController {
     static getCommentsReplies = async (req: Request, res: Response) => {
         // console.log('COMMENT_ID: ', req.params);
         const commentId = req.params.commentId;
-        console.log("🚀 ~ file: CommentController.ts ~ line 554 ~ CommentController ~ getCommentsReplies= ~ commentId", commentId)
 
         // let queryRunner = getConnection().createQueryBuilder();
         if (commentId != undefined && commentId != null) {
