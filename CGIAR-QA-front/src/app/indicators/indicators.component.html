@@ -435,8 +435,10 @@
         (click)="setOrder('comments_disagreed_count')"
       >
         <div class="header-row">
-          Disagreed
-          <div class="flag">INIT Reply</div>
+          Disagreed comments
+          <div class="flag" *ngIf="currentUser.cycle.cycle_stage == 2">
+            INIT Reply
+          </div>
           <div class="order-icon" *ngIf="order === 'comments_disagreed_count'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
