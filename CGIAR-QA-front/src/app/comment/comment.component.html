@@ -71,7 +71,7 @@
               {{ comment.detail }}
             </p>
             <app-tags-bar
-              *ngIf="currentUser.roles[0].id != 3"
+              *ngIf="currentUser.roles[0].id != 3 && !tpbUser?.isTPB"
               [comment]="comment"
               [currentUser]="currentUser"
               (tagEvent)="toggleTag($event)"
