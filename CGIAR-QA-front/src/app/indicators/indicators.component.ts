@@ -189,9 +189,16 @@ export class IndicatorsComponent implements OnInit {
     this.chatRooms = {
       general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/am16H1Vlj?username=${this.currentUser.name}`),
     }
+    this.showhighlightColum()
 
     console.log('NEW INDICATOR');
 
+  }
+
+  showhighlightColum() {
+    if (this.currentUser.cycle.cycle_stage == 2) {
+      this.showHighlightedComments = true
+    }
   }
 
 
