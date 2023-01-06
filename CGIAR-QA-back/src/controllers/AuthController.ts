@@ -7,6 +7,7 @@ import config_ from "./../config/config";
 
 import { QAUsers } from "./../entity/User";
 import { QAGeneralConfiguration } from "./../entity/GeneralConfig";
+import { QATokenAuth } from './../entity/TokenAuth';
 import { RolesHandler } from "./../_helpers/RolesHandler";
 import Util from "./../_helpers/Util";
 import { QACycle } from "./../entity/Cycles";
@@ -184,6 +185,31 @@ class AuthController {
 
             })
         });
+    }
+
+    static embedToken = async (req: Request, res: Response) => {
+        const { token, expiration_date, crp_id, username, email, name, app_user } = req.body;
+
+        try {
+            const tokenRepository = getRepository(QATokenAuth);
+            let tokenEmbed = new QATokenAuth;
+
+            tokenEmbed.token = token;
+            tokenEmbed.expiration_date = expiration_date;
+            tokenEmbed.crp_id = crp_id;
+            tokenEmbed.username = username;
+            tokenEmbed.email = email;
+            tokenEmbed.name = name;
+            tokenEmbed.app_user = app_user;
+
+            tokenEmbed = await tokenRepository.save(tokenEmbed);
+
+            res.status(200).send({ data: tokenEmbed, message: 'Token successfully saved in QA' });
+
+        } catch (error) {
+            console.log("🚀 ~ file: AuthController.ts:195 ~ AuthController ~ embedToken= ~ error", error)
+            res.status(501).send({ message: 'An error occurred, please see the log', data: error });
+        }
     }
 
 }

@@ -695,7 +695,8 @@ class Util {
             comments_highlight_count: element["comments_highlight_count"],
             comments_tpb_count: element["comments_tpb_count"],
             comments_ppu_count: element["comments_ppu_count"],
-            initiative: element["initiative"]
+            initiative: element["initiative"],
+            replies_count: element['replies_count'],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -719,6 +720,7 @@ class Util {
                 comments_disagreed_count: element["comments_disagreed_count"],
                 initiative: element["initiative"],
                 short_name: element["short_name"],
+                replies_count: element['replies_count'],
             });
         } else {
             response = Object.assign(response, {
