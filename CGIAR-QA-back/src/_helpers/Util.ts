@@ -696,7 +696,7 @@ class Util {
             comments_tpb_count: element["comments_tpb_count"],
             comments_ppu_count: element["comments_ppu_count"],
             initiative: element["initiative"],
-            replies_count: element['replies_count'],
+            tpb_count: element['tpb_count'],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -720,7 +720,6 @@ class Util {
                 comments_disagreed_count: element["comments_disagreed_count"],
                 initiative: element["initiative"],
                 short_name: element["short_name"],
-                replies_count: element['replies_count'],
             });
         } else {
             response = Object.assign(response, {
@@ -738,6 +737,7 @@ class Util {
                 enable_assessor: element['enable_assessor'],
                 enable_crp: element['enable_crp'],
                 replies_count: element['replies_count'],
+                tpb_count: element['tpb_count'],
                 approved_no_comment: element['approved_no_comment'] || null,
                 public_link: element[`public_link`],
                 editable_link: element[`editable_link`],

@@ -61,11 +61,18 @@ class CommentController {
                             ) AS comments_discarded,
                             SUM(
                                 IF (
-                                    comments.replyTypeId IS NULL,
+                                    comments.replyTypeId IS NULL AND comments.tpb = 0,
                                     1,
                                     0
                                 )
                             ) AS comments_without_answer,
+                            SUM(
+                                IF (
+                                    comments.require_changes = 1 AND comments.tpb = 1 AND comments.ppu = 0,
+                                    1,
+                                    0
+                                )
+                            ) AS comments_tpb_count,
                             SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
                     
                             IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
@@ -111,11 +118,18 @@ class CommentController {
                     ) AS comments_discarded,
                     SUM(
                         IF (
-                            comments.replyTypeId IS NULL,
+                            comments.replyTypeId IS NULL AND comments.tpb = 0 AND comments.is_deleted = 0,
                             1,
                             0
                         )
                     ) AS comments_without_answer,
+                    SUM(
+                        IF (
+                            comments.require_changes = 1 AND comments.tpb = 1 AND comments.ppu = 0,
+                            1,
+                            0
+                        )
+                    ) AS comments_tpb_count,
                     SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
             
                     IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
