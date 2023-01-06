@@ -78,7 +78,7 @@
       aria-labelledby="button-animated"
     >
       <li
-        *ngFor="let status of statusNames | keyvalue | slice: 2:4"
+        *ngFor="let status of statusNames | keyvalue | slice : 2 : 4"
         role="menuitem"
       >
         <a
@@ -227,12 +227,7 @@
               (click)="onChangeSelectAll(!approveAllitems)"
               class="btn btn-{{ approveAllitems ? 'uncheck' : 'check' }}"
             >
-              {{
-                approveAllitems
-                  ? "Uncheck
-                        all"
-                  : "Check all"
-              }}
+              {{ approveAllitems ? "Uncheck all" : "Check all" }}
             </button>
           </div>
 
