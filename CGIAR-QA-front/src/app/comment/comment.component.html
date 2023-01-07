@@ -71,7 +71,7 @@
               {{ comment.detail }}
             </p>
             <app-tags-bar
-              *ngIf="currentUser.roles[0].id != 3 && !tpbUser?.isTPB"
+              *ngIf="currentUser.roles[0].id != 3 && tpbUser?.isTPB"
               [comment]="comment"
               [currentUser]="currentUser"
               (tagEvent)="toggleTag($event)"
@@ -474,10 +474,11 @@
         !crpComment &&
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
-        !tpbUser?.isTPB) ||
+        tpbUser?.isTPB) ||
       currentUser.roles[0].description === allRoles.admin ||
-      userIsLeader ||
-      (commentsByColSelected?.require_changes != 1 && commentsByCol.length > 0)
+      (userIsLeader &&
+        (commentsByColSelected?.require_changes != 1 ||
+          commentsByCol.length > 0))
     "
     class="add-comment-container"
   >
