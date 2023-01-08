@@ -684,6 +684,12 @@
                     *ngIf="detailedData[i].loading"
                     class="spinner-border spinner-border-sm mr-1"
                   ></span>
+                  <div
+                    *ngIf="detailedData[i].is_highlight"
+                    class="highlighted-icon"
+                  >
+                    <img src="../../../assets/icons/bombillo.png" alt="" />
+                  </div>
 
                   <div
                     *ngIf="detailedData[i].replies_count != '0'"
