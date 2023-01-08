@@ -697,6 +697,7 @@ class Util {
             comments_ppu_count: element["comments_ppu_count"],
             initiative: element["initiative"],
             tpb_count: element['tpb_count'],
+            crp_acronym: element['crp_acronym'],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -720,6 +721,7 @@ class Util {
                 comments_disagreed_count: element["comments_disagreed_count"],
                 initiative: element["initiative"],
                 short_name: element["short_name"],
+                crp_acronym: element['crp_acronym'],
             });
         } else {
             response = Object.assign(response, {
@@ -757,6 +759,7 @@ class Util {
                 comments_ppu_count: element["comments_ppu_count"],
                 initiative: element["initiative"],
                 short_name: element["short_name"],
+                crp_acronym: element['crp_acronym'],
             });
         }
 
