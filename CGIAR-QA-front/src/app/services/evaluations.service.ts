@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
-import { map } from 'rxjs/operators';
 
 
 @Injectable({
@@ -17,8 +16,6 @@ export class EvaluationsService {
     return this.http.post<any>(`${environment.apiUrl}/evaluation/${id}/detail`, params)
   }
 
-
-
   // update comment data for evaluation
   updateDataEvaluation(params, id) {
     return this.http.patch<any>(`${environment.apiUrl}/evaluation/${id}/detail/`, params)
@@ -27,7 +24,7 @@ export class EvaluationsService {
   updateRequireSecondAssessmentEvaluation(id, params) {
     return this.http.patch<any>(`${environment.apiUrl}/evaluation/${id}/detail/second_assessment`, params)
   }
-  
+
   // get criteria by indicator
   getCriteriaByIndicator(id) {
     return this.http.get<any>(`${environment.apiUrl}/evaluation/indicator/${id}`)

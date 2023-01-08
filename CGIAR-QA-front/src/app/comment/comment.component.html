@@ -71,7 +71,7 @@
               {{ comment.detail }}
             </p>
             <app-tags-bar
-              *ngIf="currentUser.roles[0].id != 3 && tpbUser?.isTPB"
+              *ngIf="currentUser.roles[0].id != 3 && !tpbUser?.isTPB"
               [comment]="comment"
               [currentUser]="currentUser"
               (tagEvent)="toggleTag($event)"
@@ -437,7 +437,10 @@
   <div
     class="main-required"
     *ngIf="
-      currentUser.roles[0].description === allRoles.admin || tpbUser?.isTPB
+      currentUser.roles[0].description === allRoles.admin ||
+      (tpbUser?.isTPB &&
+        commentsByCol?.length > 0 &&
+        !commentsByCol[0].is_deleted)
     "
   >
     <input
@@ -445,7 +448,8 @@
         dataFromItem.require_changes != 1 &&
         commentsByColSelected?.require_changes != 1 &&
         currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0
+        commentsByCol.length > 0 &&
+        !commentsByCol[0].is_deleted
       "
       class="checkbox-style"
       type="checkbox"
@@ -456,7 +460,8 @@
         dataFromItem.require_changes != 1 &&
         commentsByColSelected?.require_changes != 1 &&
         currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0
+        commentsByCol.length > 0 &&
+        !commentsByCol[0].is_deleted
       "
       class="checkbox-label"
       for="changes"
@@ -474,11 +479,10 @@
         !crpComment &&
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
-        tpbUser?.isTPB) ||
-      currentUser.roles[0].description === allRoles.admin ||
-      (userIsLeader &&
-        (commentsByColSelected?.require_changes != 1 ||
-          commentsByCol.length > 0))
+        tpbUser?.isTPB &&
+        commentsByCol?.length > 0 &&
+        !commentsByCol[0].is_deleted) ||
+      currentUser.roles[0].description === allRoles.admin
     "
     class="add-comment-container"
   >
