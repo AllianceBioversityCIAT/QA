@@ -200,11 +200,12 @@ export class CommentService {
     return this.http.patch<any>(
       `${environment.apiUrl}/evaluation/highlight-comment`,
       params
-    ).pipe(
-      tap(() => {
-        this._refresh$.next()
-      })
-    );
+    )
+    // .pipe(
+    //   tap(() => {
+    //     this._refresh$.next()
+    //   })
+    // );
   }
 
   patchRequireChanges(params) {
