@@ -884,7 +884,7 @@ class EvaluationsController {
                             evaluations.id AS evaluation_id,
                             evaluations.evaluation_status AS evaluation_status, 
                             crp.name AS crp_name,
-                            crp.acronym AS crp_acronym,
+                            crp.crp_id AS crp_acronym,
                             (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field, evaluations.status AS evaluations_status,
                             evaluations.require_second_assessment,
                             IF(
@@ -945,7 +945,7 @@ class EvaluationsController {
                             evaluations.id AS evaluation_id,
                             evaluations.evaluation_status AS evaluation_status,
                             crp.name AS crp_name,
-                            crp.acronym AS crp_acronym,
+                            crp.crp_id AS crp_acronym,
                             (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field,
                             evaluations.status AS evaluations_status,
                             evaluations.require_second_assessment,
@@ -1014,7 +1014,7 @@ class EvaluationsController {
                         evaluations.id AS evaluation_id,
                         evaluations.evaluation_status AS evaluation_status,
                         crp.name AS crp_name,
-                        crp.acronym AS crp_acronym,
+                        crp.crp_id AS crp_acronym,
                         (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field,
                         evaluations.status AS evaluations_status,
                         evaluations.require_second_assessment,
@@ -1058,6 +1058,7 @@ class EvaluationsController {
             }
 
             res.status(200).json({ data: Util.parseEvaluationsData(rawData, view_name_psdo), message: "User evaluation detail" });
+            console.log("🚀 ~ file: EvaluationsController.ts:1061 ~ EvaluationsController ~ getDetailedEvaluationDash= ~ rawData", rawData)
 
         } catch (error) {
             // console.log(error);
