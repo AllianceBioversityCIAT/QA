@@ -77,9 +77,7 @@ class EvaluationsController {
                     value: element['count'],
                     label: `${element['count']}`,
                     primary_field: element["primary_field"],
-                    order: element['indicator_order'],
-                    tpb_count: element['tpb_count'],
-                    // total: element['sum'],
+                    order: element['indicator_order']
                 })
 
             }
