@@ -482,7 +482,8 @@
         tpbUser?.isTPB &&
         commentsByCol?.length > 0 &&
         !commentsByCol[0].is_deleted) ||
-      currentUser.roles[0].description === allRoles.admin
+      currentUser.roles[0].description === allRoles.admin ||
+      userIsLeader
     "
     class="add-comment-container"
   >
