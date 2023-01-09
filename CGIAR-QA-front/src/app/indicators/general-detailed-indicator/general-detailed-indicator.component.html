@@ -637,7 +637,8 @@
                       detailedData[i].value &&
                       detailedData[i].col_name !== 'evidence_link' &&
                       detailedData[i].col_name !== 'outcome_description' &&
-                      detailedData[i].col_name !== 'OICR'
+                      detailedData[i].col_name !== 'OICR' &&
+                      detailedData[i].col_name !== 'number_of_variety'
                     "
                     [innerHTML]="detailedData[i].value.replace | markdown"
                   ></div>
@@ -646,7 +647,8 @@
                       detailedData[i].value &&
                       (detailedData[i].col_name === 'outcome_description' ||
                         detailedData[i].col_name === 'OICR' ||
-                        detailedData[i].col_name === 'evidence_link')
+                        detailedData[i].col_name === 'evidence_link' ||
+                        detailedData[i].col_name !== 'number_of_variety')
                     "
                     [innerHTML]="detailedData[i].value"
                   ></div>

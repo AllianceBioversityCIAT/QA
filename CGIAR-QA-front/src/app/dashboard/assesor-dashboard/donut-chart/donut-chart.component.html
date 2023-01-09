@@ -10,7 +10,10 @@
 </div> -->
 <div *ngIf="chartName" class="legend-container">
   <div class="legend">
-    <div  *ngFor="let tag of legendLabels[chartName]"  class="tag"> <div [ngClass]="tag.class" class="square"></div> <p>{{tag.name}}</p></div>
+    <div *ngFor="let tag of legendLabels[chartName]" class="tag">
+      <div [ngClass]="tag.class" class="square"></div>
+      <p>{{ tag.name }}</p>
+    </div>
   </div>
 </div>
 <div class="pie-container" *ngIf="data.dataset">
@@ -23,11 +26,10 @@
     [legend]="showLegend"
     [legendPosition]="legendPosition"
     [labels]="showLabels"
-    [labelFormatting]="setLabelFormatting"  
+    [labelFormatting]="setLabelFormatting"
     [doughnut]="isDoughnut"
     (select)="onSelect($event)"
-
-    >
+  >
   </ngx-charts-pie-chart>
 </div>
 
