@@ -260,7 +260,6 @@ class EvaluationsController {
                                                  AND is_deleted = 0
                                                  AND is_visible = 1
                                                  AND detail IS NOT NULL
-                                                -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                                  ) <= (
                                          SELECT COUNT(id)
                                          FROM qa_comments_replies
@@ -274,7 +273,6 @@ class EvaluationsController {
                                                                  AND is_deleted = 0
                                                                  AND is_visible = 1
                                                                  AND detail IS NOT NULL
-                                                                -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                                                  )
                                      
                                  ),
@@ -424,7 +422,6 @@ class EvaluationsController {
                         AND is_deleted = 0
                         AND is_visible = 1
                         AND detail IS NOT NULL
-                        AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                     ) AS comments_count,
                     (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                     NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
@@ -537,7 +534,6 @@ class EvaluationsController {
                             AND is_deleted = 0
                             AND is_visible = 1
                             AND detail IS NOT NULL
-                            -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                         ) AS comments_count,
 
                         (
@@ -612,7 +608,6 @@ class EvaluationsController {
                                             AND is_deleted = 0
                                             AND is_visible = 1
                                             AND detail IS NOT NULL
-                                           -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                             ) <= (
                                     SELECT COUNT(id)
                                     FROM qa_comments_replies
@@ -626,7 +621,6 @@ class EvaluationsController {
                                                             AND is_deleted = 0
                                                             AND is_visible = 1
                                                             AND detail IS NOT NULL
-                                                            -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                                             )
                                 
                             ),
@@ -692,7 +686,6 @@ class EvaluationsController {
                             AND is_deleted = 0
                             AND is_visible = 1
                             AND detail IS NOT NULL
-                            AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                         ) AS comments_count,
                         (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 1) AS comments_accepted_count,
