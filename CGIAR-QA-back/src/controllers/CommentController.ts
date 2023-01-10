@@ -274,7 +274,6 @@ class CommentController {
         // approved
         //Check if username and password are set
         const { detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb } = req.body;
-        console.log("🚀 ~ file: CommentController.ts ~ line 263 ~ CommentController ~ createComment= ~ req.body", req.body)
 
         try {
             let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb);
@@ -488,26 +487,27 @@ class CommentController {
 
             const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                 `SELECT
-                id, (
-                    SELECT
-                    COUNT(DISTINCT id)
-                    FROM
-                    qa_comments_replies
-                    WHERE
-                    commentId = qa_comments.id
-                    AND is_deleted = 0
+                    id,
+                    (
+                        SELECT
+                            COUNT(DISTINCT id)
+                        FROM
+                            qa_comments_replies
+                        WHERE
+                            commentId = qa_comments.id
+                            AND is_deleted = 0
                     ) AS replies_count,
-                highlight_comment,
-                highlightById
+                    highlight_comment,
+                    highlightById
                 FROM
-                qa_comments
+                    qa_comments
                 WHERE
-                metaId = :metaId
-                AND evaluationId = :evaluationId
-                AND approved_no_comment IS NULL
-                `,
-                { metaId, evaluationId },
-                {}
+                    metaId =: metaId
+                    AND evaluationId =: evaluationId
+                    AND approved_no_comment IS NULL
+                    `,
+                    { metaId, evaluationId },
+                    {}
             );
             let replies = await queryRunner.connection.query(query, parameters);
             let comments = await CommentController.getCommts(metaId, evaluationId);
