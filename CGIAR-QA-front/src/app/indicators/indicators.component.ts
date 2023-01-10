@@ -296,6 +296,9 @@ export class IndicatorsComponent implements OnInit {
     this.evalStatusFilter = 'Removed'
   }
 
+  filterByAdded() {
+    this.evalStatusFilter = 'Added'
+  }
 
   goToView(indicatorId) {
 

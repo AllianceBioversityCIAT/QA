@@ -138,6 +138,21 @@
       </div>
     </div>
   </div>
+  <div class="added-results">
+    <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+      <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
+                            uncheckable tabindex="0" role="button">Added item</label> -->
+      <label
+        class="btn btn-outline-warning"
+        [class.active]="evalStatusFilter === 'Added'"
+        btnRadio="Added"
+        uncheckable
+        tabindex="0"
+        role="button"
+        >Added results</label
+      >
+    </div>
+  </div>
   <div class="removed-filter">
     <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
       <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
