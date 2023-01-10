@@ -255,13 +255,16 @@
               placement="top"
               *ngIf="field.replies_count != '0'"
               class="replies-count {{
-                field.replies_count == field.comments_replies_count
+                field.replies_count ==
+                +field.comments_replies_count + +field.tpb_count
                   ? 'accepted'
                   : 'rejected'
               }}"
             >
               <p class="comments-counter">
-                {{ field.comments_replies_count }}/{{ field.replies_count }}
+                {{ +field.comments_replies_count + +field.tpb_count }}/{{
+                  field.replies_count
+                }}
               </p>
             </div>
             <ng-template #commentsTooltip>
