@@ -486,9 +486,9 @@
       <th scope="col">
         <div class="header-row">Export comments</div>
       </th>
-      <th scope="col">
+      <!-- <th scope="col">
         <div class="header-row">Submission date</div>
-      </th>
+      </th> -->
       <th
         *ngIf="currentUser.cycle.cycle_stage != 2"
         scope="col"
@@ -662,9 +662,9 @@
           </div>
         </a>
       </td>
-      <td>
+      <!-- <td>
         {{ item.submission_date }}
-      </td>
+      </td> -->
       <td *ngIf="currentUser.cycle.cycle_stage != 2">
         <ul
           *ngFor="let subCategory of item.comment_by?.split(',')"
