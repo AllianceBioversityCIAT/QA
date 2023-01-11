@@ -437,10 +437,7 @@
   <div
     class="main-required"
     *ngIf="
-      currentUser.roles[0].description === allRoles.admin ||
-      (tpbUser?.isTPB &&
-        commentsByCol?.length > 0 &&
-        !commentsByCol[0].is_deleted)
+      currentUser.roles[0].description === allRoles.admin || tpbUser?.isTPB
     "
   >
     <input
@@ -479,11 +476,9 @@
         !crpComment &&
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
-        tpbUser?.isTPB &&
-        commentsByCol?.length > 0 &&
-        !commentsByCol[0].is_deleted) ||
-      currentUser.roles[0].description === allRoles.admin ||
-      userIsLeader
+        tpbUser?.isTPB) ||
+      !tpbUser?.isTPB ||
+      currentUser.roles[0].description === allRoles.admin
     "
     class="add-comment-container"
   >
