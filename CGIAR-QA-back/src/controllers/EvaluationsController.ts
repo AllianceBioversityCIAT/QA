@@ -96,7 +96,7 @@ class EvaluationsController {
     // get all evaluations dashboard - ADMIN DASHBOARD
     static getAllEvaluationsDash = async (req: Request, res: Response) => {
 
-        let { crp_id } = req.params;
+        let { crp_id } = req.query;
         const userId = res.locals.jwtPayload.userId;
         let queryRunner = getConnection().createQueryBuilder();
         const userRepository = getRepository(QAUsers);
@@ -159,6 +159,7 @@ class EvaluationsController {
                 // console.log(query);
 
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: EvaluationsController.ts:162 ~ EvaluationsController ~ getAllEvaluationsDash= ~ rawData", rawData)
             } else {
                 // CRP UNDEFINED
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -167,8 +168,7 @@ class EvaluationsController {
                     indicator.view_name AS indicator_view_name,
                     indicator.primary_field AS primary_field,
                     indicator.order AS indicator_order,
-                    COUNT(DISTINCT evaluations.id) AS count,
-                    (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 0) AS tpb_count
+                    COUNT(DISTINCT evaluations.id) AS count
                 FROM
                     qa_indicator_user qa_indicator_user
                 
@@ -193,7 +193,7 @@ class EvaluationsController {
                 // // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
-                // console.log("🚀 ~ file: EvaluationsController.ts:195 ~ EvaluationsController ~ getAllEvaluationsDash= ~ rawData", rawData)
+                console.log("🚀 ~ file: EvaluationsController.ts:195 ~ EvaluationsController ~ getAllEvaluationsDash= ~ rawData", rawData)
             }
 
             let response = []
@@ -314,6 +314,7 @@ class EvaluationsController {
                 // console.log(query);
 
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: EvaluationsController.ts:317 ~ EvaluationsController ~ getAllEvaluationsDashByCRP= ~ rawData", rawData)
             } else {
                 // CRP UNDEFINED
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -347,6 +348,7 @@ class EvaluationsController {
                 // // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: EvaluationsController.ts:351 ~ EvaluationsController ~ getAllEvaluationsDashByCRP= ~ rawData", rawData)
             }
 
             let response = []
