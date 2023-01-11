@@ -60,11 +60,7 @@ class EvaluationsController {
                 { user_Id: id },
                 {}
             );
-            // // console.log( query, parameters)
             let rawData = await queryRunner.connection.query(query, parameters);
-            console.log("🚀 ~ file: EvaluationsController.ts:66 ~ EvaluationsController ~ getEvaluationsDash= ~ rawData", rawData)
-            // console.log('rawData');
-            // console.log(rawData);
 
             let response = []
             for (let index = 0; index < rawData.length; index++) {
@@ -84,9 +80,7 @@ class EvaluationsController {
 
 
             let result = Util.groupBy(response, 'indicator_view_name');
-            console.log("🚀 ~ file: EvaluationsController.ts:90 ~ EvaluationsController ~ getEvaluationsDash= ~ result", result)
-            // // console.log('result')
-            // // console.log(result)
+            
             res.status(200).json({ data: result, message: "User evaluations" });
         } catch (error) {
             // console.log(error);
@@ -97,6 +91,7 @@ class EvaluationsController {
     static getAllEvaluationsDash = async (req: Request, res: Response) => {
 
         let { crp_id } = req.query;
+        console.log("🚀 ~ file: EvaluationsController.ts:94 ~ EvaluationsController ~ getAllEvaluationsDash= ~ crp_id", crp_id)
         const userId = res.locals.jwtPayload.userId;
         let queryRunner = getConnection().createQueryBuilder();
         const userRepository = getRepository(QAUsers);
@@ -124,7 +119,7 @@ class EvaluationsController {
                         indicator.order AS indicator_order, 
                         COUNT(DISTINCT evaluations.id) AS count,
                         evaluations.status AS evaluations_status,
-                        (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 0) AS tpb_count
+                        (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 1) AS tpb_count
                 FROM
                     qa_evaluations evaluations
                 LEFT JOIN qa_indicators indicator ON indicator.view_name = evaluations.indicator_view_name
@@ -168,7 +163,7 @@ class EvaluationsController {
                     indicator.primary_field AS primary_field,
                     indicator.order AS indicator_order,
                     COUNT(DISTINCT evaluations.id) AS count,
-                    (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 0) AS tpb_count
+                    (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 1) AS tpb_count
                 FROM
                     qa_indicator_user qa_indicator_user
                 
@@ -190,8 +185,6 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                // // console.log(query, parameters);
-
                 rawData = await queryRunner.connection.query(query, parameters);
                 // console.log("🚀 ~ file: EvaluationsController.ts:195 ~ EvaluationsController ~ getAllEvaluationsDash= ~ rawData", rawData)
             }
@@ -205,8 +198,8 @@ class EvaluationsController {
                     status: element['status'] ? element['status'] : element['evaluations_status'],
                     type: Util.getType(element['status'] ? element['status'] : element['evaluations_status'], (crp_id !== undefined && crp_id !== "undefined")),
                     value: element['count'],
-                    indicator_status: element['indicator_status'],
-                    crp_id: (crp_id) ? element['crp_id'] : null,
+                    // indicator_status: element['indicator_status'],
+                    // crp_id: (crp_id) ? element['crp_id'] : null,
                     label: `${element['count']}`,
                     primary_field: element["primary_field"],
                     order: element['indicator_order'],
@@ -216,6 +209,7 @@ class EvaluationsController {
             }
             // // console.log(response)
             let result = Util.groupBy(response, 'indicator_view_name');
+            console.log("🚀 ~ file: EvaluationsController.ts:212 ~ EvaluationsController ~ getAllEvaluationsDash= ~ result", result)
             // res.status(200).json({ data: rawData, message: "All evaluations" });
             res.status(200).json({ data: result, message: "All evaluations" });
         } catch (error) {
@@ -382,21 +376,18 @@ class EvaluationsController {
         //Get the ID from the url
         const id = req.params.id;
         const { crp_id } = req.query;
+        console.log("🚀 ~ file: EvaluationsController.ts:380 ~ EvaluationsController ~ getListEvaluationsDash= ~ crp_id", crp_id)
         // const view_name = `qa_${req.body.view_name}`;
         const view_name = req.body.view_name;
         const view_primary_field = req.body.view_primary_field;
         const levelQuery = EvaluationsController.getLevelQuery(view_name);
-
-        // // console.log(view_name, levelQuery.innovations_stage);
-        // // console.log(levelQuery);
-
 
         let queryRunner = getConnection().createQueryBuilder();
         try {
             const userRepository = getRepository(QAUsers);
             let user = await userRepository.findOneOrFail({ where: { id } });
             let isAdmin = user.roles.find(x => x.description == RolesHandler.admin);
-            // // console.log('getListEvaluationsDash', crp_id)
+            
             if (isAdmin && (crp_id == null || crp_id == 'undefined')) {
                 let sql = `
                 SELECT
@@ -405,9 +396,9 @@ class EvaluationsController {
                     evaluations.indicator_view_name,
                     evaluations.indicator_view_id,
                     evaluations.evaluation_status,
+                    evaluations.crp_id AS initiative, 
                     evaluations.batchDate as submission_date,
                     evaluations.require_second_assessment,
-                    evaluations.crp_id AS initiative, 
                     crp.acronym AS short_name,
                     crp.name AS crp_name,
                     (
@@ -505,7 +496,7 @@ class EvaluationsController {
                 // console.log('isadmin')
                 // // console.log(sql)
                 let rawData = await queryRunner.connection.query(query, parameters);
-                res.status(200).json({ data: Util.parseEvaluationsData(rawData), message: "User evaluations list" });
+                console.log("🚀 ~ file: EvaluationsController.ts:503 ~ EvaluationsController ~ getListEvaluationsDash= ~ rawData", rawData)
                 return;
             } else if (user.crps.length > 0) {
                 // console.log('CRP_LIST');
