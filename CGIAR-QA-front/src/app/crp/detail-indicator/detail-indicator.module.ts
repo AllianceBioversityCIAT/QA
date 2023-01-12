@@ -15,6 +15,7 @@ import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { MarkdownModule } from 'ngx-markdown';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { SharedModule } from 'src/app/shared-module/shared-module.module';
+import { SharedService } from 'src/app/services/shared.service';
 // import { CommentComponent } from '../../comment/comment.component';
 
 
@@ -37,6 +38,7 @@ import { SharedModule } from 'src/app/shared-module/shared-module.module';
     Ng2SearchPipeModule,
     CommentComponentModule
   ],
-  declarations: [CRPIndicatorsComponent, DetailIndicatorComponent]
+  declarations: [CRPIndicatorsComponent, DetailIndicatorComponent],
+  providers: [SharedService]
 })
 export class DetailIndicatorModule { }

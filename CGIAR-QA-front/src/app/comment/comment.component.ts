@@ -9,6 +9,7 @@ import {
   ElementRef,
   Renderer2,
   Inject,
+
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
@@ -33,6 +34,7 @@ import { HighDensityScatterSeries } from "igniteui-angular-charts";
 import { convertToObject } from "typescript";
 import { notDeepStrictEqual } from "assert";
 import { not } from "@angular/compiler/src/output/output_ast";
+import { SharedService } from "../services/shared.service";
 
 @Component({
   selector: "app-comment",
@@ -57,6 +59,7 @@ export class CommentComponent implements OnInit {
   replyTypes = ReplyTypes;
   currentY;
   isActiveButton = false;
+  showCommentComponent = false;
 
   // require_changes = false;
 
@@ -91,7 +94,8 @@ export class CommentComponent implements OnInit {
     private commentService: CommentService,
     private wordCount: WordCounterPipe,
     private spinner: NgxSpinnerService,
-    private modalService: BsModalService
+    private modalService: BsModalService,
+    private sharedService: SharedService,
   ) {
     this.authenticationService.currentUser.subscribe((x) => {
       this.currentUser = x;
@@ -130,7 +134,7 @@ export class CommentComponent implements OnInit {
     this.tpbUser = found
   }
 
-  UpdateHighlightComment(commentId: Number, isHighlighted: Boolean) {
+  UpdateHighlightComment(commentId: Number, isHighlighted: Boolean,) {
     let params = {
       id: commentId,
       highlight_comment: !isHighlighted,
@@ -152,6 +156,7 @@ export class CommentComponent implements OnInit {
     this.is_highlight.emit({
       is_highlight: isHighlighted,
     });
+    this.sharedService.markAsHighlight()
   }
 
 
