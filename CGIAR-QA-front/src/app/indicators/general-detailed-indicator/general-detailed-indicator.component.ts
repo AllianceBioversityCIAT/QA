@@ -97,6 +97,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   generalCommentGroup: FormGroup;
   currentType = '';
   isLeadAssessor: boolean;
+  user: any = false
 
   approveAllitems;
   general_comment_reply;
@@ -186,7 +187,18 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     this.suscription = this.commentService.refresh$.subscribe(() => {
       this.getDetailedData()
     })
+
+    this.istpbUser()
   }
+
+  istpbUser() {
+    const found = this.currentUser.indicators.find(element => {
+      return element?.isTPB === true
+    })
+    console.log(found, '🔥 🔥');
+    this.user = found
+  }
+
 
 
   // convenience getter for easy access to form fields

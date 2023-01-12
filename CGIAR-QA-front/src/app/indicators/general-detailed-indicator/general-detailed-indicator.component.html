@@ -397,7 +397,10 @@
                 </div>
 
                 <div
-                  *ngIf="gnralInfo.status != statusHandler.Autochecked"
+                  *ngIf="
+                    gnralInfo.status != statusHandler.Autochecked &&
+                    !user?.isTPB
+                  "
                   class="check-container"
                 >
                   <div class="check-area">
@@ -406,7 +409,8 @@
                         (validateCommentAvility(detailedData[i]) &&
                           detailedData[i].replies_count == '0') ||
                         (summon.value.isChecked &&
-                          detailedData[i].enable_comments)
+                          detailedData[i].enable_comments &&
+                          !user?.isTPB)
                       "
                       (change)="onTickChange($event, detailedData[i])"
                       [value]="detailedData[i].field_id"
