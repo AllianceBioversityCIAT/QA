@@ -22,7 +22,7 @@
             srcset=""
           />
           <p class="highligt-header">
-            Comment highlighted by {{ comment.highlight_by.name }}
+            Comment highlighted by {{ comment.replies.highlight_by }}
           </p>
         </div>
         <div
@@ -478,7 +478,7 @@
         !crpComment &&
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
-        tpbUser?.isTPB &&
+        !tpbUser?.isTPB &&
         !isCRP) ||
       currentUser.roles[0].description === allRoles.admin
     "
