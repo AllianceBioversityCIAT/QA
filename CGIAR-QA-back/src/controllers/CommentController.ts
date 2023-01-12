@@ -1,6 +1,6 @@
 import e, { Request, Response } from "express";
 import { validate } from "class-validator";
-import { getRepository, In, getConnection, IsNull, Not, getTreeRepository } from "typeorm";
+import { getRepository, In, getConnection, IsNull, Not, getTreeRepository, QueryBuilder } from "typeorm";
 
 import { QAUsers } from "./../entity/User";
 import { QAComments } from "./../entity/Comments";
@@ -487,20 +487,29 @@ class CommentController {
 
             const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                 `SELECT
-                id, (
+                id,
+                (
                     SELECT
-                    COUNT(DISTINCT id)
+                        COUNT(DISTINCT id)
                     FROM
-                    qa_comments_replies
+                        qa_comments_replies
                     WHERE
-                    commentId = qa_comments.id
-                    AND is_deleted = 0
-                    ) AS replies_count,
+                        commentId = qa_comments.id
+                        AND is_deleted = 0
+                ) AS replies_count,
+                (
+                    SELECT
+                        qu.username
+                    FROM
+                        qa_users qu
+                    WHERE
+                        qa_comments.highlightById = qu.id
+                ) AS highlight_by,
                 highlight_comment,
                 highlightById
-                FROM
+            FROM
                 qa_comments
-                WHERE
+            WHERE
                 metaId = :metaId
                 AND evaluationId = :evaluationId
                 AND approved_no_comment IS NULL
@@ -530,7 +539,6 @@ class CommentController {
             res.status(200).send({ data: comments, message: 'All comments' });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Comments can not be retrived.", data: error });
         }
     }
@@ -1622,6 +1630,7 @@ class CommentController {
     */
     private static async getCommts(metaId, evaluationId) {
         const commentsRepository = getRepository(QAComments);
+
         let whereClause = {}
         if (metaId) {
             whereClause = {
@@ -1633,14 +1642,15 @@ class CommentController {
                 evaluation: evaluationId, approved_no_comment: IsNull()
             }
         }
+
         let comments = await commentsRepository.find({
             where: whereClause,
-            relations: ['user', 'cycle', 'tags', 'replyType', 'highlight_by'],
-            // relations: ['user'],
+            relations: ['user', 'cycle', 'tags', 'replyType'],
             order: {
                 createdAt: "ASC"
             }
         });
+
         return comments;
     }
 

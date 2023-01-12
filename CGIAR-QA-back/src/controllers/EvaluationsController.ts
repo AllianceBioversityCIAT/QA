@@ -60,11 +60,7 @@ class EvaluationsController {
                 { user_Id: id },
                 {}
             );
-            // // console.log( query, parameters)
             let rawData = await queryRunner.connection.query(query, parameters);
-            console.log("🚀 ~ file: EvaluationsController.ts:66 ~ EvaluationsController ~ getEvaluationsDash= ~ rawData", rawData)
-            // console.log('rawData');
-            // console.log(rawData);
 
             let response = []
             for (let index = 0; index < rawData.length; index++) {
@@ -84,9 +80,6 @@ class EvaluationsController {
 
 
             let result = Util.groupBy(response, 'indicator_view_name');
-            console.log("🚀 ~ file: EvaluationsController.ts:90 ~ EvaluationsController ~ getEvaluationsDash= ~ result", result)
-            // // console.log('result')
-            // // console.log(result)
             res.status(200).json({ data: result, message: "User evaluations" });
         } catch (error) {
             // console.log(error);
@@ -159,7 +152,6 @@ class EvaluationsController {
                 // console.log(query);
 
                 rawData = await queryRunner.connection.query(query, parameters);
-                console.log("🚀 ~ file: EvaluationsController.ts:162 ~ EvaluationsController ~ getAllEvaluationsDash= ~ rawData", rawData)
             } else {
                 // CRP UNDEFINED
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -193,7 +185,6 @@ class EvaluationsController {
                 // // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
-                console.log("🚀 ~ file: EvaluationsController.ts:195 ~ EvaluationsController ~ getAllEvaluationsDash= ~ rawData", rawData)
             }
 
             let response = []
@@ -311,10 +302,8 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                // console.log(query);
 
                 rawData = await queryRunner.connection.query(query, parameters);
-                console.log("🚀 ~ file: EvaluationsController.ts:317 ~ EvaluationsController ~ getAllEvaluationsDashByCRP= ~ rawData", rawData)
             } else {
                 // CRP UNDEFINED
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -345,10 +334,8 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                // // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
-                console.log("🚀 ~ file: EvaluationsController.ts:351 ~ EvaluationsController ~ getAllEvaluationsDashByCRP= ~ rawData", rawData)
             }
 
             let response = []
@@ -1044,22 +1031,18 @@ class EvaluationsController {
                     { user_Id: id, indicatorId },
                     {}
                 );
-                // // console.log('assessor')
-                // // console.log(query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
 
             }
 
             res.status(200).json({ data: Util.parseEvaluationsData(rawData, view_name_psdo), message: "User evaluation detail" });
-            console.log("🚀 ~ file: EvaluationsController.ts:1061 ~ EvaluationsController ~ getDetailedEvaluationDash= ~ rawData", rawData)
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "User evaluation detail could not access to evaluations." });
         }
     }
 
-    // FIX TO-DO
+    // FIX TODO
     static updateDetailedEvaluation = async (req: Request, res: Response) => {
         console.time('update_evaluation');
         const id = req.params.id;
