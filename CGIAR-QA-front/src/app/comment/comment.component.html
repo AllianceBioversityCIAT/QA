@@ -142,7 +142,9 @@
               *ngIf="
                 comment.highlight_comment == false &&
                 currentUser.cycle.cycle_stage == 2 &&
-                comment.replies.replies_count > 0
+                comment.replies.replies_count > 0 &&
+                !isCRP &&
+                userIsLeader
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
