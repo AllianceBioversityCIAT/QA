@@ -464,7 +464,11 @@
                   ></span>
                   <!-- *ngIf="detailedData[i].is_highlight" -->
                   <div
-                    *ngIf="isCommentHighlight || detailedData[i].is_highlight"
+                    *ngIf="
+                      (isCommentHighlight &&
+                        detailedData[i].comments_replies_count > 0) ||
+                      detailedData[i].is_highlight
+                    "
                     class="highlighted-icon"
                   >
                     <img src="../../../assets/icons/bombillo.png" alt="" />

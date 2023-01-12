@@ -9,4 +9,7 @@ export class SharedService {
     markAsHighlight() {
         this._isCommentHighlight.next(true);
     }
+    dismarkHighlight() {
+        this._isCommentHighlight.next(false);
+    }
 }
