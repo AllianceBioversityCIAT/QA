@@ -140,11 +140,13 @@
           >
             <button
               *ngIf="
-                comment.highlight_comment == false &&
-                currentUser.cycle.cycle_stage == 2 &&
-                comment.replies.replies_count > 0 &&
-                !isCRP &&
-                userIsLeader
+                (comment.highlight_comment == false &&
+                  currentUser.cycle.cycle_stage == 2 &&
+                  comment.replies.replies_count > 0 &&
+                  !isCRP) ||
+                (userIsLeader &&
+                  comment.replies.replies_count &&
+                  comment.tpb != 1)
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
