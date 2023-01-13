@@ -138,16 +138,19 @@
             "
             class="highlight-section"
           >
+            <!-- (comment.highlight_comment == false &&
+            currentUser.cycle.cycle_stage == 2 &&
+            comment.replies.replies_count > 0 &&
+            !isCRP) || -->
             <button
               *ngIf="
-                (comment.highlight_comment == false &&
-                  currentUser.cycle.cycle_stage == 2 &&
-                  comment.replies.replies_count > 0 &&
-                  !isCRP) ||
-                (userIsLeader &&
-                  comment.replies.replies_count &&
-                  comment.tpb != 1 &&
-                  comment.highlight_comment == false)
+                userIsLeader &&
+                comment.replies.replies_count &&
+                comment.tpb != 1 &&
+                comment.highlight_comment == false &&
+                currentUser.cycle.cycle_stage == 2 &&
+                !isCRP &&
+                comment.replies.replies_count > 0
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
