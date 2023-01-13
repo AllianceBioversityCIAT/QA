@@ -478,9 +478,9 @@
         !crpComment &&
         currentUser.hasOwnProperty('cycle') &&
         dataFromItem.require_changes != 1 &&
-        tpbUser?.isTPB &&
         !isCRP) ||
-      currentUser.roles[0].description === allRoles.admin
+      currentUser.roles[0].description === allRoles.admin ||
+      tpbUser?.isTPB
     "
     class="add-comment-container"
   >
