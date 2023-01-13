@@ -146,7 +146,8 @@
                   !isCRP) ||
                 (userIsLeader &&
                   comment.replies.replies_count &&
-                  comment.tpb != 1)
+                  comment.tpb != 1 &&
+                  comment.highlight_comment == false)
               "
               (click)="
                 UpdateHighlightComment(comment.id, comment.highlight_comment)
