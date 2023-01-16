@@ -151,10 +151,14 @@
                 currentUser.cycle.cycle_stage == 2 &&
                 !isCRP &&
                 comment.replies.replies_count > 0 &&
-                dataFromItem == 1
+                dataFromItem.is_core == 1
               "
               (click)="
-                UpdateHighlightComment(comment.id, comment.highlight_comment)
+                UpdateHighlightComment(
+                  comment.id,
+                  comment.highlight_comment,
+                  comment
+                )
               "
               class="highlight-icon"
             >
@@ -171,7 +175,11 @@
                 currentUser.cycle.cycle_stage == 2
               "
               (click)="
-                UpdateHighlightComment(comment.id, comment.highlight_comment)
+                UpdateHighlightComment(
+                  comment.id,
+                  comment.highlight_comment,
+                  comment
+                )
               "
               class="btn btn-danger btn-block"
             >

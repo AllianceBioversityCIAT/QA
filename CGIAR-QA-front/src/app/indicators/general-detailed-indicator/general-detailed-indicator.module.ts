@@ -18,7 +18,6 @@ import { MarkdownModule } from 'ngx-markdown';
 import { CommentComponentModule } from 'src/app/comment/comment.module';
 import { AssessorsChatWindowComponent } from 'src/app/_shared/assessors-chat-window/assessors-chat-window.component';
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
-import { SharedService } from 'src/app/services/shared.service';
 
 // import { CommentComponentModule } from '../../comment/comment.component.module';
 
@@ -37,10 +36,9 @@ import { SharedService } from 'src/app/services/shared.service';
         NgxSpinnerModule,
         OrderModule,
         ReactiveFormsModule,
-        CommentComponentModule
+        CommentComponentModule,
     ],
     declarations: [GeneralDetailedIndicatorComponent],
-    providers: [SharedService]
 })
 export class GeneralDetailedIndicatorModule { }
 

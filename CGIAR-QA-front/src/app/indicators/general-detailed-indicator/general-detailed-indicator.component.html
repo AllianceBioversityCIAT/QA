@@ -355,6 +355,7 @@
                     [@inOutAnimation]
                     [innerHTML]="detailedData[i].original_field"
                   ></div>
+                  <p>testing</p>
                   <!-- data value -->
 
                   <div
@@ -465,7 +466,7 @@
                   <!-- *ngIf="detailedData[i].is_highlight" -->
                   <div
                     *ngIf="
-                      (isCommentHighlight &&
+                      (detailedData[i].highlight_comment &&
                         detailedData[i].comments_replies_count > 0) ||
                       detailedData[i].is_highlight
                     "
@@ -753,6 +754,7 @@
         class="comments-component-container"
       >
         <app-comment
+          [detailedData]="detailedData"
           [isCRP]="false"
           [userIsLeader]="isLeadAssessor"
           [original_field]="detailedData[fieldIndex]?.value || null"
@@ -762,7 +764,9 @@
             updateNumCommnts($event, detailedData[fieldIndex])
           "
           (is_highlight)="updateHighlight($event)"
-        ></app-comment>
+        >
+          ></app-comment
+        >
       </div>
     </div>
   </div>

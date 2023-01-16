@@ -24,7 +24,6 @@ import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
 import * as moment from 'moment';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
-import { SharedService } from 'src/app/services/shared.service';
 
 @Component({
   selector: 'app-general-detailed-indicator',
@@ -145,7 +144,6 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private evaluationService: EvaluationsService,
     private sanitizer: DomSanitizer,
-    private sharedService: SharedService,
   ) {
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
@@ -180,9 +178,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
 
 
     })
-    this.sharedService.isCommentHighlight$.subscribe(
-      (isCommentHighlight) => (this.isCommentHighlight = isCommentHighlight)
-    );
+
   }
 
   ngOnInit(): void {

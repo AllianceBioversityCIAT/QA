@@ -34,7 +34,6 @@ import { HighDensityScatterSeries } from "igniteui-angular-charts";
 import { convertToObject } from "typescript";
 import { notDeepStrictEqual } from "assert";
 import { not } from "@angular/compiler/src/output/output_ast";
-import { SharedService } from "../services/shared.service";
 
 @Component({
   selector: "app-comment",
@@ -74,6 +73,7 @@ export class CommentComponent implements OnInit {
   currentComment;
   // @ViewChild('commentsElem', { static: false }) commentsElem: ElementRef;
   @Input() original_field;
+  @Input() detailedData;
   @Input() userIsLeader: boolean;
   @Input() isCRP;
   // @Input() require_changes: boolean
@@ -95,7 +95,6 @@ export class CommentComponent implements OnInit {
     private wordCount: WordCounterPipe,
     private spinner: NgxSpinnerService,
     private modalService: BsModalService,
-    private sharedService: SharedService,
   ) {
     this.authenticationService.currentUser.subscribe((x) => {
       this.currentUser = x;
@@ -134,12 +133,17 @@ export class CommentComponent implements OnInit {
     this.tpbUser = found
   }
 
-  UpdateHighlightComment(commentId: Number, isHighlighted: Boolean,) {
+  UpdateHighlightComment(commentId: Number, isHighlighted: Boolean, comment) {
     let params = {
       id: commentId,
       highlight_comment: !isHighlighted,
     };
+    let detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
+    detailItemFounded.highlight_comment = !isHighlighted,
+      console.log(this.detailedData)
 
+    comment.highlight_comment = !isHighlighted,
+      console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
     console.log(params, '<===id')
 
     this.showSpinner(this.spinner_comment);
@@ -156,7 +160,6 @@ export class CommentComponent implements OnInit {
     this.is_highlight.emit({
       is_highlight: isHighlighted,
     });
-    this.sharedService.markAsHighlight()
   }
 
 
