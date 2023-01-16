@@ -111,7 +111,8 @@ export class DetailIndicatorComponent implements OnInit {
     // editable_link_marlo: 'Click here to access the item in MARLO',
     editable_link_mel: 'Click here to access the item in MEL',
     download_excel: 'Click here to download all comments in an excel file.',
-    all_approved: 'Setting this option true, will approved all items without comments.'
+    all_approved: 'Setting this option true, will approved all items without comments.',
+    changes_not_implemented: 'This field has not been updated',
   }
 
   criteriaData;

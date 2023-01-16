@@ -176,8 +176,14 @@
                 detailedData[i].hide_original_field =
                   !detailedData[i].hide_original_field
               "
-              >Show original value</span
-            >
+              >Show original value
+              <i
+                tooltip="{{ tooltips.changes_not_implemented }}"
+                *ngIf="detailedData[i].original_field === detailedData[i].value"
+                class="material-icons-round"
+                >warning</i
+              >
+            </span>
             <span
               *ngIf="
                 !detailedData[i].hide_original_field &&
@@ -188,8 +194,14 @@
                 detailedData[i].hide_original_field =
                   !detailedData[i].hide_original_field
               "
-              >Hide original value</span
-            >
+              >Hide original value
+              <i
+                tooltip="{{ tooltips.changes_not_implemented }}"
+                *ngIf="detailedData[i].original_field === detailedData[i].value"
+                class="material-icons-round"
+                >warning</i
+              >
+            </span>
             <div
               class="field-container original-field-container"
               *ngIf="!detailedData[i].hide_original_field"
