@@ -448,6 +448,7 @@ class EvaluationsController {
                                 AND is_visible = 1
                                 LIMIT 1
                         ) AS comments_ppu_count,
+                    ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
                     ( SELECT COUNT(id) FROM qa_comments_replies WHERE commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) AND is_deleted = 0 ) AS comments_replies_count,
 
                     ${levelQuery.view_sql}
@@ -476,7 +477,7 @@ class EvaluationsController {
                     qa_evaluations evaluations
                 LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
                 LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id AND crp.active = 1 AND crp.qa_active = 'open'
-                
+                LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
                 WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
                 AND evaluations.indicator_view_name = :view_name
                 AND evaluations.phase_year = actual_phase_year()
@@ -615,19 +616,14 @@ class EvaluationsController {
                             ),
                             "complete",
                             "pending"
-                    ) AS evaluations_status
-    
-
-
-                        
-                        
+                    ) AS evaluations_status,
+                    ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia
                     FROM
                         qa_evaluations evaluations
                     LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
                     LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id AND crp.active = 1 AND crp.qa_active = 'open'
                     LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
-                    
-                    
+                    LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
                     WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
                     AND evaluations.indicator_view_name = :view_name
                     AND evaluations.crp_id = :crp_id
@@ -751,13 +747,14 @@ class EvaluationsController {
                                 LEFT JOIN qa_users users2 ON users2.id = qea2.qaUsersId
                             WHERE
                                 qea2.qaEvaluationsId = evaluations.id
-                        ) assessed_r2
+                        ) assessed_r2,
+                        ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia
                     FROM
                         qa_evaluations evaluations
                     LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
                     LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id AND crp.active = 1 AND crp.qa_active = 'open'
                     LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
-                    
+                    LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
                     WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
                     AND evaluations.indicator_view_name = :view_name
                     AND indicator_user.userId = :user_Id

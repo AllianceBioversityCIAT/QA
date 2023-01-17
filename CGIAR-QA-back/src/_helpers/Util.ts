@@ -533,7 +533,7 @@ class Util {
 
     }
 
-    static createComment = async (detail, approved, userId, metaId, evaluationId, original_field = null, require_changes, tpb, date_now) => {
+    static createComment = async (detail, approved, userId, metaId, evaluationId, original_field = null, require_changes, tpb) => {
         const userRepository = getRepository(QAUsers);
         const metaRepository = getRepository(QAIndicatorsMeta);
         const evaluationsRepository = getRepository(QAEvaluations);
@@ -596,7 +596,6 @@ class Util {
             comment_.cycle = current_cycle;
             comment_.require_changes = require_changes;
             comment_.tpb = tpb;
-            comment_.createdAt = date_now;
             if (original_field)
                 comment_.original_field = original_field;
             let new_comment = await commentsRepository.save(comment_);
@@ -699,6 +698,7 @@ class Util {
             initiative: element["initiative"],
             tpb_count: element['tpb_count'],
             crp_acronym: element['crp_acronym'],
+            is_melia: element['is_melia'],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -723,6 +723,7 @@ class Util {
                 initiative: element["initiative"],
                 short_name: element["short_name"],
                 crp_acronym: element['crp_acronym'],
+                is_melia: element['is_melia'],
             });
         } else {
             response = Object.assign(response, {
@@ -761,6 +762,7 @@ class Util {
                 initiative: element["initiative"],
                 short_name: element["short_name"],
                 crp_acronym: element['crp_acronym'],
+                is_melia: element['is_melia'],
             });
         }
 
