@@ -9,7 +9,14 @@
     </h3>
   </header>
   <div class="line">
-    <div class="event">
+    <div
+      class="event"
+      [ngClass]="{
+        during: timelineState === 'during',
+        before: timelineState === 'before',
+        after: timelineState === 'after'
+      }"
+    >
       <div class="info-event shadow-sm mb-5 bg-white rounded">
         <div class="date">
           {{ batches[2].assessors_start_date | date : "MMM d, yyyy" }} - 00:00
