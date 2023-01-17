@@ -665,7 +665,7 @@
       <td *ngIf="showDisagreedComments">
         {{ item.comments_disagreed_count }}
       </td>
-      <td>{{ item.is_melia }}</td>
+      <td *ngIf="indicatorType == 'knowledge_product'">{{ item.is_melia }}</td>
 
       <td *ngIf="item" (click)="exportComments(item)">
         <a target="_blank">
