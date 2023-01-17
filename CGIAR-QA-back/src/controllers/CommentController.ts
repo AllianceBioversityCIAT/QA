@@ -277,7 +277,7 @@ class CommentController {
         const date_now = new Date();
 
         try {
-            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb, date_now);
+            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb, date_now.getDate());
             if (new_comment == null) throw new Error('Could not created comment');
             res.status(200).send({ data: new_comment, message: 'Comment created' });
 
