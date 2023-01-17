@@ -23,7 +23,7 @@ router.post("/change-password", [checkJwt], AuthController.changePassword);
 router.post("/create-config", [checkJwt, checkRole([RolesHandler.admin])], AuthController.createGeneralConfig);
 
 
-// TODO Token auth route from Reporting Embed Dashboard
+// * Token auth route from Reporting Embed Dashboard
 router.post("/token-embed", AuthController.embedToken);
 
 
