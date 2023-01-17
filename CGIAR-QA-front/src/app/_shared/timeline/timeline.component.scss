@@ -49,6 +49,22 @@
       &:hover {
         transform: scale(1.3);
       }
+      &.before::before {
+        content: "";
+        display: flex;
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+        background-color: rgb(26, 248, 119);
+      }
+      &.during::before {
+        content: "";
+        display: flex;
+        height: 12px;
+        width: 12px;
+        border-radius: 50%;
+        background-color: rgb(253, 154, 4);
+      }
       .info-event {
         position: absolute;
         width: max-content;
@@ -76,6 +92,20 @@
           font-family: "Poppins";
           font-size: $font-xs; // $font-xs: 12px;
           padding: 0 1em;
+        }
+      }
+      .during {
+        // cambia el color del punto
+        background-color: blue;
+      }
+      .event.before {
+        // añade una línea de carga
+        ::before {
+          content: "";
+          display: block;
+          width: 100%;
+          height: 2px;
+          background-color: blue;
         }
       }
     }

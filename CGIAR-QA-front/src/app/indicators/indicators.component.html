@@ -482,6 +482,20 @@
           </div>
         </div>
       </th> -->
+      <th
+        *ngIf="indicatorType == 'knowledge_product'"
+        scope="col"
+        [class.active]="order === 'is_melia'"
+        (click)="setOrder('is_melia')"
+      >
+        <div class="header-row">
+          is Melia
+          <div class="order-icon" *ngIf="order === 'is_melia'">
+            <span [hidden]="reverse">▼</span>
+            <span [hidden]="!reverse">▲</span>
+          </div>
+        </div>
+      </th>
 
       <th scope="col">
         <div class="header-row">Export comments</div>
@@ -489,6 +503,7 @@
       <!-- <th scope="col">
         <div class="header-row">Submission date</div>
       </th> -->
+
       <th
         *ngIf="currentUser.cycle.cycle_stage != 2"
         scope="col"
@@ -503,6 +518,7 @@
           </div>
         </div>
       </th>
+
       <th
         *ngIf="currentUser.cycle.cycle_stage == 2"
         scope="col"
@@ -649,6 +665,7 @@
       <td *ngIf="showDisagreedComments">
         {{ item.comments_disagreed_count }}
       </td>
+      <td>{{ item.is_melia }}</td>
 
       <td *ngIf="item" (click)="exportComments(item)">
         <a target="_blank">
