@@ -274,10 +274,9 @@ class CommentController {
         // approved
         //Check if username and password are set
         const { detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb } = req.body;
-        const date_now = new Date();
 
         try {
-            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb, date_now.getDate());
+            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb);
             if (new_comment == null) throw new Error('Could not created comment');
             res.status(200).send({ data: new_comment, message: 'Comment created' });
 
