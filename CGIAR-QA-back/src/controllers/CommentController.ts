@@ -75,7 +75,7 @@ class CommentController {
                             ) AS comments_tpb_count,
                             SUM(
                                 IF (
-                                    comments.tpb = 1,
+                                    comments.highlight_comment = 1,
                                     1,
                                     0
                                 )
