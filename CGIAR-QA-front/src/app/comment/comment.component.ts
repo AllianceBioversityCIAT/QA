@@ -35,6 +35,7 @@ import { convertToObject } from "typescript";
 import { notDeepStrictEqual } from "assert";
 import { not } from "@angular/compiler/src/output/output_ast";
 
+import * as moment from 'moment';
 @Component({
   selector: "app-comment",
   templateUrl: "./comment.component.html",
@@ -59,6 +60,10 @@ export class CommentComponent implements OnInit {
   currentY;
   isActiveButton = false;
   showCommentComponent = false;
+  cet: string = "";
+  detailItemFounded = null;
+  adminUser: any = false;
+
 
   // require_changes = false;
 
@@ -123,6 +128,12 @@ export class CommentComponent implements OnInit {
     if (!this.isCRP) {
       this.getQuickComments();
     }
+    this.findAdminUser()
+  }
+
+  findAdminUser() {
+    const adminUser = this.currentUser.config.find((res) => res.roleId == 1)
+    this.adminUser = adminUser != undefined ? true : false
   }
 
   istpbUser() {
@@ -133,18 +144,19 @@ export class CommentComponent implements OnInit {
     this.tpbUser = found
   }
 
-  UpdateHighlightComment(commentId: Number, isHighlighted: Boolean, comment) {
+  UpdateHighlightComment(commentId: Number, isHighlighted: Boolean, comment?) {
     let params = {
       id: commentId,
       highlight_comment: !isHighlighted,
     };
-    let detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
-    detailItemFounded.highlight_comment = !isHighlighted,
-      console.log(this.detailedData)
 
-    comment.highlight_comment = !isHighlighted,
-      console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
-    console.log(params, '<===id')
+    // this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
+    // this.detailItemFounded.highlight_comment = !isHighlighted,
+    //   console.log(this.detailedData)
+
+    // comment.highlight_comment = !isHighlighted,
+    //   console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
+    // console.log(params, '<===id')
 
     this.showSpinner(this.spinner_comment);
     // console.log()
@@ -289,7 +301,10 @@ export class CommentComponent implements OnInit {
     let element = <HTMLInputElement>document.getElementById("require_changes");
     let checked = element?.checked;
 
+    let date = moment().format();
+    // this.cet = moment.utc(date).utcOffset("+01:00").format();
 
+    console.log(this.cet)
     this.showSpinner(this.spinner_comment);
     console.log(this.original_field);
 
@@ -302,7 +317,8 @@ export class CommentComponent implements OnInit {
         approved: true,
         original_field: this.original_field,
         require_changes: checked,
-        tpb: checked
+        tpb: checked,
+        createdAt: (new Date(moment.utc(date).utcOffset("+01:00").format()))
       })
       .subscribe(
         (res) => {
