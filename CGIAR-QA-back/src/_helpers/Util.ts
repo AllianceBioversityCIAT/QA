@@ -699,6 +699,7 @@ class Util {
             tpb_count: element['tpb_count'],
             crp_acronym: element['crp_acronym'],
             is_melia: element['is_melia'],
+            comments_highlight: element['comments_highlight']
         }
         if (!type) {
             response = Object.assign(response, {
@@ -724,6 +725,7 @@ class Util {
                 short_name: element["short_name"],
                 crp_acronym: element['crp_acronym'],
                 is_melia: element['is_melia'],
+                comments_highlight: element['comments_highlight']
             });
         } else {
             response = Object.assign(response, {
@@ -763,6 +765,7 @@ class Util {
                 short_name: element["short_name"],
                 crp_acronym: element['crp_acronym'],
                 is_melia: element['is_melia'],
+                comments_highlight: element['comments_highlight']
             });
         }
 

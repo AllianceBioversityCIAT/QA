@@ -73,6 +73,13 @@ class CommentController {
                                     0
                                 )
                             ) AS comments_tpb_count,
+                            SUM(
+                                IF (
+                                    comments.tpb = 1,
+                                    1,
+                                    0
+                                )
+                            ) AS comments_highlight,
                             SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
                     
                             IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
@@ -97,6 +104,7 @@ class CommentController {
                 );
                 // // console.log('role === RolesHandler.crp', query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: CommentController.ts:107 ~ CommentController ~ commentsCount= ~ rawData", rawData)
             } else {
 
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -130,10 +138,15 @@ class CommentController {
                             0
                         )
                     ) AS comments_tpb_count,
+                    SUM(
+                        IF (
+                            comments.tpb = 1,
+                            1,
+                            0
+                        )
+                    ) AS comments_highlight,
                     SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
-            
                     IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
-                    
                     COUNT(DISTINCT comments.id) AS 'label',
                     COUNT(DISTINCT comments.id) AS 'value',
                     evaluations.indicator_view_name
@@ -153,8 +166,8 @@ class CommentController {
                     {},
                     {}
                 );
-                // // console.log('=== undefined', query)
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: CommentController.ts:172 ~ CommentController ~ commentsCount= ~ rawData", rawData)
 
                 /* 
                 if (crp_id !== 'undefined') {
@@ -220,12 +233,8 @@ class CommentController {
             res.status(200).json({ data: Util.groupBy(rawData, 'indicator_view_name'), message: 'Comments statistics' });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not access to comments statistics." });
         }
-
-        // // console.log( crp_id, id)
-        // res.status(200).send()
     }
 
     // create reply by comment
