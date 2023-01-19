@@ -80,6 +80,41 @@ class CommentController {
                                     0
                                 )
                             ) AS comments_highlight,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.ppu = 0,
+                                    1,
+                                    0
+                                )
+                            ) AS pending_highlight_comments,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.require_changes = 1
+                                    AND comments.ppu = 1,
+                                    1,
+                                    0
+                                )
+                            ) AS solved_with_require_request,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.require_changes = 0
+                                    AND comments.ppu = 1,
+                                    1,
+                                    0
+                                )
+                            ) AS solved_without_require_request,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.require_changes = 1
+                                    AND comments.ppu = 0,
+                                    1,
+                                    0
+                                )
+                            ) AS pending_tpb_decisions,
                             SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
                     
                             IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
@@ -109,58 +144,114 @@ class CommentController {
 
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `SELECT
-                    SUM(
-                        IF (comments.replyTypeId = 1 AND replies.detail = '', 1, 0 )
-                    ) AS comments_accepted_without_comment,
-                    SUM(
-                        IF (comments.replyTypeId = 4 AND replies.detail <> '', 1, 0 )
-                    ) AS comments_accepted_with_comment,
-                    SUM(
-                        IF (comments.replyTypeId = 2, 1, 0)
-                    ) AS comments_rejected,
-                    SUM(
-                        IF (comments.replyTypeId = 3, 1, 0)
-                    ) AS comments_clarification,
-                    SUM(
-                        IF (comments.replyTypeId = 5, 1, 0)
-                    ) AS comments_discarded,
-                    SUM(
-                        IF (
-                            comments.replyTypeId IS NULL AND comments.tpb = 0 AND comments.is_deleted = 0,
-                            1,
-                            0
-                        )
-                    ) AS comments_without_answer,
-                    SUM(
-                        IF (
-                            comments.require_changes = 1 AND comments.tpb = 1 AND comments.ppu = 0,
-                            1,
-                            0
-                        )
-                    ) AS comments_tpb_count,
-                    SUM(
-                        IF (
-                            comments.tpb = 1,
-                            1,
-                            0
-                        )
-                    ) AS comments_highlight,
-                    SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
-                    IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
-                    COUNT(DISTINCT comments.id) AS 'label',
-                    COUNT(DISTINCT comments.id) AS 'value',
-                    evaluations.indicator_view_name
-            FROM qa_comments comments
-                    LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
-            WHERE comments.is_deleted = 0
-                    AND comments.detail IS NOT NULL
-                    AND metaId IS NOT NULL
-                    AND evaluation_status <> 'Deleted'
-                    AND evaluations.phase_year = actual_phase_year()
-                    -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
-            GROUP BY evaluations.indicator_view_name, comments.replyTypeId
-            ORDER BY type DESC;
+                        SUM(
+                            IF(
+                                comments.replyTypeId = 1
+                                AND replies.detail = '',
+                                1,
+                                0
+                            )
+                        ) AS comments_accepted_without_comment,
+                        SUM(
+                            IF(
+                                comments.replyTypeId = 4
+                                AND replies.detail <> '',
+                                1,
+                                0
+                            )
+                        ) AS comments_accepted_with_comment,
+                        SUM(IF(comments.replyTypeId = 2, 1, 0)) AS comments_rejected,
+                        SUM(IF(comments.replyTypeId = 3, 1, 0)) AS comments_clarification,
+                        SUM(IF(comments.replyTypeId = 5, 1, 0)) AS comments_discarded,
+                        SUM(
+                            IF(
+                                comments.replyTypeId IS NULL
+                                AND comments.tpb = 0
+                                AND comments.is_deleted = 0,
+                                1,
+                                0
+                            )
+                        ) AS comments_without_answer,
+                        SUM(
+                            IF(
+                                comments.require_changes = 1
+                                AND comments.tpb = 1
+                                AND comments.ppu = 0,
+                                1,
+                                0
+                            )
+                        ) AS comments_tpb_count,
+                        SUM(
+                            IF(
+                                comments.tpb = 1,
+                                1,
+                                0
+                            )
+                        ) AS comments_highlight,
+                        SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.ppu = 0,
+                                1,
+                                0
+                            )
+                        ) AS pending_highlight_comments,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.require_changes = 1
+                                AND comments.ppu = 1,
+                                1,
+                                0
+                            )
+                        ) AS solved_with_require_request,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.require_changes = 0
+                                AND comments.ppu = 1,
+                                1,
+                                0
+                            )
+                        ) AS solved_without_require_request,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.require_changes = 1
+                                AND comments.ppu = 0,
+                                1,
+                                0
+                            )
+                        ) AS pending_tpb_decisions,
+                        IF(
+                            comments.replyTypeId IS NULL,
+                            'secondary',
+                            IF(
+                                comments.replyTypeId in (1, 4),
+                                'success',
+                                'danger'
+                            )
+                        ) AS type,
+                        COUNT(DISTINCT comments.id) AS 'label',
+                        COUNT(DISTINCT comments.id) AS 'value',
+                        evaluations.indicator_view_name
+                    FROM
+                        qa_comments comments
+                        LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+                        LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+                        AND replies.is_deleted = 0
+                    WHERE
+                        comments.is_deleted = 0
+                        AND comments.detail IS NOT NULL
+                        AND metaId IS NOT NULL
+                        AND evaluation_status <> 'Deleted'
+                        AND evaluations.phase_year = actual_phase_year()
+                    GROUP BY
+                        evaluations.indicator_view_name,
+                        comments.replyTypeId
+                    ORDER BY
+                        type DESC;
 
                         `,
                     {},

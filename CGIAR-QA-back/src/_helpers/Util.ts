@@ -699,7 +699,11 @@ class Util {
             tpb_count: element['tpb_count'],
             crp_acronym: element['crp_acronym'],
             is_melia: element['is_melia'],
-            comments_highlight: element['comments_highlight']
+            comments_highlight: element['comments_highlight'],
+            pending_highlight_comments: element['pending_highlight_comments'],
+            solved_with_require_request: element['solved_with_require_request'],
+            solved_without_require_request: element['solved_without_require_request'],
+            pending_tpb_decisions: element['pending_tpb_decisions'],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -725,7 +729,11 @@ class Util {
                 short_name: element["short_name"],
                 crp_acronym: element['crp_acronym'],
                 is_melia: element['is_melia'],
-                comments_highlight: element['comments_highlight']
+                comments_highlight: element['comments_highlight'],
+                pending_highlight_comments: element['pending_highlight_comments'],
+                solved_with_require_request: element['solved_with_require_request'],
+                solved_without_require_request: element['solved_without_require_request'],
+                pending_tpb_decisions: element['pending_tpb_decisions'],
             });
         } else {
             response = Object.assign(response, {
@@ -765,7 +773,11 @@ class Util {
                 short_name: element["short_name"],
                 crp_acronym: element['crp_acronym'],
                 is_melia: element['is_melia'],
-                comments_highlight: element['comments_highlight']
+                comments_highlight: element['comments_highlight'],
+                pending_highlight_comments: element['pending_highlight_comments'],
+                solved_with_require_request: element['solved_with_require_request'],
+                solved_without_require_request: element['solved_without_require_request'],
+                pending_tpb_decisions: element['pending_tpb_decisions'],
             });
         }
 
