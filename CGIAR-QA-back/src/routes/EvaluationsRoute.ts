@@ -93,6 +93,6 @@ router.get("/:evaluationId([0-9]+)/assessors", [checkJwt, checkRole([RolesHandle
 router.patch("/:id([0-9]+)/detail/second_assessment", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], EvaluationsController.updateRequireSecondEvaluation)
 
 // TODO highlight
-router.get("/highlight-status", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], EvaluationsController.pendingHighlights);
+router.get("/highlight-status/:indicatorView", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], EvaluationsController.pendingHighlights);
 
 export default router;

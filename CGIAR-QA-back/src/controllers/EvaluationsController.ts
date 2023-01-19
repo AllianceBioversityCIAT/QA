@@ -1226,46 +1226,68 @@ class EvaluationsController {
     }
 
     static pendingHighlights = async (req: Request, res: Response) => {
-        const manager = getManager();
-        
+        const { indicatorView } = req.params;
+        let queryRunner = getConnection().createQueryBuilder();
+
         try {
-            const highlights = await manager.query(
+            const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                 `SELECT
                     SUM(
                         IF(
-                            c.highlight_comment = 1 AND c.ppu = 0,
+                            c.highlight_comment = 1
+                            AND c.ppu = 0,
                             1,
                             0
                         )
                     ) AS pending_highlight_comments,
                     SUM(
                         IF(
-                            c.highlight_comment = 1 AND c.require_changes = 1 AND c.ppu = 1,
+                            c.highlight_comment = 1
+                            AND c.require_changes = 1
+                            AND c.ppu = 1,
                             1,
                             0
                         )
                     ) AS solved_with_require_request,
                     SUM(
                         IF(
-                            c.highlight_comment = 1 AND c.require_changes = 0 AND c.ppu = 1,
+                            c.highlight_comment = 1
+                            AND c.require_changes = 0
+                            AND c.ppu = 1,
                             1,
                             0
                         )
                     ) AS solved_without_require_request,
                     SUM(
                         IF(
-                            c.highlight_comment = 1 AND c.require_changes = 1 AND c.ppu = 0,
+                            c.highlight_comment = 1
+                            AND c.require_changes = 1
+                            AND c.ppu = 0,
                             1,
                             0
                         )
                     ) AS pending_tpb_decisions
                 FROM
-                    qa_comments c;`
-            )
-            res.status(200).json({data: highlights, message: 'All highlights status'});
+                    qa_comments c
+                LEFT JOIN qa_indicators_meta im ON im.id = c.metaId
+                LEFT JOIN qa_indicators i ON i.id = im.indicatorId
+                LEFT JOIN qa_evaluations e ON e.id = c.evaluationId
+                WHERE
+                    i.view_name = :indicatorView
+                    AND c.is_deleted = 0
+                    AND c.detail IS NOT NULL
+                    AND c.metaId IS NOT NULL
+                GROUP BY
+                    e.indicator_view_name;`,
+                { indicatorView },
+                {}
+            );
+            let highlights = await queryRunner.connection.query(query, parameters);
+
+            res.status(200).json({ data: highlights, message: 'All highlights status' });
         } catch (error) {
             console.log("🚀 ~ file: EvaluationsController.ts:1260 ~ EvaluationsController ~ pendingHighlights= ~ error", error)
-            res.status(200).json({data: error, message: 'Could not retrieve the highlighted status'});
+            res.status(200).json({ data: error, message: 'Could not retrieve the highlighted status' });
         }
     }
 
