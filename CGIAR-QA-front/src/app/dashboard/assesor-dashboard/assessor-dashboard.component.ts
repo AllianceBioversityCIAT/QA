@@ -28,6 +28,7 @@ export class AssessorDashboardComponent implements OnInit {
   currentUser: User;
   dashboardData: any[];
   dashboardCommentsData: any[];
+  dashboardHighlightedData: any;
   generalStatus = GeneralStatus;
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
@@ -51,7 +52,8 @@ export class AssessorDashboardComponent implements OnInit {
     generalStatus: null,
     assessorsInteractions: null,
     responseToComments: null,
-    assessmentByField: null
+    assessmentByField: null,
+    highlitedPendingComments: null,
   }
   totalPendings = {
     qa_innovation_development: 0,
@@ -104,7 +106,7 @@ export class AssessorDashboardComponent implements OnInit {
     console.log({ currentUser: this.currentUser });
 
     this.loadDashData();
-
+    this.getHighlightData()
   }
 
   loadDashData() {
@@ -122,7 +124,7 @@ export class AssessorDashboardComponent implements OnInit {
           commentsStats,
           allTags,
           // feedTags,
-          assessmentByField
+          assessmentByField,
         ] = res;
 
         //dashData
@@ -140,7 +142,6 @@ export class AssessorDashboardComponent implements OnInit {
           this.dashboardCommentsData = this.dashService.groupData(commentsStats.data);
           console.log('COUNT COMMENTS', this.dashboardCommentsData);
         }
-
 
         //allTags
         if (allTags)
@@ -360,6 +361,43 @@ export class AssessorDashboardComponent implements OnInit {
     return { dataset, brushes };
   }
 
+
+  getHighlightData() {
+
+    let dashHighlightedData = this.dashService.getHighlightedData().subscribe(res => {
+
+      const colors = {
+        Pending: 'var(--color-pending)',
+        Solved: 'var(--color-agree)',
+        SolvedWC: 'var(--color-agree-wc)'
+      }
+
+      let dataset = [];
+      let brushes = { domain: [] };
+
+      if (res) {
+        let pending_highlight_comment = res.data.find(item => item.pending_highlight_comments)
+        pending_highlight_comment = pending_highlight_comment ? { name: 'Pending', value: pending_highlight_comment.pending_highlight_comments } : null
+        if (pending_highlight_comment) dataset.push(pending_highlight_comment);
+
+        let solved_with_require_request = res.data.find(item => item.solved_with_require_request)
+        solved_with_require_request = solved_with_require_request ? { name: 'Solved', value: solved_with_require_request.solved_with_require_request } : null
+        if (solved_with_require_request) dataset.push(solved_with_require_request);
+
+        let solved_without_require_request = res.data.find(item => item.solved_without_require_request)
+        solved_without_require_request = solved_without_require_request ? { name: 'SolvedWC', value: solved_without_require_request.solved_without_require_request } : null
+        if (solved_without_require_request) dataset.push(solved_without_require_request);
+      }
+      dataset.forEach(comment => {
+        brushes.domain.push(colors[comment.name]);
+      });
+      return this.dashboardHighlightedData = { dataset, brushes }
+    })
+    return dashHighlightedData
+
+  }
+
+
   formatIndicatorTags() {
 
     const tags = this.indicatorsTags[this.selectedIndicator];
@@ -389,6 +427,7 @@ export class AssessorDashboardComponent implements OnInit {
     this.dataCharts.assessorsInteractions = this.formatIndicatorTags();
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(this.dashboardCommentsData[this.selectedIndicator]);
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
+    this.dataCharts.highlitedPendingComments = this.dashboardHighlightedData
   }
 
   updateFeedTags(tagTypeId) {

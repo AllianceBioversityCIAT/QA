@@ -62,6 +62,11 @@ export class DashboardService {
     return this.http.get<any>(`${environment.apiUrl}/comment/batches`);
   }
 
+  // get hihglighted data
+  getHighlightedData() {
+    return this.http.get<any>(`${environment.apiUrl}/evaluation/highlight-status`)
+  }
+
   sortProperties(obj) {
     // convert object into array
     var sortable = [];

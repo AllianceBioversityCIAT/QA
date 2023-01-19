@@ -82,13 +82,7 @@
             </app-donut-chart>
           </div>
         </div>
-        <div
-          *ngIf="
-            currentUser.cycle.cycle_stage == '1' ||
-            currentUser.cycle.cycle_stage == '2'
-          "
-          class="chart chart-2"
-        >
+        <div *ngIf="currentUser.cycle.cycle_stage == '1'" class="chart chart-2">
           <div class="header-chart">
             <h4 class="chart-title">Assessors interactions</h4>
             <i class="icon-info" [tooltip]="popTemplateChartB"></i>
@@ -148,8 +142,9 @@
             *ngIf="dashboardCommentsData[selectedIndicator]"
             class="chart-container"
           >
+            <!-- [data]="dataCharts.highlitedPendingComments" -->
             <app-donut-chart
-              [data]="dataCharts"
+              [data]="dataCharts.highlitedPendingComments"
               [chartName]="'highlight_comments'"
               [selectedIndicator]="selectedIndicator"
             >
