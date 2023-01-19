@@ -1,5 +1,5 @@
 import { Request, Response } from "express";
-import { getRepository, getConnection } from "typeorm";
+import { getRepository, getConnection, getManager } from "typeorm";
 
 import { QACrp } from "./../entity/CRP";
 import { QAEvaluations } from "./../entity/Evaluations";
@@ -1222,6 +1222,43 @@ class EvaluationsController {
         } catch (error) {
             // console.log(error);
             res.status(404).json({ message: "Could not update the evaluation." });
+        }
+    }
+
+    static pendingHighlights = async (req: Request, res: Response) => {
+        const manager = getManager();
+        
+        try {
+            const highlights = await manager.query(
+                `SELECT
+                    SUM(
+                        IF(
+                            c.highlight_comment = 1 AND c.ppu = 0,
+                            1,
+                            0
+                        )
+                    ) AS pending_highlight_comments,
+                    SUM(
+                        IF(
+                            c.highlight_comment = 1 AND c.require_changes = 1 AND c.ppu = 1,
+                            1,
+                            0
+                        )
+                    ) AS solved_with_require_request,
+                    SUM(
+                        IF(
+                            c.highlight_comment = 1 AND c.require_changes = 0 AND c.ppu = 1,
+                            1,
+                            0
+                        )
+                    ) AS solved_without_require_request
+                FROM
+                    qa_comments c;`
+            )
+            res.status(200).json({data: highlights, message: 'All highlights status'});
+        } catch (error) {
+            console.log("🚀 ~ file: EvaluationsController.ts:1260 ~ EvaluationsController ~ pendingHighlights= ~ error", error)
+            res.status(200).json({data: error, message: 'Could not retrieve the highlighted status'});
         }
     }
 
