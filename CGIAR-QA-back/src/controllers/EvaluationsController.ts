@@ -1226,7 +1226,7 @@ class EvaluationsController {
     }
 
     static pendingHighlights = async (req: Request, res: Response) => {
-        const { indicatorView } = req.params;
+        const { crp_id } = req.query;
         let queryRunner = getConnection().createQueryBuilder();
 
         try {
@@ -1234,52 +1234,55 @@ class EvaluationsController {
                 `SELECT
                     SUM(
                         IF(
-                            c.highlight_comment = 1
-                            AND c.ppu = 0,
+                            comments.highlight_comment = 1
+                            AND comments.ppu = 0,
                             1,
                             0
                         )
                     ) AS pending_highlight_comments,
                     SUM(
                         IF(
-                            c.highlight_comment = 1
-                            AND c.require_changes = 1
-                            AND c.ppu = 1,
+                            comments.highlight_comment = 1
+                            AND comments.require_changes = 1
+                            AND comments.ppu = 1,
                             1,
                             0
                         )
                     ) AS solved_with_require_request,
                     SUM(
                         IF(
-                            c.highlight_comment = 1
-                            AND c.require_changes = 0
-                            AND c.ppu = 1,
+                            comments.highlight_comment = 1
+                            AND comments.require_changes = 0
+                            AND comments.ppu = 1,
                             1,
                             0
                         )
                     ) AS solved_without_require_request,
                     SUM(
                         IF(
-                            c.highlight_comment = 1
-                            AND c.require_changes = 1
-                            AND c.ppu = 0,
+                            comments.highlight_comment = 1
+                            AND comments.require_changes = 1
+                            AND comments.ppu = 0,
                             1,
                             0
                         )
-                    ) AS pending_tpb_decisions
+                    ) AS pending_tpb_decisions,
+                    evaluations.indicator_view_name
                 FROM
-                    qa_comments c
-                LEFT JOIN qa_indicators_meta im ON im.id = c.metaId
-                LEFT JOIN qa_indicators i ON i.id = im.indicatorId
-                LEFT JOIN qa_evaluations e ON e.id = c.evaluationId
+                    qa_comments comments
+                    LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+                    AND replies.is_deleted = 0
                 WHERE
-                    i.view_name = :indicatorView
-                    AND c.is_deleted = 0
-                    AND c.detail IS NOT NULL
-                    AND c.metaId IS NOT NULL
+                    comments.is_deleted = 0
+                    AND comments.detail IS NOT NULL
+                    AND metaId IS NOT NULL
+                    AND evaluation_status <> 'Deleted'
+                    AND evaluations.phase_year = actual_phase_year()
                 GROUP BY
-                    e.indicator_view_name;`,
-                { indicatorView },
+                    evaluations.indicator_view_name,
+                    comments.replyTypeId;`,
+                {},
                 {}
             );
             let highlights = await queryRunner.connection.query(query, parameters);
