@@ -1251,7 +1251,14 @@ class EvaluationsController {
                             1,
                             0
                         )
-                    ) AS solved_without_require_request
+                    ) AS solved_without_require_request,
+                    SUM(
+                        IF(
+                            c.highlight_comment = 1 AND c.require_changes = 1 AND c.ppu = 0,
+                            1,
+                            0
+                        )
+                    ) AS pending_tpb_decisions
                 FROM
                     qa_comments c;`
             )
