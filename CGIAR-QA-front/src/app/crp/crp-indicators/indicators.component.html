@@ -373,9 +373,9 @@
             <th *ngIf="indicatorType == 'publications'" scope="col">
               <div class="header-row">Assessed by</div>
             </th>
-            <th scope="col">
+            <!-- <th scope="col">
               <div class="header-row">Submission date</div>
-            </th>
+            </th> -->
             <th
               scope="col"
               [class.active]="order === 'status'"
@@ -508,9 +508,9 @@
                 Validated by WoS/Scopus
               </p>
             </td>
-            <td>
+            <!-- <td>
               {{ item.submission_date }}
-            </td>
+            </td> -->
             <td>
               <i class="icon-{{ statusIconCRP[item.status] }} status-icon"></i>
               <div
