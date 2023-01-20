@@ -125,12 +125,12 @@ export class CrpDashboardComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private indicatorService: IndicatorsService) {
     this.activeRoute.params.subscribe(routeParams => {
-      console.log({ routeParams });
+      // console.log({ routeParams });
 
       this.authenticationService.currentUser.subscribe(x => {
         // console.log(routeParams, x)
         this.currentUser = x;
-        console.log(this.currentUser);
+        // console.log(this.currentUser);
 
         this.getEvaluationsStats();
         this.getCommentStats();
@@ -148,10 +148,16 @@ export class CrpDashboardComponent implements OnInit {
     if (this.indicators = [])
       this.getCRPIndicators();
 
+    this.getTpbDecision()
     // this.getCommentStats();
     // console.log('crp-dashboard')
   }
 
+  getTpbDecision() {
+    this.dashService.getHighlightedData().subscribe(res => {
+      return console.log(res)
+    })
+  }
 
   getCRPIndicators() {
 
@@ -163,12 +169,12 @@ export class CrpDashboardComponent implements OnInit {
             this.indicators = res.data.sort((a, b) => a.order - b.order);
             localStorage.setItem('indicatorsCRP', JSON.stringify(this.indicators));
             // this.authenticationService.userHeaders = res.data;
-            console.log(this.indicators)
+            // console.log(this.indicators)
             this.hideSpinner(this.spinner1);
           },
           error => {
             this.hideSpinner(this.spinner1);
-            console.log("getCRPIndicators", error);
+            // console.log("getCRPIndicators", error);
             this.alertService.error(error);
           }
         );
@@ -190,7 +196,7 @@ export class CrpDashboardComponent implements OnInit {
         },
         error => {
           this.hideSpinner(this.spinner2)
-          console.log("getAllDashData", error);
+          // console.log("getAllDashData", error);
           this.alertService.error(error);
         },
       )
@@ -214,7 +220,7 @@ export class CrpDashboardComponent implements OnInit {
         },
         error => {
           this.hideSpinner(this.spinner1)
-          console.log("getCommentStats", error);
+          // console.log("getCommentStats", error);
           this.alertService.error(error);
         },
       )
@@ -233,7 +239,7 @@ export class CrpDashboardComponent implements OnInit {
         },
         error => {
           this.hideSpinner(this.spinner1);
-          console.log("getRawComments", error);
+          // console.log("getRawComments", error);
           this.alertService.error(error);
         },
       )
@@ -255,7 +261,7 @@ export class CrpDashboardComponent implements OnInit {
         this.hideSpinner(this.spinner1);
       },
       error => {
-        console.log("downloadRawComments", error);
+        // console.log("downloadRawComments", error);
         this.hideSpinner(this.spinner1);
         this.alertService.error(error);
       }
@@ -447,8 +453,8 @@ export class CrpDashboardComponent implements OnInit {
 
 
   graphClickEvent(event, array) {
-    console.log(event, array[0], this.crpChart)
-    console.log('ch<rt', this.crpChart)
+    // console.log(event, array[0], this.crpChart)
+    // console.log('ch<rt', this.crpChart)
     // .chart.getElementsAtEvent(event))
     // .getElementsAtEvent(evt))
   }
