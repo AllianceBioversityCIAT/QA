@@ -234,6 +234,34 @@
           </div>
         </div>
       </th>
+      <th
+        *ngIf="indicatorType == 'knowledge_product'"
+        scope="col"
+        [class.active]="order === 'is_melia'"
+        (click)="setOrder('is_melia')"
+      >
+        <div class="header-row">
+          is Melia
+          <div class="order-icon" *ngIf="order === 'is_melia'">
+            <span [hidden]="reverse">▼</span>
+            <span [hidden]="!reverse">▲</span>
+          </div>
+        </div>
+      </th>
+      <th
+        *ngIf="indicatorType == 'knowledge_product'"
+        scope="col"
+        [class.active]="order === 'knowledge_product_type'"
+        (click)="setOrder('knowledge_product_type')"
+      >
+        <div class="header-row">
+          KP type
+          <div class="order-icon" *ngIf="order === 'knowledge_product_type'">
+            <span [hidden]="reverse">▼</span>
+            <span [hidden]="!reverse">▲</span>
+          </div>
+        </div>
+      </th>
       <!-- <th
         scope="col"
         [class.active]="order === 'crp_acronym'"
@@ -482,20 +510,6 @@
           </div>
         </div>
       </th> -->
-      <th
-        *ngIf="indicatorType == 'knowledge_product'"
-        scope="col"
-        [class.active]="order === 'is_melia'"
-        (click)="setOrder('is_melia')"
-      >
-        <div class="header-row">
-          is Melia
-          <div class="order-icon" *ngIf="order === 'is_melia'">
-            <span [hidden]="reverse">▼</span>
-            <span [hidden]="!reverse">▲</span>
-          </div>
-        </div>
-      </th>
 
       <th scope="col">
         <div class="header-row">Export comments</div>
@@ -609,6 +623,10 @@
       <!-- INITIATIVES SHOULD BE DISPLAYED IN NEXT LINE -->
       <!-- CRP/PTF - DEBE SER DE TYPE -->
       <td>{{ item.initiative }}-{{ item.short_name }}</td>
+      <td *ngIf="indicatorType == 'knowledge_product'">{{ item.is_melia }}</td>
+      <td *ngIf="indicatorType == 'knowledge_product'">
+        {{ item.knowledge_product_type }}
+      </td>
       <!-- DEBE SER INICIATIVA -->
       <!-- <td>{{ item.crp_acronym }}</td> -->
       <!-- COMMENTS -->
@@ -665,7 +683,6 @@
       <td *ngIf="showDisagreedComments">
         {{ item.comments_disagreed_count }}
       </td>
-      <td *ngIf="indicatorType == 'knowledge_product'">{{ item.is_melia }}</td>
 
       <td *ngIf="item" (click)="exportComments(item)">
         <a target="_blank">
