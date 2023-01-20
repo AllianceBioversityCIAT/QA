@@ -704,6 +704,7 @@ class Util {
             solved_with_require_request: element['solved_with_require_request'],
             solved_without_require_request: element['solved_without_require_request'],
             pending_tpb_decisions: element['pending_tpb_decisions'],
+            knowledge_product_type: element['knowledge_product_type'],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -734,6 +735,7 @@ class Util {
                 solved_with_require_request: element['solved_with_require_request'],
                 solved_without_require_request: element['solved_without_require_request'],
                 pending_tpb_decisions: element['pending_tpb_decisions'],
+                knowledge_product_type: element['knowledge_product_type'],
             });
         } else {
             response = Object.assign(response, {
@@ -778,6 +780,7 @@ class Util {
                 solved_with_require_request: element['solved_with_require_request'],
                 solved_without_require_request: element['solved_without_require_request'],
                 pending_tpb_decisions: element['pending_tpb_decisions'],
+                knowledge_product_type: element['knowledge_product_type'],
             });
         }
 
