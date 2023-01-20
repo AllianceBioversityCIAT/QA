@@ -449,6 +449,7 @@ class EvaluationsController {
                                 LIMIT 1
                         ) AS comments_ppu_count,
                     ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
+                    ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type,
                     ( SELECT COUNT(id) FROM qa_comments_replies WHERE commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) AND is_deleted = 0 ) AS comments_replies_count,
 
                     ${levelQuery.view_sql}
@@ -617,7 +618,8 @@ class EvaluationsController {
                             "complete",
                             "pending"
                     ) AS evaluations_status,
-                    ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia
+                    ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
+                    ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
                     FROM
                         qa_evaluations evaluations
                     LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
@@ -748,7 +750,8 @@ class EvaluationsController {
                             WHERE
                                 qea2.qaEvaluationsId = evaluations.id
                         ) assessed_r2,
-                        ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia
+                        ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
+                        ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
                     FROM
                         qa_evaluations evaluations
                     LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
