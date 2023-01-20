@@ -103,59 +103,78 @@
         >
           Further assessment
         </button> -->
-        <div>
-          <div class="form-check">
-            <input
-              type="checkbox"
-              name=""
-              id="accepted"
-              [(ngModel)]="showAcceptedComments"
-              [value]="!showAcceptedComments"
-            />
-            <label for="accepted"> Accepted </label>
-          </div>
-          <div class="form-check">
-            <input
-              type="checkbox"
-              name=""
-              id="disagreed"
-              [(ngModel)]="showDisagreedComments"
-              [value]="!showDisagreedComments"
-            />
-            <label for="disagreed"> Disagreed </label>
-          </div>
-          <div class="form-check">
-            <input
-              type="checkbox"
-              name=""
-              id="highlight"
-              [(ngModel)]="showHighlightedComments"
-              [value]="!showHighlightedComments"
-            />
-            <label for="highlight"> Highlighted comments </label>
-          </div>
-          <div class="form-check">
-            <input
-              type="checkbox"
-              name=""
-              id="tpb"
-              [(ngModel)]="showTpbComments"
-              [value]="!showTpbComments"
-            />
-            <label for="tpb"> Third party broker instructions </label>
-          </div>
-          <div class="form-check">
-            <input
-              type="checkbox"
-              name=""
-              id="implemented"
-              [(ngModel)]="showImplementedDecisions"
-              [value]="!showImplementedDecisions"
-            />
-            <label for="implemented"> Implemented Decisions </label>
+        <div class="columns">
+          <p class="filter-title-header">Display columns</p>
+
+          <div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="accepted"
+                [(ngModel)]="showAcceptedComments"
+                [value]="!showAcceptedComments"
+              />
+              <label for="accepted"> Accepted Comments</label>
+            </div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="disagreed"
+                [(ngModel)]="showDisagreedComments"
+                [value]="!showDisagreedComments"
+              />
+              <label for="disagreed"> Disagreed Comments</label>
+            </div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="highlight"
+                [(ngModel)]="showHighlightedComments"
+                [value]="!showHighlightedComments"
+              />
+              <label for="highlight"> Highlighted comments </label>
+            </div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="tpb"
+                [(ngModel)]="showTpbComments"
+                [value]="!showTpbComments"
+              />
+              <label for="tpb"> Third party broker instructions </label>
+            </div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="implemented"
+                [(ngModel)]="showImplementedDecisions"
+                [value]="!showImplementedDecisions"
+              />
+              <label for="implemented"> Implemented Decisions </label>
+            </div>
           </div>
         </div>
 
+        <div class="added-results">
+          <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+            <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
+                            uncheckable tabindex="0" role="button">Added item</label> -->
+            <label
+              class="btn btn-outline-warning"
+              [class.active]="evalStatusFilter === 'Added'"
+              btnRadio="Added"
+              uncheckable
+              tabindex="0"
+              role="button"
+              >Added items</label
+            >
+          </div>
+        </div>
         <div class="removed-filter">
           <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
             <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
@@ -168,21 +187,6 @@
               tabindex="0"
               role="button"
               >Removed items</label
-            >
-          </div>
-        </div>
-        <div class="added-results">
-          <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
-            <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
-                            uncheckable tabindex="0" role="button">Added item</label> -->
-            <label
-              class="btn btn-outline-danger"
-              [class.active]="evalStatusFilter === 'Removed'"
-              btnRadio="Removed"
-              uncheckable
-              tabindex="0"
-              role="button"
-              >Added items</label
             >
           </div>
         </div>
@@ -208,7 +212,7 @@
               (click)="setOrder('id')"
             >
               <div class="header-row">
-                Id
+                Result
                 <div class="order-icon" *ngIf="order === 'id'">
                   <span [hidden]="reverse">▼</span>
                   <span [hidden]="!reverse">▲</span>

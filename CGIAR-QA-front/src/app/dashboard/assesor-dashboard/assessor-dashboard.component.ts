@@ -402,7 +402,6 @@ export class AssessorDashboardComponent implements OnInit {
       });
       return this.dataCharts.highlitedPendingComments = { dataset, brushes }
     })
-    // console.log("🚀 ~ file: assessor-dashboard.component.ts:406 ~ AssessorDashboardComponent ~ getHighlightData ~ dashHighlightedData", dashHighlightedData)
     return dashHighlightedData
   }
 
