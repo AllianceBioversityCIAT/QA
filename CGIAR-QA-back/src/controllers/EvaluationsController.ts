@@ -1283,8 +1283,7 @@ class EvaluationsController {
                     AND evaluation_status <> 'Deleted'
                     AND evaluations.phase_year = actual_phase_year()
                 GROUP BY
-                    evaluations.indicator_view_name,
-                    comments.replyTypeId;`,
+                    evaluations.indicator_view_name;`,
                 {},
                 {}
             );
