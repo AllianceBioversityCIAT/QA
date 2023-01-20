@@ -52,29 +52,29 @@ export class HeaderBarComponent implements OnInit {
     public router: Router,
     private indicatorService: IndicatorsService,
     private alertService: AlertService) {
-      console.log('Refresh navbar 1');
+    // console.log('Refresh navbar 1');
 
-  
-      this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe((e: NavigationStart)  => {
-        console.log('Refresh navbar 1',e);
-        if (e.url != '/login') {
-          this.authenticationService.currentUser.subscribe(x => {
-            this.currentUser = x;
-            if (x) {
-              this.currentRole = x.roles[0].description.toLowerCase()
 
-              if(!this.indicators.length)
+    this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe((e: NavigationStart) => {
+      // console.log('Refresh navbar 1',e);
+      if (e.url != '/login') {
+        this.authenticationService.currentUser.subscribe(x => {
+          this.currentUser = x;
+          if (x) {
+            this.currentRole = x.roles[0].description.toLowerCase()
+
+            if (!this.indicators.length)
               this.ngOnInit();
 
 
-              this.isHome = `/dashboard/${this.currentUser}`;
-            }
-          },
-            err => { console.log(err) });
-        } else {
-          this.indicators = [];
-        }
-      });
+            this.isHome = `/dashboard/${this.currentUser}`;
+          }
+        },
+          err => { console.log(err) });
+      } else {
+        this.indicators = [];
+      }
+    });
   }
 
   getCurrentRoute() {
@@ -87,7 +87,7 @@ export class HeaderBarComponent implements OnInit {
 
   ngOnInit() {
     // this.indicators = [];
-    if(this.currentUserID != this.currentUser.id){
+    if (this.currentUserID != this.currentUser.id) {
       this.currentUserID = this.currentUser.id;
       // this.indicators = [];
       this.getHeaderLinks();
@@ -120,24 +120,24 @@ export class HeaderBarComponent implements OnInit {
   }
 
   getHeaderLinks() {
-    console.log('GET HEADER LINKS OUT');
-    
+    // console.log('GET HEADER LINKS OUT');
+
     if (this.indicators && !this.indicators.length && this.currentUser && !this.isCRP()) {
       this.indicatorService.getIndicatorsByUser(this.currentUser.id).subscribe(
         res => {
-          console.log("getHeaderLinks", res);
+          // console.log("getHeaderLinks", res);
           this.indicators = res.data.filter(indicator => indicator.indicator.type = indicator.indicator.name.toLocaleLowerCase());
           this.authenticationService.userHeaders = [...this.indicators];
 
-          if(this.currentRole == 'admin') {
+          if (this.currentRole == 'admin') {
             //Remove last indicator (AICCRA)
             // this.indicators.pop();
           }
-          console.log(this.indicators);
-          
+          // console.log(this.indicators);
+
         },
         error => {
-          console.log("getHeaderLinks", error);
+          // console.log("getHeaderLinks", error);
           this.alertService.error(error);
         }
       )
@@ -160,7 +160,7 @@ export class HeaderBarComponent implements OnInit {
   /**
    * validate current route.url to show header bar
    */
-   headerAvailable() {
+  headerAvailable() {
     const urlAdd = this.router.url;
     let r = true;
     switch (true) {
