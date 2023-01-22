@@ -174,7 +174,8 @@
               class="original-field"
               (click)="
                 detailedData[i].hide_original_field =
-                  !detailedData[i].hide_original_field
+                  !detailedData[i].hide_original_field;
+                $event.stopPropagation()
               "
               >Show original value
               <i
@@ -183,6 +184,22 @@
                 class="material-icons-round"
                 >warning</i
               >
+              <a
+                href="https://prtest.ciat.cgiar.org/result/result-detail/{{
+                  params.indicatorId
+                }}/general-information"
+                target="”_blank”"
+              >
+                <span
+                  tooltip="{{ tooltips.edit }}"
+                  *ngIf="
+                    detailedData[i].original_field === detailedData[i].value
+                  "
+                  class="material-icons"
+                >
+                  edit
+                </span>
+              </a>
             </span>
             <span
               *ngIf="
@@ -192,7 +209,8 @@
               class="original-field"
               (click)="
                 detailedData[i].hide_original_field =
-                  !detailedData[i].hide_original_field
+                  !detailedData[i].hide_original_field;
+                $event.stopPropagation()
               "
               >Hide original value
               <i
@@ -201,7 +219,24 @@
                 class="material-icons-round"
                 >warning</i
               >
+              <a
+                href="https://prtest.ciat.cgiar.org/result/result-detail/{{
+                  params.indicatorId
+                }}/general-information"
+                target="”_blank”"
+              >
+                <span
+                  tooltip="{{ tooltips.edit }}"
+                  *ngIf="
+                    detailedData[i].original_field === detailedData[i].value
+                  "
+                  class="material-icons"
+                >
+                  edit
+                </span>
+              </a>
             </span>
+
             <div
               class="field-container original-field-container"
               *ngIf="!detailedData[i].hide_original_field"
