@@ -680,6 +680,7 @@ class Util {
             comments_count: element["comments_count"],
             evaluation_id: element["evaluation_id"],
             is_core: element["is_core"],
+            indicator_slug: element["indicator_slug"],
             status: element["evaluations_status"],
             response_status: element["response_status"],
             evaluation_status: element["evaluation_status"],
@@ -736,6 +737,7 @@ class Util {
                 solved_without_require_request: element['solved_without_require_request'],
                 pending_tpb_decisions: element['pending_tpb_decisions'],
                 knowledge_product_type: element['knowledge_product_type'],
+                indicator_slug: element["indicator_slug"],
             });
         } else {
             response = Object.assign(response, {
@@ -781,6 +783,7 @@ class Util {
                 solved_without_require_request: element['solved_without_require_request'],
                 pending_tpb_decisions: element['pending_tpb_decisions'],
                 knowledge_product_type: element['knowledge_product_type'],
+                indicator_slug: element["indicator_slug"],
             });
         }
 
