@@ -18,6 +18,7 @@ import { WordCounterPipe } from 'src/app/pipes/word-counter.pipe';
 
 import * as moment from 'moment';
 import { animate, style, transition, trigger } from '@angular/animations';
+import { environment } from 'src/environments/environment';
 
 
 @Component({
@@ -94,6 +95,7 @@ export class DetailIndicatorComponent implements OnInit {
   statusNames = StatusNames;
   statusNamesCRP = StatusNamesCRP;
   approveAllitems;
+  redirectTo = null;
 
   @ViewChild("commentsElem") private commentsElem: ElementRef;
   @ViewChild("containerElement") private containerElement: ElementRef;
@@ -113,6 +115,7 @@ export class DetailIndicatorComponent implements OnInit {
     download_excel: 'Click here to download all comments in an excel file.',
     all_approved: 'Setting this option true, will approved all items without comments.',
     changes_not_implemented: 'This field has not been updated',
+    edit: 'Edit field'
   }
 
   criteriaData;
@@ -160,6 +163,10 @@ export class DetailIndicatorComponent implements OnInit {
   ngOnInit() {
     console.log(this.crpsMEL);
 
+  }
+
+  getredirectTo() {
+    this.redirectTo = environment.redirectTo
   }
 
   getDetailedData() {
