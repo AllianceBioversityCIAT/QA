@@ -60,7 +60,6 @@ export class CommentComponent implements OnInit {
   currentY;
   isActiveButton = false;
   showCommentComponent = false;
-  cet: string = "";
   detailItemFounded = null;
   adminUser: any = false;
 
@@ -301,10 +300,7 @@ export class CommentComponent implements OnInit {
     let element = <HTMLInputElement>document.getElementById("require_changes");
     let checked = element?.checked;
 
-    let date = moment().format();
-    // this.cet = moment.utc(date).utcOffset("+01:00").format();
 
-    console.log(this.cet)
     this.showSpinner(this.spinner_comment);
     console.log(this.original_field);
 
@@ -318,7 +314,7 @@ export class CommentComponent implements OnInit {
         original_field: this.original_field,
         require_changes: checked,
         tpb: checked,
-        createdAt: (new Date(moment.utc(date).utcOffset("+01:00").format()))
+
       })
       .subscribe(
         (res) => {
@@ -479,8 +475,6 @@ export class CommentComponent implements OnInit {
       }
     );
   }
-
-
 
   getCommentReplies(comment) {
     if (comment.isCollapsed) {

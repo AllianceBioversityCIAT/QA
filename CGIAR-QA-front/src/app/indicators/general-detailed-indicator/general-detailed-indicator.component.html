@@ -490,7 +490,8 @@
                     *ngIf="
                       (detailedData[i].highlight_comment &&
                         detailedData[i].comments_replies_count > 0) ||
-                      detailedData[i].is_highlight
+                      detailedData[i].is_highlight ||
+                      detailedData[i].highligth_by
                     "
                     class="highlighted-icon"
                   >
