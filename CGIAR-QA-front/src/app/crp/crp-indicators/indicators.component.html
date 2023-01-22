@@ -405,9 +405,10 @@
               let i = index
             "
           >
+            <!-- QA-{{ indicatorType.charAt(0).toUpperCase()
+              }}{{ indicatorType.charAt(1).toUpperCase() }}- -->
             <th scope="row">
-              QA-{{ indicatorType.charAt(0).toUpperCase()
-              }}{{ indicatorType.charAt(1).toUpperCase() }}-{{ item.id }}
+              {{ item.id }}
             </th>
             <td *ngIf="item.hasOwnProperty('brief') && item.brief">
               <div
