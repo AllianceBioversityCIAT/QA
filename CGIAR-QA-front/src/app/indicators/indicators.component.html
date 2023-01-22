@@ -35,9 +35,16 @@
         </div> -->
   </div>
   <div class="text-right">
-    <!-- <div *ngIf="indicatorType == 'publications'" class="circle autochecked" style="margin-left: 50px;"></div> -->
-    <i *ngIf="indicatorType == 'publications'" class="icon-autochecked"></i>
-    <p *ngIf="indicatorType == 'publications'">Automatically validated</p>
+    <div
+      *ngIf="indicatorType == 'publications'"
+      class="circle autochecked"
+      style="margin-left: 50px"
+    ></div>
+    <i
+      *ngIf="indicatorType == 'knowledge_product'"
+      class="icon-autochecked"
+    ></i>
+    <p *ngIf="indicatorType == 'knowledge_product'">Automatically validated</p>
 
     <i class="icon-pending"></i>
     <!-- <div class="circle pending" style="margin-left: 50px;"></div> -->
