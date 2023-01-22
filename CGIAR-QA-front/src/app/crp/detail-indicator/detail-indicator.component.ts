@@ -95,7 +95,6 @@ export class DetailIndicatorComponent implements OnInit {
   statusNames = StatusNames;
   statusNamesCRP = StatusNamesCRP;
   approveAllitems;
-  redirectTo = null;
 
   @ViewChild("commentsElem") private commentsElem: ElementRef;
   @ViewChild("containerElement") private containerElement: ElementRef;
@@ -163,10 +162,6 @@ export class DetailIndicatorComponent implements OnInit {
   ngOnInit() {
     console.log(this.crpsMEL);
 
-  }
-
-  getredirectTo() {
-    this.redirectTo = environment.redirectTo
   }
 
   getDetailedData() {
