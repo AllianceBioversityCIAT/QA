@@ -41,6 +41,13 @@
                 <span>ADDED BY {{ comment.user.username }} </span>
                 <div>
                   <p>On {{ comment.createdAt | date : "long" }}</p>
+                  <p>
+                    On
+                    {{
+                      comment.createdAt
+                        | date : "d MMMM, y - h:mm:ss a" : "UTC+2"
+                    }}
+                  </p>
                   <!-- <p *ngIf="comment.cycle"> {{comment.cycle.cycle_name}}:
                                         <strong>{{comment.cycle.cycle_stage}} </strong>
                                     </p> -->

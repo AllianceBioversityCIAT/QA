@@ -73,6 +73,16 @@
   </div>
 
   <div *ngIf="detailedData[0]" class="buttons">
+    <a
+      tooltip="{{ tooltips.redirectTo }}"
+      href="https://prtest.ciat.cgiar.org/result/result-detail/{{
+        params.indicatorId
+      }}/general-information"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i class="cgiar-logo"></i>
+    </a>
     <div
       style="margin-right: 1em"
       tooltip="{{ tooltips.download_excel }}"
@@ -84,6 +94,7 @@
     >
       <i class="icon-download-excel"></i>
     </div>
+
     <!-- TO-DO -->
     <!-- <a *ngIf="detailedData[0].editable_link" href="http://marlodev.ciat{{detailedData[0].editable_link.split('https://marlo')[1]}}" target="_blank">
             <div tooltip="{{tooltips.editable_link}}" container="body" placement="top"
@@ -100,9 +111,8 @@
         target="_blank"
       >
         <i class="icon-mel"></i>
-      </a>
-      <a
-        tooltip="{{ tooltips.editable_link_marlo }}"
+      </a> -->
+    <!-- <a
         *ngIf="
           detailedData[0].editable_link &&
           !crpsMEL.hasOwnProperty(detailedData[0].crp_acronym)
@@ -111,8 +121,8 @@
         target="_blank"
       >
         <i class="icon-marlo"></i>
-      </a>
-    </div> -->
+      </a> -->
+    <!-- </div> -->
   </div>
 </div>
 
@@ -142,7 +152,7 @@
                   "
                   class="material-icons"
                 >
-                  edit
+                  mode_edit
                 </span>
               </a>
               <h2 [innerHTML]="detailedData[i].display_name | markdown"></h2>

@@ -109,7 +109,7 @@
     The quality assessment process has ended.
   </p>
 
-  <div *ngIf="detailedData[0]">
+  <div class="buttons" *ngIf="detailedData[0]">
     <a
       *ngIf="detailedData[0].public_link"
       [href]="detailedData[0].public_link"
@@ -123,6 +123,17 @@
       >
         <i class="icon-public-link"></i>
       </div>
+    </a>
+
+    <a
+      tooltip="{{ tooltips.redirectTo }}"
+      href="https://prtest.ciat.cgiar.org/result/result-detail/{{
+        params.indicatorId
+      }}/general-information"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <i class="cgiar-logo"></i>
     </a>
 
     <div

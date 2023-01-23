@@ -621,6 +621,13 @@
   }
 }
 
+.cgiar-logo {
+  height: 30px;
+  width: 30px;
+  display: flex;
+  align-items: center;
+}
+
 .dropdown-item {
   display: flex;
   justify-content: flex-start;
@@ -630,4 +637,7 @@
     width: 24px;
     margin-right: 0.5em;
   }
+}
+.buttons {
+  display: flex;
 }

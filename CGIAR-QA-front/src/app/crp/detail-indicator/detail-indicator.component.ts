@@ -114,7 +114,8 @@ export class DetailIndicatorComponent implements OnInit {
     download_excel: 'Click here to download all comments in an excel file.',
     all_approved: 'Setting this option true, will approved all items without comments.',
     changes_not_implemented: 'This field has not been updated',
-    edit: 'Edit field'
+    edit: 'Edit field',
+    redirectTo: 'Go to general information of this result'
   }
 
   criteriaData;
