@@ -128,6 +128,22 @@
         <div class="data-row" *ngFor="let field of detailedData; let i = index">
           <div class="col">
             <div class="row" style="padding: 0">
+              <a
+                href="https://prtest.ciat.cgiar.org/result/result-detail/{{
+                  params.indicatorId
+                }}/{{ detailedData[i].indicator_slug }}"
+                target="”_blank”"
+              >
+                <span
+                  tooltip="{{ tooltips.edit }}"
+                  *ngIf="
+                    detailedData[i].original_field === detailedData[i].value
+                  "
+                  class="material-icons"
+                >
+                  edit
+                </span>
+              </a>
               <h2 [innerHTML]="detailedData[i].display_name | markdown"></h2>
               <div>
                 <i
@@ -184,22 +200,6 @@
                 class="material-icons-round"
                 >warning</i
               >
-              <a
-                href="https://prtest.ciat.cgiar.org/result/result-detail/{{
-                  params.indicatorId
-                }}/{{ detailedData[i].indicator_slug }}"
-                target="”_blank”"
-              >
-                <span
-                  tooltip="{{ tooltips.edit }}"
-                  *ngIf="
-                    detailedData[i].original_field === detailedData[i].value
-                  "
-                  class="material-icons"
-                >
-                  edit
-                </span>
-              </a>
             </span>
             <span
               *ngIf="
@@ -219,22 +219,6 @@
                 class="material-icons-round"
                 >warning</i
               >
-              <a
-                href="https://prtest.ciat.cgiar.org/result/result-detail/{{
-                  params.indicatorId
-                }}/{{ detailedData[i].indicator_slug }}"
-                target="”_blank”"
-              >
-                <span
-                  tooltip="{{ tooltips.edit }}"
-                  *ngIf="
-                    detailedData[i].original_field === detailedData[i].value
-                  "
-                  class="material-icons"
-                >
-                  edit
-                </span>
-              </a>
             </span>
 
             <div
