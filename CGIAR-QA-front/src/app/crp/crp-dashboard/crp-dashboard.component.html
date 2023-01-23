@@ -136,6 +136,8 @@
     <div class="modal-body">
       <div class="row justify-content-center comments-dash-container">
         <ngx-charts-bar-vertical-stacked
+          class="custom-class"
+          style="cursor: default"
           *ngIf="has_comments"
           [scheme]="colorScheme"
           [results]="multi"
@@ -150,8 +152,8 @@
           [animations]="animations"
           (activate)="onActivate($event)"
           (deactivate)="onDeactivate($event)"
-          (select)="onSelect($event)"
         >
+          <!-- (select)="onSelect($event)" -->
         </ngx-charts-bar-vertical-stacked>
 
         <div *ngIf="!has_comments" class="no-data">
