@@ -371,9 +371,9 @@
                 </div>
               </div>
             </th>
-            <th scope="col">
+            <!-- <th scope="col">
               <div class="header-row">Export comments</div>
-            </th>
+            </th> -->
             <th *ngIf="indicatorType == 'publications'" scope="col">
               <div class="header-row">Assessed by</div>
             </th>
@@ -487,7 +487,7 @@
             <td *ngIf="showImplementedDecisions">
               {{ item.comments_ppu_count }}
             </td>
-            <td (click)="exportComments(item)">
+            <!-- <td (click)="exportComments(item)">
               <a target="_blank">
                 <div
                   tooltip="Comment in excel format"
@@ -498,7 +498,7 @@
                   <i class="icon-download-excel"></i>
                 </div>
               </a>
-            </td>
+            </td> -->
             <td *ngIf="indicatorType == 'publications'">
               <div
                 *ngIf="item.assessment_status != 'autochecked'"
