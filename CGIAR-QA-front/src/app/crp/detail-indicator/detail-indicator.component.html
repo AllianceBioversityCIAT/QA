@@ -149,7 +149,8 @@
                   tooltip="{{ tooltips.edit }}"
                   *ngIf="
                     detailedData[i].original_field === detailedData[i].value &&
-                    detailedData[i].replies_count
+                    detailedData[i].replies_count &&
+                    detailedData[i].value != null
                   "
                   class="material-icons"
                 >
