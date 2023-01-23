@@ -95,7 +95,8 @@
             *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
             class="total-pending"
           >
-            0
+            <!-- 0 -->
+            -
           </div>
           <button
             *ngIf="indicatorIsEnable(indicator.key)"
