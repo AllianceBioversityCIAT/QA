@@ -132,17 +132,18 @@
           *ngIf="currentUser.cycle.cycle_stage == '2'"
         >
           <div class="header-chart">
-            <h4 class="chart-title">Highlighted Comments 🚧</h4>
+            <h4 class="chart-title">Highlighted Comments</h4>
             <i class="icon-info" [tooltip]="popTemplateChartC"></i>
             <ng-template #popTemplateChartC>
               <div [innerHtml]="descriptionCharts.highlightComment"></div>
             </ng-template>
           </div>
           <div
-            *ngIf="dashboardCommentsData[selectedIndicator]"
+            *ngIf="dataCharts.highlitedPendingComments"
             class="chart-container"
           >
             <!-- [data]="dataCharts.highlitedPendingComments" -->
+            <!-- [chartName]="'comments'" -->
             <app-donut-chart
               [data]="dataCharts.highlitedPendingComments"
               [chartName]="'highlight_comments'"

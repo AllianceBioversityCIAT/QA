@@ -39,6 +39,7 @@ export class AssessorDashboardComponent implements OnInit {
   feedList: [];
   itemStatusByIndicator = {};
   indicator_status: string = 'indicators_status';
+  highlightedData = [];
 
   descriptionCharts = {
     generalStatus: "This shows the progress of assessment of a specific indicator. ",
@@ -103,10 +104,9 @@ export class AssessorDashboardComponent implements OnInit {
     })
     this.showSpinner()
     console.log({ currentUser: this.currentUser });
-
     this.loadDashData();
-    // this.getHighlightData()
 
+    console.log(this.dashService.getHighlightedData())
   }
 
   loadDashData() {
@@ -115,8 +115,9 @@ export class AssessorDashboardComponent implements OnInit {
       this.getCommentStats(),
       this.getAllTags(),
       // this.getFeedTags(this.selectedIndicator),
-      this.getItemStatusByIndicatorService(this.selectedIndicator)
+      this.getItemStatusByIndicatorService(this.selectedIndicator),
       // this.getAllItemStatusByIndicator()
+      this.dashService.getHighlightedData()
     ]);
     responses.subscribe(
       res => {
@@ -125,6 +126,7 @@ export class AssessorDashboardComponent implements OnInit {
           allTags,
           // feedTags,
           assessmentByField,
+          highlightData
         ] = res;
 
         //dashData
@@ -156,6 +158,11 @@ export class AssessorDashboardComponent implements OnInit {
           this.itemStatusByIndicator = assessmentByField.data;
         // console.log(this.itemStatusByIndicator);
 
+        if (highlightData) {
+          this.highlightedData = highlightData.data;
+          console.log("🚀 ~ file: assessor-dashboard.component.ts:163 ~ AssessorDashboardComponent ~ loadDashData ~ highlightData", this.highlightedData)
+
+        }
 
         //UPDATE CHARTS
         if (dashData.data && commentsStats.data && allTags.data)
@@ -361,48 +368,36 @@ export class AssessorDashboardComponent implements OnInit {
     return { dataset, brushes };
   }
 
-
   getHighlightData(data, indicator?) {
 
-    let dashHighlightedData = this.dashService.getHighlightedData().subscribe(res => {
+    const colors = {
+      Pending: 'var(--color-pending)',
+      Solved: 'var(--color-agree)',
+      SolvedWC: 'var(--color-agree-wc)'
+    }
+    let dataset = [];
+    let brushes = { domain: [] };
 
-      const colors = {
-        Pending: 'var(--color-pending)',
-        Solved: 'var(--color-agree)',
-        SolvedWC: 'var(--color-agree-wc)'
-      }
-      let dataset = [];
-      let brushes = { domain: [] };
+    console.log(data)
+    if (data != undefined && data != 'undefined') {
+      console.log(data)
 
-      if (res) {
-        let pending_highlight_comment = res.data.find(item => {
-          console.log("🚀 ~ file: assessor-dashboard.component.ts:381 ~ AssessorDashboardComponent ~ dashHighlightedData ~ item", item)
-          return item.pending_highlight_comments != 0
-        })
-        pending_highlight_comment = pending_highlight_comment ? { name: 'Pending', value: pending_highlight_comment.pending_highlight_comments } : null
-        if (pending_highlight_comment) dataset.push(pending_highlight_comment);
+      let pending_highlight_comment = { name: 'Pending', value: +data.pending_highlight_comments }
+      dataset.push(pending_highlight_comment);
 
 
-        let solved_with_require_request = res.data.find(item => item.solved_with_require_request != 0)
-        solved_with_require_request = solved_with_require_request ? { name: 'Solved', value: solved_with_require_request.solved_with_require_request } : null
-        if (solved_with_require_request) dataset.push(solved_with_require_request);
+      let solved_with_require_request = { name: 'Solved', value: +data.solved_with_require_request }
+      dataset.push(solved_with_require_request);
 
-        let solved_without_require_request = res.data.find(item => item.solved_without_require_request != 0)
-        solved_without_require_request = solved_without_require_request ? { name: 'SolvedWC', value: solved_without_require_request.solved_without_require_request } : null
-        // if (solved_without_require_request) dataset.push(solved_without_require_request);
-        if (solved_without_require_request) {
-          dataset.push(solved_without_require_request);
-          this.totalPendings[indicator] = +solved_without_require_request.solved_without_require_request;
-        }
+      let solved_without_require_request = { name: 'SolvedWC', value: +data.solved_without_require_request }
+      dataset.push(solved_without_require_request);
 
-        res = data
-      }
-      dataset.forEach(comment => {
-        brushes.domain.push(colors[comment.name]);
-      });
-      return this.dataCharts.highlitedPendingComments = { dataset, brushes }
+    }
+    dataset.forEach(comment => {
+      brushes.domain.push(colors[comment.name]);
     })
-    return dashHighlightedData
+
+    return { dataset, brushes }
   }
 
   formatIndicatorTags() {
@@ -435,7 +430,13 @@ export class AssessorDashboardComponent implements OnInit {
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(this.dashboardCommentsData[this.selectedIndicator]);
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
     // this.dataCharts.highlitedPendingComments = this.formatPendingHighlight(this.dashboardCommentsData[this.selectedIndicator])
-    this.dataCharts.highlitedPendingComments = this.getHighlightData(this.dashboardCommentsData[this.selectedIndicator])
+    console.log("🚀 ~ file: assessor-dashboard.component.ts:443 ~ AssessorDashboardComponent ~ updateDataCharts ~ this.highlightedData", this.highlightedData)
+
+    let find = this.highlightedData.find(indi => indi.indicator_view_name == this.selectedIndicator)
+    // console.log(find)
+
+    this.dataCharts.highlitedPendingComments = this.getHighlightData(find, this.selectedIndicator)
+    console.log("🚀 ~ file: assessor-dashboard.component.ts:441 ~ AssessorDashboardComponent ~ updateDataCharts ~ this.dataCharts.highlitedPendingComments", this.dataCharts.highlitedPendingComments)
   }
 
   updateFeedTags(tagTypeId) {
