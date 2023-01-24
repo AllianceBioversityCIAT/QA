@@ -50,8 +50,6 @@ class AuthController {
                     crp_id = :crp_id
                 AND
                     token = :token
-                AND 
-                    DATE(expiration_date) >= CURDATE()
                     `,
                 { crp_id, token },
                 {}
