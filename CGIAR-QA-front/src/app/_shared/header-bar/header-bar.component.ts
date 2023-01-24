@@ -36,16 +36,15 @@ export class HeaderBarComponent implements OnInit {
   }
 
   indicatorsName = [
-    { name: 'SLOs', viewname: 'qa_slo' },
-    { name: 'Policies', viewname: 'qa_policies' },
-    { name: 'OICRs', viewname: 'qa_oicr' },
-    { name: 'Innovations', viewname: 'qa_innovations' },
-    { name: 'Milestones', viewname: 'qa_milestones' },
-    { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    { name: 'CapDevs', viewname: 'qa_capdev' },
-    { name: 'MELIAs', viewname: 'qa_melia' },
-    // { name: 'Indicator Contrib', viewname: 'qa_aiccra_indicators_contrib' },
-    // qa_outcomes: 'Outcomes',
+    { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
+    { name: 'Capacity Change', viewname: 'qa_capacity_change' },
+    { name: 'Other Outcome', viewname: 'qa_other_outcome' },
+    { name: 'Other Output', viewname: 'qa_other_output' },
+    { name: 'CapDev', viewname: 'qa_capdev' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
+    { name: 'Innovation Development', viewname: 'qa_innovation_development' },
+    { name: 'Policy Change', viewname: 'qa_policy_change' },
+    { name: 'Innovation Use', viewname: 'qa_innovation_use' },
   ]
 
   constructor(private activeRoute: ActivatedRoute,
@@ -53,29 +52,29 @@ export class HeaderBarComponent implements OnInit {
     public router: Router,
     private indicatorService: IndicatorsService,
     private alertService: AlertService) {
-      console.log('Refresh navbar 1');
+    // console.log('Refresh navbar 1');
 
-  
-      this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe((e: NavigationStart)  => {
-        console.log('Refresh navbar 1',e);
-        if (e.url != '/login') {
-          this.authenticationService.currentUser.subscribe(x => {
-            this.currentUser = x;
-            if (x) {
-              this.currentRole = x.roles[0].description.toLowerCase()
 
-              if(!this.indicators.length)
+    this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe((e: NavigationStart) => {
+      // console.log('Refresh navbar 1',e);
+      if (e.url != '/login') {
+        this.authenticationService.currentUser.subscribe(x => {
+          this.currentUser = x;
+          if (x) {
+            this.currentRole = x.roles[0].description.toLowerCase()
+
+            if (!this.indicators.length)
               this.ngOnInit();
 
 
-              this.isHome = `/dashboard/${this.currentUser}`;
-            }
-          },
-            err => { console.log(err) });
-        } else {
-          this.indicators = [];
-        }
-      });
+            this.isHome = `/dashboard/${this.currentUser}`;
+          }
+        },
+          err => { console.log(err) });
+      } else {
+        this.indicators = [];
+      }
+    });
   }
 
   getCurrentRoute() {
@@ -88,7 +87,7 @@ export class HeaderBarComponent implements OnInit {
 
   ngOnInit() {
     // this.indicators = [];
-    if(this.currentUserID != this.currentUser.id){
+    if (this.currentUserID != this.currentUser.id) {
       this.currentUserID = this.currentUser.id;
       // this.indicators = [];
       this.getHeaderLinks();
@@ -121,24 +120,24 @@ export class HeaderBarComponent implements OnInit {
   }
 
   getHeaderLinks() {
-    console.log('GET HEADER LINKS OUT');
-    
+    // console.log('GET HEADER LINKS OUT');
+
     if (this.indicators && !this.indicators.length && this.currentUser && !this.isCRP()) {
       this.indicatorService.getIndicatorsByUser(this.currentUser.id).subscribe(
         res => {
-          console.log("getHeaderLinks", res);
+          // console.log("getHeaderLinks", res);
           this.indicators = res.data.filter(indicator => indicator.indicator.type = indicator.indicator.name.toLocaleLowerCase());
           this.authenticationService.userHeaders = [...this.indicators];
 
-          if(this.currentRole == 'admin') {
+          if (this.currentRole == 'admin') {
             //Remove last indicator (AICCRA)
             // this.indicators.pop();
           }
-          console.log(this.indicators);
-          
+          // console.log(this.indicators);
+
         },
         error => {
-          console.log("getHeaderLinks", error);
+          // console.log("getHeaderLinks", error);
           this.alertService.error(error);
         }
       )
@@ -161,7 +160,7 @@ export class HeaderBarComponent implements OnInit {
   /**
    * validate current route.url to show header bar
    */
-   headerAvailable() {
+  headerAvailable() {
     const urlAdd = this.router.url;
     let r = true;
     switch (true) {

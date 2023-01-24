@@ -7,13 +7,12 @@ import { PaginationModule } from 'ngx-bootstrap/pagination';
 import { ReactiveFormsModule } from '@angular/forms';
 
 
-import {GeneralDetailedIndicatorRoutingModule } from './general-detailed-indicator-routing.module';
+import { GeneralDetailedIndicatorRoutingModule } from './general-detailed-indicator-routing.module';
 // import { IndicatorsComponent } from './indicators.component';
 
 import { NgxSpinnerModule } from "ngx-spinner";
 import { OrderModule } from 'ngx-order-pipe';
 import { GeneralDetailedIndicatorComponent } from './general-detailed-indicator.component';
-import { CommentComponent } from '../../comment/comment.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { MarkdownModule } from 'ngx-markdown';
 import { CommentComponentModule } from 'src/app/comment/comment.module';
@@ -37,9 +36,9 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
         NgxSpinnerModule,
         OrderModule,
         ReactiveFormsModule,
-        CommentComponentModule
+        CommentComponentModule,
     ],
-    declarations: [ GeneralDetailedIndicatorComponent]
+    declarations: [GeneralDetailedIndicatorComponent],
 })
 export class GeneralDetailedIndicatorModule { }
 

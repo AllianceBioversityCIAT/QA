@@ -29,20 +29,21 @@
       filter: grayscale(1);
       margin-left: 0.5em;
     }
-    transition: all .4s ease-in; 
+    transition: all 0.4s ease-in;
     color: var(--gray-secondary);
     &.requires-second-assessment {
       color: black;
-      i{
+      i {
         filter: none;
       }
     }
   }
-  .assessment-status, .response-status{
+  .assessment-status,
+  .response-status {
     display: flex;
     align-items: center;
     margin-bottom: 1em;
-    p{
+    p {
       margin: 0;
     }
     .status {
@@ -61,9 +62,15 @@
     justify-content: flex-end;
     align-items: center;
     .btn-mis {
-      i{
+      i {
         max-height: 40px;
       }
+    }
+    .cgiar-logo {
+      height: 30px;
+      width: 30px;
+      display: flex;
+      align-items: center;
     }
   }
 }
@@ -87,11 +94,11 @@
   color: #d59b1b;
 }
 
-.field-container{
+.field-container {
   max-width: 100%;
-  p{
+  p {
     max-width: 60% !important;
-    a{
+    a {
       max-width: 60% !important;
       color: yellow !important;
     }
@@ -104,9 +111,18 @@
   font-weight: $semibold;
   font-style: italic;
   margin-top: 0;
-  &:hover{
+  display: flex;
+  align-items: center;
+  &:hover {
     text-decoration: underline;
     cursor: pointer;
+  }
+}
+.material-icons-round {
+  color: #ff8a00;
+  margin-left: 10px;
+  &:hover {
+    text-decoration: none;
   }
 }
 
@@ -118,7 +134,6 @@
   font-style: italic;
   font-size: $font-xs;
   max-width: 100%;
-
 }
 .criteria-container {
   display: flex;
@@ -134,6 +149,14 @@
 }
 .row {
   padding: 20px;
+  .material-icons {
+    color: #ff7300;
+    margin-left: 0px;
+    margin-right: 5px;
+    he &:hover {
+      text-decoration: none;
+    }
+  }
   .data-container {
     border: 1px solid var(--gray-primary);
     padding: 20px;
@@ -149,7 +172,7 @@
       background: var(--color-agree);
       border-radius: 0.3em;
       font-size: 0.6em;
-    margin-left: 1em;
+      margin-left: 1em;
       padding: 2px 5px;
       border: var(--green-primary) 2px solid;
       display: block !important;
@@ -228,7 +251,6 @@
       }
 
       .activate-messages-container {
-
         border-radius: 50%;
         height: 3em;
         width: 3em;

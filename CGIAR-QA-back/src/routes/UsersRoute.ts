@@ -1,6 +1,6 @@
 import { Router } from "express";
-import  * as checkJwt_ from "../middlewares/CheckJwt";
-import  * as checkRole_  from "../middlewares/CheckRole";
+import * as checkJwt_ from "../middlewares/CheckJwt";
+import * as checkRole_ from "../middlewares/CheckRole";
 
 const checkJwt = checkJwt_.checkJwt
 const checkRole = checkRole_.checkRole
@@ -11,8 +11,8 @@ const checkRole = checkRole_.checkRole
 // import * as checkJwt from "../../src/middlewares/checkJwt";
 // import * as checkRole from "../../src/middlewares/checkRole";
 
-import UserController from "@controllers/UserController";
-import { RolesHandler } from "@helpers/RolesHandler";
+import UserController from "./../controllers/UserController";
+import { RolesHandler } from "./../_helpers/RolesHandler";
 
 
 const router = Router();
@@ -25,6 +25,7 @@ const router = Router();
  */
 
 //Get all users
+// ! Review endpoint
 router.get("/all", [checkJwt, checkRole([RolesHandler.admin])], UserController.listAll);
 
 // Get one user

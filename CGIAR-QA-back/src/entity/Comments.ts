@@ -23,13 +23,13 @@ export class QAComments {
 
     @ManyToOne(type => QAUsers, user => user.comments)
     user: QAUsers;
-    
+
     @ManyToOne(type => QACycle, cycle => cycle.comments)
     cycle: QAUsers;
 
     @ManyToOne(type => QAReplyType, replyType => replyType.comments)
     replyType: QAReplyType;
-    
+
     @OneToMany(type => QACommentsReplies, comment => comment.user)
     replies: QACommentsReplies;
 
@@ -90,4 +90,19 @@ export class QAComments {
     @Column()
     @UpdateDateColumn()
     updatedAt: Date;
+
+    @Column({ nullable: true, type: 'tinyint', default: 0 })
+    highlight_comment: number;
+
+    @ManyToOne(type => QAUsers, user => user.comments, { nullable: true })
+    highlight_by: QAUsers;
+
+    @Column({ nullable: true, type: 'tinyint', default: 0 })
+    require_changes: number;
+
+    @Column({ nullable: true, type: 'tinyint', default: 0 })
+    tpb: number;
+
+    @Column({ nullable: true, type: 'tinyint', default: 0 })
+    ppu: number;
 } 

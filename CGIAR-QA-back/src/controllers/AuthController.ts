@@ -3,25 +3,26 @@ import * as jwt from "jsonwebtoken";
 import { getRepository, getConnection } from "typeorm";
 import { validate } from "class-validator";
 
-import config_ from "@config/config";
+import config_ from "./../config/config";
 
-import { QAUsers } from "@entity/User";
-import { QAGeneralConfiguration } from "@entity/GeneralConfig";
-import { RolesHandler } from "@helpers/RolesHandler";
-import Util from "@helpers/Util";
-import { QACycle } from "@entity/Cycles";
+import { QAUsers } from "./../entity/User";
+import { QAGeneralConfiguration } from "./../entity/GeneralConfig";
+import { QATokenAuth } from './../entity/TokenAuth';
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import Util from "./../_helpers/Util";
+import { QACycle } from "./../entity/Cycles";
 let ActiveDirectory = require('activedirectory');
 
-const { ErrorHandler } = require("@helpers/ErrorHandler")
+const { ErrorHandler } = require("./../_helpers/ErrorHandler")
 
 class AuthController {
     static login = async (req: Request, res: Response, next: NextFunction) => {
         const { username, password } = req.body;
         try {
             const user = await Util.login(username, password);
-            res.status(200).json({ data: user })
+            res.status(200).json({ data: user })
         } catch (error) {
-            console.log(error);
+            // console.log(error);
 
             return res.status(400).json(error);
         }
@@ -49,27 +50,25 @@ class AuthController {
                     crp_id = :crp_id
                 AND
                     token = :token
-                AND 
-                    DATE(expiration_date) >= CURDATE()
                     `,
                 { crp_id, token },
                 {}
             );
 
             let r = await queryRunner.connection.query(query, parameters);
-            // console.log('token', r, query, parameters)
+            // // console.log('token', r, query, parameters)
             if (r.length == 0) {
                 res.status(400).json({ data: [], message: 'Invalid token' });
                 return;
             }
             let auth_token = r[0];
             let user = await Util.createOrReturnUser(auth_token);
-           
+
 
             res.status(200).json({ data: user, message: 'CRP Logged' })
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(400).json(error)
             // next(error)
         }
@@ -115,7 +114,7 @@ class AuthController {
 
     static createGeneralConfig = async (req: Request, res: Response) => {
         //get body data
-        // console.log(req.body)
+        // // console.log(req.body)
         let { end_date, start_date, role, status, peer_review_paper_guideline, policies_guideline, almetrics_guideline,
             anual_report_guideline, innovations_guideline, partnerships_guideline, capdev_guideline, uptake_guideline, oicr_guideline } = req.body;
         try {
@@ -141,21 +140,21 @@ class AuthController {
             res.status(200).send({ data: config });
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(400).send({ data: error, message: 'Configuration can not be created' });
         }
     }
 
     static validateAD(qa_user, password) {
-        console.log(config_.active_directory)
+        // console.log(config_.active_directory)
         let ad = new ActiveDirectory(config_.active_directory);
 
         let ad_user = qa_user.email;
 
         return new Promise((resolve, reject) => {
             ad.authenticate(ad_user, password, (err, auth) => {
-                console.log(err);
-                console.log(auth);
+                // console.log(err);
+                // console.log(auth);
 
                 if (err) {
                     if (err.errno == "ENOTFOUND") {
@@ -168,13 +167,13 @@ class AuthController {
                 }
 
                 if (auth) {
-                    console.log('Authenticated AD!');
+                    // console.log('Authenticated AD!');
                     resolve(auth)
                 }
 
                 else {
-                    console.log('Authentication failed!');
-                    
+                    // console.log('Authentication failed!');
+
                     let err = {
                         'errno': 'INVALID_CREDENTIALS',
                         'description': 'The supplied credential is invalid'
@@ -184,6 +183,31 @@ class AuthController {
 
             })
         });
+    }
+
+    static embedToken = async (req: Request, res: Response) => {
+        const { token, expiration_date, crp_id, username, email, name, app_user } = req.body;
+
+        try {
+            const tokenRepository = getRepository(QATokenAuth);
+            let tokenEmbed = new QATokenAuth;
+
+            tokenEmbed.token = token;
+            tokenEmbed.expiration_date = expiration_date;
+            tokenEmbed.crp_id = crp_id;
+            tokenEmbed.username = username;
+            tokenEmbed.email = email;
+            tokenEmbed.name = name;
+            tokenEmbed.app_user = app_user;
+
+            tokenEmbed = await tokenRepository.save(tokenEmbed);
+
+            res.status(200).send({ data: tokenEmbed, message: 'Token successfully saved in QA' });
+
+        } catch (error) {
+            console.log("🚀 ~ file: AuthController.ts:195 ~ AuthController ~ embedToken= ~ error", error)
+            res.status(501).send({ message: 'An error occurred, please see the log', data: error });
+        }
     }
 
 }

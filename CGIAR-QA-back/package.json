@@ -35,11 +35,13 @@
       "typeorm": "0.2.22"
    },
    "scripts": {
-      "tsc": "tsc",
+      "build": "tsc",
       "start": "set debug=* && npx tsnd --respawn --transpileOnly --max-old-space-size=4096 ./src/index.ts  ",
       "start-dev": "set debug=* && npx tsnd --respawn --transpileOnly ./src/index.ts --host=172.22.33.55 --disable-host-check",
-      "prod": "tsc && node --max-old-space-size=4096 ./build/index.js ",
-      "migration": "ts-node ./node_modules/typeorm/cli.js migration:run",
+      "prod": "tsc && node --max-old-space-size=4096 ./dist/index.js ",
+      "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
+      "migration:generate": "npx ts-node ./node_modules/typeorm/cli.js migration:generate -n",
+      "migration:create": "npx ts-node ./node_modules/typeorm/cli.js migration:create -n",
       "synch": "ts-node ./node_modules/typeorm/cli.js schema:sync",
       "docker:build": "docker build -t qacgiarback .",
       "docker:run": "docker run -dti --name qacgiarapi -p 3000:3300 qacgiarback"

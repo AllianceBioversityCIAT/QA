@@ -28,52 +28,57 @@ export class AssessorDashboardComponent implements OnInit {
   currentUser: User;
   dashboardData: any[];
   dashboardCommentsData: any[];
+  dashboardHighlightedData: any;
   generalStatus = GeneralStatus;
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = 'qa_slo';
+  selectedIndicator = 'qa_innovation_development';
   dataSelected: any;
   indicatorData: any;
   feedList: [];
   itemStatusByIndicator = {};
   indicator_status: string = 'indicators_status';
+  highlightedData = [];
 
   descriptionCharts = {
     generalStatus: "This shows the progress of assessment of a specific indicator. ",
     assessorsInteractions: "This presents assessors' interactions with existing comments on an item being already evaluated by other assessors. ",
-    responseToComments: "This shows the status of CRP responses to comments made by assessors during the first round.",
+    responseToComments: "This shows the status of Initiatives responses to comments made by assessors during the first round.",
     assessmentByField: "This shows the status of assessment for each field of an item.",
+    highlightComment: "This shows the status of pending highlighted comments"
   }
 
   dataCharts = {
     generalStatus: null,
     assessorsInteractions: null,
     responseToComments: null,
-    assessmentByField: null
+    assessmentByField: null,
+    highlitedPendingComments: null,
   }
   totalPendings = {
-    qa_policies: 0,
-    qa_innovations: 0,
-    qa_publications: 0,
-    qa_oicr: 0,
-    qa_melia: 0,
+    qa_innovation_development: 0,
+    qa_impact_contribution: 0,
+    qa_capacity_change: 0,
+    qa_other_outcome: 0,
+    qa_other_output: 0,
     qa_capdev: 0,
-    qa_milestones: 0,
-    qa_slo: 0
+    qa_knowledge_product: 0,
+    qa_policy_change: 0,
+    qa_innovation_use: 0
   }
 
 
   indicatorsNameDropdwon = [
-    { name: 'SLOs', viewname: 'qa_slo' },
-    { name: 'Policies', viewname: 'qa_policies' },
-    { name: 'OICRs', viewname: 'qa_oicr' },
-    { name: 'Innovations', viewname: 'qa_innovations' },
-    { name: 'Milestones', viewname: 'qa_milestones' },
-    { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    { name: 'CapDevs', viewname: 'qa_capdev' },
-    { name: 'MELIAs', viewname: 'qa_melia' },
-    // qa_outcomes: 'Outcomes',
+    { name: 'Innovation Development', viewname: 'qa_innovation_development' },
+    { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
+    { name: 'Capacity Change', viewname: 'qa_capacity_change' },
+    { name: 'Other Outcome', viewname: 'qa_other_outcome' },
+    { name: 'Other Output', viewname: 'qa_other_output' },
+    { name: 'CapDev', viewname: 'qa_capdev' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
+    { name: 'Policy Change', viewname: 'qa_policy_change' },
+    { name: 'Innovation Use', viewname: 'qa_innovation_use' },
   ]
 
   constructor(private dashService: DashboardService,
@@ -95,14 +100,13 @@ export class AssessorDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.usersService.getUserById(this.currentUser.id).subscribe(res => {
-      // console.log(res.data.indicators);
       this.authenticationService.parseUpdateIndicators(res.data.indicators);
     })
     this.showSpinner()
     console.log({ currentUser: this.currentUser });
-
     this.loadDashData();
 
+    console.log(this.dashService.getHighlightedData())
   }
 
   loadDashData() {
@@ -111,22 +115,24 @@ export class AssessorDashboardComponent implements OnInit {
       this.getCommentStats(),
       this.getAllTags(),
       // this.getFeedTags(this.selectedIndicator),
-      this.getItemStatusByIndicatorService(this.selectedIndicator)
+      this.getItemStatusByIndicatorService(this.selectedIndicator),
       // this.getAllItemStatusByIndicator()
+      this.dashService.getHighlightedData()
     ]);
     responses.subscribe(
       res => {
-        const [dashData, 
+        const [dashData,
           commentsStats,
           allTags,
           // feedTags,
-          assessmentByField
+          assessmentByField,
+          highlightData
         ] = res;
 
         //dashData
-        if(dashData.data) {
-          console.log({dashData});
-          
+        if (dashData.data) {
+          // console.log({ dashData });
+
           this.dashboardData = this.dashService.groupData(dashData.data);
           console.log(this.dashboardData);
           // this.selectedIndicator = Object.keys(this.dashboardData)[0]
@@ -134,29 +140,33 @@ export class AssessorDashboardComponent implements OnInit {
         }
 
         //commentsStats
-        if(commentsStats) {
+        if (commentsStats) {
           this.dashboardCommentsData = this.dashService.groupData(commentsStats.data);
-          console.log('COUNT COMMENTS',this.dashboardCommentsData);
+          // console.log('COUNT COMMENTS', this.dashboardCommentsData);
         }
-        
 
         //allTags
-        if(allTags)
-        this.indicatorsTags = this.commentService.groupTags(allTags.data);;
+        if (allTags)
+          this.indicatorsTags = this.commentService.groupTags(allTags.data);;
 
         //feedTags
         // if(feedTags)
         // this.feedList = feedTags.data;
 
         //assessmentByField
-        if(assessmentByField)
-        this.itemStatusByIndicator = assessmentByField.data;
-        console.log(this.itemStatusByIndicator);
-        
+        if (assessmentByField)
+          this.itemStatusByIndicator = assessmentByField.data;
+        // console.log(this.itemStatusByIndicator);
+
+        if (highlightData) {
+          this.highlightedData = highlightData.data;
+          console.log("🚀 ~ file: assessor-dashboard.component.ts:163 ~ AssessorDashboardComponent ~ loadDashData ~ highlightData", this.highlightedData)
+
+        }
 
         //UPDATE CHARTS
-        if(dashData.data && commentsStats.data && allTags.data)
-        this.updateDataCharts();
+        if (dashData.data && commentsStats.data && allTags.data)
+          this.updateDataCharts();
 
         this.hideSpinner();
       }
@@ -192,8 +202,8 @@ export class AssessorDashboardComponent implements OnInit {
       res => {
         const [
           // feedTags,
-           assessmentByField
-          ] = res;
+          assessmentByField
+        ] = res;
         //feedTags
         // this.feedList = feedTags.data;
 
@@ -301,7 +311,7 @@ export class AssessorDashboardComponent implements OnInit {
     if (complete) complete.name = 'Assessed 1st round';
     let finalized = dataset.find(item => item.name == 'finalized');
     if (finalized) finalized.name = 'Quality Assessed';
-    
+
     let autochecked = dataset.find(item => item.name == 'autochecked');
     if (autochecked) {
       this.indicator_status = 'publications_status';
@@ -358,6 +368,38 @@ export class AssessorDashboardComponent implements OnInit {
     return { dataset, brushes };
   }
 
+  getHighlightData(data, indicator?) {
+
+    const colors = {
+      Pending: 'var(--color-pending)',
+      Solved: 'var(--color-agree)',
+      SolvedWC: 'var(--color-agree-wc)'
+    }
+    let dataset = [];
+    let brushes = { domain: [] };
+
+    console.log(data)
+    if (data != undefined && data != 'undefined') {
+      console.log(data)
+
+      let pending_highlight_comment = { name: 'Pending', value: +data.pending_highlight_comments }
+      dataset.push(pending_highlight_comment);
+
+
+      let solved_with_require_request = { name: 'Solved', value: +data.solved_with_require_request }
+      dataset.push(solved_with_require_request);
+
+      let solved_without_require_request = { name: 'SolvedWC', value: +data.solved_without_require_request }
+      dataset.push(solved_without_require_request);
+
+    }
+    dataset.forEach(comment => {
+      brushes.domain.push(colors[comment.name]);
+    })
+
+    return { dataset, brushes }
+  }
+
   formatIndicatorTags() {
 
     const tags = this.indicatorsTags[this.selectedIndicator];
@@ -387,6 +429,14 @@ export class AssessorDashboardComponent implements OnInit {
     this.dataCharts.assessorsInteractions = this.formatIndicatorTags();
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(this.dashboardCommentsData[this.selectedIndicator]);
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
+    // this.dataCharts.highlitedPendingComments = this.formatPendingHighlight(this.dashboardCommentsData[this.selectedIndicator])
+    console.log("🚀 ~ file: assessor-dashboard.component.ts:443 ~ AssessorDashboardComponent ~ updateDataCharts ~ this.highlightedData", this.highlightedData)
+
+    let find = this.highlightedData.find(indi => indi.indicator_view_name == this.selectedIndicator)
+    // console.log(find)
+
+    this.dataCharts.highlitedPendingComments = this.getHighlightData(find, this.selectedIndicator)
+    console.log("🚀 ~ file: assessor-dashboard.component.ts:441 ~ AssessorDashboardComponent ~ updateDataCharts ~ this.dataCharts.highlitedPendingComments", this.dataCharts.highlitedPendingComments)
   }
 
   updateFeedTags(tagTypeId) {
@@ -408,13 +458,13 @@ export class AssessorDashboardComponent implements OnInit {
         pdf_url = this.currentUser.config[0][`assessors_guideline`];
         break;
       default:
-        
+
         break;
     }
     window.open(pdf_url, "_blank");
   }
   openChart(template: TemplateRef<any>, e) {
-    this.modalRef = this.modalService.show(template, {class: 'modal-xl'});
+    this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
   }
 
 

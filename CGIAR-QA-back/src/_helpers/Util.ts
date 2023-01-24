@@ -1,32 +1,32 @@
 
-import { StatusHandler, StatusHandlerLegacy, StatusHandlerMIS } from "@helpers/StatusHandler";
-const { ErrorHandler } = require("@helpers/ErrorHandler")
+import { StatusHandler, StatusHandlerLegacy, StatusHandlerMIS } from "./../_helpers/StatusHandler";
+const { ErrorHandler } = require("./../_helpers/ErrorHandler")
 
-import { DisplayTypeHandler } from "@helpers/DisplayTypeHandler";
-import { RolesHandler } from "@helpers/RolesHandler";
+import { DisplayTypeHandler } from "./../_helpers/DisplayTypeHandler";
+import { RolesHandler } from "./../_helpers/RolesHandler";
 import { getRepository, getConnection, createQueryBuilder, In } from "typeorm";
-import { QAUsers } from "@entity/User";
-import { QARoles } from "@entity/Roles";
-import { QACrp } from "@entity/CRP";
-import { QAGeneralConfiguration } from "@entity/GeneralConfig";
+import { QAUsers } from "./../entity/User";
+import { QARoles } from "./../entity/Roles";
+import { QACrp } from "./../entity/CRP";
+import { QAGeneralConfiguration } from "./../entity/GeneralConfig";
 import { config } from "process";
-import config_ from "@config/config";
-import { QAIndicators } from "@entity/Indicators";
-import { QAIndicatorsMeta } from "@entity/IndicatorsMeta";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QAIndicatorUser } from "@entity/IndicatorByUser";
+import config_ from "./../config/config";
+import { QAIndicators } from "./../entity/Indicators";
+import { QAIndicatorsMeta } from "./../entity/IndicatorsMeta";
+import { QAEvaluations } from "./../entity/Evaluations";
+import { QAIndicatorUser } from "./../entity/IndicatorByUser";
 
 import * as jwt from "jsonwebtoken";
 import * as excel from 'exceljs';
-import { QAComments } from "@entity/Comments";
-import { QACycle } from "@entity/Cycles";
-import { QATags } from "@entity/Tags";
-import { QATagType } from "@entity/TagType";
-import AuthController from "@controllers/AuthController";
+import { QAComments } from "./../entity/Comments";
+import { QACycle } from "./../entity/Cycles";
+import { QATags } from "./../entity/Tags";
+import { QATagType } from "./../entity/TagType";
+import AuthController from "./../controllers/AuthController";
 import { BaseError } from "./BaseError";
 import { HttpStatusCode } from "./Constants";
 import moment from "moment";
-import { QACommentsReplies } from "@entity/CommentsReplies";
+import { QACommentsReplies } from "./../entity/CommentsReplies";
 // const excel = require('exceljs');
 
 
@@ -497,7 +497,7 @@ class Util {
                     }
                     let row = {
                         id: rows[i].id,
-                        crp_acronym: rows[i].crp_acronym,
+                        short_name: rows[i].short_name,
                         indicator_title: rows[i].indicator_title,
                         createdAt: rows[i].createdAt,
                         updatedAt: rows[i].updatedAt,
@@ -533,7 +533,7 @@ class Util {
 
     }
 
-    static createComment = async (detail, approved, userId, metaId, evaluationId, original_field = null) => {
+    static createComment = async (detail, approved, userId, metaId, evaluationId, original_field = null, require_changes, tpb) => {
         const userRepository = getRepository(QAUsers);
         const metaRepository = getRepository(QAIndicatorsMeta);
         const evaluationsRepository = getRepository(QAEvaluations);
@@ -547,7 +547,6 @@ class Util {
                 meta = await metaRepository.findOneOrFail({ where: { id: metaId } });
             let evaluation = await evaluationsRepository.findOneOrFail({ where: { id: evaluationId } });
 
-
             // Insert assessed by if not exists
 
             const assessed_by = await getConnection().createQueryBuilder()
@@ -559,7 +558,7 @@ class Util {
 
             console.log({ assessed_by });
             if (assessed_by.length <= 0) {
-                const insertAssessedBy = await getConnection().createQueryBuilder()
+                await getConnection().createQueryBuilder()
                     .insert()
                     .into('qa_evaluations_assessed_by_qa_users')
                     .values({
@@ -595,6 +594,8 @@ class Util {
             comment_.evaluation = evaluation;
             comment_.user = user;
             comment_.cycle = current_cycle;
+            comment_.require_changes = require_changes;
+            comment_.tpb = tpb;
             if (original_field)
                 comment_.original_field = original_field;
             let new_comment = await commentsRepository.save(comment_);
@@ -678,15 +679,33 @@ class Util {
             comments_clarification_count: element["comments_clarification_count"],
             comments_count: element["comments_count"],
             evaluation_id: element["evaluation_id"],
+            is_core: element["is_core"],
+            indicator_slug: element["indicator_slug"],
             status: element["evaluations_status"],
             response_status: element["response_status"],
             evaluation_status: element["evaluation_status"],
             crp_name: element["crp_name"],
-            crp_acronym: element["crp_acronym"],
+            short_name: element["short_name"],
             crp_accepted: element["crp_accepted"],
             crp_rejected: element["crp_rejected"],
             assessment_status: element["assessment_status"],
-            require_second_assessment: element["require_second_assessment"]
+            require_second_assessment: element["require_second_assessment"],
+            is_highlight: element["is_highlight"],
+            highligth_by: element["highligth_by"],
+            require_changes: element["require_changes"],
+            comments_highlight_count: element["comments_highlight_count"],
+            comments_tpb_count: element["comments_tpb_count"],
+            comments_ppu_count: element["comments_ppu_count"],
+            initiative: element["initiative"],
+            tpb_count: element['tpb_count'],
+            crp_acronym: element['crp_acronym'],
+            is_melia: element['is_melia'],
+            comments_highlight: element['comments_highlight'],
+            pending_highlight_comments: element['pending_highlight_comments'],
+            solved_with_require_request: element['solved_with_require_request'],
+            solved_without_require_request: element['solved_without_require_request'],
+            pending_tpb_decisions: element['pending_tpb_decisions'],
+            knowledge_product_type: element['knowledge_product_type'],
         }
         if (!type) {
             response = Object.assign(response, {
@@ -701,6 +720,24 @@ class Util {
                 stage: element.hasOwnProperty('stage') ? element['stage'] : undefined,
                 fp: element.hasOwnProperty('fp') ? element['fp'] : undefined,
                 brief: element.hasOwnProperty('brief') ? element['brief'] : undefined, //TODO
+                is_highlight: element["is_highlight"],
+                highligth_by: element["highligth_by"],
+                require_changes: element["require_changes"],
+                comments_highlight_count: element["comments_highlight_count"],
+                comments_tpb_count: element["comments_tpb_count"],
+                comments_ppu_count: element["comments_ppu_count"],
+                comments_disagreed_count: element["comments_disagreed_count"],
+                initiative: element["initiative"],
+                short_name: element["short_name"],
+                crp_acronym: element['crp_acronym'],
+                is_melia: element['is_melia'],
+                comments_highlight: element['comments_highlight'],
+                pending_highlight_comments: element['pending_highlight_comments'],
+                solved_with_require_request: element['solved_with_require_request'],
+                solved_without_require_request: element['solved_without_require_request'],
+                pending_tpb_decisions: element['pending_tpb_decisions'],
+                knowledge_product_type: element['knowledge_product_type'],
+                indicator_slug: element["indicator_slug"],
             });
         } else {
             response = Object.assign(response, {
@@ -718,6 +755,7 @@ class Util {
                 enable_assessor: element['enable_assessor'],
                 enable_crp: element['enable_crp'],
                 replies_count: element['replies_count'],
+                tpb_count: element['tpb_count'],
                 approved_no_comment: element['approved_no_comment'] || null,
                 public_link: element[`public_link`],
                 editable_link: element[`editable_link`],
@@ -729,8 +767,24 @@ class Util {
                 count_accepted_with_comments: element['accepted_with_comments'],
                 original_field: element['original_field'],
                 hide_original_field: true,
+                is_highlight: element["is_highlight"],
+                highligth_by: element["highligth_by"],
+                require_changes: element["require_changes"],
+                comments_highlight_count: element["comments_highlight_count"],
+                comments_tpb_count: element["comments_tpb_count"],
+                comments_ppu_count: element["comments_ppu_count"],
+                initiative: element["initiative"],
+                short_name: element["short_name"],
+                crp_acronym: element['crp_acronym'],
+                is_melia: element['is_melia'],
+                comments_highlight: element['comments_highlight'],
+                pending_highlight_comments: element['pending_highlight_comments'],
+                solved_with_require_request: element['solved_with_require_request'],
+                solved_without_require_request: element['solved_without_require_request'],
+                pending_tpb_decisions: element['pending_tpb_decisions'],
+                knowledge_product_type: element['knowledge_product_type'],
+                indicator_slug: element["indicator_slug"],
             });
-
         }
 
         return response;

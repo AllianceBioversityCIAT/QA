@@ -37,6 +37,6 @@ import { SharedModule } from 'src/app/shared-module/shared-module.module';
     Ng2SearchPipeModule,
     CommentComponentModule
   ],
-  declarations: [CRPIndicatorsComponent, DetailIndicatorComponent]
+  declarations: [CRPIndicatorsComponent, DetailIndicatorComponent],
 })
 export class DetailIndicatorModule { }

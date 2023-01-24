@@ -2,20 +2,20 @@ import { Request, Response, response } from "express";
 import { getRepository, createQueryBuilder, getConnection, Not } from "typeorm";
 import { validate } from "class-validator";
 
-import { QAUsers } from "@entity/User";
-import { QAIndicators } from "@entity/Indicators";
-import { QAIndicatorUser } from "@entity/IndicatorByUser";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QAIndicatorsMeta } from "@entity/IndicatorsMeta";
-import { QACommentsMeta } from "@entity/CommentsMeta";
+import { QAUsers } from "../entity/User";
+import { QAIndicators } from "../entity/Indicators";
+import { QAIndicatorUser } from "../entity/IndicatorByUser";
+import { QAEvaluations } from "../entity/Evaluations";
+import { QAIndicatorsMeta } from "../entity/IndicatorsMeta";
+import { QACommentsMeta } from "../entity/CommentsMeta";
 
-import { StatusHandlerMIS } from "@helpers/StatusHandler"
-import { RolesHandler } from "@helpers/RolesHandler"
-import Util from "@helpers/Util";
-import { GeneralIndicatorName } from "@helpers/GeneralIndicatorName";
-import { QABatch } from "@entity/Batch";
-import { QAComments } from "@entity/Comments";
-import { QACrp } from "@entity/CRP";
+import { StatusHandlerMIS } from "./../_helpers/StatusHandler"
+import { RolesHandler } from "./../_helpers/RolesHandler"
+import Util from "./../_helpers/Util";
+import { GeneralIndicatorName } from "./../_helpers/GeneralIndicatorName";
+import { QABatch } from "../entity/Batch";
+import { QAComments } from "../entity/Comments";
+import { QACrp } from "../entity/CRP";
 
 
 class IndicatorsController {
@@ -37,7 +37,7 @@ class IndicatorsController {
             res.status(200).json({ data: indicators, message: "All indicators" });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not access to indicators." });
         }
     };
@@ -46,13 +46,13 @@ class IndicatorsController {
         const { crp_id } = req.params;
         try {
             const crpRepository = getRepository(QACrp);
-            const crp: QACrp = await crpRepository.findOne({crp_id});
+            const crp: QACrp = await crpRepository.findOne({ crp_id });
 
             //Send the crp object
             res.status(200).json({ data: crp, message: `CRP ${crp.id} - ${crp.acronym} loaded.` });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not access to indicators." });
         }
     };
@@ -73,10 +73,10 @@ class IndicatorsController {
             let isAdmin = user.roles.find(x => x.description == RolesHandler.admin);
 
             let isCRP = user.crps.length > 0 ? true : false;
-            console.log({ user });
+            // console.log({ user });
 
-            // console.log('getIndicatorsByUser')
-            // console.log('isAdmin', isAdmin)
+            // // console.log('getIndicatorsByUser')
+            // // console.log('isAdmin', isAdmin)
             if (isAdmin) {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `
@@ -136,7 +136,9 @@ class IndicatorsController {
                         indicators.order AS indicator_order,
                         indicators.view_name AS view_name,
                         meta.enable_assessor as enable_assessor,
-                        qa_indicator_user.isLeader as is_leader
+                        qa_indicator_user.isLeader as is_leader,
+                        qa_indicator_user.isTPB as is_tpb,
+                        qa_indicator_user.isPPU as is_ppu
                     FROM
                         qa_indicator_user qa_indicator_user
                     LEFT JOIN qa_indicators indicators ON indicators.id = qa_indicator_user.indicatorId
@@ -160,7 +162,7 @@ class IndicatorsController {
             }
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(200).json({ data: [], message: "User indicators." });
         }
     }
@@ -296,10 +298,10 @@ class IndicatorsController {
 
                 }
                 let res_ = await indicatorbyUsrRepository.save(savePromises);
-                // console.log(hasAssignedIndicators)
+                // // console.log(hasAssignedIndicators)
                 res.status(200).json({ message: "Indicator by user saved", data: res_ })
             } catch (error) {
-                console.log(error)
+                // console.log(error)
             }
 
         } else {
@@ -318,7 +320,7 @@ class IndicatorsController {
                 }
 
             } catch (error) {
-                console.log(error)
+                // console.log(error)
                 res.status(404).json({ message: "User / Indicator not found" });
                 return;
             }
@@ -330,7 +332,7 @@ class IndicatorsController {
             try {
                 userbyIndicator = await indicatorbyUsrRepository.save(userbyIndicator);
                 // res_ = await Util.createEvaluations(userbyIndicator, selectedIndicator);
-                // console.log("res_", res_)
+                // // console.log("res_", res_)
                 res.status(200).json({ message: "Indicator by user saved", data: res_ })
                 res.status(200).json({ message: "Indicator by user saved", data: userbyIndicator })
 
@@ -353,15 +355,15 @@ class IndicatorsController {
         const indicator = req.params.indicator;
         const crp_id = req.query.crp_id;
         let totalEvaluationsByIndicator = {
-            qa_innovations: {},
-            qa_policies: {},
-            qa_publications: {},
-            qa_oicr: {},
-            qa_melia: {},
+            qa_impact_contribution: {},
+            qa_capacity_change: {},
+            qa_other_outcome: {},
+            qa_other_output: {},
             qa_capdev: {},
-            qa_milestones: {},
-            qa_outcomes: {},
-            qa_slo: {}
+            qa_knowledge_product: {},
+            qa_innovation_development: {},
+            qa_policy_change: {},
+            qa_innovation_use: {}
         };
         const indicators = Object.keys(GeneralIndicatorName);
 
@@ -379,7 +381,7 @@ class IndicatorsController {
                    AND qim.enable_comments <> 0
                    AND qim.include_detail = 1
                    AND qi.view_name like :indicator`;
-                console.log('query with crp_id', { queryMetas });
+                // console.log('query with crp_id', { queryMetas });
             } else {
                 queryMetas = `SELECT col_name, display_name, indicatorId, qi.view_name,
                     (SELECT count(*) FROM qa_evaluations qe WHERE qe.indicator_view_name = qi.view_name AND qe.phase_year = actual_phase_year() AND qe.status <> 'autochecked') AS total
@@ -397,7 +399,7 @@ class IndicatorsController {
                 {}
             );
             let allMetas = await qrMetas.connection.query(query, parameters);
-            console.log('TOTALES', allMetas);
+            // console.log('TOTALES', allMetas);
             let queryRunnerNotApplicable = getConnection().createQueryBuilder();
 
             for (const meta of allMetas) {
@@ -430,14 +432,14 @@ class IndicatorsController {
 
                     totalEvaluationsByIndicator[meta.view_name][meta.display_name]['pending'] -= +notApplicableCount[0].count;
                 } catch (error) {
-                    console.log(error);
+                    // console.log(error);
 
                 }
             }
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "All items status by indicators can not be retrived.", data: error });
         }
 
@@ -522,13 +524,13 @@ class IndicatorsController {
 
 
             }
-            console.log(totalEvaluationsByIndicator['qa_slo']);
+            // console.log(totalEvaluationsByIndicator['qa_slo']);
             totalEvaluationsByIndicator[indicator] = Object.values(totalEvaluationsByIndicator[indicator]);
             res.status(200).send({ data: totalEvaluationsByIndicator[indicator], message: 'Items by indicator' });
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Item status by indicators can not be retrived.", data: error });
         }
     }
@@ -536,15 +538,15 @@ class IndicatorsController {
     //ALL
     static getAllItemStatusByIndicator = async (req: Request, res: Response) => {
         let totalEvaluationsByIndicator = {
-            qa_innovations: {},
-            qa_policies: {},
-            qa_publications: {},
-            qa_oicr: {},
-            qa_melia: {},
+            qa_impact_contribution: {},
+            qa_capacity_change: {},
+            qa_other_outcome: {},
+            qa_other_output: {},
             qa_capdev: {},
-            qa_milestones: {},
-            qa_outcomes: {},
-            qa_slo: {}
+            qa_knowledge_product: {},
+            qa_innovation_development: {},
+            qa_policy_change: {},
+            qa_innovation_use: {}
         };
         const indicators = Object.keys(GeneralIndicatorName);
 
@@ -564,13 +566,13 @@ class IndicatorsController {
                 {}
             );
             let allMetas = await qrMetas.connection.query(query, parameters);
-            console.log('TOTALES', allMetas);
+            // console.log('TOTALES', allMetas);
 
             allMetas.forEach(meta => {
                 totalEvaluationsByIndicator[meta.view_name][meta.display_name] = { item: meta.display_name, pending: meta.total, approved_without_comment: 0, assessment_with_comments: 0 };
             });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "items by indicators can not be retrived.", data: error });
         }
 
@@ -620,13 +622,13 @@ class IndicatorsController {
                         break;
                 }
             }
-            console.log(totalEvaluationsByIndicator['qa_slo']);
+            // console.log(totalEvaluationsByIndicator['qa_slo']);
 
             res.status(200).send({ data: totalEvaluationsByIndicator, message: 'All items by indicator' });
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "items by indicators can not be retrived.", data: error });
         }
     }
@@ -712,7 +714,7 @@ class IndicatorsController {
             const evaluations = await queryRunner.query(query, parameters);
 
             const batches = await batchesRepository.find({ where: { phase_year: AR } });
-                
+
             const data = evaluations.map(e => ({
                 indicator_name: e.indicator_view_name.split('qa_')[1],
                 id: e.indicator_view_id,
@@ -722,14 +724,14 @@ class IndicatorsController {
             })
             );
 
-            
+
             // queryRunner.close();
-            // console.log('Connection closed.');
+            // // console.log('Connection closed.');
 
             res.status(200).send({ data: data, message: `List of ${indicator_view_name[0].view_name.split('qa_')[1]} indicator items` })
         } catch (error) {
-            console.log(error);
-            
+            // console.log(error);
+
             res.status(404).json({ message: "Items for MIS cannot be retrieved", data: error })
         }
 
@@ -759,7 +761,7 @@ class IndicatorsController {
         const indicatorRepository = getRepository(QAIndicators);
         const batchesRepository = getRepository(QABatch);
 
-       
+
         let queryRunner = getConnection().createQueryBuilder().connection;
 
         try {
@@ -826,13 +828,13 @@ class IndicatorsController {
 
             const [query, parameters] = await queryRunner.driver.escapeQueryWithParameters(
                 sql,
-                { indicator_view_name: indicator_view_name[0].view_name, crp_id, indicator_view_id: item_id,AR },
+                { indicator_view_name: indicator_view_name[0].view_name, crp_id, indicator_view_id: item_id, AR },
                 {}
             );
 
             let item = await queryRunner.query(query, parameters);
             item = item[0];
-            
+
             const batches = await batchesRepository.find({ where: { phase_year: AR } });
 
             const data = {
@@ -844,12 +846,12 @@ class IndicatorsController {
             }
 
             // queryRunner.close();
-            // console.log('Connection closed.');
+            // // console.log('Connection closed.');
 
             res.status(200).send({ data: data, message: `Item ${data.id} of  ${indicator_view_name[0].view_name.split('qa_')[1]} indicator.` })
         } catch (error) {
-            console.log(error);
-            
+            // console.log(error);
+
             res.status(404).json({ message: "Items for MIS cannot be retrieved", data: error })
         }
 

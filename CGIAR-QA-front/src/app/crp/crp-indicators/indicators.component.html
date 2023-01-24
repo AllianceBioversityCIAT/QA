@@ -1,241 +1,570 @@
-<a class="nav-item nav-link go-back" [routerLinkActive]="['active']" routerLink="/crp/dashboard/">
-    <i class=icon-go-back></i> Dashboard
+<a
+  class="nav-item nav-link go-back"
+  [routerLinkActive]="['active']"
+  routerLink="/crp/dashboard/"
+>
+  <i class="icon-go-back"></i> Dashboard
 </a>
 
 <div class="row">
-    <div class="col-12">
-        <div>
-            <h2>{{returnListName(indicatorType, 'header')}} </h2>
-            <h4 style="text-align: center;"
-                *ngIf="currentUser.hasOwnProperty('cycle') && !currentUser.hasOwnProperty('cycle_ended')">
-                {{(currentUser.cycle.cycle_stage > 1 ) ? 'QA Round' + ': '+ currentUser.cycle.cycle_stage: ''}}
-            </h4>
-            <h4 style="margin: 1em auto; text-align: center;"
-                *ngIf="currentUser && !currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended">
-                The quality assessment process has ended.
-            </h4>
+  <div class="col-12">
+    <div>
+      <h2>{{ returnListName(indicatorType, "header") }}</h2>
+      <h4
+        style="text-align: center"
+        *ngIf="
+          currentUser.hasOwnProperty('cycle') &&
+          !currentUser.hasOwnProperty('cycle_ended')
+        "
+      >
+        {{
+          currentUser.cycle.cycle_stage > 1
+            ? "QA Round" + ": " + currentUser.cycle.cycle_stage
+            : ""
+        }}
+      </h4>
+      <h4
+        style="margin: 1em auto; text-align: center"
+        *ngIf="
+          currentUser &&
+          !currentUser.hasOwnProperty('cycle') &&
+          currentUser.cycle_ended
+        "
+      >
+        The quality assessment process has ended.
+      </h4>
 
-            <div class="row col sub-header">
-                <div class="col row text-left">
-                    <div class="model-link-container" (click)="goToPDF('AR')">
-                        <i class="icon-pdf"></i>
-                        <hr>
-                        <p>AR Template</p>
-                    </div>
-                    <div *ngIf="hasTemplate" class="model-link-container" (click)="goToPDF(indicatorType)">
-                        <i class="icon-pdf"></i>
-                        <hr>
-                        <p>Indicator Guidance</p>
-                    </div>
-                    <div (click)="exportComments(null, true)">
-                        <a target="_blank">
-                            <div tooltip="All {{indicatorTypeName}} related comments in excel format" container="body"
-                                placement="top" class="btn btn-primary file-button">
-                                <i class="icon-download-excel"></i>
-                            </div>
-                        </a>
-                    </div>
-                </div>
-                <div class="col row text-right">
-                    <i class="icon-quality-assessed"></i>
-                    <p>Answered / No action needed</p>
-                    <i class="icon-pending"></i>
-                    <p>Pending</p>
-                </div>
+      <div class="row col sub-header">
+        <div class="col row text-left">
+          <div class="model-link-container" (click)="goToPDF('AR')">
+            <i class="icon-pdf"></i>
+            <hr />
+            <p>AR Template</p>
+          </div>
+          <div
+            *ngIf="hasTemplate"
+            class="model-link-container"
+            (click)="goToPDF(indicatorType)"
+          >
+            <i class="icon-pdf"></i>
+            <hr />
+            <p>Indicator Guidance</p>
+          </div>
+          <div (click)="exportComments(null, true)">
+            <a target="_blank">
+              <div
+                tooltip="All {{
+                  indicatorTypeName
+                }} related comments in excel format"
+                container="body"
+                placement="top"
+                class="btn btn-primary file-button"
+              >
+                <i class="icon-download-excel"></i>
+              </div>
+            </a>
+          </div>
+        </div>
+        <div class="col row text-right">
+          <i class="icon-quality-assessed"></i>
+          <p>Answered / No action needed</p>
+          <i class="icon-pending"></i>
+          <p>Pending</p>
+        </div>
+      </div>
+      <div class="row filters-container">
+        <!-- <div *ngIf="submission_dates.length" class="date-filter">
+          <span>Filter by submission</span>
+          <div
+            *ngFor="let sub of submission_dates"
+            class="form-check form-check-inline"
+          >
+            <input
+              class="form-check-input"
+              type="checkbox"
+              id="sub.id"
+              [value]="sub.date"
+              [checked]="sub.checked"
+              (change)="onDateChange($event, sub.batch_name)"
+              [disabled]="!sub.is_active"
+            />
+            <label class="form-check-label" for="inlineCheckbox{{ sub.id }}">{{
+              sub.date
+            }}</label>
+          </div>
+        </div> -->
+        <!-- <button
+          type="button"
+          class="btn btn-outline-primary"
+          [(ngModel)]="rsaFilter"
+          btnCheckbox
+          [btnCheckboxTrue]="1"
+          [btnCheckboxFalse]="0"
+        >
+          Further assessment
+        </button> -->
+        <div class="columns">
+          <p class="filter-title-header">Display columns</p>
+
+          <div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="accepted"
+                [(ngModel)]="showAcceptedComments"
+                [value]="!showAcceptedComments"
+              />
+              <label for="accepted"> Accepted Comments</label>
             </div>
-            <div class="row filters-container">
-                <div *ngIf="submission_dates.length" class="date-filter">
-                    <span>Filter by submission</span>
-                    <div *ngFor="let sub of submission_dates" class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="sub.id" [value]="sub.date"
-                            [checked]="sub.checked" (change)="onDateChange($event,sub.batch_name)"
-                            [disabled]="!sub.is_active">
-                        <label class="form-check-label" for="inlineCheckbox{{sub.id}}">{{sub.date}}</label>
-                    </div>
-                </div>
-                <button type="button" class="btn btn-outline-primary" [(ngModel)]="rsaFilter" btnCheckbox
-                    [btnCheckboxTrue]="1" [btnCheckboxFalse]="0">
-                    Further assessment
-                </button>
-                <div class="removed-filter">
-                    <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
-                        <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
-                            uncheckable tabindex="0" role="button">Added item</label> -->
-                        <label class="btn btn-outline-danger" [class.active]="evalStatusFilter === 'Removed'"
-                            btnRadio="Removed" uncheckable tabindex="0" role="button">Removed items</label>
-                    </div>
-                </div>
-
-                <div class="form-group">
-                    <input type="text" class="form-control" placeholder="Search Here" [(ngModel)]="searchText">
-                </div>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="disagreed"
+                [(ngModel)]="showDisagreedComments"
+                [value]="!showDisagreedComments"
+              />
+              <label for="disagreed"> Disagreed Comments</label>
             </div>
-
-            <table class="table table-bordered" *ngIf="collectionSize != 0">
-                <thead class="table-header">
-                    <tr>
-                        <th scope="col" [class.active]="order === 'id'" (click)="setOrder('id')">
-                            <div class="header-row">
-                                Id
-                                <div class="order-icon" *ngIf="order === 'id'">
-                                    <span [hidden]="reverse">▼</span>
-                                    <span [hidden]="!reverse">▲</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th scope="col" *ngIf="returnedArray && returnedArray[0].brief">
-                            <div class="header-row">
-                                Brief contribution
-                            </div>
-                        </th>
-                        <th scope="col" [class.active]="order === 'title'" (click)="setOrder('title')">
-                            <div class="header-row">
-                                Title
-                                <div class="order-icon" *ngIf="order === 'title'">
-                                    <span [hidden]="reverse">▼</span>
-                                    <span [hidden]="!reverse">▲</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th *ngIf="returnedArray && returnedArray[0].hasOwnProperty('stage')" scope="col"
-                            [class.active]="order === 'stage'" (click)="setOrder('stage')">
-                            <div class="header-row">
-                                {{stageHeaderText[indicatorType]}}
-                                <div class="order-icon" *ngIf="order === 'stage'">
-                                    <span [hidden]="reverse">▼</span>
-                                    <span [hidden]="!reverse">▲</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th *ngIf="returnedArray && returnedArray[0].fp" scope="col" [class.active]="order === 'fp'"
-                            (click)="setOrder('fp')">
-                            <div class="header-row">
-                                Flagship
-                                <div class="order-icon" *ngIf="order === 'fp'">
-                                    <span [hidden]="reverse">▼</span>
-                                    <span [hidden]="!reverse">▲</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th scope="col" [class.active]="order === 'comments_replies_count'"
-                            (click)="setOrder('comments_replies_count')">
-                            <div class="header-row"> Answered comments
-                                <div class="order-icon" *ngIf="order === 'comments_replies_count'">
-                                    <span [hidden]="reverse">▼</span>
-                                    <span [hidden]="!reverse">▲</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th scope="col" [class.active]="order === 'comments_count'"
-                            (click)="setOrder('comments_count')">
-                            <div class="header-row"> Comments
-                                <div class="order-icon" *ngIf="order === 'comments_count'">
-                                    <span [hidden]="reverse">▼</span>
-                                    <span [hidden]="!reverse">▲</span>
-                                </div>
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="header-row">
-                                Export comments
-                            </div>
-                        </th>
-                        <th *ngIf="indicatorType == 'publications'" scope="col">
-                            <div class="header-row">
-                                Assessed by
-                            </div>
-                        </th>
-                        <th scope="col">
-                            <div class="header-row">
-                                Submission date
-                            </div>
-                        </th>
-                        <th scope="col" [class.active]="order === 'status'" (click)="setOrder('status') ">
-                            <div class="header-row"> QA Status
-                                <div class="order-icon" *ngIf="order === 'status'">
-                                    <span [hidden]="reverse">▼</span>
-                                    <span [hidden]="!reverse">▲</span>
-                                </div>
-                            </div>
-                        </th>
-                    </tr>
-                </thead>
-                <tbody class="table-body">
-                    <tr
-                        *ngFor="let item of evaluationList | customFilter:evalStatusFilter:'evaluation_status' | filter:searchText | dateFilter:submission_dates:'submission_date'| filterBoolean:rsaFilter:'require_second_assessment' | slice:currentPage.startItem:currentPage.endItem  ; let i = index">
-                        <th scope="row">
-                            QA-{{ indicatorType.charAt(0).toUpperCase() }}{{ indicatorType.charAt(1).toUpperCase() }}-{{
-                            item.id }}
-                        </th>
-                        <td *ngIf="item.hasOwnProperty('brief') && item.brief">
-                            <div *ngIf="item.evaluation_status && item.evaluation_status !== 'New'"
-                                class="evaluation-status {{ item.evaluation_status ? item.evaluation_status.toLowerCase():'' }}"
-                                style="display:none">
-                                {{item.evaluation_status}}
-                            </div>
-                            <a (click)="savePageList()" class="brief-format" rel="noopener noreferrer"
-                                [routerLinkActive]="['active']" routerLink="./detail/{{item.id}}"
-                                [innerHtml]="formatBrief(item.brief)"></a>
-                        </td>
-                        <td>
-                            <div *ngIf="item.evaluation_status && item.evaluation_status !== 'New'"
-                                class="evaluation-status {{ item.evaluation_status ? item.evaluation_status.toLowerCase():'' }}"
-                                style="display:none">
-                                {{item.evaluation_status}}
-                            </div>
-                            <a (click)="savePageList()" *ngIf="!item.brief" rel="noopener noreferrer"
-                                [routerLinkActive]="['active']" routerLink="./detail/{{item.id}}">
-                                {{ fixAccent(item.title)}}</a>
-                            <div *ngIf="returnedArray[0].brief" class="div">{{ item.title}}</div>
-                        </td>
-                        <td *ngIf="item.hasOwnProperty('stage')">{{ (item.stage) ? item.stage: notProviedText}}</td>
-                        <td *ngIf="item.hasOwnProperty('fp')">{{ (item.fp) ? item.fp: notProviedText}}</td>
-                        <td>{{ item.comments_replies_count }}</td>
-                        <td>{{ item.comments_count }}</td>
-                        <td (click)="exportComments(item)">
-                            <a target="_blank">
-                                <div tooltip="Comment in excel format" container="body" placement="top"
-                                    class="btn btn-primary file-button">
-                                    <i class="icon-download-excel"></i>
-                                </div>
-                            </a>
-                        </td>
-                        <td *ngIf="indicatorType == 'publications'">
-                            <div *ngIf="item.assessment_status != 'autochecked'" class="assessed-by">Assessors</div>
-                            <p class="wos-label" *ngIf="item.assessment_status == 'autochecked'">Validated by WoS/Scopus
-                            </p>
-                        </td>
-                        <td>
-                            {{item.submission_date}}
-                        </td>
-                        <td>
-                            <i class="icon-{{ statusIconCRP[item.status] }} status-icon"></i>
-                            <div class="require-second-assessment" *ngIf="item.require_second_assessment">Further
-                                assessment
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-
-            <div *ngIf='evaluationList' class="total-items">
-                Total items:
-                {{(evaluationList | customFilter:evalStatusFilter:'evaluation_status' | filter:searchText |
-                dateFilter:submission_dates:'submission_date' | filterBoolean:rsaFilter:'require_second_assessment'
-                ).length}}
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="highlight"
+                [(ngModel)]="showHighlightedComments"
+                [value]="!showHighlightedComments"
+              />
+              <label for="highlight"> Highlighted comments </label>
             </div>
-            <div *ngIf='evaluationList && collectionSize > 0'
-                class="d-flex justify-content-center p-2 pagination-container">
-                <pagination [rotate]="false"
-                    [totalItems]="(evaluationList | customFilter:evalStatusFilter:'evaluation_status' | filter:searchText  | dateFilter:submission_dates:'submission_date' | filterBoolean:rsaFilter:'require_second_assessment').length"
-                    [maxSize]="5" (pageChanged)="pageChanged($event)">
-                </pagination>
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="tpb"
+                [(ngModel)]="showTpbComments"
+                [value]="!showTpbComments"
+              />
+              <label for="tpb"> Third party broker instructions </label>
             </div>
-            <div class="div" *ngIf="collectionSize == 0">There is no data for this indicator</div>
-
+            <div class="form-check">
+              <input
+                type="checkbox"
+                name=""
+                id="implemented"
+                [(ngModel)]="showImplementedDecisions"
+                [value]="!showImplementedDecisions"
+              />
+              <label for="implemented"> Implemented Decisions </label>
+            </div>
+          </div>
         </div>
 
-        <!-- Loading Spinner -->
-        <ngx-spinner [name]="spinner_name" [fullScreen]="false"></ngx-spinner>
+        <div class="added-results">
+          <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+            <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
+                            uncheckable tabindex="0" role="button">Added item</label> -->
+            <label
+              class="btn btn-outline-warning"
+              [class.active]="evalStatusFilter === 'Added'"
+              btnRadio="Added"
+              uncheckable
+              tabindex="0"
+              role="button"
+              >Added items</label
+            >
+          </div>
+        </div>
+        <div class="removed-filter">
+          <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+            <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
+                            uncheckable tabindex="0" role="button">Added item</label> -->
+            <label
+              class="btn btn-outline-danger"
+              [class.active]="evalStatusFilter === 'Removed'"
+              btnRadio="Removed"
+              uncheckable
+              tabindex="0"
+              role="button"
+              >Removed items</label
+            >
+          </div>
+        </div>
+
+        <div class="form-group">
+          <input
+            type="text"
+            class="form-control"
+            placeholder="Search Here"
+            [(ngModel)]="searchText"
+          />
+        </div>
+      </div>
+
+      <!-- //HERE IS THE EMBEDED TABLE -->
+
+      <table class="table table-bordered" *ngIf="collectionSize != 0">
+        <thead class="table-header">
+          <tr>
+            <th
+              scope="col"
+              [class.active]="order === 'id'"
+              (click)="setOrder('id')"
+            >
+              <div class="header-row">
+                Id
+                <div class="order-icon" *ngIf="order === 'id'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th scope="col" *ngIf="returnedArray && returnedArray[0].brief">
+              <div class="header-row">Brief contribution</div>
+            </th>
+            <th
+              scope="col"
+              [class.active]="order === 'title'"
+              (click)="setOrder('title')"
+            >
+              <div class="header-row">
+                Title
+                <div class="order-icon" *ngIf="order === 'title'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="returnedArray && returnedArray[0].hasOwnProperty('stage')"
+              scope="col"
+              [class.active]="order === 'stage'"
+              (click)="setOrder('stage')"
+            >
+              <div class="header-row">
+                {{ stageHeaderText[indicatorType] }}
+                <div class="order-icon" *ngIf="order === 'stage'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="returnedArray && returnedArray[0].fp"
+              scope="col"
+              [class.active]="order === 'fp'"
+              (click)="setOrder('fp')"
+            >
+              <div class="header-row">
+                Flagship
+                <div class="order-icon" *ngIf="order === 'fp'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              scope="col"
+              [class.active]="order === 'comments_replies_count'"
+              (click)="setOrder('comments_replies_count')"
+            >
+              <div class="header-row">
+                Comments answered by initiatives
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_replies_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              scope="col"
+              [class.active]="order === 'comments_count'"
+              (click)="setOrder('comments_count')"
+            >
+              <div class="header-row">
+                Assessors' comments
+                <div class="order-icon" *ngIf="order === 'comments_count'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showAcceptedComments"
+              scope="col"
+              [class.active]="order === 'comments_accepted_count'"
+              (click)="setOrder('comments_accepted_count')"
+            >
+              <div class="header-row">
+                Accepted Comments
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_accepted_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showDisagreedComments"
+              scope="col"
+              [class.active]="order === 'comments_disagreed_count'"
+              (click)="setOrder('comments_disagreed_count')"
+            >
+              <div class="header-row">
+                Disagreed comments
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_disagreed_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showHighlightedComments"
+              scope="col"
+              [class.active]="order === 'comments_highlight_count'"
+              (click)="setOrder('comments_highlight_count')"
+            >
+              <div class="header-row">
+                Pending highlighted comments
+                <div
+                  class="order-icon"
+                  *ngIf="order === 'comments_highlight_count'"
+                >
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showTpbComments"
+              scope="col"
+              [class.active]="order === 'comments_tpb_count'"
+              (click)="setOrder('comments_tpb_count')"
+            >
+              <div class="header-row">
+                Third party broker instructions
+                <div class="order-icon" *ngIf="order === 'comments_tpb_count'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <th
+              *ngIf="showImplementedDecisions"
+              scope="col"
+              [class.active]="order === 'comments_ppu_count'"
+              (click)="setOrder('comments_ppu_count')"
+            >
+              <div class="header-row">
+                Implemeted Decisions
+                <div class="order-icon" *ngIf="order === 'comments_ppu_count'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+            <!-- <th scope="col">
+              <div class="header-row">Export comments</div>
+            </th> -->
+            <th *ngIf="indicatorType == 'publications'" scope="col">
+              <div class="header-row">Assessed by</div>
+            </th>
+            <!-- <th scope="col">
+              <div class="header-row">Submission date</div>
+            </th> -->
+            <th
+              scope="col"
+              [class.active]="order === 'status'"
+              (click)="setOrder('status')"
+            >
+              <div class="header-row">
+                QA Status
+                <div class="order-icon" *ngIf="order === 'status'">
+                  <span [hidden]="reverse">▼</span>
+                  <span [hidden]="!reverse">▲</span>
+                </div>
+              </div>
+            </th>
+          </tr>
+        </thead>
+        <tbody class="table-body">
+          <tr
+            *ngFor="
+              let item of evaluationList
+                | customFilter : evalStatusFilter : 'evaluation_status'
+                | filter : searchText
+                | slice : currentPage.startItem : currentPage.endItem;
+              let i = index
+            "
+          >
+            <!-- QA-{{ indicatorType.charAt(0).toUpperCase()
+              }}{{ indicatorType.charAt(1).toUpperCase() }}- -->
+            <th scope="row">
+              {{ item.id }}
+            </th>
+            <td *ngIf="item.hasOwnProperty('brief') && item.brief">
+              <div
+                *ngIf="
+                  item.evaluation_status && item.evaluation_status !== 'New'
+                "
+                class="evaluation-status {{
+                  item.evaluation_status
+                    ? item.evaluation_status.toLowerCase()
+                    : ''
+                }}"
+                style="display: none"
+              >
+                {{ item.evaluation_status }}
+              </div>
+              <a
+                (click)="savePageList()"
+                class="brief-format"
+                rel="noopener noreferrer"
+                [routerLinkActive]="['active']"
+                routerLink="./detail/{{ item.id }}"
+                [innerHtml]="formatBrief(item.brief)"
+              ></a>
+            </td>
+            <td>
+              <div
+                *ngIf="
+                  item.evaluation_status && item.evaluation_status !== 'New'
+                "
+                class="evaluation-status {{
+                  item.evaluation_status
+                    ? item.evaluation_status.toLowerCase()
+                    : ''
+                }}"
+                style="display: none"
+              >
+                {{ item.evaluation_status }}
+              </div>
+              <a
+                (click)="savePageList()"
+                *ngIf="!item.brief"
+                rel="noopener noreferrer"
+                [routerLinkActive]="['active']"
+                routerLink="./detail/{{ item.id }}"
+              >
+                {{ fixAccent(item.title) }}</a
+              >
+              <div *ngIf="returnedArray[0].brief" class="div">
+                {{ item.title }}
+              </div>
+            </td>
+            <!-- type -->
+            <td *ngIf="item.hasOwnProperty('stage')">
+              {{ item.stage ? item.stage : notProviedText }}
+            </td>
+            <!-- CRP -->
+            <td *ngIf="item.hasOwnProperty('fp')">
+              {{ item.fp ? item.fp : notProviedText }}
+            </td>
+            <td>{{ item.comments_replies_count }}</td>
+            <td>{{ item.comments_count }}</td>
+
+            <td *ngIf="showAcceptedComments">
+              {{ item.comments_accepted_count }}
+            </td>
+
+            <td *ngIf="showDisagreedComments">
+              {{ item.comments_disagreed_count }}
+            </td>
+            <td *ngIf="showHighlightedComments">
+              {{ item.comments_highlight_count }}
+            </td>
+            <td *ngIf="showTpbComments">
+              {{ item.comments_tpb_count }}
+            </td>
+            <td *ngIf="showImplementedDecisions">
+              {{ item.comments_ppu_count }}
+            </td>
+            <!-- <td (click)="exportComments(item)">
+              <a target="_blank">
+                <div
+                  tooltip="Comment in excel format"
+                  container="body"
+                  placement="top"
+                  class="btn btn-primary file-button"
+                >
+                  <i class="icon-download-excel"></i>
+                </div>
+              </a>
+            </td> -->
+            <td *ngIf="indicatorType == 'publications'">
+              <div
+                *ngIf="item.assessment_status != 'autochecked'"
+                class="assessed-by"
+              >
+                Assessors
+              </div>
+              <p
+                class="wos-label"
+                *ngIf="item.assessment_status == 'autochecked'"
+              >
+                Validated by WoS/Scopus
+              </p>
+            </td>
+            <!-- <td>
+              {{ item.submission_date }}
+            </td> -->
+            <td>
+              <i class="icon-{{ statusIconCRP[item.status] }} status-icon"></i>
+              <div
+                class="require-second-assessment"
+                *ngIf="item.require_second_assessment"
+              >
+                Further assessment
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+
+      <div *ngIf="evaluationList" class="total-items">
+        Total items:
+        {{
+          (
+            evaluationList
+            | customFilter : evalStatusFilter : "evaluation_status"
+            | filter : searchText
+            | filterBoolean : rsaFilter : "require_second_assessment"
+          ).length
+        }}
+      </div>
+      <div
+        *ngIf="evaluationList && collectionSize > 0"
+        class="d-flex justify-content-center p-2 pagination-container"
+      >
+        <pagination
+          [rotate]="false"
+          [totalItems]="
+            (
+              evaluationList
+              | customFilter : evalStatusFilter : 'evaluation_status'
+              | filter : searchText
+              | filterBoolean : rsaFilter : 'require_second_assessment'
+            ).length
+          "
+          [maxSize]="5"
+          (pageChanged)="pageChanged($event)"
+        >
+        </pagination>
+      </div>
+      <div class="div" *ngIf="collectionSize == 0">
+        There is no data for this indicator
+      </div>
     </div>
+
+    <!-- Loading Spinner -->
+    <ngx-spinner [name]="spinner_name" [fullScreen]="false"></ngx-spinner>
+  </div>
 </div>

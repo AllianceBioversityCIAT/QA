@@ -11,9 +11,9 @@ const checkRole = checkRole_.checkRole
 // import * as checkJwt from "../../src/middlewares/checkJwt";
 // import * as checkRole from "../../src/middlewares/checkRole";
 
-import EvaluationsController from "@controllers/EvaluationsController";
-import { RolesHandler } from "@helpers/RolesHandler";
-import CommentController from "@controllers/CommentController";
+import EvaluationsController from "./../controllers/EvaluationsController";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import CommentController from "./../controllers/CommentController";
 
 const router = Router();
 
@@ -36,7 +36,7 @@ router.get("/:id([0-9]+)", [checkJwt, checkRole([RolesHandler.admin, RolesHandle
 // get list evaluations by user
 router.post("/:id([0-9]+)/list", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], EvaluationsController.getListEvaluationsDash);
 
-// get detailed evaluations by user
+// * get detailed evaluations by user
 router.post("/:id([0-9]+)/detail", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], EvaluationsController.getDetailedEvaluationDash);
 
 // update detailed evaluations by user
@@ -47,6 +47,12 @@ router.get("/crp", [checkJwt, checkRole([RolesHandler.admin])], EvaluationsContr
 
 // get active indicators by admin
 router.get("/crp/indicators", [checkJwt, checkRole([RolesHandler.admin])], EvaluationsController.getIndicatorsByCrp);
+
+// * Update highlight comment status
+router.patch("/highlight-comment", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], CommentController.patchHighlightComment);
+
+// * Update require changes status
+router.patch("/require-changes", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], CommentController.patchRequireChanges);
 
 //TAGS
 
@@ -74,7 +80,7 @@ router.patch("/detail/comment/reply", [checkJwt, checkRole([RolesHandler.admin, 
 // get comment from indicator item
 router.get("/:evaluationId([0-9]+)/detail/comment/:metaId([0-9]+)", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getComments)
 
-// get replies by comment
+//  get replies by comment
 router.get("/:evaluationId([0-9]+)/detail/comment/:commentId([0-9]+)/replies", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getCommentsReplies)
 
 // get Criteria By Indicator
@@ -85,4 +91,8 @@ router.get("/:evaluationId([0-9]+)/assessors", [checkJwt, checkRole([RolesHandle
 
 // update require_second_assessment in indicator item
 router.patch("/:id([0-9]+)/detail/second_assessment", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], EvaluationsController.updateRequireSecondEvaluation)
+
+// TODO highlight
+router.get("/highlight-status", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], EvaluationsController.pendingHighlights);
+
 export default router;

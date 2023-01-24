@@ -9,37 +9,43 @@ import { IndicatorsService } from 'src/app/services/indicators.service';
 })
 export class DonutChartComponent implements OnInit {
   wosColor = "#46bdc6";
-  
+
   @Input() data;
   @Input() chartName;
   @Input() selectedIndicator;
 
   myData;
-  public legendLabels: any = { 
+  public legendLabels: any = {
     indicator_status: [
-    {name:"Pending", class: "pending"},
-    // {name:"Assessed (1st round)", class:"complete" },
-    {name:"Quality Assessed", class:"finalized" }
-  ],
+      { name: "Pending", class: "pending" },
+      // {name:"Assessed (1st round)", class:"complete" },
+      { name: "Quality Assessed", class: "finalized" }
+    ],
     publications_status: [
-    {name:"Automatically validated", class: "autochecked"},
-    {name:"Pending", class: "pending"},
-    // {name:"Assessed (1st round)", class:"complete" },
-    {name:"Quality Assessed", class:"finalized" }
-  ],
-  comments: [
-    {name:"Pending", class:"pending" },
-    {name:"Accepted", class: "agree"},
-    {name:"Accepted with comment", class: "agree-wc"},
-    {name:"Disagree", class: "disagree"},
-    // {name:"Clarification needed", class: "clarification"},
-    
-  ]};
+      { name: "Automatically validated", class: "autochecked" },
+      { name: "Pending", class: "pending" },
+      // {name:"Assessed (1st round)", class:"complete" },
+      { name: "Quality Assessed", class: "finalized" }
+    ],
+    comments: [
+      { name: "Pending", class: "pending" },
+      { name: "Accepted", class: "agree" },
+      { name: "Accepted with comment", class: "agree-wc" },
+      { name: "Disagree", class: "disagree" },
+      // {name:"Clarification needed", class: "clarification"},
+    ],
+    highlight_comments: [
+      { name: "Pending", class: "pending" },
+      { name: "Solved with change request", class: "solved-with-change-request" },
+      { name: "Solved without change request", class: "solved-without-change-request" },
+
+    ]
+  };
 
   public chartType: any;
   public doughnutChartData: any[] = [[350, 450, 100]];
   public doughnutChartType: string = "doughnut";
-  public chartColors: Array<any> = [{backgroundColor: ['#59ed9c','#f3da90','#ed8b84']}]
+  public chartColors: Array<any> = [{ backgroundColor: ['#59ed9c', '#f3da90', '#ed8b84'] }]
 
 
   // options
@@ -59,53 +65,54 @@ export class DonutChartComponent implements OnInit {
     console.log('PIE CHART DATA', this.data);
     // console.log(this.chartName);
     // console.log(this.chartType);
-    
+
   }
 
   onSelect(data): void {
+    console.log("🚀 ~ file: donut-chart.component.ts:66 ~ DonutChartComponent ~ onSelect ~ data", data)
     console.log('Item clicked', JSON.parse(JSON.stringify(data)));
     let status = null;
     switch (data.name) {
       case 'pending':
         status = false;
-        console.log('Click on Pending');        
+        console.log('Click on Pending');
         this.indicatorService.setOrderByStatus(status);
         break;
       case 'Assessed 1st round':
         status = true;
-        console.log('Click on Assessed 1st round');        
+        console.log('Click on Assessed 1st round');
         this.indicatorService.setOrderByStatus(status);
         break;
       case 'Assessed 2nd round':
         status = false;
-        console.log('Click on Assessed 2nd round');        
+        console.log('Click on Assessed 2nd round');
         this.indicatorService.setOrderByStatus(status);
         break;
 
       case 'AcceptedWC':
         status = false;
-        console.log('Click on AcceptedWC');        
+        console.log('Click on AcceptedWC');
         this.indicatorService.setOrderByAccpetedWC(status);
         break;
 
       case 'Clarification':
         status = false;
-        console.log('Click on Clarification');        
+        console.log('Click on Clarification');
         this.indicatorService.setOrderByClarification(status);
         break;
 
       case 'Disagree':
         status = false;
-        console.log('Click on Disagree');        
+        console.log('Click on Disagree');
         this.indicatorService.setOrderByDisagree(status);
         break;
-    
+
       default:
         break;
     }
-if(status != null) {
-  this.router.navigate([`/indicator/${this.selectedIndicator.split('qa_')[1]}/id`]);
-}
+    if (status != null) {
+      this.router.navigate([`/indicator/${this.selectedIndicator.split('qa_')[1]}/id`]);
+    }
   }
 
   onActivate(data): void {
@@ -116,7 +123,7 @@ if(status != null) {
     // console.log('Deactivate', JSON.parse(JSON.stringify(data)));
   }
 
-  setLabelFormatting(c): string {   
+  setLabelFormatting(c): string {
     let indicator = this.data.find(status => status.data.name == c)
     return `${indicator.value}`;
   }

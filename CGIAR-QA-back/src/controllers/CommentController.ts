@@ -1,18 +1,18 @@
 import e, { Request, Response } from "express";
 import { validate } from "class-validator";
-import { getRepository, In, getConnection, IsNull, Not, getTreeRepository } from "typeorm";
+import { getRepository, In, getConnection, IsNull, Not, getTreeRepository, QueryBuilder } from "typeorm";
 
-import { QAUsers } from "@entity/User";
-import { QAComments } from "@entity/Comments";
-import { QACommentsMeta } from "@entity/CommentsMeta";
+import { QAUsers } from "./../entity/User";
+import { QAComments } from "./../entity/Comments";
+import { QACommentsMeta } from "./../entity/CommentsMeta";
 
-import Util from "@helpers/Util"
-import { QACommentsReplies } from "@entity/CommentsReplies";
-import { RolesHandler } from "@helpers/RolesHandler";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QACycle } from "@entity/Cycles";
-import { QATags } from "@entity/Tags";
-import { QAReplyType } from "@entity/ReplyType";
+import Util from "./../_helpers/Util"
+import { QACommentsReplies } from "./../entity/CommentsReplies";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import { QAEvaluations } from "./../entity/Evaluations";
+import { QACycle } from "./../entity/Cycles";
+import { QATags } from "./../entity/Tags";
+import { QAReplyType } from "./../entity/ReplyType";
 const { htmlToText } = require('html-to-text');
 
 // const vfile = require('to-vfile')
@@ -22,19 +22,14 @@ const { htmlToText } = require('html-to-text');
 // const toString = require('nlcst-to-string')
 
 
-// import { QAIndicatorsMeta } from "@entity/IndicatorsMeta";
+// import { QAIndicatorsMeta } from "./../entity/IndicatorsMeta";
 // import { createSecretKey } from "crypto";
 
 
 class CommentController {
-
-
     static commentsCount = async (req: Request, res: Response) => {
         const { crp_id } = req.query;
         const userId = res.locals.jwtPayload.userId;
-
-
-
         const queryRunner = getConnection().createQueryBuilder();
         const userRepository = getRepository(QAUsers);
         let rawData;
@@ -44,7 +39,7 @@ class CommentController {
             user = await userRepository.findOneOrFail(userId);
             let role = user.roles[0].description;
 
-            // console.log(crp_id)
+            // // console.log(crp_id)
             if (crp_id !== undefined && crp_id !== 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `
@@ -66,11 +61,60 @@ class CommentController {
                             ) AS comments_discarded,
                             SUM(
                                 IF (
-                                    comments.replyTypeId IS NULL,
+                                    comments.replyTypeId IS NULL AND comments.tpb = 0,
                                     1,
                                     0
                                 )
                             ) AS comments_without_answer,
+                            SUM(
+                                IF (
+                                    comments.require_changes = 1 AND comments.tpb = 1 AND comments.ppu = 0,
+                                    1,
+                                    0
+                                )
+                            ) AS comments_tpb_count,
+                            SUM(
+                                IF (
+                                    comments.highlight_comment = 1,
+                                    1,
+                                    0
+                                )
+                            ) AS comments_highlight,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.ppu = 0,
+                                    1,
+                                    0
+                                )
+                            ) AS pending_highlight_comments,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.require_changes = 1
+                                    AND comments.ppu = 1,
+                                    1,
+                                    0
+                                )
+                            ) AS solved_with_require_request,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.require_changes = 0
+                                    AND comments.ppu = 1,
+                                    1,
+                                    0
+                                )
+                            ) AS solved_without_require_request,
+                            SUM(
+                                IF(
+                                    comments.highlight_comment = 1
+                                    AND comments.require_changes = 1
+                                    AND comments.ppu = 0,
+                                    1,
+                                    0
+                                )
+                            ) AS pending_tpb_decisions,
                             SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
                     
                             IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
@@ -93,59 +137,128 @@ class CommentController {
                     { crp_id },
                     {}
                 );
-                // console.log('role === RolesHandler.crp', query, parameters)
+                // // console.log('role === RolesHandler.crp', query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: CommentController.ts:107 ~ CommentController ~ commentsCount= ~ rawData", rawData)
             } else {
 
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `SELECT
-                    SUM(
-                        IF (comments.replyTypeId = 1 AND replies.detail = '', 1, 0 )
-                    ) AS comments_accepted_without_comment,
-                    SUM(
-                        IF (comments.replyTypeId = 4 AND replies.detail <> '', 1, 0 )
-                    ) AS comments_accepted_with_comment,
-                    SUM(
-                        IF (comments.replyTypeId = 2, 1, 0)
-                    ) AS comments_rejected,
-                    SUM(
-                        IF (comments.replyTypeId = 3, 1, 0)
-                    ) AS comments_clarification,
-                    SUM(
-                        IF (comments.replyTypeId = 5, 1, 0)
-                    ) AS comments_discarded,
-                    SUM(
-                        IF (
+                        SUM(
+                            IF(
+                                comments.replyTypeId = 1
+                                AND replies.detail = '',
+                                1,
+                                0
+                            )
+                        ) AS comments_accepted_without_comment,
+                        SUM(
+                            IF(
+                                comments.replyTypeId = 4
+                                AND replies.detail <> '',
+                                1,
+                                0
+                            )
+                        ) AS comments_accepted_with_comment,
+                        SUM(IF(comments.replyTypeId = 2, 1, 0)) AS comments_rejected,
+                        SUM(IF(comments.replyTypeId = 3, 1, 0)) AS comments_clarification,
+                        SUM(IF(comments.replyTypeId = 5, 1, 0)) AS comments_discarded,
+                        SUM(
+                            IF(
+                                comments.replyTypeId IS NULL
+                                AND comments.tpb = 0
+                                AND comments.is_deleted = 0,
+                                1,
+                                0
+                            )
+                        ) AS comments_without_answer,
+                        SUM(
+                            IF(
+                                comments.require_changes = 1
+                                AND comments.tpb = 1
+                                AND comments.ppu = 0,
+                                1,
+                                0
+                            )
+                        ) AS comments_tpb_count,
+                        SUM(
+                            IF(
+                                comments.tpb = 1,
+                                1,
+                                0
+                            )
+                        ) AS comments_highlight,
+                        SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.ppu = 0,
+                                1,
+                                0
+                            )
+                        ) AS pending_highlight_comments,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.require_changes = 1
+                                AND comments.ppu = 1,
+                                1,
+                                0
+                            )
+                        ) AS solved_with_require_request,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.require_changes = 0
+                                AND comments.ppu = 1,
+                                1,
+                                0
+                            )
+                        ) AS solved_without_require_request,
+                        SUM(
+                            IF(
+                                comments.highlight_comment = 1
+                                AND comments.require_changes = 1
+                                AND comments.ppu = 0,
+                                1,
+                                0
+                            )
+                        ) AS pending_tpb_decisions,
+                        IF(
                             comments.replyTypeId IS NULL,
-                            1,
-                            0
-                        )
-                    ) AS comments_without_answer,
-                    SUM(IF(replies.userId = 47, 1, 0)) AS auto_replies_total,
-            
-                    IF(comments.replyTypeId IS NULL, 'secondary', IF(comments.replyTypeId in(1,4), 'success','danger')) AS type,
-                    
-                    COUNT(DISTINCT comments.id) AS 'label',
-                    COUNT(DISTINCT comments.id) AS 'value',
-                    evaluations.indicator_view_name
-            FROM qa_comments comments
-                    LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
-            WHERE comments.is_deleted = 0
-                    AND comments.detail IS NOT NULL
-                    AND metaId IS NOT NULL
-                    AND evaluation_status <> 'Deleted'
-                    AND evaluations.phase_year = actual_phase_year()
-                    -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
-            GROUP BY evaluations.indicator_view_name, comments.replyTypeId
-            ORDER BY type DESC;
+                            'secondary',
+                            IF(
+                                comments.replyTypeId in (1, 4),
+                                'success',
+                                'danger'
+                            )
+                        ) AS type,
+                        COUNT(DISTINCT comments.id) AS 'label',
+                        COUNT(DISTINCT comments.id) AS 'value',
+                        evaluations.indicator_view_name
+                    FROM
+                        qa_comments comments
+                        LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+                        LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+                        AND replies.is_deleted = 0
+                    WHERE
+                        comments.is_deleted = 0
+                        AND comments.detail IS NOT NULL
+                        AND metaId IS NOT NULL
+                        AND evaluation_status <> 'Deleted'
+                        AND evaluations.phase_year = actual_phase_year()
+                    GROUP BY
+                        evaluations.indicator_view_name,
+                        comments.replyTypeId
+                    ORDER BY
+                        type DESC;
 
                         `,
                     {},
                     {}
                 );
-                // console.log('=== undefined', query)
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: CommentController.ts:172 ~ CommentController ~ commentsCount= ~ rawData", rawData)
 
                 /* 
                 if (crp_id !== 'undefined') {
@@ -173,7 +286,7 @@ class CommentController {
                          { crp_id },
                          {}
                      );
-                     console.log('!== undefined', query)
+                    //  console.log('!== undefined', query)
                      rawData = await queryRunner.connection.query(query, parameters);
                      // res.status(200).json({ data: Util.parseCommentData(rawData, 'indicator_view_name'), message: 'Comments by crp' });
                  }
@@ -202,7 +315,7 @@ class CommentController {
                          {},
                          {}
                      );
-                     console.log('=== undefined', query)
+                    //  console.log('=== undefined', query)
                      rawData = await queryRunner.connection.query(query, parameters);
                  }
                  */
@@ -211,16 +324,12 @@ class CommentController {
             res.status(200).json({ data: Util.groupBy(rawData, 'indicator_view_name'), message: 'Comments statistics' });
 
         } catch (error) {
-            console.log(error);
             res.status(404).json({ message: "Could not access to comments statistics." });
         }
-
-        // console.log( crp_id, id)
-        // res.status(200).send()
     }
 
     // create reply by comment
-    static createCommentReply = async (req: Request, res: Response) => { 
+    static createCommentReply = async (req: Request, res: Response) => {
 
         //Check if username and password are set
         const { detail, userId, commentId, crp_approved, approved, replyTypeId } = req.body;
@@ -251,11 +360,11 @@ class CommentController {
             //     comment.approved = approved;
             //     comment = await commentsRepository.save(comment);
             // }
-            // console.log(new_replay)
+            // // console.log(new_replay)
             res.status(200).send({ data: new_replay, message: 'Comment created' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Comment can not be created.", data: error });
         }
     }
@@ -264,15 +373,15 @@ class CommentController {
     static createComment = async (req: Request, res: Response) => {
         // approved
         //Check if username and password are set
-        const { detail, approved, userId, metaId, evaluationId, original_field } = req.body;
+        const { detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb } = req.body;
 
         try {
-            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field);
+            let new_comment = await Util.createComment(detail, approved, userId, metaId, evaluationId, original_field, require_changes, tpb);
             if (new_comment == null) throw new Error('Could not created comment');
             res.status(200).send({ data: new_comment, message: 'Comment created' });
 
         } catch (error) {
-            // console.log(error);
+            // // console.log(error);
             res.status(404).json({ message: "Comment can not be created.", data: error });
         }
     }
@@ -282,18 +391,20 @@ class CommentController {
     static updateComment = async (req: Request, res: Response) => {
 
         //Check if username and password are set
-        const { approved, is_visible, is_deleted, id, detail, userId } = req.body;
+        const { approved, is_visible, is_deleted, id, detail, userId, require_changes, tpb } = req.body;
         const commentsRepository = getRepository(QAComments);
         const tagsRepository = getRepository(QATags);
 
         try {
             let comment_ = await commentsRepository.findOneOrFail(id, { relations: ["tags"] });
-            if(is_deleted){
+            if (is_deleted) {
                 tagsRepository.remove(comment_.tags);
             }
             comment_.approved = approved;
             comment_.is_deleted = is_deleted;
             comment_.is_visible = is_visible;
+            comment_.require_changes = require_changes;
+            comment_.tpb = tpb;
             if (detail)
                 comment_.detail = detail;
             if (userId)
@@ -306,7 +417,7 @@ class CommentController {
             res.status(200).send({ data: updated_comment, message: 'Comment updated' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Comment can not be updated.", data: error });
         }
     }
@@ -329,7 +440,7 @@ class CommentController {
                 reply_.user = userId;
             if (reply_.is_deleted) {
                 const commentsRepository = await getRepository(QAComments);
-                console.log(reply_)
+                // console.log(reply_)
                 let comment = await commentsRepository.findOneOrFail(reply_.comment.id);
                 comment.crp_approved = null;
                 comment.replyType = null;
@@ -342,7 +453,7 @@ class CommentController {
             res.status(200).send({ data: updated_comment, message: 'Reply updated' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Reply can not be updated.", data: error });
         }
     }
@@ -352,7 +463,7 @@ class CommentController {
     static getAllIndicatorTags = async (req: Request, res: Response) => {
         //TODO
         const { crp_id } = req.query;
-        console.log({ crp_id });
+        // console.log({ crp_id });
 
         let queryRunner = getConnection().createQueryBuilder();
         try {
@@ -399,7 +510,7 @@ class CommentController {
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Tags by indicators can not be retrived.", data: error });
         }
     }
@@ -460,7 +571,7 @@ class CommentController {
             res.status(200).send({ data: tags, message: 'All new tags order by date (desc)' });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Recent tags can not be retrived.", data: error });
         }
     }
@@ -476,18 +587,29 @@ class CommentController {
 
             const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                 `SELECT
-                id, (
+                id,
+                (
                     SELECT
-                    COUNT(DISTINCT id)
+                        COUNT(DISTINCT id)
                     FROM
-                    qa_comments_replies
+                        qa_comments_replies
                     WHERE
-                    commentId = qa_comments.id
-                    AND is_deleted = 0
-                    ) AS replies_count
-                FROM
+                        commentId = qa_comments.id
+                        AND is_deleted = 0
+                ) AS replies_count,
+                (
+                    SELECT
+                        qu.username
+                    FROM
+                        qa_users qu
+                    WHERE
+                        qa_comments.highlightById = qu.id
+                ) AS highlight_by,
+                highlight_comment,
+                highlightById
+            FROM
                 qa_comments
-                WHERE
+            WHERE
                 metaId = :metaId
                 AND evaluationId = :evaluationId
                 AND approved_no_comment IS NULL
@@ -517,19 +639,97 @@ class CommentController {
             res.status(200).send({ data: comments, message: 'All comments' });
 
         } catch (error) {
-            console.log(error);
             res.status(404).json({ message: "Comments can not be retrived.", data: error });
+        }
+    }
+
+    // * Updated ppu status ---------------------------------------------------------------------------------------------------------------------
+    static patchPpuChanges = async (req: Request, res: Response) => {
+        const commentsRepository = getRepository(QAComments);
+        const { ppu, commentReplyId } = req.body;
+        let message: String;
+
+        try {
+            let commentReplyId_ = await commentsRepository.findOneOrFail(commentReplyId);
+            commentReplyId_.ppu = ppu;
+
+            if (ppu != 0) {
+                const commentReplyId = await commentsRepository.save(commentReplyId_);
+                message = `Require changes was marked done`;
+                res.status(202).json({ reply_comment: commentReplyId, message: message });
+            } else {
+                const commentReplyId = await commentsRepository.save(commentReplyId_);
+                message = 'Require changes was removed';
+                res.status(202).json({ reply_comment: commentReplyId, message: message });
+            }
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({ message: 'An error ocurred when try to mark require changes' });
         }
 
     }
 
+    // * Updated require changes ---------------------------------------------------------------------------------------------------------------------
+    static patchRequireChanges = async (req: Request, res: Response) => {
+        const commentsRepository = getRepository(QAComments);
+        const { require_changes, id } = req.body;
+        let update_require_changes;
+        let message: String;
+
+        try {
+            let comment_ = await commentsRepository.findOneOrFail(id);
+            comment_.require_changes = require_changes;
+
+            if (require_changes != 0) {
+                update_require_changes = await commentsRepository.save(comment_);
+                message = `Require changes was marked`;
+            } else {
+                update_require_changes = await commentsRepository.update(id, { require_changes: 0 });
+                message = 'Require changes was removed';
+            }
+            res.status(202).json({ data: update_require_changes, message: message });
+        } catch (error) {
+            console.log(error);
+            res.status(400).json({ message: 'An error ocurred when try to mark require changes' });
+        }
+
+    }
+
+    // * Updated highlight comment -----------------------------------------------------------------------------------------------------------------------
+    static patchHighlightComment = async (req: Request, res: Response) => {
+        const commentsRepository = getRepository(QAComments);
+        const userId = res.locals.jwtPayload;
+        const { highlight_comment, id } = req.body;
+        let updated_comment;
+        let message: String;
+
+        try {
+            let comment_ = await commentsRepository.findOneOrFail(id);
+            comment_.highlight_by = userId.userId;
+            comment_.highlight_comment = highlight_comment;
+
+            if (highlight_comment != 0) {
+                updated_comment = await commentsRepository.save(comment_);
+                message = `Highlight mark by ${userId.username}`;
+            } else {
+                updated_comment = await commentsRepository.update(id, { highlight_by: null, highlight_comment: 0 });
+                message = `Highlight mark was removed in comment ${id} by ${userId.username}`;
+            }
+
+            res.status(201).send({ data: updated_comment, message: message });
+        } catch (error) {
+            // console.log(error);
+            res.status(500).json({ message: "Highlight comment can not be set.", data: error });
+        }
+    }
+
     // get comments replies
     static getCommentsReplies = async (req: Request, res: Response) => {
-        console.log('COMMENT_ID: ',req.params);
+        // console.log('COMMENT_ID: ', req.params);
         const commentId = req.params.commentId;
-        
+
         // let queryRunner = getConnection().createQueryBuilder();
-        if(commentId != undefined && commentId != null) {
+        if (commentId != undefined && commentId != null) {
             try {
                 let replies = await getRepository(QACommentsReplies).find(
                     {
@@ -545,11 +745,11 @@ class CommentController {
                 )
                 res.status(200).send({ data: replies, message: 'All comments replies' });
             } catch (error) {
-                console.log(error);
+                // console.log(error);
                 res.status(404).json({ message: "Comment can not be retrived.", data: error });
             }
         } else {
-            console.log('CRASHED');
+            // console.log('CRASHED');
 
             res.status(404).json({ message: "Comment can not be retrieved. Comment ID not provided", data: null });
         }
@@ -591,7 +791,7 @@ class CommentController {
 
             res.status(200).send({ data: response, message: 'Comments meta created' });
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             //If not found, send a 404 response
             res.status(404).json({ message: 'Comment meta was not created.', data: error });
             // throw new ErrorHandler(404, 'User not found.');
@@ -620,9 +820,9 @@ class CommentController {
                 .where("qa_comments_meta.indicatorId=:indicatorId", { indicatorId: id })
                 // .getSql()
                 .getRawOne()
-            // console.log(commentMeta, enable, isActive)
+            // // console.log(commentMeta, enable, isActive)
             commentMeta[enable] = isActive;
-            // console.log(commentMeta, 'after')
+            // // console.log(commentMeta, 'after')
 
             //Validade if the parameters are ok
             const errors = await validate(commentMeta);
@@ -633,10 +833,10 @@ class CommentController {
 
             // update indicator by user
             commentMeta = await commentMetaRepository.save(commentMeta);
-            // console.log(commentMeta)
+            // // console.log(commentMeta)
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             //If not found, send a 404 response
             res.status(404).json({ message: 'User indicator not found.', data: error });
             // throw new ErrorHandler(404, 'User not found.');
@@ -654,7 +854,7 @@ class CommentController {
         const { evaluationId } = req.params;
         const { userId, name, crp_id, indicatorName } = req.query;
         let queryRunner = getConnection().createQueryBuilder();
-        // console.log('getCommentsExcel')
+        // // console.log('getCommentsExcel')
 
         let comments;
         try {
@@ -667,7 +867,7 @@ class CommentController {
                 ]
             });
             let currentRole = user.roles.map(role => { return role.description })[0];
-            // console.log(evaluationId,indicatorName)
+            // // console.log(evaluationId,indicatorName)
             if (evaluationId == undefined || evaluationId == 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     `
@@ -710,7 +910,7 @@ class CommentController {
                     {}
                 );
 
-                // console.log(parameters)
+                // // console.log(parameters)
                 comments = await queryRunner.connection.query(query, parameters);
             } else {
 
@@ -755,7 +955,7 @@ class CommentController {
                         {}
                     );
 
-                    // console.log(parameters)
+                    // // console.log(parameters)
                     comments = await queryRunner.connection.query(query, parameters);
                 }
                 else {
@@ -799,7 +999,7 @@ class CommentController {
                         {}
                     );
 
-                    // console.log(parameters)
+                    // // console.log(parameters)
                     comments = await queryRunner.connection.query(query, parameters);
                 }
             }
@@ -809,7 +1009,7 @@ class CommentController {
                 { header: 'Indicator id', key: 'id' },
                 { header: 'Indicator Title', key: 'indicator_title' },
                 { header: 'Field', key: 'field' },
-                { header: 'Value', key: 'value'},
+                { header: 'Value', key: 'value' },
                 { header: 'User', key: 'user' },
                 { header: 'Comment', key: 'comment' },
                 { header: 'Cycle', key: 'cycle_stage' },
@@ -827,7 +1027,7 @@ class CommentController {
             res.status(200).send(stream);
             // res.status(200).send({ data: stream, message: 'File download' });
         } catch (error) {
-            console.log('excel error', error)
+            // console.log('excel error', error)
             res.status(404).json({ message: 'Comments not found.', data: error });
         }
 
@@ -835,12 +1035,12 @@ class CommentController {
 
     }
 
-    
+
     static toggleApprovedNoComments = async (req: Request, res: Response) => {
         console.time('toggle_approved');
 
-        console.log('TOGGLE APPROVED NO COMMENTS');
-        
+        // console.log('TOGGLE APPROVED NO COMMENTS');
+
         //TODO - Improve performance
         const { evaluationId } = req.params;
         const { meta_array, userId, isAll, noComment } = req.body;
@@ -851,28 +1051,28 @@ class CommentController {
         const commentsRepository = getRepository(QAComments);
         const cycleRepo = getRepository(QACycle);
 
-        // console.log(meta_array)  
+        // // console.log(meta_array)  
         try {
 
-        const comments = await commentsRepository
-                            .createQueryBuilder("qc")
-                            // .select("qc.metaId")
-                            .leftJoinAndSelect("qc.meta", "meta")
-                            .where("qc.evaluationId = :evaluationId", {evaluationId})
-                            .andWhere("qc.metaId IN (:meta_array)", {meta_array})
-                            .andWhere("qc.approved_no_comment IS NOT NULL")
-                            .getMany();
-        
-        
-        // await getConnection()
-        //     .createQueryBuilder()
-        //     .select("*")
-        //     .from(QAComments, "qc")
-        //     .where("evaluationId = :evaluationId", {evaluationId})
-        //     .andWhere("metaId IN (:meta_array)", {meta_array})
-        //     .andWhere("approved_no_comment IS NOT NULL")
-        //     .getMany();
-            
+            const comments = await commentsRepository
+                .createQueryBuilder("qc")
+                // .select("qc.metaId")
+                .leftJoinAndSelect("qc.meta", "meta")
+                .where("qc.evaluationId = :evaluationId", { evaluationId })
+                .andWhere("qc.metaId IN (:meta_array)", { meta_array })
+                .andWhere("qc.approved_no_comment IS NOT NULL")
+                .getMany();
+
+
+            // await getConnection()
+            //     .createQueryBuilder()
+            //     .select("*")
+            //     .from(QAComments, "qc")
+            //     .where("evaluationId = :evaluationId", {evaluationId})
+            //     .andWhere("metaId IN (:meta_array)", {meta_array})
+            //     .andWhere("approved_no_comment IS NOT NULL")
+            //     .getMany();
+
 
 
             // const [query, parameters] = await queryRunner.driver.escapeQueryWithParameters(
@@ -889,43 +1089,43 @@ class CommentController {
             //     {}
             // );
             // comments = await queryRunner.query(query, parameters);
-            // console.log(comments.length, meta_array)
-            console.log({comments})
+            // // console.log(comments.length, meta_array)
+            // console.log({ comments })
             let user = await userRepository.findOneOrFail({ where: { id: userId } });
-            console.log(user);
+            // console.log(user);
 
             console.time('getEvaluation')
-            let evaluation = await evaluationsRepository.findOne({ where: { id: evaluationId }});
+            let evaluation = await evaluationsRepository.findOne({ where: { id: evaluationId } });
 
 
             // let evaluation = await evaluationsRepository.findOneOrFail({ where: { id: evaluationId }});
             // evaluationsRepository.queryRunner.connection.close;
             console.timeEnd('getEvaluation')
-            console.log(evaluation);
-            
+            // console.log(evaluation);
+
             let current_cycle = await cycleRepo
-            .createQueryBuilder("qa_cycle")
-            .select('*')
-            .where("DATE(qa_cycle.start_date) <= CURDATE()")
-            .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
-            .getRawOne();
-            console.log({current_cycle});
+                .createQueryBuilder("qa_cycle")
+                .select('*')
+                .where("DATE(qa_cycle.start_date) <= CURDATE()")
+                .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
+                .getRawOne();
+            // console.log({ current_cycle });
 
 
             // TO-DO Assessed by per batch
             // if(current_cycle.id == 1) {
-                //INSERT ASSESSED BY
+            //INSERT ASSESSED BY
 
-                const assessed_by = await getConnection().createQueryBuilder()
+            const assessed_by = await getConnection().createQueryBuilder()
                 .select()
                 .from("qa_evaluations_assessed_by_qa_users", "qaed")
-                .where("qaEvaluationsId = :evaluationId", {evaluationId})
-                .andWhere("qaUsersId = :userId", {userId})
+                .where("qaEvaluationsId = :evaluationId", { evaluationId })
+                .andWhere("qaUsersId = :userId", { userId })
                 .execute();
 
-                console.log({assessed_by});
-                if(assessed_by.length <= 0) {
-                    const insertAssessedBy = await getConnection().createQueryBuilder()
+            // console.log({ assessed_by });
+            if (assessed_by.length <= 0) {
+                const insertAssessedBy = await getConnection().createQueryBuilder()
                     .insert()
                     .into('qa_evaluations_assessed_by_qa_users')
                     .values({
@@ -933,33 +1133,33 @@ class CommentController {
                         qaUsersId: userId
                     })
                     .execute();
-                }
+            }
 
-                
-                console.log(assessed_by);
-                
-                // evaluation.assessed_by.push(user);
+
+            // console.log(assessed_by);
+
+            // evaluation.assessed_by.push(user);
             // } else {
             //     evaluation.assessed_by_second_round.push(user);
             // }
-            // console.log('ASSESSORS',evaluation.assessed_by);
+            // // console.log('ASSESSORS',evaluation.assessed_by);
             // evaluation.assessed_by.push(user);
-            // console.log('ASSESSORS',evaluation.assessed_by);
+            // // console.log('ASSESSORS',evaluation.assessed_by);
             // evaluationsRepository.save(evaluation);
-            console.log('evaluations saved');
-            
+            // console.log('evaluations saved');
+
             let response = [];
 
 
             for (let index = 0; index < meta_array.length; index++) {
                 let comment_ = new QAComments();
-                // console.log(index, ' for cycle');
-                
-                // console.log(comments.length, comments.find(data => data.metaId == meta_array[index]))
+                // // console.log(index, ' for cycle');
+
+                // // console.log(comments.length, comments.find(data => data.metaId == meta_array[index]))
                 if (comments && comments.find(comment => comment.meta.id == meta_array[index])) {
                     let existnCommt = comments.find(comment => comment.meta.id == meta_array[index]);
-                    // console.log('Comment exists', {existnCommt});
-                    
+                    // // console.log('Comment exists', {existnCommt});
+
                     existnCommt.approved = noComment;
                     existnCommt.is_deleted = !noComment;
                     existnCommt.evaluation = evaluation;
@@ -978,17 +1178,17 @@ class CommentController {
                     if (current_cycle == undefined) throw new Error('Could not created comment')
                     comment_.cycle = current_cycle;
                 }
-                // console.log(comment_);
+                // // console.log(comment_);
                 response.push(comment_)
             }
             let result = await commentsRepository.save(response);
-            console.log({result});
+            // console.log({ result });
 
             console.timeEnd('toggle_approved');
             res.status(200).send({ data: result, message: 'Comment toggle' });
 
         } catch (error) {
-            console.log(error)
+            // console.log(error)
             res.status(404).json({ message: 'Comments not setted as approved.', data: error });
         }
 
@@ -1004,7 +1204,7 @@ class CommentController {
         const userRepository = getRepository(QAUsers);
 
         try {
-            console.log(crp_id, '>>> getRawCommentsData')
+            // console.log(crp_id, '>>> getRawCommentsData')
 
             if (crp_id !== undefined && crp_id !== 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -1166,7 +1366,7 @@ class CommentController {
 
             res.status(200).json({ message: "Comments raw data", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Comments raw data error', data: error });
         }
     }
@@ -1181,15 +1381,17 @@ class CommentController {
 
         let tag = await tagsRepository.findOne({
             where: [
-              { commentId: commentId, userId: userId },
+                { commentId: commentId, userId: userId },
             ]
-          });
-          console.log(tag);
-          if(tag) {
-              tagsRepository.remove(tag);
-              console.log(`Tag deleted`);
-          } else console.log(`The user hasn't previous tag for this comment`);
-        
+        });
+        // console.log(tag);
+        if (tag) {
+            tagsRepository.remove(tag);
+            // console.log(`Tag deleted`);
+        } else {
+            // console.log(`The user hasn't previous tag for this comment`);
+        }
+
 
         try {
             let new_tag = await Util.createTag(userId, tagTypeId, commentId);
@@ -1197,7 +1399,6 @@ class CommentController {
             res.status(200).send({ data: new_tag, message: 'Tag created' });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Tag can not be created.", data: error });
         }
     }
@@ -1253,7 +1454,7 @@ class CommentController {
     //get raw comments excel
     static getRawCommentsExcel = async (req: Request, res: Response) => {
         const { crp_id } = req.params;
-        console.log(crp_id, '>>> getRawCommentsExcel')
+        // console.log(crp_id, '>>> getRawCommentsExcel')
         // const userId = res.locals.jwtPayload.userId;
         let rawData;
         const queryRunner = getConnection().createQueryBuilder();
@@ -1309,7 +1510,7 @@ class CommentController {
                     { crp_id },
                     {}
                 );
-                // console.log(query)
+                // // console.log(query)
                 rawData = await queryRunner.connection.query(query, parameters);
             } else {
 
@@ -1363,7 +1564,7 @@ class CommentController {
                 );
                 rawData = await queryRunner.connection.query(query, parameters);
             }
-            // console.log(rawData)
+            // // console.log(rawData)
             const stream: Buffer = await Util.createRawCommentsExcel([
                 { header: 'CRP', key: 'crp_acronym' },
                 { header: 'Comment id', key: 'comment_id' },
@@ -1389,7 +1590,7 @@ class CommentController {
             return;
             // res.status(200).json({ message: "Comments raw excel", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Comments raw data error', data: error });
         }
     }
@@ -1410,7 +1611,7 @@ class CommentController {
             rawData = await queryRunner.query(query, parameters);
             res.status(200).json({ message: "Cycles data", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Could not get cycles', data: error });
         }
     }
@@ -1434,12 +1635,12 @@ class CommentController {
             rawData[0].end_date = end_date;
             rawData[0].start_date = start_date;
 
-            // console.log(rawData)
-            // console.log(r)
+            // // console.log(rawData)
+            // // console.log(r)
             let r = await cycleRepo.save(rawData[0]);
             res.status(200).json({ message: "Cycle updated", data: r });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Could not update cycle', data: error });
         }
     }
@@ -1462,7 +1663,7 @@ class CommentController {
         const userRepository = getRepository(QAUsers);
 
         try {
-            console.log(crp_id, '>>> getIndicatorKeywords')
+            // console.log(crp_id, '>>> getIndicatorKeywords')
 
             if (crp_id !== undefined && crp_id !== 'undefined') {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -1515,7 +1716,7 @@ class CommentController {
 
             res.status(200).json({ message: "Comments keywords data", data: rawData });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: 'Comments keywords data error', data: error });
         }
     }
@@ -1529,6 +1730,7 @@ class CommentController {
     */
     private static async getCommts(metaId, evaluationId) {
         const commentsRepository = getRepository(QAComments);
+
         let whereClause = {}
         if (metaId) {
             whereClause = {
@@ -1540,14 +1742,15 @@ class CommentController {
                 evaluation: evaluationId, approved_no_comment: IsNull()
             }
         }
+
         let comments = await commentsRepository.find({
             where: whereClause,
             relations: ['user', 'cycle', 'tags', 'replyType'],
-            // relations: ['user'],
             order: {
                 createdAt: "ASC"
             }
         });
+
         return comments;
     }
 
@@ -1557,55 +1760,55 @@ class CommentController {
         });
     }
 
-        //get QuickComments 
-        static getQuickComments = async (req: Request, res: Response) => {
-            let rawData;
-            const queryRunner = getConnection().createQueryBuilder();
-    
-            try {
-                const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                    `
+    //get QuickComments 
+    static getQuickComments = async (req: Request, res: Response) => {
+        let rawData;
+        const queryRunner = getConnection().createQueryBuilder();
+
+        try {
+            const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
+                `
                     SELECT * FROM qa_quick_comments
                     `,
-                    {},
-                    {}
-                );
-                rawData = await queryRunner.connection.query(query, parameters);
-                res.status(200).json({ message: "List of quick comments", data: rawData });
-            } catch (error) {
-                console.log(error);
-                res.status(404).json({ message: 'Could not get list of quick comments', data: error });
-            }
+                {},
+                {}
+            );
+            rawData = await queryRunner.connection.query(query, parameters);
+            res.status(200).json({ message: "List of quick comments", data: rawData });
+        } catch (error) {
+            // console.log(error);
+            res.status(404).json({ message: 'Could not get list of quick comments', data: error });
         }
-    
-        //get batches 
-        static getBatches = async (req: Request, res: Response) => {
-            let rawData;
-            const queryRunner = getConnection().createQueryBuilder();
-    
-            try {
-                const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                    `
+    }
+
+    //get batches 
+    static getBatches = async (req: Request, res: Response) => {
+        let rawData;
+        const queryRunner = getConnection().createQueryBuilder();
+
+        try {
+            const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
+                `
                     SELECT * FROM qa_batch order by batch_name asc
                     `,
-                    {},
-                    {}
-                );
-                rawData = await queryRunner.connection.query(query, parameters);
-                console.log(rawData);
-                
-                let batches = [];
+                {},
+                {}
+            );
+            rawData = await queryRunner.connection.query(query, parameters);
+            // console.log(rawData);
 
-                for (let i = 0; i < rawData.length; i++) {
-                    const element = {submission_date: rawData[i]};
-                    
-                }
-                res.status(200).json({ message: "batches data", data: rawData });
-            } catch (error) {
-                console.log(error);
-                res.status(404).json({ message: 'Could not get batches', data: error });
+            let batches = [];
+
+            for (let i = 0; i < rawData.length; i++) {
+                const element = { submission_date: rawData[i] };
+
             }
+            res.status(200).json({ message: "batches data", data: rawData });
+        } catch (error) {
+            // console.log(error);
+            res.status(404).json({ message: 'Could not get batches', data: error });
         }
+    }
 }
 
 export default CommentController;

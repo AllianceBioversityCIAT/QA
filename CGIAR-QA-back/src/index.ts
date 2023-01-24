@@ -2,17 +2,18 @@ import "reflect-metadata";
 require('module-alias/register')
 import { createConnection, ConnectionManager, Connection } from "typeorm";
 import express from "express";
+import { Response } from "express";
 import bodyParser from "body-parser";
 import helmet from "helmet";
 import cors from "cors";
-import Routes from "@routes/IndexRoute";
-import config from "@config/config";
+import Routes from "./routes/IndexRoute";
+import config from "./config/config";
 const { handleError } = require('./_helpers/ErrorHandler');
 const parentDir = require('path').resolve(process.cwd(), '../');
 
 // Connects to the Database -> then starts the express
 createConnection()
-    .then(async connection => {
+    .then(() => {
         // Create a new express application instance
         const app = express();
         // Call midlewares
@@ -21,20 +22,23 @@ createConnection()
             { frameguard: false }
         ));
         app.use(bodyParser.json());
-        app.use(express.static(parentDir + '/CGIAR-QA-front/dist/qa-app'));
+        // app.use(express.static(parentDir + '/CGIAR-QA-front/dist/qa-app'));
 
 
 
         //Set all routes from routes folder
         app.use("/api", Routes);
-        app.get('/', (req, res) => {
-            res.sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html")
+        app.get("/", (req, res) => {
+            res.status(200).json({ msg: 'Welcome to QA API! 🖥' });
         });
-        // 404 catch 
-        app.all('*', (req: any, res: any) => {
-            console.log(`[TRACE] Server 404 request: ${req.originalUrl}`);
-            res.status(200).sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html");
-        });
+        // app.get('/', (req, res) => {
+        //     res.sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html")
+        // });
+        // // 404 catch 
+        // app.all('*', (req: any, res: any) => {
+        //     console.log(`[TRACE] Server 404 request: ${req.originalUrl}`);
+        //     res.status(200).sendFile(parentDir + "/CGIAR-QA-front/dist/qa-app/index.html");
+        // });
 
         //Handle Errors
         app.use((err, req, res, next) => {

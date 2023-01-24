@@ -37,7 +37,7 @@ export class DashboardService {
   getAllDashboardEvaluations(crp_id?) {
     let params = new HttpParams().set('crp_id', crp_id)
     // params.set('is_crp', is_crp);
-    return this.http.get<any>(`${environment.apiUrl}/evaluation`, { params });
+    return this.http.get<any>(`${environment.apiUrl}/evaluation/`, { params });
   }
   // get all dash data by crp (evaluations)
   getAllDashboardEvaluationsByCRP(crp_id?) {
@@ -60,6 +60,11 @@ export class DashboardService {
   //get batches 
   getAllBatches() {
     return this.http.get<any>(`${environment.apiUrl}/comment/batches`);
+  }
+
+  // get hihglighted data
+  getHighlightedData() {
+    return this.http.get<any>(`${environment.apiUrl}/evaluation/highlight-status`)
   }
 
   sortProperties(obj) {

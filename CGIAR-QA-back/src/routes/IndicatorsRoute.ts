@@ -10,9 +10,9 @@ const checkRole = checkRole_.checkRole
 // import * as checkJwt from "../../src/middlewares/checkJwt";
 // import * as checkRole from "../../src/middlewares/checkRole";
 
-import IndicatorsController from "@controllers/IndicatorsController";
-import { RolesHandler } from "@helpers/RolesHandler";
-import CommentController from "@controllers/CommentController";
+import IndicatorsController from "./../controllers/IndicatorsController";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import CommentController from "./../controllers/CommentController";
 
 const router = Router();
 

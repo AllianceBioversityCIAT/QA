@@ -67,6 +67,12 @@ export class CRPIndicatorsComponent implements OnInit {
   submission_dates = [];
   rsaFilter: boolean = false;
 
+  showAcceptedComments = false;
+  showDisagreedComments = false
+  showHighlightedComments = false;
+  showTpbComments = false;
+  showImplementedDecisions = false;
+
 
   constructor(private activeRoute: ActivatedRoute,
     private router: Router,
@@ -80,7 +86,7 @@ export class CRPIndicatorsComponent implements OnInit {
     // private orderPipe: OrderPipe,
     private titleService: Title,
     private alertService: AlertService) {
-      this.getBatchDates();
+    this.getBatchDates();
 
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
@@ -105,7 +111,6 @@ export class CRPIndicatorsComponent implements OnInit {
     // }, 1000);
   }
 
-
   getEvaluationsList(params) {
     this.showSpinner(this.spinner_name);
     this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column, this.currentUser.crp.crp_id).subscribe(
@@ -116,7 +121,7 @@ export class CRPIndicatorsComponent implements OnInit {
         this.returnedArray = this.evaluationList.slice(0, 10);
         this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
         console.log(this.evaluationList);
-        
+
         this.hideSpinner(this.spinner_name);
       },
       error => {
@@ -174,10 +179,10 @@ export class CRPIndicatorsComponent implements OnInit {
   exportComments(item, all?) {
     this.showSpinner(this.spinner_name);
     let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}${(item) ? '-' + item.id : ''}_${moment().format('YYYYMMDD_HHmm')}`
-    console.log('filename',filename);
-    if(this.authenticationService.getBrowser() === 'Safari')
+    console.log('filename', filename);
+    if (this.authenticationService.getBrowser() === 'Safari')
       filename += `.xlsx`
-      
+
     this.commentService.getCommentsExcel({ evaluationId: (item) ? item.evaluation_id : undefined, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.indicatorType}`, crp_id: all ? this.currentUser.crp.crp_id : undefined }).subscribe(
       res => {
         console.log(res)
@@ -234,7 +239,7 @@ export class CRPIndicatorsComponent implements OnInit {
     }
     return;
   }
-  
+
   fixAccent(value) {
     return value ? value.replace("´", "'") : value;
   }
@@ -246,10 +251,10 @@ export class CRPIndicatorsComponent implements OnInit {
 
   getBatchDates() {
     this.commentService.getBatches().subscribe(res => {
-      
+
       const batches = res.data;
       for (let index = 0; index < batches.length; index++) {
-        let batch = {date: moment(batches[index].submission_date).format('ll'), batch_name: +batches[index].batch_name, checked: false, is_active: null};
+        let batch = { date: moment(batches[index].submission_date).format('ll'), batch_name: +batches[index].batch_name, checked: false, is_active: null };
         batch.is_active = moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
         batch.checked = batch.is_active;
         this.submission_dates.push(batch);
@@ -262,7 +267,7 @@ export class CRPIndicatorsComponent implements OnInit {
   }
 
   onDateChange(e, subDate) {
-    if(subDate) {
+    if (subDate) {
       console.log(e.target.checked, e.target.value);
       const foundIndex = this.submission_dates.findIndex(sd => sd.date == e.target.value);
       this.submission_dates[foundIndex]['checked'] = e.target.checked;

@@ -83,9 +83,7 @@ export class AuthenticationService {
   setLoggedUserTawkTo(user) {
     if (window.hasOwnProperty('Tawk_API')) {
       console.log('Tawk API EXISTS');
-      
       if (window['Tawk_API'].isVisitorEngaged()) window['Tawk_API'].endChat();
-      
       window['Tawk_API'].setAttributes({
         name: user.username,
         email: user.email
@@ -95,12 +93,10 @@ export class AuthenticationService {
     } else {
       console.log('Tawk API DOES NOT EXISTS');
       setTimeout(
-        function() {
+        function () {
           if (window.hasOwnProperty('Tawk_API')) {
             console.log('Tawk API EXISTS');
-            
             if (window['Tawk_API'].isVisitorEngaged()) window['Tawk_API'].endChat();
-            
             window['Tawk_API'].setAttributes({
               name: user.username,
               email: user.email
@@ -109,7 +105,7 @@ export class AuthenticationService {
             });
           }
         }
-        ,10000)
+        , 10000)
 
     }
   }

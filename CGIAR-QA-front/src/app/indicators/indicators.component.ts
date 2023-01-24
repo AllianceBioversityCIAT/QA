@@ -41,14 +41,15 @@ export class IndicatorsComponent implements OnInit {
     endItem: 10
   }
   currentPage = {
-    qa_policies: 1,
-    qa_innovations: 1,
-    qa_publications: 1,
-    qa_oicr: 1,
-    qa_melia: 1,
+    qa_impact_contribution: 1,
+    qa_capacity_change: 1,
+    qa_other_outcome: 1,
+    qa_other_output: 1,
     qa_capdev: 1,
-    qa_milestones: 1,
-    qa_slo: 1,
+    qa_knowledge_product: 1,
+    qa_innovation_development: 1,
+    qa_policy_change: 1,
+    qa_innovation_use: 1
   };
   stageHeaderText = {
     policies: 'Stage',
@@ -58,7 +59,7 @@ export class IndicatorsComponent implements OnInit {
     publications: 'ISI',
     milestones: 'Milestone Status',
   }
-indicatorTypePage = null;
+  indicatorTypePage = null;
   maxSize = 5;
   pageSize = 4;
   collectionSize = 0;
@@ -87,6 +88,11 @@ indicatorTypePage = null;
   criteria_loading = false;
 
   submission_dates: any[] = [];
+  showAcceptedComments = false;
+  showDisagreedComments = false
+  showHighlightedComments = false;
+  showTpbComments = false;
+  showImplementedDecisions = false;
 
   constructor(private activeRoute: ActivatedRoute,
     private router: Router,
@@ -102,7 +108,7 @@ indicatorTypePage = null;
     private evaluationService: EvaluationsService,
     private titleService: Title,
     private alertService: AlertService) {
-      this.getBatchDates();
+    this.getBatchDates();
 
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
@@ -135,13 +141,13 @@ indicatorTypePage = null;
 
       const batches = res.data;
       for (let index = 0; index < batches.length; index++) {
-        let batch = {date: moment(batches[index].submission_date).format('ll'), batch_name: +batches[index].batch_name, checked: false, is_active: null};
+        let batch = { date: moment(batches[index].submission_date).format('ll'), batch_name: +batches[index].batch_name, checked: false, is_active: null };
         batch.is_active = moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
         // batch.checked = batch.is_active;
-        batch.checked = batch.batch_name == 3 ? true: false;
+        batch.checked = batch.batch_name == 3 ? true : false;
         this.submission_dates.push(batch);
       }
-      
+
     }, error => {
       console.log(error)
       this.alertService.error(error);
@@ -183,19 +189,25 @@ indicatorTypePage = null;
     this.chatRooms = {
       general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/am16H1Vlj?username=${this.currentUser.name}`),
     }
+    this.showhighlightColum()
 
     console.log('NEW INDICATOR');
 
   }
 
+  showhighlightColum() {
+    if (this.currentUser.cycle.cycle_stage == 2) {
+      this.showHighlightedComments = true
+    }
+  }
 
 
   getEvaluationsList(params) {
     this.showSpinner();
+
     this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column).subscribe(
       res => {
 
-        
         // console.log(res)
         if (this.indicatorType == 'slo') {
           this.order = 'status';
@@ -204,19 +216,20 @@ indicatorTypePage = null;
         }
         this.evaluationList = this.orderPipe.transform(res.data, this.order);
         console.log('LISTA', this.evaluationList);
-        
+
         this.collectionSize = this.evaluationList.length;
         this.returnedArray = this.evaluationList.slice(0, 10);
+        console.log("🚀 ~ file: indicators.component.ts:215 ~ IndicatorsComponent ~ getEvaluationsList ~ returnedArray", this.returnedArray)
         this.returnedArrayHasStage = this.returnedArray.find(e => e.stage != null)
         // console.log('RETURNED_ARRAY', this.returnedArray);
-        
+
         this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
-        
+
         this.hideSpinner();
         setTimeout(() => {
           this.currentPage = this.indicatorService.getPagesIndicatorList()
           this.indicatorTypePage = (`qa_${this.indicatorType}`);
-          if(!this.verifyOrder())this.setOrder(this.order, this.reverse);
+          if (!this.verifyOrder()) this.setOrder(this.order, this.reverse);
           this.indicatorService.cleanAllOrders();
           // this.setOrder(this.order, this.reverse);
         }, 200);
@@ -272,8 +285,8 @@ indicatorTypePage = null;
     // console.log(this.evaluationList, (this.reverse) ? 'asc':'desc', this.order)
     this.evaluationList = this.orderPipe.transform(this.evaluationList, (this.reverse) ? 'asc' : 'desc', this.order);
     window.scroll({
-      top: 150, 
-      left: 0, 
+      top: 150,
+      left: 0,
       behavior: 'smooth'
     });
     // this.returnedArray = this.evaluationList.slice(this.currentPageList.startItem, this.currentPageList.endItem);
@@ -283,6 +296,9 @@ indicatorTypePage = null;
     this.evalStatusFilter = 'Removed'
   }
 
+  filterByAdded() {
+    this.evalStatusFilter = 'Added'
+  }
 
   goToView(indicatorId) {
 
@@ -327,7 +343,7 @@ indicatorTypePage = null;
     )
   }
 
-
+  // * Para darle nombre a la columna primaria
   returnListName(indicator: string, type: string) {
     let r;
     if (type === 'header') {
@@ -364,21 +380,21 @@ indicatorTypePage = null;
 
     switch (currentOrder.type) {
       case 'orderByAcceptedWC':
-      this.setOrder('comments_accepted_with_comment_count',currentOrder.value);
-      return true;
-      
+        this.setOrder('comments_accepted_with_comment_count', currentOrder.value);
+        return true;
+
       case 'orderByDisagree':
-      this.setOrder('comments_disagreed_count', currentOrder.value);
-      return true;
-      
+        this.setOrder('comments_disagreed_count', currentOrder.value);
+        return true;
+
       case 'orderByClarification':
-      this.setOrder('comments_clarification_count', currentOrder.value);
-      return true;
-      
+        this.setOrder('comments_clarification_count', currentOrder.value);
+        return true;
+
       case 'orderByStatus':
-      this.setOrder('status', currentOrder.value);
-      return true;
-      
+        this.setOrder('status', currentOrder.value);
+        return true;
+
       default:
         return false;
     }
@@ -403,7 +419,7 @@ indicatorTypePage = null;
   }
 
   onDateChange(e, subDate) {
-    if(subDate) {
+    if (subDate) {
       console.log(e.target.checked, e.target.value);
       const foundIndex = this.submission_dates.findIndex(sd => sd.date == e.target.value);
       this.submission_dates[foundIndex]['checked'] = e.target.checked;

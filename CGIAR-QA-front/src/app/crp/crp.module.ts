@@ -21,6 +21,7 @@ import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { StatusChartComponent } from './crp-dashboard/status-chart/status-chart.component';
 import { CommentsChartComponent } from './crp-dashboard/comments-chart/comments-chart.component';
 import { TimelineComponent } from '../_shared/timeline/timeline.component';
+import { ReplacePipe } from '../pipes/replace.pipe';
 
 
 
@@ -47,6 +48,7 @@ import { TimelineComponent } from '../_shared/timeline/timeline.component';
     CrpDashboardComponent,
     StatusChartComponent,
     CommentsChartComponent,
+    ReplacePipe,
     // TimelineComponent
   ]
 })

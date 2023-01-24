@@ -2,8 +2,8 @@ import { Router } from "express";
 import * as checkJwt_ from "../middlewares/CheckJwt";
 import * as checkRole_ from "../middlewares/CheckRole";
 
-import { RolesHandler } from "@helpers/RolesHandler";
-import CommentController from "@controllers/CommentController";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import CommentController from "./../controllers/CommentController";
 
 const checkJwt = checkJwt_.checkJwt
 const checkRole = checkRole_.checkRole
@@ -40,6 +40,9 @@ router.get("/cycles", [checkJwt, checkRole([RolesHandler.admin])], CommentContro
 
 // get cycles data
 router.patch("/cycles/update", [checkJwt, checkRole([RolesHandler.admin])], CommentController.updateCycle);
+
+// * Update ppu status
+router.patch("/ppu", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.patchPpuChanges);
 
 // get batches data
 router.get("/batches", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])], CommentController.getBatches);

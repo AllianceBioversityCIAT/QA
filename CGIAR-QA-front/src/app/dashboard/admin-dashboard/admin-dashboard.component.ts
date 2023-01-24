@@ -37,7 +37,7 @@ export class AdminDashboardComponent implements OnInit {
   dashboardCyclesData: any[];
   configurationData: any[];
   selectedProgramName: string;
-  selectedProg:any = 'All';
+  selectedProg: any = 'All';
   settingsForm: FormGroup;
   programsForm: FormGroup;
   generalStatus = GeneralStatus;
@@ -46,32 +46,32 @@ export class AdminDashboardComponent implements OnInit {
   assessorsChat = {
     isOpen: false,
     indicators: {
-      qa_policies: false,
-      qa_innovations: false,
-      qa_publications: false,
-      qa_oicr: false,
-      qa_melia: false,
+      qa_impact_contribution: true,
+      qa_capacity_change: false,
+      qa_other_outcome: false,
+      qa_other_output: false,
       qa_capdev: false,
-      qa_milestones: false,
-      qa_slo: true,
-      qa_outcomes: false,
+      qa_knowledge_product: false,
+      qa_innovation_development: false,
+      qa_policy_change: false,
+      qa_innovation_use: false
     }
   }
 
   indicator_status: string = 'indicators_status';
 
   indicatorsNameDropdwon = [
-    { name: 'SLOs', viewname: 'qa_slo' },
-    { name: 'Policies', viewname: 'qa_policies' },
-    { name: 'OICRs', viewname: 'qa_oicr' },
-    { name: 'Innovations', viewname: 'qa_innovations' },
-    { name: 'Milestones', viewname: 'qa_milestones' },
-    { name: 'Peer Reviewed Papers', viewname: 'qa_publications' },
-    { name: 'CapDevs', viewname: 'qa_capdev' },
-    { name: 'MELIAs', viewname: 'qa_melia' },
-    // qa_outcomes: 'Outcomes',
+    { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
+    { name: 'Capacity Change', viewname: 'qa_capacity_change' },
+    { name: 'Other Outcome', viewname: 'qa_other_outcome' },
+    { name: 'Other Output', viewname: 'qa_other_output' },
+    { name: 'CapDev', viewname: 'qa_capdev' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
+    { name: 'Innovation Development', viewname: 'qa_innovation_development' },
+    { name: 'Policy Change', viewname: 'qa_policy_change' },
+    { name: 'Innovation Use', viewname: 'qa_innovation_use' },
   ];
-  
+
   activeCompleteDash = true;
 
   indicatorsAvailable;
@@ -79,7 +79,7 @@ export class AdminDashboardComponent implements OnInit {
   descriptionCharts = {
     generalStatus: "This shows the progress of assessment of a specific indicator. ",
     assessorsInteractions: "This presents assessors' interactions with existing comments on an item being already evaluated by other assessors. ",
-    responseToComments: "This shows the status of CRP responses to comments made by assessors during the first round.",
+    responseToComments: "This shows the status of Initiatives responses to comments made by assessors during the first round.",
     assessmentByField: "This shows the status of assessment for each field of an item.",
   }
 
@@ -91,27 +91,28 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   totalPendings = {
-    qa_policies: 0,
-    qa_innovations: 0,
-    qa_publications: 0,
-    qa_oicr: 0,
-    qa_melia: 0,
+    qa_impact_contribution: 0,
+    qa_capacity_change: 0,
+    qa_other_outcome: 0,
+    qa_other_output: 0,
     qa_capdev: 0,
-    qa_milestones: 0,
-    qa_slo: 0
+    qa_knowledge_product: 0,
+    qa_innovation_development: 0,
+    qa_policy_change: 0,
+    qa_innovation_use: 0
   }
 
   //new props
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = 'qa_slo';
+  selectedIndicator = 'qa_impact_contribution';
   dataSelected: any;
   indicatorData: any;
   feedList: [];
   itemStatusByIndicator = {};
 
   enableQATooltip: string = 'Enable the assessment process so Quality Assessors can start the process of providing recommendations. If this option is disabled, they cannot provide any comments.';
-  enableCommentsTooltip: string = 'If this option is enabled, CRPs and PTFs will be able to see all comments provided by the Quality Assessors in MARLO and MEL; and also will be able to react to the comments.';
+  enableCommentsTooltip: string = 'If this option is enabled, Initiatives will be able to see all comments provided by the Quality Assessors in PRMS Reporting tool; and also will be able to react to the comments.';
 
   modalRef: BsModalRef;
   multi = [];
@@ -129,7 +130,7 @@ export class AdminDashboardComponent implements OnInit {
   yAxisLabel: string = '# of comments';
   animations: boolean = true;
 
-  showSideMenu:boolean = false;
+  showSideMenu: boolean = false;
 
   colorScheme = {
     domain: ['#67be71', '#F1B7B7']
@@ -262,10 +263,10 @@ export class AdminDashboardComponent implements OnInit {
     return this.indicatorService.getAllItemStatusByIndicator().pipe();
   }
 
-    //Assessment by field and by indicator
-    getItemStatusByIndicatorService(indicator: string, crp_id? : string): Observable<any> {
-      return this.indicatorService.getItemStatusByIndicator(indicator, crp_id).pipe();
-    }
+  //Assessment by field and by indicator
+  getItemStatusByIndicatorService(indicator: string, crp_id?: string): Observable<any> {
+    return this.indicatorService.getItemStatusByIndicator(indicator, crp_id).pipe();
+  }
 
 
   getAllTags(crp_id?): Observable<any> {
@@ -355,7 +356,7 @@ export class AdminDashboardComponent implements OnInit {
     }
 
     return { dataset, brushes };
-  } 
+  }
 
   formatIndicatorTags() {
 
@@ -443,12 +444,12 @@ export class AdminDashboardComponent implements OnInit {
 
 
   onProgramChange({ target }, value) {
-    if(value)
-    this.selectedProgramName = (value.acronym === '' || value.acronym === ' ') ? value.name : value.acronym;
+    if (value)
+      this.selectedProgramName = (value.acronym === '' || value.acronym === ' ') ? value.name : value.acronym;
 
-    this.selectedProgramName = this.selectedProgramName? this.selectedProgramName : 'All';
+    this.selectedProgramName = this.selectedProgramName ? this.selectedProgramName : 'All';
     let crp_id;
-    if(!value){
+    if (!value) {
       this.selectedProg = 'All';
       crp_id = null;
     } else {
@@ -466,7 +467,7 @@ export class AdminDashboardComponent implements OnInit {
         this.getAllTags(crp_id),
         // this.getFeedTags(this.selectedIndicator),
         // this.getAllItemStatusByIndicator()
-        this.getItemStatusByIndicatorService(this.selectedIndicator,crp_id)
+        this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id)
       ]);
 
       responses.subscribe(res => {
@@ -476,16 +477,16 @@ export class AdminDashboardComponent implements OnInit {
         console.log('DASH keys', Object.keys(this.dashboardData));
         this.selectedIndicator = Object.keys(this.dashboardData)[0];
         this.indicatorsAvailable = this.indicatorsNameDropdwon;
-        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData );
+        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData);
         console.log('INDICATORS', this.indicatorsAvailable);
-        
-        
+
+
         this.dataSelected = this.dashboardData[this.selectedIndicator];
 
         this.dashboardCommentsData = this.dashService.groupData(commentsStats.data);
-        console.log('RESPONSES',commentsStats.data);
+        console.log('RESPONSES', commentsStats.data);
         console.log('RESPONSES', this.dashboardCommentsData);
-        
+
 
         this.indicatorsTags = this.commentService.groupTags(allTags.data);
         // this.feedList = feedTags.data;
@@ -510,16 +511,16 @@ export class AdminDashboardComponent implements OnInit {
       ]);
 
       responses.subscribe(res => {
-        const [dashData, commentsStats, allTags,  assessmentByField] = res;
+        const [dashData, commentsStats, allTags, assessmentByField] = res;
         this.dashboardData = this.dashService.groupData(dashData.data);
         console.log('DASH DATA', this.dashboardData);
         this.selectedIndicator = Object.keys(this.dashboardData)[0];
         console.log('DASH DATA', this.selectedIndicator);
         this.indicatorsAvailable = this.indicatorsNameDropdwon;
-        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData );
+        this.indicatorsAvailable = this.indicatorsAvailable.filter(ind => ind.viewname in this.dashboardData);
         console.log('INDICATORS', this.indicatorsAvailable);
-        
-        
+
+
         this.dataSelected = this.dashboardData[this.selectedIndicator];
         this.dashboardCommentsData = this.dashService.groupData(commentsStats.data);
         this.indicatorsTags = this.commentService.groupTags(allTags.data);
@@ -572,8 +573,8 @@ export class AdminDashboardComponent implements OnInit {
       // this.crps.unshift(new CRP( 0, 'All', 'undefined',  '0', false ) )
       // this.selectedProgramName = this.crps[0]['acronym'];
       this.selectedProgramName = 'All';
-      console.log('PROGRAM NAME',this.selectedProgramName);
-      
+      console.log('PROGRAM NAME', this.selectedProgramName);
+
       this.configurationData = indicatorsByCrps.data;
       // console.log(this.configurationData)
 
@@ -740,7 +741,7 @@ export class AdminDashboardComponent implements OnInit {
     this.showSpinner();
     // console.log(this.selectedProg)
     let crp_id = this.selectedProg['crp_id'];
-   console.log(this.selectedProg);
+    console.log(this.selectedProg);
 
     let filename = `QA-COMMENTS-${this.selectedProg.hasOwnProperty('acronym') && this.selectedProg['acronym'] !== 'All' ? '(' + this.selectedProg['acronym'] + ')' : ''}${moment().format('YYYYMMDD:HHmm')}`
     if (this.authenticationService.getBrowser() === 'Safari')
@@ -950,7 +951,7 @@ export class AdminDashboardComponent implements OnInit {
 
 
     // template.elementRef.nativeElement.style.top = `${this.currentY}px`;
-    this.modalRef = this.modalService.show(template, {class: 'modal-xl'});
+    this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
 
     // const modal = this.elem.nativeElement.querySelector('.modal-content');
     // console.log(modal);

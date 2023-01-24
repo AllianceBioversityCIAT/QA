@@ -28,29 +28,31 @@ import { IndicatorsService } from 'src/app/services/indicators.service';
 
 
 export class CrpDashboardComponent implements OnInit {
-  crp=null;
+  crp = null;
   dashboardData: any[];
   statusNames = { complete: 0, pending: 0 }
   indicators = [];
   statusChartData = {
-    qa_policies: [],
-    qa_innovations: [],
-    qa_publications: [],
-    qa_oicr: [],
-    qa_melia: [],
+    qa_impact_contribution: [],
+    qa_capacity_change: [],
+    qa_other_outcome: [],
+    qa_other_output: [],
     qa_capdev: [],
-    qa_milestones: [],
-    qa_slo: []
+    qa_knowledge_product: [],
+    qa_innovation_development: [],
+    qa_policy_change: [],
+    qa_innovation_use: []
   }
   totalPendings = {
-    qa_policies: 0,
-    qa_innovations: 0,
-    qa_publications: 0,
-    qa_oicr: 0,
-    qa_melia: 0,
+    qa_impact_contribution: 0,
+    qa_capacity_change: 0,
+    qa_other_outcome: 0,
+    qa_other_output: 0,
     qa_capdev: 0,
-    qa_milestones: 0,
-    qa_slo: 0
+    qa_knowledge_product: 0,
+    qa_innovation_development: 0,
+    qa_policy_change: 0,
+    qa_innovation_use: 0
   }
   dashboardCommentsData: any[];
 
@@ -123,13 +125,13 @@ export class CrpDashboardComponent implements OnInit {
     private spinner: NgxSpinnerService,
     private indicatorService: IndicatorsService) {
     this.activeRoute.params.subscribe(routeParams => {
-      console.log({routeParams});
-      
+      // console.log({ routeParams });
+
       this.authenticationService.currentUser.subscribe(x => {
         // console.log(routeParams, x)
         this.currentUser = x;
-        console.log(this.currentUser);
-        
+        // console.log(this.currentUser);
+
         this.getEvaluationsStats();
         this.getCommentStats();
       });
@@ -146,10 +148,16 @@ export class CrpDashboardComponent implements OnInit {
     if (this.indicators = [])
       this.getCRPIndicators();
 
+    this.getTpbDecision()
     // this.getCommentStats();
     // console.log('crp-dashboard')
   }
 
+  getTpbDecision() {
+    this.dashService.getHighlightedData().subscribe(res => {
+      return console.log(res)
+    })
+  }
 
   getCRPIndicators() {
 
@@ -161,12 +169,12 @@ export class CrpDashboardComponent implements OnInit {
             this.indicators = res.data.sort((a, b) => a.order - b.order);
             localStorage.setItem('indicatorsCRP', JSON.stringify(this.indicators));
             // this.authenticationService.userHeaders = res.data;
-            console.log(this.indicators)
+            // console.log(this.indicators)
             this.hideSpinner(this.spinner1);
           },
           error => {
             this.hideSpinner(this.spinner1);
-            console.log("getCRPIndicators", error);
+            // console.log("getCRPIndicators", error);
             this.alertService.error(error);
           }
         );
@@ -188,7 +196,7 @@ export class CrpDashboardComponent implements OnInit {
         },
         error => {
           this.hideSpinner(this.spinner2)
-          console.log("getAllDashData", error);
+          // console.log("getAllDashData", error);
           this.alertService.error(error);
         },
       )
@@ -212,7 +220,7 @@ export class CrpDashboardComponent implements OnInit {
         },
         error => {
           this.hideSpinner(this.spinner1)
-          console.log("getCommentStats", error);
+          // console.log("getCommentStats", error);
           this.alertService.error(error);
         },
       )
@@ -231,7 +239,7 @@ export class CrpDashboardComponent implements OnInit {
         },
         error => {
           this.hideSpinner(this.spinner1);
-          console.log("getRawComments", error);
+          // console.log("getRawComments", error);
           this.alertService.error(error);
         },
       )
@@ -253,7 +261,7 @@ export class CrpDashboardComponent implements OnInit {
         this.hideSpinner(this.spinner1);
       },
       error => {
-        console.log("downloadRawComments", error);
+        // console.log("downloadRawComments", error);
         this.hideSpinner(this.spinner1);
         this.alertService.error(error);
       }
@@ -369,7 +377,7 @@ export class CrpDashboardComponent implements OnInit {
     }
     let dataset = [];
     let brushes = { domain: [] };
-// console.log('CRP_REPLIES',data);
+    // console.log('CRP_REPLIES',data);
 
     if (data) {
       let comments_accepted_with_comment = data.find(item => item.comments_accepted_with_comment != '0');
@@ -445,8 +453,8 @@ export class CrpDashboardComponent implements OnInit {
 
 
   graphClickEvent(event, array) {
-    console.log(event, array[0], this.crpChart)
-    console.log('ch<rt', this.crpChart)
+    // console.log(event, array[0], this.crpChart)
+    // console.log('ch<rt', this.crpChart)
     // .chart.getElementsAtEvent(event))
     // .getElementsAtEvent(evt))
   }

@@ -1,6 +1,6 @@
 import { Router } from "express";
-import AuthController from "@controllers/AuthController";
-import { RolesHandler } from "@helpers/RolesHandler";
+import AuthController from "./../controllers/AuthController";
+import { RolesHandler } from "./../_helpers/RolesHandler";
 
 import * as checkJwt_ from "../middlewares/CheckJwt";
 import * as checkRole_ from "../middlewares/CheckRole";
@@ -21,6 +21,10 @@ router.post("/change-password", [checkJwt], AuthController.changePassword);
 
 //Change my password
 router.post("/create-config", [checkJwt, checkRole([RolesHandler.admin])], AuthController.createGeneralConfig);
+
+
+// * Token auth route from Reporting Embed Dashboard
+router.post("/token-embed", AuthController.embedToken);
 
 
 export default router;

@@ -6,7 +6,6 @@ import { Role } from '../_models/roles.model';
 
 import { CrpComponent } from './crp.component';
 import { CrpDashboardComponent } from './crp-dashboard/crp-dashboard.component';
-import { CRPIndicatorsComponent } from './crp-indicators/indicators.component';
 import { DetailIndicatorComponent } from './detail-indicator/detail-indicator.component';
 
 

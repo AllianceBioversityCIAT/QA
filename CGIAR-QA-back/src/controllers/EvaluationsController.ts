@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import { getRepository, getConnection } from "typeorm";
+import { getRepository, getConnection, getManager } from "typeorm";
 
-import { QACrp } from "@entity/CRP";
-import { QAEvaluations } from "@entity/Evaluations";
-import { QAUsers } from "@entity/User";
+import { QACrp } from "./../entity/CRP";
+import { QAEvaluations } from "./../entity/Evaluations";
+import { QAUsers } from "./../entity/User";
 
-import { RolesHandler } from "@helpers/RolesHandler";
-import Util from "@helpers/Util";
-import { StatusHandler } from "@helpers/StatusHandler";
+import { RolesHandler } from "./../_helpers/RolesHandler";
+import Util from "./../_helpers/Util";
+import { StatusHandler } from "./../_helpers/StatusHandler";
 
 
 class EvaluationsController {
@@ -60,10 +60,7 @@ class EvaluationsController {
                 { user_Id: id },
                 {}
             );
-            // console.log( query, parameters)
             let rawData = await queryRunner.connection.query(query, parameters);
-            console.log('rawData');
-            console.log(rawData);
 
             let response = []
             for (let index = 0; index < rawData.length; index++) {
@@ -77,18 +74,15 @@ class EvaluationsController {
                     label: `${element['count']}`,
                     primary_field: element["primary_field"],
                     order: element['indicator_order']
-                    // total: element['sum'],
                 })
 
             }
 
 
             let result = Util.groupBy(response, 'indicator_view_name');
-            // console.log('result')
-            // console.log(result)
             res.status(200).json({ data: result, message: "User evaluations" });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "User evaluations Could not access to evaluations." });
         }
     }
@@ -106,7 +100,7 @@ class EvaluationsController {
 
 
             let rawData;
-            console.log('getAllEvaluationsDash', crp_id)
+            // console.log('getAllEvaluationsDash', crp_id)
             if (crp_id !== undefined && crp_id !== "undefined") {
 
                 let sqlQuery = '';
@@ -122,7 +116,8 @@ class EvaluationsController {
                         (SELECT enable_crp FROM qa_comments_meta comments_meta WHERE comments_meta.indicatorId = indicator.id) AS indicator_status,
                         indicator.order AS indicator_order, 
                         COUNT(DISTINCT evaluations.id) AS count,
-                        evaluations.status AS evaluations_status
+                        evaluations.status AS evaluations_status,
+                        (SELECT COUNT(qc.id) FROM qadb.qa_comments qc INNER JOIN qadb.qa_evaluations qe ON qc.evaluationId = qe.id WHERE qc.tpb = 1 AND qc.ppu = 0) AS tpb_count
                 FROM
                     qa_evaluations evaluations
                 LEFT JOIN qa_indicators indicator ON indicator.view_name = evaluations.indicator_view_name
@@ -154,7 +149,7 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                console.log(query);
+                // console.log(query);
 
                 rawData = await queryRunner.connection.query(query, parameters);
             } else {
@@ -187,7 +182,7 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                // console.log(query, parameters);
+                // // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
             }
@@ -205,16 +200,17 @@ class EvaluationsController {
                     crp_id: (crp_id) ? element['crp_id'] : null,
                     label: `${element['count']}`,
                     primary_field: element["primary_field"],
-                    order: element['indicator_order']
+                    order: element['indicator_order'],
+                    tpb_count: element['tpb_count'],
                 })
 
             }
-            // console.log(response)
+            // // console.log(response)
             let result = Util.groupBy(response, 'indicator_view_name');
             // res.status(200).json({ data: rawData, message: "All evaluations" });
             res.status(200).json({ data: result, message: "All evaluations" });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "All evaluations could not access to evaluations." });
         }
 
@@ -233,7 +229,7 @@ class EvaluationsController {
 
 
             let rawData;
-            console.log('getAllEvaluationsDash', crp_id)
+            // console.log('getAllEvaluationsDash', crp_id)
             if (crp_id !== undefined && crp_id !== "undefined") {
 
                 let sqlQuery = '';
@@ -255,7 +251,6 @@ class EvaluationsController {
                                                  AND is_deleted = 0
                                                  AND is_visible = 1
                                                  AND detail IS NOT NULL
-                                                -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                                  ) <= (
                                          SELECT COUNT(id)
                                          FROM qa_comments_replies
@@ -269,7 +264,6 @@ class EvaluationsController {
                                                                  AND is_deleted = 0
                                                                  AND is_visible = 1
                                                                  AND detail IS NOT NULL
-                                                                -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                                                  )
                                      
                                  ),
@@ -308,7 +302,6 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                console.log(query);
 
                 rawData = await queryRunner.connection.query(query, parameters);
             } else {
@@ -341,7 +334,6 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
             }
@@ -363,12 +355,12 @@ class EvaluationsController {
                 })
 
             }
-            // console.log(response)
+            // // console.log(response)
             let result = Util.groupBy(response, 'indicator_view_name');
             // res.status(200).json({ data: rawData, message: "All evaluations" });
             res.status(200).json({ data: result, message: "All evaluations by crp" });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "All evaluations by crp could not access to evaluations." });
         }
 
@@ -384,8 +376,8 @@ class EvaluationsController {
         const view_primary_field = req.body.view_primary_field;
         const levelQuery = EvaluationsController.getLevelQuery(view_name);
 
-        // console.log(view_name, levelQuery.innovations_stage);
-        // console.log(levelQuery);
+        // // console.log(view_name, levelQuery.innovations_stage);
+        // // console.log(levelQuery);
 
 
         let queryRunner = getConnection().createQueryBuilder();
@@ -393,7 +385,7 @@ class EvaluationsController {
             const userRepository = getRepository(QAUsers);
             let user = await userRepository.findOneOrFail({ where: { id } });
             let isAdmin = user.roles.find(x => x.description == RolesHandler.admin);
-            // console.log('getListEvaluationsDash', crp_id)
+            // // console.log('getListEvaluationsDash', crp_id)
             if (isAdmin && (crp_id == null || crp_id == 'undefined')) {
                 let sql = `
                 SELECT
@@ -402,10 +394,10 @@ class EvaluationsController {
                     evaluations.indicator_view_name,
                     evaluations.indicator_view_id,
                     evaluations.evaluation_status,
-                    evaluations.crp_id, 
                     evaluations.batchDate as submission_date,
                     evaluations.require_second_assessment,
-                    crp.acronym AS crp_acronym,
+                    evaluations.crp_id AS initiative, 
+                    crp.acronym AS short_name,
                     crp.name AS crp_name,
                     (
                         SELECT
@@ -419,19 +411,47 @@ class EvaluationsController {
                         AND is_deleted = 0
                         AND is_visible = 1
                         AND detail IS NOT NULL
-                        AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                     ) AS comments_count,
                     (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
-                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 1) AS comments_accepted_count,
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
                     (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                     NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 4) AS comments_accepted_with_comment_count,
 					(SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                     NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 2) AS comments_disagreed_count,
                     (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                     NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 3) AS comments_clarification_count,
-
-
+                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND highlight_comment = 1) AS comments_highlight_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND tpb = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_tpb_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND ppu = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_ppu_count,
+                    ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
+                    ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type,
                     ( SELECT COUNT(id) FROM qa_comments_replies WHERE commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) AND is_deleted = 0 ) AS comments_replies_count,
+
                     ${levelQuery.view_sql}
                     (
                         SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
@@ -458,11 +478,10 @@ class EvaluationsController {
                     qa_evaluations evaluations
                 LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
                 LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id AND crp.active = 1 AND crp.qa_active = 'open'
-                
+                LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
                 WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
                 AND evaluations.indicator_view_name = :view_name
                 AND evaluations.phase_year = actual_phase_year()
-                AND evaluations.status <> 'autochecked'
                 GROUP BY
                     crp.crp_id,
                     ${levelQuery.innovations_stage}
@@ -473,13 +492,13 @@ class EvaluationsController {
                     { view_name },
                     {}
                 );
-                console.log('isadmin')
-                // console.log(sql)
+                // console.log('isadmin')
+                // // console.log(sql)
                 let rawData = await queryRunner.connection.query(query, parameters);
                 res.status(200).json({ data: Util.parseEvaluationsData(rawData), message: "User evaluations list" });
                 return;
             } else if (user.crps.length > 0) {
-                console.log('CRP_LIST');
+                // console.log('CRP_LIST');
 
                 let sql = `
                     SELECT
@@ -488,10 +507,10 @@ class EvaluationsController {
                         evaluations.indicator_view_id,
                         evaluations.evaluation_status,
                         evaluations.status as assessment_status,
-                        evaluations.crp_id,
                         evaluations.batchDate as submission_date,
                         evaluations.require_second_assessment,
-                        crp.acronym AS crp_acronym,
+                        evaluations.crp_id AS initiative,
+                        crp.acronym AS short_name,
                         crp.name AS crp_name,
                         (
                             SELECT
@@ -505,13 +524,63 @@ class EvaluationsController {
                             AND is_deleted = 0
                             AND is_visible = 1
                             AND detail IS NOT NULL
-                            -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                         ) AS comments_count,
 
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND approved_no_comment IS NULL
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                AND replyTypeId = 2
+                        ) AS comments_disagreed_count,
 
                         (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
-
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND highlight_comment = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_highlight_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND tpb = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_tpb_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND ppu = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_ppu_count,
                         ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 ) AND is_deleted = 0 ) AS comments_replies_count,
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
@@ -529,7 +598,6 @@ class EvaluationsController {
                                             AND is_deleted = 0
                                             AND is_visible = 1
                                             AND detail IS NOT NULL
-                                           -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                             ) <= (
                                     SELECT COUNT(id)
                                     FROM qa_comments_replies
@@ -543,25 +611,20 @@ class EvaluationsController {
                                                             AND is_deleted = 0
                                                             AND is_visible = 1
                                                             AND detail IS NOT NULL
-                                                            -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                                             )
                                 
                             ),
                             "complete",
                             "pending"
-                    ) AS evaluations_status
-    
-
-
-                        
-                        
+                    ) AS evaluations_status,
+                    ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
+                    ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
                     FROM
                         qa_evaluations evaluations
                     LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
                     LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id AND crp.active = 1 AND crp.qa_active = 'open'
                     LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
-                    
-                    
+                    LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
                     WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
                     AND evaluations.indicator_view_name = :view_name
                     AND evaluations.crp_id = :crp_id
@@ -578,8 +641,8 @@ class EvaluationsController {
                     { crp_id: crp_id, view_name },
                     {}
                 );
-                // console.log('crp')
-                // console.log(sql)
+                // // console.log('crp')
+                // // console.log(sql)
                 let rawData = await queryRunner.connection.query(query, parameters);
                 res.status(200).json({ data: Util.parseEvaluationsData(rawData), message: "CRP evaluations list" });
 
@@ -592,10 +655,10 @@ class EvaluationsController {
                         evaluations.indicator_view_name,
                         evaluations.indicator_view_id,
                         evaluations.evaluation_status,
-                        evaluations.crp_id,
                         evaluations.batchDate as submission_date,
                         evaluations.require_second_assessment,
-                        crp.acronym AS crp_acronym,
+                        evaluations.crp_id AS initiative,
+                        crp.acronym AS short_name,
                         crp.name AS crp_name,
                         (
                             SELECT
@@ -609,7 +672,6 @@ class EvaluationsController {
                             AND is_deleted = 0
                             AND is_visible = 1
                             AND detail IS NOT NULL
-                            AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                         ) AS comments_count,
                         (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 1) AS comments_accepted_count,
@@ -619,7 +681,45 @@ class EvaluationsController {
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 2) AS comments_disagreed_count,
                         (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 3) AS comments_clarification_count,
-
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND highlight_comment = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_highlight_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND tpb = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_tpb_count,
+                        (
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND ppu = 1
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                LIMIT 1
+                        ) AS comments_ppu_count,
 
                         (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
@@ -648,26 +748,27 @@ class EvaluationsController {
                                 LEFT JOIN qa_users users2 ON users2.id = qea2.qaUsersId
                             WHERE
                                 qea2.qaEvaluationsId = evaluations.id
-                        ) assessed_r2
+                        ) assessed_r2,
+                        ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
+                        ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
                     FROM
                         qa_evaluations evaluations
                     LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
                     LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id AND crp.active = 1 AND crp.qa_active = 'open'
                     LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
-                    
+                    LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
                     WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
                     AND evaluations.indicator_view_name = :view_name
                     AND indicator_user.userId = :user_Id
                     AND evaluations.phase_year = actual_phase_year()
-                    AND evaluations.status <> 'autochecked'
                     GROUP BY
                         crp.crp_id,
                         evaluations.id,
                         ${levelQuery.innovations_stage}
                         indicator_user.indicatorId
                 `;
-                console.log('isasessor')
-                // console.log(sql)
+                // console.log('isasessor')
+                // // console.log(sql)
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     sql,
                     { user_Id: id, view_name },
@@ -680,7 +781,7 @@ class EvaluationsController {
 
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "User evaluations list could not access to evaluations." });
         }
     }
@@ -691,8 +792,8 @@ class EvaluationsController {
             innovations_stage: '',
         }
         switch (view_name) {
-            case 'qa_innovations':
-                response.view_sql = "(SELECT stage FROM qa_innovations innovations WHERE innovations.id = evaluations.indicator_view_id) AS stage,"
+            case 'qa_indicato':
+                response.view_sql = "(SELECT stage FROM qa_indicato innovations WHERE innovations.id = evaluations.indicator_view_id) AS stage,"
                 // response.innovations_stage = "qa_innovations.stage,"
                 break;
             case 'qa_policies':
@@ -736,7 +837,7 @@ class EvaluationsController {
         const indicatorId = req.body.indicatorId;
         let queryRunner = getConnection().createQueryBuilder();
 
-        // console.log(view_name, view_primary_field)
+        // // console.log(view_name, view_primary_field)
         //Get indicator item data from view
         try {
             const userRepository = getRepository(QAUsers);
@@ -757,11 +858,13 @@ class EvaluationsController {
                             meta.description AS meta_description,
                             meta.include_detail AS meta_include_detail,
                             meta.is_primay AS meta_is_primay,
+                            meta.is_core AS is_core,
+                            meta.indicator_slug AS indicator_slug,
                             evaluations.id AS evaluation_id,
                             evaluations.evaluation_status AS evaluation_status, 
                             crp.name AS crp_name,
-                            crp.acronym AS crp_acronym,
-                            (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field,                            evaluations.status AS evaluations_status,
+                            crp.crp_id AS crp_acronym,
+                            (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field, evaluations.status AS evaluations_status,
                             evaluations.require_second_assessment,
                             IF(
                                 (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id  AND approved_no_comment IS NULL AND metaId IS NOT NULL AND detail IS NOT NULL AND is_deleted = 0 AND is_visible = 1) 
@@ -769,13 +872,17 @@ class EvaluationsController {
                                 ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id  AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) ), "complete", "pending") 
                             AS response_status,
                         ( SELECT enable_assessor FROM qa_comments_meta WHERE indicatorId = indicators.id ) AS enable_assessor,
-                        ( SELECT id FROM qa_comments WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_id,
+                        ( SELECT highlight_comment FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS is_highlight,
+                        ( SELECT require_changes FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS require_changes,
+                        ( SELECT id FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_deleted = 0 LIMIT 1 ) AS general_comment_id,
                         ( SELECT detail FROM qa_comments WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment,
+                        ( SELECT user_.name FROM qa_users user_ LEFT JOIN qa_comments comments ON comments.highlightById = user_.id WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1 ) AS highligth_by,
                         ( SELECT user_.username FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_user,
                         ( SELECT user_.updatedAt FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_updatedAt,
                         ( SELECT approved_no_comment FROM qa_comments WHERE metaId = meta.id AND evaluationId = evaluations.id 	AND is_deleted = 0 AND approved_no_comment IS NOT NULL LIMIT 1) AS approved_no_comment,
                         ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND qa_comments.metaId = meta.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) ) AS comments_replies_count,
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL ) AS replies_count,
+                        ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL AND tpb = 1 AND ppu = 1) AS tpb_count,
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 1) AS accepted_comments,
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 2) AS disagree_comments,
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 3) AS clarification_comments,
@@ -786,6 +893,7 @@ class EvaluationsController {
                         LEFT JOIN qa_indicators indicators ON indicators.view_name = '${view_name}'
                         LEFT JOIN qa_indicators_meta meta ON meta.indicatorId = indicators.id
                         LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
+                        LEFT JOIN qa_comments qa ON qa.highlightById = evaluations.crp_id
                         WHERE ${view_name_psdo}.id = :indicatorId 
                         AND evaluations.indicator_view_name = '${view_name}'
                         AND evaluations.phase_year = actual_phase_year()
@@ -794,8 +902,8 @@ class EvaluationsController {
                     { user_Id: id, indicatorId },
                     {}
                 );
-                // console.log('admin')
-                // console.log(query, parameters)
+                // // console.log('admin')
+                // // console.log(query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
 
             }
@@ -809,13 +917,15 @@ class EvaluationsController {
                             meta.display_name AS meta_display_name,
                             meta.id AS meta_id,
                             meta.order AS order_,
+                            meta.is_core AS is_core,
+                            meta.indicator_slug AS indicator_slug,
                             meta.description AS meta_description,
                             meta.include_detail AS meta_include_detail,
                             meta.is_primay AS meta_is_primay,
                             evaluations.id AS evaluation_id,
                             evaluations.evaluation_status AS evaluation_status,
                             crp.name AS crp_name,
-                            crp.acronym AS crp_acronym,
+                            crp.crp_id AS crp_acronym,
                             (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field,
                             evaluations.status AS evaluations_status,
                             evaluations.require_second_assessment,
@@ -826,19 +936,22 @@ class EvaluationsController {
                             AS response_status,
 
                         ( SELECT enable_crp FROM qa_comments_meta WHERE indicatorId = indicators.id ) AS enable_crp,
-                        ( SELECT id FROM qa_comments WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_id,
+                        ( SELECT id FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_deleted = 0 LIMIT 1 ) AS general_comment_id,
+                        ( SELECT highlight_comment FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS is_highlight,
+                        ( SELECT require_changes FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS require_changes,
+                        ( SELECT user_.name FROM qa_users user_ LEFT JOIN qa_comments comments ON comments.highlightById = user_.id WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1 ) AS highligth_by,
                         ( SELECT detail FROM qa_comments WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment,
                         ( SELECT user_.username FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_user,
                         ( SELECT user_.updatedAt FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_updatedAt,
                         ( SELECT approved_no_comment FROM qa_comments WHERE metaId = meta.id AND evaluationId = evaluations.id 	AND is_deleted = 0 AND approved_no_comment IS NOT NULL LIMIT 1) AS approved_no_comment,
                         ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND qa_comments.metaId = meta.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) ) AS comments_replies_count,
 
-
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL AND crp_approved = 1 ) AS crp_accepted,
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL AND crp_approved = 0 ) AS crp_rejected,
 
 
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL ) AS replies_count,
+                        ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL AND tpb = 1 AND ppu = 1) AS tpb_count,
                        
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 1) AS accepted_comments,
                         ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 2) AS disagree_comments,
@@ -856,12 +969,13 @@ class EvaluationsController {
                         AND evaluations.phase_year = actual_phase_year()
                         ORDER BY meta.order ASC
                         `,
-                    { indicatorId },
+                    { user_Id: id, indicatorId },
                     {}
                 );
-                // console.log('crp')
-                // console.log(query, parameters)
+                // // console.log('crp')
+                // // console.log(query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
+
             }
             else {
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -876,22 +990,27 @@ class EvaluationsController {
                         meta.description AS meta_description,
                         meta.include_detail AS meta_include_detail,
                         meta.is_primay AS meta_is_primay,
+                        meta.is_core AS is_core,
+                        meta.indicator_slug AS indicator_slug,
                         evaluations.id AS evaluation_id,
                         evaluations.evaluation_status AS evaluation_status,
                         crp.name AS crp_name,
-                        crp.acronym AS crp_acronym,
+                        crp.crp_id AS crp_acronym,
                         (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field,
                         evaluations.status AS evaluations_status,
                         evaluations.require_second_assessment,
                     ( SELECT enable_assessor FROM qa_comments_meta WHERE indicatorId = indicator_user.indicatorId ) AS enable_assessor,
-                    ( SELECT id FROM qa_comments WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_id,
+                    ( SELECT id FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_deleted = 0 LIMIT 1 ) AS general_comment_id,
                     ( SELECT detail FROM qa_comments WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment,
+                    ( SELECT highlight_comment FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS is_highlight,
+                    ( SELECT require_changes FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS require_changes,
+                    ( SELECT user_.name FROM qa_users user_ LEFT JOIN qa_comments comments ON comments.highlightById = user_.id WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1 ) AS highligth_by,
                     ( SELECT user_.username FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_user,
                     ( SELECT user_.updatedAt FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_updatedAt,
                     ( SELECT approved_no_comment FROM qa_comments WHERE metaId = meta.id AND evaluationId = evaluations.id 	AND is_deleted = 0 AND approved_no_comment IS NOT NULL LIMIT 1) AS approved_no_comment,
                     ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND qa_comments.metaId = meta.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) ) AS comments_replies_count,
-                    
                     ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL ) AS replies_count,
+                    ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL AND tpb = 1 AND ppu = 1) AS tpb_count,
                     ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 1) AS accepted_comments,
                     ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 2) AS disagree_comments,
                     ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 3) AS clarification_comments,
@@ -913,36 +1032,34 @@ class EvaluationsController {
                     { user_Id: id, indicatorId },
                     {}
                 );
-                // console.log('assessor')
-                // console.log(query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
 
             }
 
             res.status(200).json({ data: Util.parseEvaluationsData(rawData, view_name_psdo), message: "User evaluation detail" });
+
         } catch (error) {
-            console.log(error);
             res.status(404).json({ message: "User evaluation detail could not access to evaluations." });
         }
     }
 
-    // FIX TO-DO
+    // FIX TODO
     static updateDetailedEvaluation = async (req: Request, res: Response) => {
         console.time('update_evaluation');
         const id = req.params.id;
         const userId = res.locals.jwtPayload.userId;
         const { general_comments, status } = req.body;
-        
+
         // const userRepository = getRepository(QAUsers);
         // let user = await userRepository.findOneOrFail({ where: { id: userId } });
-        // console.log('EnteredService UpdateEvaluation', { user });
-        
+        // // console.log('EnteredService UpdateEvaluation', { user });
+
         const evaluationsRepository = getRepository(QAEvaluations);
         let queryRunner = getConnection().createQueryBuilder().connection;
-        // console.log({ general_comments, status }, id)
+        // // console.log({ general_comments, status }, id)
         try {
             let evaluation = await evaluationsRepository.findOne({ where: { id: id } });
-            console.log('Got the Evaluation', evaluation);
+            // console.log('Got the Evaluation', evaluation);
 
             // evaluation.general_comments = general_comments;
             evaluation.status = status;
@@ -957,10 +1074,10 @@ class EvaluationsController {
                     {}
                 );
                 // evaluation.assessed_by_second_round.push(user);
-                // console.log('Pushed user', evaluation);
+                // // console.log('Pushed user', evaluation);
 
                 let metaId = await queryRunner.query(query, parameters);
-                let comment = await Util.createComment(null, true, userId, metaId[0].id, evaluation.id);
+                // let comment = await Util.createComment(null, true, userId, metaId[0].id, evaluation.id, require_changes);
             }
 
             let updatedEva = await evaluationsRepository.save(evaluation);
@@ -968,7 +1085,7 @@ class EvaluationsController {
             res.status(200).json({ data: updatedEva, message: "Evaluation updated." });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not update evaluation.", data: error });
         }
     }
@@ -984,7 +1101,7 @@ class EvaluationsController {
             let allCRP = await crpRepository.find({ where: { active: true } });
             res.status(200).json({ data: allCRP, message: "All CRPs" });
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not get crp." });
         }
 
@@ -1022,7 +1139,7 @@ class EvaluationsController {
             res.status(200).json({ data: evalData, message: "Indicators settings" });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not get indicators settings." });
         }
     }
@@ -1046,7 +1163,7 @@ class EvaluationsController {
             res.status(200).json({ data: evalData, message: "Indicator evaluation criteria" });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not get any evaluation criteria." });
         }
     }
@@ -1080,14 +1197,14 @@ class EvaluationsController {
             );
 
             let assessorByEvalR2 = await queryRunner.connection.query(query2, parameters2);
-            console.log({ assessorByEvalR2 });
+            // console.log({ assessorByEvalR2 });
             const response = { assessed_r1: assessorByEvalR1[0].assessed_r1 || 'Not yet assessed', assessed_r2: assessorByEvalR2[0].assessed_r2 || 'Not yet assessed' }
-            console.log(response);
+            // console.log(response);
 
             res.status(200).json({ data: response, message: `Assessors in  evaluation ${evaluationId}` });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not get any assesor for this evaluation." });
         }
     }
@@ -1102,13 +1219,81 @@ class EvaluationsController {
             let evaluation = await evaluationsRepository.findOne(evaluationId);
             evaluation.require_second_assessment = require_second_assessment;
             evaluationsRepository.save(evaluation);
-            console.log(evaluation);
+            // console.log(evaluation);
 
             res.status(200).json({ data: evaluation, message: `Evaluation ${evaluationId} updated.` });
 
         } catch (error) {
-            console.log(error);
+            // console.log(error);
             res.status(404).json({ message: "Could not update the evaluation." });
+        }
+    }
+
+    static pendingHighlights = async (req: Request, res: Response) => {
+        const { crp_id } = req.query;
+        let queryRunner = getConnection().createQueryBuilder();
+
+        try {
+            const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
+                `SELECT
+                    SUM(
+                        IF(
+                            comments.highlight_comment = 1
+                            AND comments.ppu = 0,
+                            1,
+                            0
+                        )
+                    ) AS pending_highlight_comments,
+                    SUM(
+                        IF(
+                            comments.highlight_comment = 1
+                            AND comments.require_changes = 1
+                            AND comments.ppu = 1,
+                            1,
+                            0
+                        )
+                    ) AS solved_with_require_request,
+                    SUM(
+                        IF(
+                            comments.highlight_comment = 1
+                            AND comments.require_changes = 0
+                            AND comments.ppu = 1,
+                            1,
+                            0
+                        )
+                    ) AS solved_without_require_request,
+                    SUM(
+                        IF(
+                            comments.highlight_comment = 1
+                            AND comments.require_changes = 1
+                            AND comments.ppu = 0,
+                            1,
+                            0
+                        )
+                    ) AS pending_tpb_decisions,
+                    evaluations.indicator_view_name
+                FROM
+                    qa_comments comments
+                    LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+                    AND replies.is_deleted = 0
+                WHERE
+                    comments.is_deleted = 0
+                    AND comments.detail IS NOT NULL
+                    AND metaId IS NOT NULL
+                    AND evaluation_status <> 'Deleted'
+                    AND evaluations.phase_year = actual_phase_year()
+                GROUP BY
+                    evaluations.indicator_view_name;`,
+                {},
+                {}
+            );
+            let highlights = await queryRunner.connection.query(query, parameters);
+
+            res.status(200).json({ data: highlights, message: 'All highlights status' });
+        } catch (error) {
+            console.log("🚀 ~ file: EvaluationsController.ts:1260 ~ EvaluationsController ~ pendingHighlights= ~ error", error)
+            res.status(200).json({ data: error, message: 'Could not retrieve the highlighted status' });
         }
     }
 
