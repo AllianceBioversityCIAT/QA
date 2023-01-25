@@ -423,7 +423,7 @@ export class CrpDashboardComponent implements OnInit {
   }
 
   indicatorIsEnable(ind) {
-    return ind ? this.indicators.find(indicator => indicator.view_name == ind).comment_meta.enable_crp : ind;
+    return ind ? this.indicators.find(indicator => indicator.view_name == ind)?.comment_meta.enable_crp : ind;
   }
 
 
