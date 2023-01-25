@@ -102,10 +102,10 @@ export class CommentComponent implements OnInit {
   ) {
     this.authenticationService.currentUser.subscribe((x) => {
       this.currentUser = x;
-      console.log(this.currentUser.cycle_ended);
+      // console.log(this.currentUser.cycle_ended);
 
-      console.log(this.currentUser);
-      console.log("IS_CRP", this.isCRP);
+      // console.log(this.currentUser);
+      // console.log("IS_CRP", this.isCRP);
     });
   }
 
@@ -114,7 +114,7 @@ export class CommentComponent implements OnInit {
       comment: ["", Validators.required],
     });
     this.dataFromItem = [];
-    console.log("IS_CRP", this.isCRP);
+    // console.log("IS_CRP", this.isCRP);
     this.istpbUser()
 
     if (
@@ -122,7 +122,7 @@ export class CommentComponent implements OnInit {
       this.currentUser.roles[0].description == this.allRoles.admin
     ) {
       this.currentUser.roles.shift();
-      console.log(this.currentUser);
+      // console.log(this.currentUser);
     }
     if (!this.isCRP) {
       this.getQuickComments();
@@ -139,7 +139,7 @@ export class CommentComponent implements OnInit {
     const found = this.currentUser.indicators.find(element => {
       return element?.isTPB === true
     })
-    console.log(found, '🔥 🔥');
+    // console.log(found, '🔥 🔥');
     this.tpbUser = found
   }
 
@@ -151,10 +151,10 @@ export class CommentComponent implements OnInit {
 
     // this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
     // this.detailItemFounded.highlight_comment = !isHighlighted,
-    //   console.log(this.detailedData)
+    // console.log(this.detailedData)
 
     // comment.highlight_comment = !isHighlighted,
-    //   console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
+    // console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
     // console.log(params, '<===id')
 
     this.showSpinner(this.spinner_comment);
@@ -300,9 +300,14 @@ export class CommentComponent implements OnInit {
     let element = <HTMLInputElement>document.getElementById("require_changes");
     let checked = element?.checked;
 
-
     this.showSpinner(this.spinner_comment);
     console.log(this.original_field);
+
+    var offset = new Date().getTimezoneOffset();
+    var gmt = new Date().toLocaleString() + " GMT " + -offset / 60;
+    // var date = moment(gmt).toDate();
+    var date = new Date(gmt)
+    console.log(date)
 
     this.commentService
       .createDataComment({
@@ -314,6 +319,7 @@ export class CommentComponent implements OnInit {
         original_field: this.original_field,
         require_changes: checked,
         tpb: checked,
+        createdAt: date
 
       })
       .subscribe(
@@ -383,7 +389,7 @@ export class CommentComponent implements OnInit {
     delete data.user.crps;
     delete data.user.indicators;
     this.showSpinner(this.spinner_comment);
-    // console.log(data)
+    console.log(data)
     this.commentService.updateCommentReply(data).subscribe(
       (res) => {
         // console.log(res)
@@ -539,7 +545,7 @@ export class CommentComponent implements OnInit {
   }
 
   replyComment(currentComment) {
-    console.log(currentComment.replyTypeId);
+    // console.log(currentComment.replyTypeId);
 
     if (
       (this.commentGroup.invalid || this.formData.comment.value === "") &&
@@ -549,7 +555,7 @@ export class CommentComponent implements OnInit {
       this.alertService.error("Comment is required", false);
       return;
     }
-    console.log("CRP_RESPONSE", currentComment.crp_response);
+    // console.log("CRP_RESPONSE", currentComment.crp_response);
     this.showSpinner(this.spinner_comment);
     this.commentService
       .createDataCommentReply({
@@ -566,7 +572,7 @@ export class CommentComponent implements OnInit {
           this.formData.comment.reset();
         },
         (error) => {
-          console.log("replyComment", error);
+          // console.log("replyComment", error);
           this.hideSpinner(this.spinner_comment);
           this.alertService.error(error);
         }
