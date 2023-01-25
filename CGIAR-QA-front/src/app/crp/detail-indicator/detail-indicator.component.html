@@ -71,13 +71,10 @@
       The quality assessment process has ended.
     </p>
   </div>
-
   <div *ngIf="detailedData[0]" class="buttons">
     <a
       tooltip="{{ tooltips.redirectTo }}"
-      href="https://prtest.ciat.cgiar.org/result/result-detail/{{
-        params.indicatorId
-      }}/general-information"
+      [href]="prUrl + '/result/result-detail/' + params.indicatorId"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -138,10 +135,15 @@
         <div class="data-row" *ngFor="let field of detailedData; let i = index">
           <div class="col">
             <div class="row" style="padding: 0">
-              <a
-                href="https://prtest.ciat.cgiar.org/result/result-detail/{{
+              <!-- href="https://prtest.ciat.cgiar.org/result/result-detail/{{
                   params.indicatorId
-                }}/{{ detailedData[i].indicator_slug }}"
+                }}/{{ detailedData[i].indicator_slug }}" -->
+              <a
+                [href]="
+                  prUrl +
+                  '/result/result-detail/' +
+                  detailedData[i].indicator_slug
+                "
                 target="”_blank”"
                 rel="noopener noreferrer"
               >

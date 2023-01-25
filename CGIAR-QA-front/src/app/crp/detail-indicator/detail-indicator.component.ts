@@ -11,7 +11,7 @@ import { User } from '../../_models/user.model';
 import { DetailedStatus, GeneralIndicatorName, GeneralStatus, StatusNames, StatusNamesCRP } from "../../_models/general-status.model"
 import { crpMEL } from "../../_models/crp.model";
 import { Role } from 'src/app/_models/roles.model';
-import { Title } from '@angular/platform-browser';
+import { DomSanitizer, Title } from '@angular/platform-browser';
 import { CommentService } from 'src/app/services/comment.service';
 import { UrlTransformPipe } from 'src/app/pipes/url-transform.pipe';
 import { WordCounterPipe } from 'src/app/pipes/word-counter.pipe';
@@ -68,7 +68,7 @@ import { environment } from 'src/environments/environment';
 })
 export class DetailIndicatorComponent implements OnInit {
 
-
+  prUrl: string;
   currentUser: User;
   detailedData: any[];
   params: any;
@@ -134,7 +134,9 @@ export class DetailIndicatorComponent implements OnInit {
     private titleService: Title,
     private wordCount: WordCounterPipe,
     private authenticationService: AuthenticationService,
-    private evaluationService: EvaluationsService) {
+    private evaluationService: EvaluationsService,
+    private _sanitizer: DomSanitizer
+  ) {
 
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
@@ -156,6 +158,7 @@ export class DetailIndicatorComponent implements OnInit {
       /** set page title */
       this.titleService.setTitle(`${this.currentType} / QA-${this.params.type.charAt(0).toUpperCase()}${this.params.type.charAt(1).toUpperCase()}-${this.params.indicatorId}`);
 
+      this.prUrl = environment.prUrl
 
     })
   }
@@ -163,6 +166,10 @@ export class DetailIndicatorComponent implements OnInit {
   ngOnInit() {
     console.log(this.crpsMEL);
 
+  }
+
+  safeURL(url: string) {
+    return this._sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
   getDetailedData() {
