@@ -1,41 +1,57 @@
 <div class="login-component row col justify-content-md-center">
-    <div class="header row col-sm-10 justify-content-md-center">
-        <h2>Welcome to the Quality Assessment Platform</h2>
-        <p class="col-sm-10">The Quality Assessment Platform is an online tool assisting the CGIAR System Management Office and Research Programs in the quality assessment
-            process
-            for reporting. </p>
-    </div>
+  <div class="header row col-sm-10 justify-content-md-center">
+    <h2>Welcome to the Quality Assessment Platform</h2>
+    <p class="col-sm-10">
+      The Quality Assurance Platform is an online tool assisting the CGIAR and
+      Initiatives in the quality assurance process for reporting.
+    </p>
+  </div>
 
-    <div class="card col-sm-6">
-        <div class="card-body">
-            <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
-                <div class="form-group">
-                    <label for="username">Email or username</label>
-                    <input type="text" formControlName="username" class="form-control"
-                        [ngClass]="{ 'is-invalid': submitted && f.username.errors }" />
-                    <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
-                        <div *ngIf="f.username.errors.required">Username is required</div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label for="password">Password</label>
-                    <input type="password"  autocomplete="on" formControlName="password" class="form-control"
-                        [ngClass]="{ 'is-invalid': submitted && f.password.errors }" />
-                    <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
-                        <div *ngIf="f.password.errors.required">Password is required</div>
-                    </div>
-                </div>
-                <div class="form-group col-4">
-                    <button [disabled]="loading" class="btn btn-primary">
-                        <span *ngIf="loading" class="spinner-border spinner-border-sm mr-1"></span>
-                        Login
-                    </button>
-                </div>
-            </form>
+  <div class="card col-sm-6">
+    <div class="card-body">
+      <form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="username">Email or username</label>
+          <input
+            type="text"
+            formControlName="username"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.username.errors }"
+          />
+          <div *ngIf="submitted && f.username.errors" class="invalid-feedback">
+            <div *ngIf="f.username.errors.required">Username is required</div>
+          </div>
         </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            autocomplete="on"
+            formControlName="password"
+            class="form-control"
+            [ngClass]="{ 'is-invalid': submitted && f.password.errors }"
+          />
+          <div *ngIf="submitted && f.password.errors" class="invalid-feedback">
+            <div *ngIf="f.password.errors.required">Password is required</div>
+          </div>
+        </div>
+        <div class="form-group col-4">
+          <button [disabled]="loading" class="btn btn-primary">
+            <span
+              *ngIf="loading"
+              class="spinner-border spinner-border-sm mr-1"
+            ></span>
+            Login
+          </button>
+        </div>
+      </form>
     </div>
+  </div>
 
-    <div *ngIf="!env.production" class="row notification">
-        <p>Please be aware that everything you enter in this testing environment may be removed from the database at any time</p>
-    </div>
+  <div *ngIf="!env.production" class="row notification">
+    <p>
+      Please be aware that everything you enter in this testing environment may
+      be removed from the database at any time
+    </p>
+  </div>
 </div>
