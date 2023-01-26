@@ -71,13 +71,10 @@
       The quality assessment process has ended.
     </p>
   </div>
-
   <div *ngIf="detailedData[0]" class="buttons">
     <a
       tooltip="{{ tooltips.redirectTo }}"
-      href="https://prtest.ciat.cgiar.org/result/result-detail/{{
-        params.indicatorId
-      }}/general-information"
+      [href]="prUrl + '/result/result-detail/' + params.indicatorId"
       target="_blank"
       rel="noopener noreferrer"
     >
@@ -139,9 +136,11 @@
           <div class="col">
             <div class="row" style="padding: 0">
               <a
-                href="https://prtest.ciat.cgiar.org/result/result-detail/{{
-                  params.indicatorId
-                }}/{{ detailedData[i].indicator_slug }}"
+                [href]="
+                  prUrl +
+                  '/result/result-detail/' +
+                  detailedData[i].indicator_slug
+                "
                 target="”_blank”"
                 rel="noopener noreferrer"
               >
@@ -208,7 +207,10 @@
               >Show original value
               <i
                 tooltip="{{ tooltips.changes_not_implemented }}"
-                *ngIf="detailedData[i].original_field === detailedData[i].value"
+                *ngIf="
+                  detailedData[i].original_field === detailedData[i].value &&
+                  detailedData[i].count_disagree_comments != 1
+                "
                 class="material-icons-round"
                 >warning</i
               >
@@ -227,7 +229,10 @@
               >Hide original value
               <i
                 tooltip="{{ tooltips.changes_not_implemented }}"
-                *ngIf="detailedData[i].original_field === detailedData[i].value"
+                *ngIf="
+                  detailedData[i].original_field === detailedData[i].value &&
+                  detailedData[i].count_disagree_comments != 1
+                "
                 class="material-icons-round"
                 >warning</i
               >

@@ -457,6 +457,9 @@ class EvaluationsController {
                         SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                     ) AS title,
                     (
+                        SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
+                    ) AS result_code,
+                    (
                         SELECT
                         group_concat(DISTINCT users.username)
                         FROM
@@ -492,13 +495,11 @@ class EvaluationsController {
                     { view_name },
                     {}
                 );
-                // console.log('isadmin')
-                // // console.log(sql)
                 let rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: EvaluationsController.ts:501 ~ EvaluationsController ~ getListEvaluationsDash= ~ rawData", rawData)
                 res.status(200).json({ data: Util.parseEvaluationsData(rawData), message: "User evaluations list" });
                 return;
             } else if (user.crps.length > 0) {
-                // console.log('CRP_LIST');
 
                 let sql = `
                     SELECT
@@ -585,6 +586,9 @@ class EvaluationsController {
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS title,
+                        (
+                            SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
+                        ) AS result_code,
                         ${levelQuery.view_sql}
                         indicator_user.indicatorId,
 
@@ -729,6 +733,9 @@ class EvaluationsController {
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS title,
+                        (
+                            SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
+                        ) AS result_code,
                         ${levelQuery.view_sql}
                         indicator_user.indicatorId,
                         (
@@ -1275,8 +1282,7 @@ class EvaluationsController {
                 FROM
                     qa_comments comments
                     LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
-                    AND replies.is_deleted = 0
+                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
                 WHERE
                     comments.is_deleted = 0
                     AND comments.detail IS NOT NULL

@@ -67,7 +67,7 @@ export class StatusChartComponent implements OnInit {
   indicatorIsEnable() {
     // console.log(this.indicator[0].name);
 
-    return this.indicators.find(indicator => indicator.view_name == this.indicator[0].name).comment_meta.enable_crp;
+    return this.indicators.find(indicator => indicator.view_name == this.indicator[0].name)?.comment_meta.enable_crp;
   }
 
 }
