@@ -135,9 +135,6 @@
         <div class="data-row" *ngFor="let field of detailedData; let i = index">
           <div class="col">
             <div class="row" style="padding: 0">
-              <!-- href="https://prtest.ciat.cgiar.org/result/result-detail/{{
-                  params.indicatorId
-                }}/{{ detailedData[i].indicator_slug }}" -->
               <a
                 [href]="
                   prUrl +
@@ -210,7 +207,10 @@
               >Show original value
               <i
                 tooltip="{{ tooltips.changes_not_implemented }}"
-                *ngIf="detailedData[i].original_field === detailedData[i].value"
+                *ngIf="
+                  detailedData[i].original_field === detailedData[i].value &&
+                  detailedData[i].count_disagree_comments != 1
+                "
                 class="material-icons-round"
                 >warning</i
               >
@@ -229,7 +229,10 @@
               >Hide original value
               <i
                 tooltip="{{ tooltips.changes_not_implemented }}"
-                *ngIf="detailedData[i].original_field === detailedData[i].value"
+                *ngIf="
+                  detailedData[i].original_field === detailedData[i].value &&
+                  detailedData[i].count_disagree_comments != 1
+                "
                 class="material-icons-round"
                 >warning</i
               >
