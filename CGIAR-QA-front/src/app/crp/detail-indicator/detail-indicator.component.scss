@@ -162,6 +162,9 @@
     padding: 20px;
     margin: 0 0.5em 2em;
     min-height: 200px;
+    .core-field {
+      margin: 0px 10px;
+    }
     .text-area {
       border: 1px solid var(--gray-primary);
       padding: 0.5em;

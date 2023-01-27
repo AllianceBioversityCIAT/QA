@@ -129,10 +129,13 @@
 
                 <div [ngClass]="{
                     'approved-no-comment':
-                      field.approved_no_comment == 1 && field.enable_comments
+                    field.approved_no_comment == 1 && field.enable_comments
                   }" style="display: none">
                   Approved without comments
                 </div>
+              </div>
+              <div class="core-field" *ngIf="detailedData[i].is_core">
+                <img src="../../../assets/icons/icon-core.svg" alt="" />
               </div>
             </div>
 
