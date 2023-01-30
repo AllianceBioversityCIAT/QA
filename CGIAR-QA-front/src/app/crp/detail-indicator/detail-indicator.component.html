@@ -61,9 +61,8 @@
       target="_blank" rel="noopener noreferrer">
       <i class="cgiar-logo"></i>
     </a>
-    <div style="margin-right: 1em; display:none" tooltip="{{ tooltips.download_excel }}" container="body"
-      placement="top" *ngIf="detailedData" (click)="getCommentsExcel(detailedData[0])"
-      class="btn btn-primary file-button">
+    <div style="margin-right: 1em" tooltip="{{ tooltips.download_excel }}" container="body" placement="top"
+      *ngIf="detailedData" (click)="getCommentsExcel(detailedData[0])" class="btn btn-primary file-button">
       <i class="icon-download-excel"></i>
     </div>
 
