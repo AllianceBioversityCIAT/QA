@@ -1,116 +1,70 @@
-<div
-  class="row justify-content-center"
-  *ngIf="
+<div class="row justify-content-center" *ngIf="
     currentUser &&
     !currentUser.hasOwnProperty('cycle') &&
     currentUser.cycle_ended
-  "
->
+  ">
   <!-- <i class="qa-timeline-icon"></i> -->
   <!-- <app-timeline></app-timeline> -->
   <h2 style="margin: 1em auto">The quality assessment process has ended.</h2>
 </div>
 
-<div
-  class="row justify-content-center dashboard-container"
-  *ngIf="dashboardData && dashboardCommentsData && indicators"
->
+<div class="row justify-content-center dashboard-container"
+  *ngIf="dashboardData && dashboardCommentsData && indicators">
   <div class="col-12 col-progress">
-    <div
-      *ngIf="dashboardData && dashboardCommentsData && indicators"
-      class="dashboard-grid"
-    >
-      <div
-        *ngFor="
+    <div *ngIf="dashboardData && dashboardCommentsData && indicators" class="dashboard-grid">
+      <div *ngFor="
           let indicator of dashboardData
             | keyvalue
             | sortBy : 'asc' : 'value.order'
-        "
-        class="indicator"
-      >
+        " class="indicator">
         <div class="chart status-chart">
-          <app-status-chart
-            [indicator]="[{ name: indicator.key, series: indicator.value }]"
-            [indicators]="indicators"
-            [total]="indicator.value.total"
-          ></app-status-chart>
+          <app-status-chart [indicator]="[{ name: indicator.key, series: indicator.value }]" [indicators]="indicators"
+            [total]="indicator.value.total"></app-status-chart>
         </div>
         <div class="chart comments-chart">
-          <app-comments-chart
-            *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
-            [total]="dashboardCommentsData[indicator.key].total"
-            [data]="
+          <app-comments-chart *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
+            [total]="dashboardCommentsData[indicator.key].total" [data]="
               formatCommentsIndicatorData(
                 dashboardCommentsData[indicator.key],
                 indicator.key
               )
-            "
-            [selectedIndicator]="indicator.key"
-            [chartName]="indicator.key"
-          >
+            " [selectedIndicator]="indicator.key" [chartName]="indicator.key">
           </app-comments-chart>
-          <app-comments-chart
-            *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
-            [total]="0"
-            [data]="false"
-          >
+          <app-comments-chart *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)" [total]="0" [data]="false">
           </app-comments-chart>
+
         </div>
         <div class="chart comments-chart" class="chart pending-responses">
-          <div
-            *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
-            class="total-pending"
-          >
+          <div *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)" class="total-pending">
             {{ totalPendings[indicator.key] }}
           </div>
-          <div
-            *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
-            class="total-pending"
-          >
+          <div *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)" class="total-pending">
             0
           </div>
-          <button
-            *ngIf="indicatorIsEnable(indicator.key)"
-            class="btn btn-primary btn-response-pending"
-            (click)="goToPendingItems(indicator.key)"
-          >
+          <button *ngIf="indicatorIsEnable(indicator.key)" class="btn btn-primary btn-response-pending"
+            (click)="goToPendingItems(indicator.key)">
             Click here to respond pending comments
           </button>
-          <button
-            *ngIf="!indicatorIsEnable(indicator.key)"
-            class="btn btn-red-secondary btn-response-pending disabled"
-            title="Indicator isn't enable"
-          >
+          <button *ngIf="!indicatorIsEnable(indicator.key)" class="btn btn-red-secondary btn-response-pending disabled"
+            title="Indicator isn't enable">
             This indicator is closed for initiatives
           </button>
         </div>
         <div class="chart comments-chart" class="chart pending-responses">
-          <div
-            *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
-            class="total-pending"
-          >
-            <!-- {{ totalPendings[indicator.key] }}  -->-
+          <div *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)" class="total-pending" onload="formatPendingTpbData(dashboardCommentsData[indicator.key],
+                indicator.key)">
+            {{pendings[indicator.key]}}
           </div>
-          <div
-            *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
-            class="total-pending"
-          >
-            <!-- 0 -->
-            -
+          <div *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)" class="total-pending">
+            0
           </div>
-          <button
-            *ngIf="indicatorIsEnable(indicator.key)"
-            class="btn btn-primary btn-response-pending"
-            (click)="goToPendingItems(indicator.key)"
-          >
+          <button *ngIf="indicatorIsEnable(indicator.key)" class="btn btn-primary btn-response-pending"
+            (click)="goToPendingItems(indicator.key)">
             Pending third party broker decisions
           </button>
-          <button
-            *ngIf="!indicatorIsEnable(indicator.key)"
-            class="btn btn-red-secondary btn-response-pending disabled"
-            title="Indicator isn't enable"
-          >
-            This indicator is closed for initiatives
+          <button *ngIf="!indicatorIsEnable(indicator.key)" class="btn btn-red-secondary btn-response-pending disabled"
+            title="Indicator isn't enable">
+            This indicator is closed for PPU
           </button>
         </div>
       </div>
@@ -125,35 +79,17 @@
         Download comments
       </button>
       <h2 style="margin-left: 1em">All comments</h2>
-      <button
-        type="button"
-        class="close pull-right"
-        (click)="modalRef.hide()"
-        aria-label="Close"
-      >
+      <button type="button" class="close pull-right" (click)="modalRef.hide()" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-body">
       <div class="row justify-content-center comments-dash-container">
-        <ngx-charts-bar-vertical-stacked
-          class="custom-class"
-          style="cursor: default"
-          *ngIf="has_comments"
-          [scheme]="colorScheme"
-          [results]="multi"
-          [gradient]="gradient"
-          [xAxis]="showXAxis"
-          [yAxis]="showYAxis"
-          [legend]="showLegend"
-          [showXAxisLabel]="showXAxisLabel"
-          [showYAxisLabel]="showYAxisLabel"
-          [xAxisLabel]="xAxisLabel"
-          [yAxisLabel]="yAxisLabel"
-          [animations]="animations"
-          (activate)="onActivate($event)"
-          (deactivate)="onDeactivate($event)"
-        >
+        <ngx-charts-bar-vertical-stacked class="custom-class" style="cursor: default" *ngIf="has_comments"
+          [scheme]="colorScheme" [results]="multi" [gradient]="gradient" [xAxis]="showXAxis" [yAxis]="showYAxis"
+          [legend]="showLegend" [showXAxisLabel]="showXAxisLabel" [showYAxisLabel]="showYAxisLabel"
+          [xAxisLabel]="xAxisLabel" [yAxisLabel]="yAxisLabel" [animations]="animations" (activate)="onActivate($event)"
+          (deactivate)="onDeactivate($event)">
           <!-- (select)="onSelect($event)" -->
         </ngx-charts-bar-vertical-stacked>
 
@@ -162,14 +98,8 @@
         </div>
       </div>
     </div>
-    <ngx-spinner
-      bdColor="rgba(51,51,51,0.3)"
-      [name]="spinner1"
-      color="#fff"
-      size="default"
-      type="square-jelly-box"
-      [fullScreen]="false"
-    ></ngx-spinner>
+    <ngx-spinner bdColor="rgba(51,51,51,0.3)" [name]="spinner1" color="#fff" size="default" type="square-jelly-box"
+      [fullScreen]="false"></ngx-spinner>
   </div>
 </ng-template>
 

@@ -54,6 +54,17 @@ export class CrpDashboardComponent implements OnInit {
     qa_policy_change: 0,
     qa_innovation_use: 0
   }
+  pendings = {
+    qa_impact_contribution: 0,
+    qa_capacity_change: 0,
+    qa_other_outcome: 0,
+    qa_other_output: 0,
+    qa_capdev: 0,
+    qa_knowledge_product: 0,
+    qa_innovation_development: 0,
+    qa_policy_change: 0,
+    qa_innovation_use: 0
+  }
   dashboardCommentsData: any[];
 
 
@@ -111,9 +122,6 @@ export class CrpDashboardComponent implements OnInit {
     domain: ['#67be71', '#F1B7B7']
   };
 
-
-
-
   constructor(private activeRoute: ActivatedRoute,
     private router: Router,
     private authenticationService: AuthenticationService,
@@ -137,7 +145,6 @@ export class CrpDashboardComponent implements OnInit {
       });
     })
 
-
     /** set page title */
     this.titleService.setTitle(`CRP Dashboard`);
 
@@ -147,20 +154,12 @@ export class CrpDashboardComponent implements OnInit {
     this.indicators = JSON.parse(localStorage.getItem('indicators')) || [];
     if (this.indicators = [])
       this.getCRPIndicators();
-
-    this.getTpbDecision()
     // this.getCommentStats();
     // console.log('crp-dashboard')
   }
 
-  getTpbDecision() {
-    this.dashService.getHighlightedData().subscribe(res => {
-      return console.log(res)
-    })
-  }
 
   getCRPIndicators() {
-
     if (!this.indicators.length && this.currentUser) {
       this.showSpinner(this.spinner1)
       this.indicatorService.getIndicators()
@@ -200,7 +199,6 @@ export class CrpDashboardComponent implements OnInit {
           this.alertService.error(error);
         },
       )
-
   }
 
   getCommentStats() {
@@ -267,8 +265,6 @@ export class CrpDashboardComponent implements OnInit {
       }
     )
   }
-
-
 
   getPendingResponseComments(data) {
     // console.log(data, ))
@@ -366,6 +362,8 @@ export class CrpDashboardComponent implements OnInit {
     // console.log(this.statusChartData);
   }
 
+
+
   formatCommentsIndicatorData(data, indicator?) {
     const colors = {
       Accepted: 'var(--color-agree)',
@@ -408,6 +406,15 @@ export class CrpDashboardComponent implements OnInit {
         this.totalPendings[indicator] = +comments_without_answer.value;
       }
 
+      let pending_tpb_decisions = data.find(item => {
+        return item.pending_tpb_decisions != '0'
+      })
+      pending_tpb_decisions = pending_tpb_decisions ? { name: 'Pending_Tpb', value: +pending_tpb_decisions.pending_tpb_decisions } : null;
+
+      if (pending_tpb_decisions) {
+        this.pendings[indicator] = +pending_tpb_decisions.value;
+      }
+
       dataset.forEach(comment => {
         brushes.domain.push(colors[comment.name]);
       });
@@ -440,16 +447,10 @@ export class CrpDashboardComponent implements OnInit {
   }
 
 
-
-
-
-
   /**
    * 
    * Chart controllers
    */
-
-
 
 
   graphClickEvent(event, array) {
