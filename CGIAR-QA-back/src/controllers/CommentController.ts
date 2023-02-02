@@ -645,28 +645,21 @@ class CommentController {
     // * Updated ppu status ---------------------------------------------------------------------------------------------------------------------
     static patchPpuChanges = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
-        const evaluationRepository = getRepository(QAEvaluations);
-        const { ppu, commentReplyId, evaluationId } = req.body;
+        const { ppu, commentReplyId } = req.body;
         let message: String;
 
         try {
             let commentReplyId_ = await commentsRepository.findOneOrFail(commentReplyId);
-            let evaluationId_ = await evaluationRepository.findOne(evaluationId);
             commentReplyId_.ppu = ppu;
-            evaluationId_.status;
 
             if (ppu != 0) {
-                evaluationId_.status = StatusHandler.Finalized;
                 const commentReplyId = await commentsRepository.save(commentReplyId_);
-                const evaluation = await evaluationRepository.save(evaluationId_);
                 message = `Require changes was marked done`;
-                res.status(202).json({ reply_comment: commentReplyId, evaluationStatus: evaluation, message: message });
+                res.status(202).json({ reply_comment: commentReplyId, message: message });
             } else {
-                evaluationId_.status = StatusHandler.Finalized;
                 const commentReplyId = await commentsRepository.save(commentReplyId_);
-                const evaluation = await evaluationRepository.save(evaluationId_);
                 message = 'Require changes was removed';
-                res.status(202).json({ reply_comment: commentReplyId, evaluationStatus: evaluation, message: message });
+                res.status(202).json({ reply_comment: commentReplyId, message: message });
             }
         } catch (error) {
             console.log(error);
@@ -1020,7 +1013,7 @@ class CommentController {
                 // { header: 'Public Link', key: 'public_link' },
             ], comments, 'comments', indicatorName);
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', `attachment; filename=${name}.csv`);
+            res.setHeader('Content-Disposition', `attachment; filename=${name}.xlsx`);
             res.setHeader('Content-Length', stream.length);
             res.status(200).send(stream);
             // res.status(200).send({ data: stream, message: 'File download' });
