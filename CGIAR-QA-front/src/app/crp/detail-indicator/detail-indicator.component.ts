@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList, } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
@@ -164,13 +164,13 @@ export class DetailIndicatorComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.crpsMEL);
-
+    // console.log(this.crpsMEL);
   }
 
   safeURL(url: string) {
     return this._sanitizer.bypassSecurityTrustResourceUrl(url);
   }
+
 
   getDetailedData() {
     this.evaluationService.getDataEvaluation(this.currentUser.id, this.activeRoute.snapshot.params).subscribe(

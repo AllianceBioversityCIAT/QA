@@ -21,14 +21,12 @@
     <!-- <div class="assessment-status">
       <p>Assessment Status:</p>
       <div class="status">
-        <i
-          [ngClass]="{
+        <i [ngClass]="{
             'icon-in-progress': gnralInfo.status === statusHandler.Complete,
             'icon-pending': gnralInfo.status === statusHandler.Pending,
             'icon-quality-assessed':
               gnralInfo.status === statusHandler.Finalized
-          }"
-        >
+          }">
         </i>
         {{ statusNames[gnralInfo.status] }}
       </div>
@@ -42,7 +40,7 @@
               gnralInfo.response_status === statusHandler.Complete
           }">
         </i>
-        {{ statusNamesCRP[gnralInfo.response_status] }} test
+        {{ statusNamesCRP[gnralInfo.response_status] }}
       </div>
     </div>
 
@@ -59,7 +57,9 @@
   <div *ngIf="detailedData[0]" class="buttons">
     <a tooltip="{{ tooltips.redirectTo }}" [href]="prUrl + '/result/result-detail/' + params.indicatorId"
       target="_blank" rel="noopener noreferrer">
-      <i class="cgiar-logo"></i>
+      <span class="material-icons goTo">
+        launch
+      </span>
     </a>
     <div style="margin-right: 1em" tooltip="{{ tooltips.download_excel }}" container="body" placement="top"
       *ngIf="detailedData" (click)="getCommentsExcel(detailedData[0])" class="btn btn-primary file-button">
@@ -115,7 +115,7 @@
                 <span tooltip="{{ tooltips.edit }}" *ngIf="
                     detailedData[i].original_field === detailedData[i].value &&
                     +detailedData[i].replies_count > 0
-                  " class="material-icons">
+                  " class="material-icons-round edit">
                   mode_edit
                 </span>
               </a>

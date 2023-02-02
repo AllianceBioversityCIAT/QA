@@ -149,13 +149,19 @@
 }
 .row {
   padding: 20px;
-  .material-icons {
+  .material-icons,
+  .edit {
     color: #ff7300;
     margin-left: 0px;
     margin-right: 5px;
-    he &:hover {
+    &:hover {
       text-decoration: none;
     }
+  }
+  .material-icons,
+  .goTo {
+    color: #000000;
+    display: flex;
   }
   .data-container {
     border: 1px solid var(--gray-primary);
