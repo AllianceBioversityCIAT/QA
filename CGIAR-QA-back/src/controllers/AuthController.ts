@@ -205,7 +205,6 @@ class AuthController {
             res.status(200).send({ data: tokenEmbed, message: 'Token successfully saved in QA' });
 
         } catch (error) {
-            console.log("🚀 ~ file: AuthController.ts:195 ~ AuthController ~ embedToken= ~ error", error)
             res.status(501).send({ message: 'An error occurred, please see the log', data: error });
         }
     }

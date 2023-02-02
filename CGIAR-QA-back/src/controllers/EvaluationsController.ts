@@ -366,6 +366,65 @@ class EvaluationsController {
 
     }
 
+    static getEvaluationStatus = async (req: Request, res: Response) => {
+        const { result_id } = req.params;
+        let queryRunner = getConnection().createQueryBuilder();
+
+        try {
+            const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
+                `SELECT
+                        evaluations.indicator_view_id,
+                        IF(
+                                (
+                                        SELECT
+                                                COUNT(id)
+                                        FROM
+                                                qa_comments
+                                        WHERE
+                                                qa_comments.evaluationId = evaluations.id
+                                                AND approved_no_comment IS NULL
+                                                AND metaId IS NOT NULL
+                                                AND is_deleted = 0
+                                                AND is_visible = 1
+                                                AND detail IS NOT NULL
+                                ) <= (
+                                        SELECT
+                                                COUNT(id)
+                                        FROM
+                                                qa_comments_replies
+                                        WHERE
+                                                is_deleted = 0
+                                                AND commentId IN (
+                                                        SELECT
+                                                                id
+                                                        FROM
+                                                                qa_comments
+                                                        WHERE
+                                                                qa_comments.evaluationId = evaluations.id
+                                                                AND approved_no_comment IS NULL
+                                                                AND metaId IS NOT NULL
+                                                                AND is_deleted = 0
+                                                                AND is_visible = 1
+                                                                AND detail IS NOT NULL
+                                                )
+                                ),
+                                "complete",
+                                "pending"
+                        ) AS evaluations_status
+                FROM
+                        qa_evaluations evaluations
+                        WHERE evaluations.indicator_view_id = :result_id`,
+                { result_id },
+                {}
+            );
+            let rawData = await queryRunner.connection.query(query, parameters);
+            res.status(200).json({ data: Util.parseEvaluationsData(rawData), message: `Evaluation status for result: ${result_id}` });
+        } catch (error) {
+            res.status(400).json({ message: 'An error ocurred qhen trying to retrieve the evaluation status' });
+        }
+    }
+
+
     // get evaluations LIST by user - List of indicators
     static getListEvaluationsDash = async (req: Request, res: Response) => {
         //Get the ID from the url
@@ -496,7 +555,6 @@ class EvaluationsController {
                     {}
                 );
                 let rawData = await queryRunner.connection.query(query, parameters);
-                console.log("🚀 ~ file: EvaluationsController.ts:501 ~ EvaluationsController ~ getListEvaluationsDash= ~ rawData", rawData)
                 res.status(200).json({ data: Util.parseEvaluationsData(rawData), message: "User evaluations list" });
                 return;
             } else if (user.crps.length > 0) {
@@ -1298,7 +1356,6 @@ class EvaluationsController {
 
             res.status(200).json({ data: highlights, message: 'All highlights status' });
         } catch (error) {
-            console.log("🚀 ~ file: EvaluationsController.ts:1260 ~ EvaluationsController ~ pendingHighlights= ~ error", error)
             res.status(200).json({ data: error, message: 'Could not retrieve the highlighted status' });
         }
     }

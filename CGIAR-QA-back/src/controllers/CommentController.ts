@@ -1,6 +1,6 @@
 import e, { Request, Response } from "express";
 import { validate } from "class-validator";
-import { getRepository, In, getConnection, IsNull, Not, getTreeRepository, QueryBuilder } from "typeorm";
+import { getRepository, In, getConnection, IsNull, Not, getTreeRepository, QueryBuilder, Repository } from "typeorm";
 
 import { QAUsers } from "./../entity/User";
 import { QAComments } from "./../entity/Comments";
@@ -13,6 +13,7 @@ import { QAEvaluations } from "./../entity/Evaluations";
 import { QACycle } from "./../entity/Cycles";
 import { QATags } from "./../entity/Tags";
 import { QAReplyType } from "./../entity/ReplyType";
+import { StatusHandler } from "../_helpers/StatusHandler";
 const { htmlToText } = require('html-to-text');
 
 // const vfile = require('to-vfile')
@@ -139,7 +140,6 @@ class CommentController {
                 );
                 // // console.log('role === RolesHandler.crp', query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
-                console.log("🚀 ~ file: CommentController.ts:107 ~ CommentController ~ commentsCount= ~ rawData", rawData)
             } else {
 
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -258,7 +258,6 @@ class CommentController {
                     {}
                 );
                 rawData = await queryRunner.connection.query(query, parameters);
-                console.log("🚀 ~ file: CommentController.ts:172 ~ CommentController ~ commentsCount= ~ rawData", rawData)
 
                 /* 
                 if (crp_id !== 'undefined') {
@@ -646,21 +645,28 @@ class CommentController {
     // * Updated ppu status ---------------------------------------------------------------------------------------------------------------------
     static patchPpuChanges = async (req: Request, res: Response) => {
         const commentsRepository = getRepository(QAComments);
-        const { ppu, commentReplyId } = req.body;
+        const evaluationRepository = getRepository(QAEvaluations);
+        const { ppu, commentReplyId, evaluationId } = req.body;
         let message: String;
 
         try {
             let commentReplyId_ = await commentsRepository.findOneOrFail(commentReplyId);
+            let evaluationId_ = await evaluationRepository.findOne(evaluationId);
             commentReplyId_.ppu = ppu;
+            evaluationId_.status;
 
             if (ppu != 0) {
+                evaluationId_.status = StatusHandler.Finalized;
                 const commentReplyId = await commentsRepository.save(commentReplyId_);
+                const evaluation = await evaluationRepository.save(evaluationId_);
                 message = `Require changes was marked done`;
-                res.status(202).json({ reply_comment: commentReplyId, message: message });
+                res.status(202).json({ reply_comment: commentReplyId, evaluationStatus: evaluation, message: message });
             } else {
+                evaluationId_.status = StatusHandler.Finalized;
                 const commentReplyId = await commentsRepository.save(commentReplyId_);
+                const evaluation = await evaluationRepository.save(evaluationId_);
                 message = 'Require changes was removed';
-                res.status(202).json({ reply_comment: commentReplyId, message: message });
+                res.status(202).json({ reply_comment: commentReplyId, evaluationStatus: evaluation, message: message });
             }
         } catch (error) {
             console.log(error);
@@ -850,11 +856,9 @@ class CommentController {
 
     //get comments in excel
     static getCommentsExcel = async (req: Request, res: Response) => {
-        // const { name, id } = req.params;
         const { evaluationId } = req.params;
         const { userId, name, crp_id, indicatorName } = req.query;
         let queryRunner = getConnection().createQueryBuilder();
-        // // console.log('getCommentsExcel')
 
         let comments;
         try {
@@ -874,43 +878,41 @@ class CommentController {
                     SELECT
                     comments.detail,
                     comments.id AS comment_id,
-                    evaluations.indicator_view_id AS id,
                     comments.updatedAt,
                     comments.createdAt,
                     comments.crp_approved,
                     evaluations.crp_id,
                     evaluations.id AS evaluation_id,
-                        users.username,
-                        users.email,
-                        meta.display_name,
-                        meta.col_name,
-                        replies.createdAt AS reply_createdAt,
-                        replies.updatedAt AS reply_updatedAt,
-                        replies.detail AS reply,
-                        (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
-                        (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
-                        (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
-                        FROM
-                        qa_comments comments
-                        LEFT JOIN qa_users users ON users.id = comments.userId
-                        LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                        LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
-                        LEFT JOIN qa_indicators_meta meta ON meta.id = comments.metaId
-                        WHERE
-                        comments.detail IS NOT NULL
-                        AND evaluations.indicator_view_name = :indicatorName
-                        AND (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
-                        AND comments.approved = 1
-                        AND comments.is_deleted = 0
-                        AND evaluations.crp_id = :crp_id
-                        AND evaluations.phase_year = actual_phase_year()
-                        ORDER BY createdAt ASC
-                        `,
+                    users.username,
+                    users.email,
+                    meta.display_name,
+                    meta.col_name,
+                    replies.createdAt AS reply_createdAt,
+                    replies.updatedAt AS reply_updatedAt,
+                    replies.detail AS reply,
+                    (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS id,
+                    (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
+                    (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
+                    (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
+                    FROM
+                    qa_comments comments
+                    LEFT JOIN qa_users users ON users.id = comments.userId
+                    LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
+                    LEFT JOIN qa_indicators_meta meta ON meta.id = comments.metaId
+                    WHERE
+                    comments.detail IS NOT NULL
+                    AND evaluations.indicator_view_name = :indicatorName
+                    AND (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
+                    AND comments.approved = 1
+                    AND comments.is_deleted = 0
+                    AND evaluations.crp_id = :crp_id
+                    AND evaluations.phase_year = actual_phase_year()
+                    ORDER BY createdAt ASC
+                    `,
                     { crp_id, indicatorName },
                     {}
                 );
-
-                // // console.log(parameters)
                 comments = await queryRunner.connection.query(query, parameters);
             } else {
 
@@ -920,7 +922,6 @@ class CommentController {
                                 SELECT
                                 comments.detail,
                                 comments.id AS comment_id,
-                                evaluations.indicator_view_id AS id,
                             comments.updatedAt,
                             comments.createdAt,
                             comments.crp_approved,
@@ -934,6 +935,7 @@ class CommentController {
                             replies.updatedAt AS reply_updatedAt,
                             replies.detail AS reply,
                             (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
+                            (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS id,
                             (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
                             (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
                             FROM
@@ -954,8 +956,6 @@ class CommentController {
                         { evaluationId },
                         {}
                     );
-
-                    // // console.log(parameters)
                     comments = await queryRunner.connection.query(query, parameters);
                 }
                 else {
@@ -964,7 +964,6 @@ class CommentController {
                                 SELECT
                                 comments.detail,
                                 comments.id AS comment_id,
-                                evaluations.indicator_view_id AS id,
                             comments.updatedAt,
                             comments.createdAt,
                             comments.crp_approved,
@@ -978,6 +977,7 @@ class CommentController {
                             replies.updatedAt AS reply_updatedAt,
                             replies.detail AS reply,
                             (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
+                            (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS id,
                             (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
                             (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
                             FROM
@@ -998,15 +998,13 @@ class CommentController {
                         { evaluationId },
                         {}
                     );
-
-                    // // console.log(parameters)
                     comments = await queryRunner.connection.query(query, parameters);
                 }
             }
 
             const stream: Buffer = await Util.createCommentsExcel([
                 { header: 'Comment id', key: 'comment_id' },
-                { header: 'Indicator id', key: 'id' },
+                { header: 'Result code', key: 'id' },
                 { header: 'Indicator Title', key: 'indicator_title' },
                 { header: 'Field', key: 'field' },
                 { header: 'Value', key: 'value' },
@@ -1022,7 +1020,7 @@ class CommentController {
                 // { header: 'Public Link', key: 'public_link' },
             ], comments, 'comments', indicatorName);
             res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', `attachment; filename=${name}.xlsx`);
+            res.setHeader('Content-Disposition', `attachment; filename=${name}.csv`);
             res.setHeader('Content-Length', stream.length);
             res.status(200).send(stream);
             // res.status(200).send({ data: stream, message: 'File download' });
