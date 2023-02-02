@@ -684,6 +684,7 @@ class Util {
             status: element["evaluations_status"],
             response_status: element["response_status"],
             evaluation_status: element["evaluation_status"],
+            indicator_view_id: element["indicator_view_id"],
             crp_name: element["crp_name"],
             short_name: element["short_name"],
             crp_accepted: element["crp_accepted"],
@@ -740,6 +741,7 @@ class Util {
                 knowledge_product_type: element['knowledge_product_type'],
                 indicator_slug: element["indicator_slug"],
                 result_code: element['result_code'],
+                indicator_view_id: element["indicator_view_id"],
 
             });
         } else {
@@ -788,7 +790,7 @@ class Util {
                 knowledge_product_type: element['knowledge_product_type'],
                 indicator_slug: element["indicator_slug"],
                 result_code: element['result_code'],
-
+                indicator_view_id: element["indicator_view_id"],
             });
         }
 
