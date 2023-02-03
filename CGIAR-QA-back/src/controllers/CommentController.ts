@@ -871,6 +871,7 @@ class CommentController {
                     SELECT
                     comments.detail,
                     comments.id AS comment_id,
+                    evaluations.indicator_view_id AS id,
                     comments.updatedAt,
                     comments.createdAt,
                     comments.crp_approved,
@@ -883,7 +884,6 @@ class CommentController {
                     replies.createdAt AS reply_createdAt,
                     replies.updatedAt AS reply_updatedAt,
                     replies.detail AS reply,
-                    (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS id,
                     (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
                     (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
                     (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
@@ -915,6 +915,7 @@ class CommentController {
                                 SELECT
                                 comments.detail,
                                 comments.id AS comment_id,
+                                evaluations.indicator_view_id AS id,
                             comments.updatedAt,
                             comments.createdAt,
                             comments.crp_approved,
@@ -928,7 +929,6 @@ class CommentController {
                             replies.updatedAt AS reply_updatedAt,
                             replies.detail AS reply,
                             (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
-                            (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS id,
                             (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
                             (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
                             FROM
@@ -957,6 +957,7 @@ class CommentController {
                                 SELECT
                                 comments.detail,
                                 comments.id AS comment_id,
+                                evaluations.indicator_view_id AS id,
                             comments.updatedAt,
                             comments.createdAt,
                             comments.crp_approved,
@@ -970,7 +971,6 @@ class CommentController {
                             replies.updatedAt AS reply_updatedAt,
                             replies.detail AS reply,
                             (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
-                            (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS id,
                             (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
                             (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
                             FROM
@@ -997,7 +997,7 @@ class CommentController {
 
             const stream: Buffer = await Util.createCommentsExcel([
                 { header: 'Comment id', key: 'comment_id' },
-                { header: 'Result code', key: 'id' },
+                { header: 'Result Id', key: 'id' },
                 { header: 'Indicator Title', key: 'indicator_title' },
                 { header: 'Field', key: 'field' },
                 { header: 'Value', key: 'value' },
