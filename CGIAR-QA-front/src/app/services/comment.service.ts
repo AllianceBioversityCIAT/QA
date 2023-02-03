@@ -213,5 +213,8 @@ export class CommentService {
   patchPpuChanges(params) {
     return this.http.patch<any>(`${environment.apiUrl}/comment/ppu`, params);
   }
+  getEvaluationStatus(result_id) {
+    return this.http.get<any>(`${environment.apiUrl}/evaluation/status/${result_id}`)
+  }
 
 }

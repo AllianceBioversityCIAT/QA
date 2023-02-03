@@ -34,4 +34,7 @@ export class EvaluationsService {
   getAssessorsByEvaluation(id) {
     return this.http.get<any>(`${environment.apiUrl}/evaluation/${id}/assessors`)
   }
+  getEvaluationStatus(result_id) {
+    return this.http.get<any>(`${environment.apiUrl}/evaluation/status/${result_id}`)
+  }
 }

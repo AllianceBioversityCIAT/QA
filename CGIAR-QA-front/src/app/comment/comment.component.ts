@@ -80,6 +80,7 @@ export class CommentComponent implements OnInit {
   @Input() detailedData;
   @Input() userIsLeader: boolean;
   @Input() isCRP;
+  @Input() evalu_stat: any;
   // @Input() require_changes: boolean
   @Output("parentFun") parentFun: EventEmitter<any> = new EventEmitter();
   @Output("validateAllFieldsAssessed")
@@ -538,6 +539,7 @@ export class CommentComponent implements OnInit {
     this.answerComment(true, newReplyTypeId, comment);
     this.replyComment(comment);
     this.modalRef.hide();
+    this.evalu_stat.emit();
   }
 
   cancel(): void {

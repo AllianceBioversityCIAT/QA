@@ -21,12 +21,14 @@
     <!-- <div class="assessment-status">
       <p>Assessment Status:</p>
       <div class="status">
-        <i [ngClass]="{
+        <i
+          [ngClass]="{
             'icon-in-progress': gnralInfo.status === statusHandler.Complete,
             'icon-pending': gnralInfo.status === statusHandler.Pending,
             'icon-quality-assessed':
               gnralInfo.status === statusHandler.Finalized
-          }">
+          }"
+        >
         </i>
         {{ statusNames[gnralInfo.status] }}
       </div>
@@ -65,35 +67,8 @@
       *ngIf="detailedData" (click)="getCommentsExcel(detailedData[0])" class="btn btn-primary file-button">
       <i class="icon-download-excel"></i>
     </div>
+    <!-- <button (click)="getEvaluationStatus()">testing</button> -->
 
-    <!-- TO-DO -->
-    <!-- <a *ngIf="detailedData[0].editable_link" href="http://marlodev.ciat{{detailedData[0].editable_link.split('https://marlo')[1]}}" target="_blank">
-            <div tooltip="{{tooltips.editable_link}}" container="body" placement="top"
-                class="btn btn-primary file-button">
-                
-                <i class="icon-public-link"></i> 
-            </div>
-        </a> -->
-    <!-- <div class="btn-mis">
-      <a
-        tooltip="{{ tooltips.editable_link_mel }}"
-        *ngIf="crpsMEL.hasOwnProperty(detailedData[0].crp_acronym)"
-        href="{{ detailedData[0].editable_link }}"
-        target="_blank"
-      >
-        <i class="icon-mel"></i>
-      </a> -->
-    <!-- <a
-        *ngIf="
-          detailedData[0].editable_link &&
-          !crpsMEL.hasOwnProperty(detailedData[0].crp_acronym)
-        "
-        href="{{ detailedData[0].editable_link }}"
-        target="_blank"
-      >
-        <i class="icon-marlo"></i>
-      </a> -->
-    <!-- </div> -->
   </div>
 </div>
 
@@ -385,7 +360,8 @@
     class="col-sm-4 comments-container">
     <div [ngClass]="{ hide: !renderComments }" class="comments-component-container">
       <app-comment #comment [isCRP]="isCRP" (parentFun)="hideComments(fieldIndex, detailedData[fieldIndex], null)"
-        (updateNumCommnts)="updateNumCommnts($event, detailedData[fieldIndex])"></app-comment>
+        (updateNumCommnts)="updateNumCommnts($event, detailedData[fieldIndex])"
+        (evaluation_status)="getEvaluationStatus()" [evalu_stat]="eval_stat"></app-comment>
     </div>
   </div>
 </div>
