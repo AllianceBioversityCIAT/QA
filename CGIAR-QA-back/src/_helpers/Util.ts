@@ -430,7 +430,7 @@ class Util {
                         console.log(error);
                     }
                     let row = {
-                        id: rows[i].id,
+                        result_code: rows[i].result_code,
                         indicator_title: rows[i].indicator_title,
                         createdAt: rows[i].createdAt,
                         updatedAt: rows[i].updatedAt,
