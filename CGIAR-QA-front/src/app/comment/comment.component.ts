@@ -80,7 +80,7 @@ export class CommentComponent implements OnInit {
   @Input() detailedData;
   @Input() userIsLeader: boolean;
   @Input() isCRP;
-  @Input() evalu_stat: any;
+  @Input() eval_stat: any;
   // @Input() require_changes: boolean
   @Output("parentFun") parentFun: EventEmitter<any> = new EventEmitter();
   @Output("validateAllFieldsAssessed")
@@ -88,6 +88,8 @@ export class CommentComponent implements OnInit {
   @Output("updateNumCommnts") updateNumCommnts: EventEmitter<any> =
     new EventEmitter();
   @Output("is_highlight") is_highlight = new EventEmitter<any>();
+  @Output("evalu_stat") evalu_stat = new EventEmitter<any>();
+
   // @Output("require_change") require_change = new EventEmitter<any>();
   @ViewChild("commentContainer") private commentContainer: ElementRef;
   allRoles = Role;
@@ -394,6 +396,8 @@ export class CommentComponent implements OnInit {
     this.commentService.updateCommentReply(data).subscribe(
       (res) => {
         // console.log(res)
+        this.evalu_stat.emit();
+        console.log("🚀 ~ file: comment.component.ts:401 ~ updateCommentReply ~ this.evalu_stat", this.evalu_stat)
         this.getItemCommentData(false);
       },
       (error) => {
@@ -506,12 +510,6 @@ export class CommentComponent implements OnInit {
     }
   }
 
-  answerComment(is_approved: any, replyTypeId: number, comment: any) {
-    comment.crp_response = is_approved;
-    comment.replyTypeId = replyTypeId;
-    // this.is_approved = is_approved;
-    // this.availableComment = true
-  }
 
   //ACCEPT COMMENT
   openModal(template: TemplateRef<any>, e) {
@@ -532,6 +530,15 @@ export class CommentComponent implements OnInit {
     // this.confirmModal.nativeElement.style.top = `${this.currentY}px`;
   }
 
+  answerComment(is_approved: any, replyTypeId: number, comment: any) {
+    comment.crp_response = is_approved;
+    comment.replyTypeId = replyTypeId;
+    this.evalu_stat.emit();
+    console.log("🚀 ~ file: comment.component.ts:535 ~ answerComment ~ this.evalu_stat", this.evalu_stat)
+    // this.eval_stat.emit();
+    // this.is_approved = is_approved;
+    // this.availableComment = true
+  }
   confirm(is_approved: any, replyTypeId: number, comment: any): void {
     let newReplyTypeId = this.formData.comment.value
       ? this.replyTypes.accepted_with_comment
@@ -539,7 +546,6 @@ export class CommentComponent implements OnInit {
     this.answerComment(true, newReplyTypeId, comment);
     this.replyComment(comment);
     this.modalRef.hide();
-    this.evalu_stat.emit();
   }
 
   cancel(): void {
@@ -572,6 +578,8 @@ export class CommentComponent implements OnInit {
           this.availableComment = false;
           this.getItemCommentData();
           this.formData.comment.reset();
+          this.evalu_stat.emit();
+
         },
         (error) => {
           // console.log("replyComment", error);

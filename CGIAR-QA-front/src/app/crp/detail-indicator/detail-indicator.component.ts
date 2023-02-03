@@ -95,7 +95,7 @@ export class DetailIndicatorComponent implements OnInit {
   statusNames = StatusNames;
   statusNamesCRP = StatusNamesCRP;
   approveAllitems;
-  eval_stat: string
+  eval_stat: any
 
   @ViewChild("commentsElem") private commentsElem: ElementRef;
   @ViewChild("containerElement") private containerElement: ElementRef;

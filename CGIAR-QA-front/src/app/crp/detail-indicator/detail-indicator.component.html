@@ -360,8 +360,8 @@
     class="col-sm-4 comments-container">
     <div [ngClass]="{ hide: !renderComments }" class="comments-component-container">
       <app-comment #comment [isCRP]="isCRP" (parentFun)="hideComments(fieldIndex, detailedData[fieldIndex], null)"
-        (updateNumCommnts)="updateNumCommnts($event, detailedData[fieldIndex])"
-        (evaluation_status)="getEvaluationStatus()" [evalu_stat]="eval_stat"></app-comment>
+        (updateNumCommnts)="updateNumCommnts($event, detailedData[fieldIndex])" (evalu_stat)="getEvaluationStatus()"
+        [eval_stat]="eval_stat"></app-comment>
     </div>
   </div>
 </div>
