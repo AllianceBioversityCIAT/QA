@@ -95,6 +95,7 @@ export class DetailIndicatorComponent implements OnInit {
   statusNames = StatusNames;
   statusNamesCRP = StatusNamesCRP;
   approveAllitems;
+  eval_stat: string
 
   @ViewChild("commentsElem") private commentsElem: ElementRef;
   @ViewChild("containerElement") private containerElement: ElementRef;
@@ -162,15 +163,23 @@ export class DetailIndicatorComponent implements OnInit {
 
     })
   }
+  // setTimeout(() => { this.getEvaluationStatus() }, 5000)
 
   ngOnInit() {
     // console.log(this.crpsMEL);
+    this.getEvaluationStatus();
   }
 
   safeURL(url: string) {
     return this._sanitizer.bypassSecurityTrustResourceUrl(url);
   }
 
+  getEvaluationStatus() {
+    this.evaluationService.getEvaluationStatus(this.params.indicatorId).subscribe((resp) => {
+      this.gnralInfo.response_status = resp.data[0].status;
+      this.eval_stat = resp.data[0].status;
+    })
+  }
 
   getDetailedData() {
     this.evaluationService.getDataEvaluation(this.currentUser.id, this.activeRoute.snapshot.params).subscribe(
@@ -397,7 +406,6 @@ export class DetailIndicatorComponent implements OnInit {
 
     this.evaluationService.updateDataEvaluation(evaluationData, evaluationData.evaluation_id).subscribe(
       res => {
-        // //console.log(res)
         this.alertService.success(res.message);
         this.showSpinner('spinner1')
         this.getDetailedData();
@@ -413,7 +421,6 @@ export class DetailIndicatorComponent implements OnInit {
 
   validateCommentAvility(field, is_embed) {
     // console.log(this.gnralInfo)
-
     let userRole = this.currentUser.roles[0].description, avility = false;
     // if (this.gnralInfo.status === DetailedStatus.Pending) return false;
     switch (userRole) {
