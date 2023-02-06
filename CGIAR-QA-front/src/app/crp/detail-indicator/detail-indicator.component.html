@@ -136,7 +136,8 @@
               ">Show original value
               <i tooltip="{{ tooltips.changes_not_implemented }}" *ngIf="
                   detailedData[i].original_field === detailedData[i].value &&
-                  detailedData[i].count_disagree_comments != 1
+                  detailedData[i].count_disagree_comments != 1 && detailedData[i].is_core && 
+                  detailedData[i].comments_replies_count > 0
                 " class="material-icons-round">warning</i>
             </span>
             <span *ngIf="
@@ -149,7 +150,8 @@
               ">Hide original value
               <i tooltip="{{ tooltips.changes_not_implemented }}" *ngIf="
                   detailedData[i].original_field === detailedData[i].value &&
-                  detailedData[i].count_disagree_comments != 1
+                  detailedData[i].count_disagree_comments != 1 && detailedData[i].is_core && 
+                  detailedData[i].comments_replies_count > 0
                 " class="material-icons-round">warning</i>
             </span>
 

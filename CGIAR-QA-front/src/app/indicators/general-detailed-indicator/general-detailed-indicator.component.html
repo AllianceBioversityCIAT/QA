@@ -253,7 +253,9 @@
                     <i tooltip="{{ tooltips.changes_not_implemented }}" *ngIf="
                         detailedData[i].original_field ===
                           detailedData[i].value &&
-                        currentUser.cycle.cycle_stage == 2
+                        currentUser.cycle.cycle_stage == 2 &&
+                  !detailedData[i].count_disagree_comments && detailedData[i].is_core && 
+                  detailedData[i].comments_replies_count > 0 && detailedData[i].count_accepted_comments
                       " class="material-icons-round">warning</i>
                   </span>
 
@@ -267,7 +269,9 @@
                     <i tooltip="{{ tooltips.changes_not_implemented }}" *ngIf="
                         detailedData[i].original_field ===
                           detailedData[i].value &&
-                        currentUser.cycle.cycle_stage == 2
+                        currentUser.cycle.cycle_stage == 2 &&
+                  !detailedData[i].count_disagree_comments && detailedData[i].is_core && 
+                  detailedData[i].comments_replies_count > 0 && detailedData[i].count_accepted_comments
                       " class="material-icons-round">warning</i>
                   </span>
                   <div class="field-container original-field-container" *ngIf="!detailedData[i].hide_original_field"
