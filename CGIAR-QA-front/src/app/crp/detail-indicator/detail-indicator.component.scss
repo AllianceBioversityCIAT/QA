@@ -274,6 +274,24 @@
           margin: auto;
         }
       }
+      div.requires-icon {
+        // background-color: orange;
+        border-radius: 50%;
+        position: absolute;
+        margin-right: 30px;
+        height: 2em;
+        width: 2em;
+        opacity: 90%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        img {
+          height: 24px;
+          margin: auto;
+          align-items: center;
+          display: flex;
+        }
+      }
     }
   }
 }

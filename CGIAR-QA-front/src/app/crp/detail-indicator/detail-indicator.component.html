@@ -192,7 +192,9 @@
             }}">
             <i *ngIf="!field.loading" class="icon-message"></i>
             <span *ngIf="field.loading" class="spinner-border spinner-border-sm mr-1"></span>
-
+            <div *ngIf="detailedData[i].require_changes" class="requires-icon">
+              <img src="../../../assets/icons/require-changes.svg" alt="" />
+            </div>
             <div container="body" placement="top" *ngIf="field.replies_count != '0'" class="replies-count {{
                 field.replies_count ==
                 +field.comments_replies_count + +field.tpb_count
