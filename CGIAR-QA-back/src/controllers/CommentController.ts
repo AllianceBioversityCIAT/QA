@@ -709,10 +709,10 @@ class CommentController {
 
             if (highlight_comment != 0) {
                 updated_comment = await commentsRepository.save(comment_);
-                message = `Highlight mark by ${userId.username}`;
+                message = `Assessment highlighted by  ${userId.username}`;
             } else {
                 updated_comment = await commentsRepository.update(id, { highlight_by: null, highlight_comment: 0 });
-                message = `Highlight mark was removed in comment ${id} by ${userId.username}`;
+                message = `Highligh mark was removed in comment by ${userId.username}`;
             }
 
             res.status(201).send({ data: updated_comment, message: message });
