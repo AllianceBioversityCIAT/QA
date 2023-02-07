@@ -34,7 +34,8 @@
           </ul>
         </div>
       </div>
-      <div *ngIf="dashboardData && (dashboardData | json) != ({} | json)" class="w-100 grid-container">
+      <div *ngIf="dashboardData && (dashboardData | json) != ({} | json)" class="w-100"
+        [ngClass]="{'grid-container': currentUser.cycle.cycle_stage == '1','grid-second-round': currentUser.cycle.cycle_stage == '2'}">
         <div class="chart chart-1">
           <div class="header-chart">
             <h4 class="chart-title" [tooltip]="popTemplateChartA">
@@ -67,7 +68,8 @@
           </div>
         </div>
         <div class="chart" [ngClass]="{
-            'responses-to-comments-r2': currentUser.cycle.cycle_stage == '1'
+            'responses-to-comments-r2': currentUser.cycle.cycle_stage == '1',
+            'grid-second-round': currentUser.cycle.cycle_stage == '2'
           }" *ngIf="currentUser.cycle.cycle_stage == '1'">
           <div class="header-chart">
             <h4 class="chart-title">Responses to comments</h4>
@@ -82,7 +84,10 @@
             </app-donut-chart>
           </div>
         </div>
-        <div class="chart" *ngIf="currentUser.cycle.cycle_stage == '2'">
+        <!-- 'responses-to-comments-r2': currentUser.cycle.cycle_stage == '2' -->
+        <div class="chart" [ngClass]="{
+          'grid-second-round': currentUser.cycle.cycle_stage == '2'
+          }" *ngIf="currentUser.cycle.cycle_stage == '2'">
           <div class="header-chart">
             <h4 class="chart-title">Highlighted Comments</h4>
             <i class="icon-info" [tooltip]="popTemplateChartC"></i>
@@ -99,7 +104,9 @@
           </div>
         </div>
         <div class="chart" *ngIf="currentUser.cycle.cycle_stage == '1'" [ngClass]="{
-            'assessment-by-field-r2': currentUser.cycle.cycle_stage == '1'
+            'assessment-by-field-r2': currentUser.cycle.cycle_stage == '1',
+            'grid-second-round': currentUser.cycle.cycle_stage == '2'
+
           }">
           <div class="header-chart">
             <h4 class="chart-title">Assessment by field</h4>
