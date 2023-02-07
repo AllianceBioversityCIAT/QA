@@ -305,22 +305,22 @@
       </th>
 
       <!-- class="four tabCol" -->
-      <th *ngIf="showTpbComments" scope="col" [class.active]="order === 'comments_ppu_count'"
+      <th *ngIf="showTpbComments" scope="col" [class.active]="order === 'comments_tpb_count'"
         (click)="setOrder('comments_ppu_count')">
         <div class="header-row">
           T-pb instructions
-          <div class="order-icon" *ngIf="order === 'comments_ppu_count'">
+          <div class="order-icon" *ngIf="order === 'comments_tpb_count'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
           </div>
         </div>
       </th>
 
-      <th *ngIf="showImplementedDecisions" scope="col" [class.active]="order === 'comments_tpb_count'"
+      <th *ngIf="showImplementedDecisions" scope="col" [class.active]="order === 'comments_ppu_count'"
         (click)="setOrder('comments_tpb_count')">
         <div class="header-row">
           Implemented Decisions
-          <div class="order-icon" *ngIf="order === 'comments_tpb_count'">
+          <div class="order-icon" *ngIf="order === 'comments_ppu_count'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
           </div>
