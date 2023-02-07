@@ -678,16 +678,18 @@ class CommentController {
 
         try {
             let comment_ = await commentsRepository.findOneOrFail(id);
-            comment_.require_changes = require_changes;
-            comment_.tpb = tpb;
-
-            // if (require_changes != 0) {
-            update_require_changes = await commentsRepository.save(comment_);
-            message = `Require changes was marked`;
-            // } else {
-            //     update_require_changes = await commentsRepository.update(id, { require_changes: 0 });
-            //     message = 'Require changes was removed';
-            // }
+            
+            if (require_changes != 0) {
+                comment_.require_changes = require_changes;
+                comment_.tpb = tpb;
+                update_require_changes = await commentsRepository.save(comment_);
+                message = `The TPB instruction was successfully created with require changes`;
+            } else {
+                comment_.require_changes = 0;
+                comment_.tpb = tpb;
+                update_require_changes = await commentsRepository.save(comment_);
+                message = 'The TPB instruction was successfully created';
+            }
             res.status(202).json({ data: update_require_changes, message: message });
         } catch (error) {
             console.log(error);
