@@ -674,18 +674,20 @@ class CommentController {
         const { require_changes, id } = req.body;
         let update_require_changes;
         let message: String;
+        let tpb = 1;
 
         try {
             let comment_ = await commentsRepository.findOneOrFail(id);
             comment_.require_changes = require_changes;
+            comment_.tpb = tpb;
 
-            if (require_changes != 0) {
-                update_require_changes = await commentsRepository.save(comment_);
-                message = `Require changes was marked`;
-            } else {
-                update_require_changes = await commentsRepository.update(id, { require_changes: 0 });
-                message = 'Require changes was removed';
-            }
+            // if (require_changes != 0) {
+            update_require_changes = await commentsRepository.save(comment_);
+            message = `Require changes was marked`;
+            // } else {
+            //     update_require_changes = await commentsRepository.update(id, { require_changes: 0 });
+            //     message = 'Require changes was removed';
+            // }
             res.status(202).json({ data: update_require_changes, message: message });
         } catch (error) {
             console.log(error);
