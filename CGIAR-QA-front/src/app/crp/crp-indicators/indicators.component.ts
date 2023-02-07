@@ -106,10 +106,16 @@ export class CRPIndicatorsComponent implements OnInit {
   }
 
   ngOnInit() {
-    // setTimeout(() => {                           //<<<---using ()=> syntax
-    //   this.verifyIfOrderByStatus();
-    // }, 1000);
+    this.showColumsByDefault()
   }
+
+  showColumsByDefault() {
+    if (this.currentUser.cycle.cycle_stage == 2) {
+      this.showHighlightedComments = true
+      this.showTpbComments = true
+    }
+  }
+
 
   getEvaluationsList(params) {
     this.showSpinner(this.spinner_name);

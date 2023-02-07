@@ -124,10 +124,7 @@
           <div *ngIf="!crpComment" class="btn-danger-section">
             <button *ngIf="
               userIsLeader && comment.highlight_comment == true &&
-                currentUser.cycle.cycle_stage == 2 ||
-                !tpbUser?.isTPB &&
-                comment.highlight_comment == true &&
-                currentUser.cycle.cycle_stage == 2
+                currentUser.cycle.cycle_stage == 2 
               " (click)="
                 UpdateHighlightComment(
                   comment.id,
