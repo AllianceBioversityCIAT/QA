@@ -352,7 +352,7 @@
         dataFromItem.require_changes != 1 &&
         !isCRP) ||
       currentUser.roles[0].description === allRoles.admin ||
-      tpbUser?.isTPB
+      tpbUser?.isTPB && dataFromItem.require_changes != 1 
     " class="add-comment-container">
     <!-- commentsByCol?.replies.replies_count > 0 -->
     <form [formGroup]="commentGroup">
