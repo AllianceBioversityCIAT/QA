@@ -61,6 +61,7 @@ export class CommentComponent implements OnInit {
   isActiveButton = false;
   showCommentComponent = false;
   detailItemFounded = null;
+  detailItemFounded2 = null;
   adminUser: any = false;
 
 
@@ -152,13 +153,13 @@ export class CommentComponent implements OnInit {
       highlight_comment: !isHighlighted,
     };
 
-    // this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
-    // this.detailItemFounded.highlight_comment = !isHighlighted,
-    // console.log(this.detailedData)
+    this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
+    this.detailItemFounded.highlight_comment = !isHighlighted,
+      console.log(this.detailedData)
 
-    // comment.highlight_comment = !isHighlighted,
-    // console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
-    // console.log(params, '<===id')
+    comment.highlight_comment = !isHighlighted,
+      console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
+    console.log(params, '<===id')
 
     this.showSpinner(this.spinner_comment);
     // console.log()
