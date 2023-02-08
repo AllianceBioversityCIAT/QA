@@ -49,6 +49,7 @@ export class CommentComponent implements OnInit {
   statusHandler = DetailedStatus;
   commentsByCol: any = [];
   commentsByColSelected: any = null;
+  commentByTpb: any
   commentsByColReplies: any = [];
   mainComment: any = null;
   currentUser: User;
@@ -178,22 +179,6 @@ export class CommentComponent implements OnInit {
   }
 
 
-  UpdateRequireChanges(commentId: Number, requireChanges: boolean) {
-
-    console.log(requireChanges, 'checked')
-    let params = {
-      id: commentId,
-      require_changes: requireChanges
-    }
-    console.log("🚀 ~ line ~ params", params)
-    console.log(commentId, '<===id')
-
-    this.showSpinner(this.spinner_comment);
-    this.commentService.patchRequireChanges(params).subscribe((res) => {
-      console.log(res, '<-- response require changes');
-      this.getItemCommentData();
-    })
-  }
 
   implementedChange(commentByTpb, implementedChanges: boolean) {
 
@@ -294,24 +279,46 @@ export class CommentComponent implements OnInit {
       );
   }
 
-  addComment(parentCommentId: number) {
+  UpdateRequireChanges(commentId: number, commentIdCreated: number, requireChanges: boolean) {
+
+    console.log(requireChanges, 'checked')
+    let params = {
+      id: commentId, commentIdCreated,
+      // id: commentIdCreated,
+      require_changes: requireChanges,
+      tpb: true
+    }
+    console.log("🚀 ~ line ~ params", params)
+    console.log(commentId, '<===id')
+
+    this.showSpinner(this.spinner_comment);
+    this.commentService.patchRequireChanges(params).subscribe((res) => {
+      console.log(res, '<-- response require changes');
+      this.getItemCommentData();
+    })
+  }
+
+  addComment(parentCommentId: number, commentIdCreated: number) {
     console.log("ADDING COMMENT");
     if (this.commentGroup.invalid) {
       this.alertService.error("comment is required", false);
       return;
     }
 
+    const found = this.currentUser.indicators.find(element => {
+      return element?.isTPB === true
+    })
+    this.tpbUser = found
+    console.log("🚀 ~ file: comment.component.ts:312 ~ addComment ~ found", found)
+
     let element = <HTMLInputElement>document.getElementById("require_changes");
     let checked = element?.checked;
 
     this.showSpinner(this.spinner_comment);
-    console.log(this.original_field);
 
     var offset = new Date().getTimezoneOffset();
     var gmt = new Date().toLocaleString() + " GMT " + -offset / 60;
-    // var date = moment(gmt).toDate();
     var date = new Date(gmt)
-    console.log(date)
 
     this.commentService
       .createDataComment({
@@ -322,18 +329,23 @@ export class CommentComponent implements OnInit {
         approved: true,
         original_field: this.original_field,
         require_changes: checked,
-        tpb: checked,
+        tpb: found?.isTPB,
         createdAt: date
 
       })
       .subscribe(
         (res) => {
           console.log("COMMENT ADDED");
+          console.log(res, 'jeje')
+          this.commentByTpb = res.data.id
+          console.log("🚀 ~ file: comment.component.ts:335 ~ addComment ~ this.commentByTpb", this.commentByTpb)
           this.getItemCommentData(true);
           this.formData.comment.reset();
           this.validateAllFieldsAssessed.emit();
           if (checked && this.commentsByColSelected != null) {
-            this.UpdateRequireChanges(parentCommentId, checked)
+            this.UpdateRequireChanges(parentCommentId, this.commentByTpb, true)
+          } else {
+            this.UpdateRequireChanges(parentCommentId, this.commentByTpb, true);
           }
         },
         (error) => {
@@ -345,6 +357,7 @@ export class CommentComponent implements OnInit {
 
     // UpdateRequireChanges(this.commentsByCol.id, this.commentsByCol.require_changes);
   }
+
 
   updateComment(type, data: any, parentCommentId) {
     // updateComment(type, data: any, commentId: number) {
@@ -369,7 +382,7 @@ export class CommentComponent implements OnInit {
 
     this.commentService.updateDataComment(params).subscribe(
       (res) => {
-        this.UpdateRequireChanges(parentCommentId, false)
+        this.UpdateRequireChanges(parentCommentId, this.commentByTpb, false)
         this.getItemCommentData(true);
       },
       (error) => {

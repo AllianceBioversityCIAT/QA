@@ -100,10 +100,10 @@
             currentUser.cycle.cycle_stage == 2 &&
             comment.replies.replies_count > 0 &&
             !isCRP) || -->
+            <!-- comment.tpb != 1 && -->
             <button *ngIf="
                 userIsLeader &&
                 comment.replies.replies_count &&
-                comment.tpb != 1 &&
                 comment.highlight_comment == false &&
                 currentUser.cycle.cycle_stage == 2 &&
                 !isCRP &&
@@ -375,8 +375,9 @@
     </div>
     <footer>
       <span class="wordCount">{{ getWordCount(formData.comment.value) }} / 1000 words</span>
-      <button type="button" class="btn btn-agree" (click)="addComment(commentsByColSelected?.id)">
+      <button type="button" class="btn btn-agree" (click)="addComment(commentsByColSelected?.id, commentByTpb)">
         ADD
+        <!-- (click)="UpdateRequireChanges(commentsByColSelected?.id, commentByTpb, true)" -->
       </button>
     </footer>
   </div>
