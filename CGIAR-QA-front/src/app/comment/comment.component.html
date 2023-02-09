@@ -329,13 +329,15 @@
     ">
     <input *ngIf="
         dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.require_changes != 1 &&
+        commentsByColSelected?.require_changes != 1 && 
+        commentsByColSelected?.tpb != 1 &&
         currentUser.cycle.cycle_stage == 2 &&
         commentsByCol.length > 0
       " class="checkbox-style" type="checkbox" id="require_changes" />
     <label *ngIf="
         dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.require_changes != 1 &&
+        commentsByColSelected?.require_changes != 1 && 
+        commentsByColSelected?.tpb != 1 &&
         currentUser.cycle.cycle_stage == 2 &&
         commentsByCol.length > 0
       " class="checkbox-label" for="changes" for="require_changes">
@@ -344,17 +346,21 @@
       reported in the PRMS Reporting tool
     </label>
   </div>
-
+  <!-- <div>
+    {{commentsByColSelected?.tpb}}
+  </div> -->
   <div *ngIf="
       (!availableComment &&
-        !crpComment &&
+        !crpComment && commentsByColSelected?.tpb != 1 &&
         currentUser.hasOwnProperty('cycle') &&
-        dataFromItem.require_changes != 1 &&
         !isCRP) ||
       currentUser.roles[0].description === allRoles.admin ||
-      tpbUser?.isTPB && dataFromItem.require_changes != 1 
+      tpbUser?.isTPB && (commentsByColSelected?.tpb != 1)
+    
     " class="add-comment-container">
     <!-- commentsByCol?.replies.replies_count > 0 -->
+    <!-- && dataFromItem.require_changes != 1 -->
+    <!-- && limitCommentsByTpb != 1 -->
     <form [formGroup]="commentGroup">
       <!-- <p><span class="textarea" role="textbox" contenteditable maxlength="{{totalChar}}" formControlName="comment"></span></p> -->
       <textarea maxlength="{{ totalChar }}" formControlName="comment"></textarea>
@@ -375,7 +381,7 @@
     </div>
     <footer>
       <span class="wordCount">{{ getWordCount(formData.comment.value) }} / 1000 words</span>
-      <button type="button" class="btn btn-agree" (click)="addComment(commentsByColSelected?.id, commentByTpb)">
+      <button type="button" class="btn btn-agree" (click)="addComment()">
         ADD
         <!-- (click)="UpdateRequireChanges(commentsByColSelected?.id, commentByTpb, true)" -->
       </button>

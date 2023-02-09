@@ -50,6 +50,7 @@ export class CommentComponent implements OnInit {
   commentsByCol: any = [];
   commentsByColSelected: any = null;
   commentByTpb: any
+  // limitCommentsByTpb: any = null
   commentsByColReplies: any = [];
   mainComment: any = null;
   currentUser: User;
@@ -133,6 +134,8 @@ export class CommentComponent implements OnInit {
       this.getQuickComments();
     }
     this.findAdminUser()
+
+
   }
 
   findAdminUser() {
@@ -279,11 +282,11 @@ export class CommentComponent implements OnInit {
       );
   }
 
-  UpdateRequireChanges(commentId: number, commentIdCreated: number, requireChanges: boolean) {
+  UpdateRequireChanges(commentId: number, requireChanges: boolean) {
 
     console.log(requireChanges, 'checked')
     let params = {
-      id: commentId, commentIdCreated,
+      id: commentId,
       // id: commentIdCreated,
       require_changes: requireChanges,
       tpb: true
@@ -298,18 +301,24 @@ export class CommentComponent implements OnInit {
     })
   }
 
-  addComment(parentCommentId: number, commentIdCreated: number) {
+  addComment() {
     console.log("ADDING COMMENT");
     if (this.commentGroup.invalid) {
       this.alertService.error("comment is required", false);
       return;
     }
 
+    // this.commentsByCol.find((tpbComment) => {
+    //   if (tpbComment?.tpb && tpbComment?.is_deleted === false) {
+    //     this.limitCommentsByTpb = tpbComment.tpb
+    //     console.log("🚀 ~this.limitCommentsByTpb", this.limitCommentsByTpb)
+    //   }
+    // })
+
     const found = this.currentUser.indicators.find(element => {
       return element?.isTPB === true
     })
     this.tpbUser = found
-    console.log("🚀 ~ file: comment.component.ts:312 ~ addComment ~ found", found)
 
     let element = <HTMLInputElement>document.getElementById("require_changes");
     let checked = element?.checked;
@@ -336,16 +345,12 @@ export class CommentComponent implements OnInit {
       .subscribe(
         (res) => {
           console.log("COMMENT ADDED");
-          console.log(res, 'jeje')
           this.commentByTpb = res.data.id
-          console.log("🚀 ~ file: comment.component.ts:335 ~ addComment ~ this.commentByTpb", this.commentByTpb)
           this.getItemCommentData(true);
           this.formData.comment.reset();
           this.validateAllFieldsAssessed.emit();
-          if (checked && this.commentsByColSelected != null) {
-            this.UpdateRequireChanges(parentCommentId, this.commentByTpb, true)
-          } else {
-            this.UpdateRequireChanges(parentCommentId, this.commentByTpb, true);
+          if (checked && found?.isTPB) {
+            this.UpdateRequireChanges(this.commentByTpb, true)
           }
         },
         (error) => {
@@ -354,7 +359,6 @@ export class CommentComponent implements OnInit {
           this.alertService.error(error);
         }
       );
-
     // UpdateRequireChanges(this.commentsByCol.id, this.commentsByCol.require_changes);
   }
 
@@ -367,7 +371,7 @@ export class CommentComponent implements OnInit {
       return;
     }
     data[type] = !data[type];
-    console.log({ data });
+    // console.log({ data });
     let params = {
       approved: data.approved,
       is_visible: data.is_visible,
@@ -377,12 +381,11 @@ export class CommentComponent implements OnInit {
       userId: data.user.id,
       require_changes: false
     };
-    console.log(params)
     this.showSpinner(this.spinner_comment);
 
     this.commentService.updateDataComment(params).subscribe(
       (res) => {
-        this.UpdateRequireChanges(parentCommentId, this.commentByTpb, false)
+        this.UpdateRequireChanges(parentCommentId, false)
         this.getItemCommentData(true);
       },
       (error) => {
@@ -400,18 +403,15 @@ export class CommentComponent implements OnInit {
       this.alertService.error(canUpdate.message);
       return;
     }
-    console.log(data);
     data[type] = !data[type];
     delete data.user.replies;
     delete data.user.crps;
     delete data.user.indicators;
     this.showSpinner(this.spinner_comment);
-    console.log(data)
     this.commentService.updateCommentReply(data).subscribe(
       (res) => {
         // console.log(res)
         this.evalu_stat.emit();
-        console.log("🚀 ~ file: comment.component.ts:401 ~ updateCommentReply ~ this.evalu_stat", this.evalu_stat)
         this.getItemCommentData(false);
       },
       (error) => {
@@ -483,7 +483,6 @@ export class CommentComponent implements OnInit {
         });
         // I can iterate in reverse order
         this.commentsByCol.forEach(element => {
-          console.log(element.is_deleted);
           let found = false;
           if (found === false) {
             if (!element.is_deleted) {
@@ -492,6 +491,12 @@ export class CommentComponent implements OnInit {
             }
           }
         });
+        // this.limitCommentsByTpb = this.commentsByCol.find((tpbComment) => {
+        //   if (tpbComment?.tpb && tpbComment?.is_deleted === false) {
+        //     this.limitCommentsByTpb = tpbComment.tpb
+        //     console.log("🚀 ~this.limitCommentsByTpb", this.limitCommentsByTpb)
+        //   }
+        // })
       },
       (error) => {
         console.log("getItemCommentData", error);
@@ -548,7 +553,6 @@ export class CommentComponent implements OnInit {
     comment.crp_response = is_approved;
     comment.replyTypeId = replyTypeId;
     this.evalu_stat.emit();
-    console.log("🚀 ~ file: comment.component.ts:535 ~ answerComment ~ this.evalu_stat", this.evalu_stat)
     // this.eval_stat.emit();
     // this.is_approved = is_approved;
     // this.availableComment = true

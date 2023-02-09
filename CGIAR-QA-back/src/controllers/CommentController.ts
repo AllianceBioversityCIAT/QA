@@ -674,19 +674,19 @@ class CommentController {
         const { require_changes, id } = req.body;
         let update_require_changes;
         let message: String;
-        let tpb = 1;
+        // let tpb = 1;
 
         try {
             let comment_ = await commentsRepository.findOneOrFail(id);
-            
+
             if (require_changes != 0) {
                 comment_.require_changes = require_changes;
-                comment_.tpb = tpb;
+                // comment_.tpb = tpb;
                 update_require_changes = await commentsRepository.save(comment_);
                 message = `The TPB instruction was successfully created with require changes`;
             } else {
                 comment_.require_changes = 0;
-                comment_.tpb = tpb;
+                // comment_.tpb = tpb;
                 update_require_changes = await commentsRepository.save(comment_);
                 message = 'The TPB instruction was successfully created';
             }
