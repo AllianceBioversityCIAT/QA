@@ -1297,23 +1297,29 @@ class EvaluationsController {
     static pendingHighlights = async (req: Request, res: Response) => {
         const { crp_id } = req.query;
         let queryRunner = getConnection().createQueryBuilder();
+        let data;
 
         try {
             const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                 `SELECT
                     SUM(
                         IF(
-                            comments.highlight_comment = 1
-                            AND comments.ppu = 0,
+                            comments.highlight_comment = 1,
                             1,
                             0
                         )
                     ) AS pending_highlight_comments,
                     SUM(
                         IF(
+                            comments.tpb = 1,
+                            1,
+                            0
+                        )
+                    ) AS total_tpb_comments,
+                    SUM(
+                        IF(
                             comments.highlight_comment = 1
-                            AND comments.require_changes = 1
-                            AND comments.ppu = 1,
+                            AND comments.require_changes = 1,
                             1,
                             0
                         )
@@ -1321,8 +1327,7 @@ class EvaluationsController {
                     SUM(
                         IF(
                             comments.highlight_comment = 1
-                            AND comments.require_changes = 0
-                            AND comments.ppu = 1,
+                            AND comments.require_changes = 0,
                             1,
                             0
                         )
@@ -1340,7 +1345,8 @@ class EvaluationsController {
                 FROM
                     qa_comments comments
                     LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
+                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+                    AND replies.is_deleted = 0
                 WHERE
                     comments.is_deleted = 0
                     AND comments.detail IS NOT NULL
@@ -1354,7 +1360,23 @@ class EvaluationsController {
             );
             let highlights = await queryRunner.connection.query(query, parameters);
 
-            res.status(200).json({ data: highlights, message: 'All highlights status' });
+            const convert = highlights[0];
+            let pending_highlight_comments = convert.pending_highlight_comments - convert.total_tpb_comments;
+            let solved_with_require_request = convert.solved_with_require_request;
+            let solved_without_require_request = convert.solved_without_require_request;
+            let pending_tpb_decisions = convert.pending_tpb_decisions;
+            let indicator_view_name = convert.indicator_view_name;
+
+            data = {
+                pending_highlight_comments,
+                solved_with_require_request,
+                solved_without_require_request,
+                pending_tpb_decisions,
+                indicator_view_name
+            }
+
+            res.status(200).json({ data: [data], message: 'All highlights status' });
+            console.log("🚀 ~ file: EvaluationsController.ts:1379 ~ EvaluationsController ~ pendingHighlights= ~ data", data)
         } catch (error) {
             res.status(200).json({ data: error, message: 'Could not retrieve the highlighted status' });
         }
