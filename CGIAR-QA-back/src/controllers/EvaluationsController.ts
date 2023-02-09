@@ -1304,7 +1304,6 @@ class EvaluationsController {
                     SUM(
                         IF(
                             comments.highlight_comment = 1
-                            AND comments.tpb = 1,
                             AND comments.ppu = 0,
                             1,
                             0
