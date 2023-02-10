@@ -1295,9 +1295,7 @@ class EvaluationsController {
     }
 
     static pendingHighlights = async (req: Request, res: Response) => {
-        const { crp_id } = req.query;
         let queryRunner = getConnection().createQueryBuilder();
-        let data;
 
         try {
             const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -1358,24 +1356,30 @@ class EvaluationsController {
                 {},
                 {}
             );
+
             let highlights = await queryRunner.connection.query(query, parameters);
 
-            const convert = highlights[0];
-            let pending_highlight_comments = convert.pending_highlight_comments - convert.total_tpb_comments;
-            let solved_with_require_request = convert.solved_with_require_request;
-            let solved_without_require_request = convert.solved_without_require_request;
-            let pending_tpb_decisions = convert.pending_tpb_decisions;
-            let indicator_view_name = convert.indicator_view_name;
+            let data = [];
+            for (let i = 0; i < highlights.length; i++) {
+                const convert = highlights[i];
+                let pending_highlight_comments = convert.pending_highlight_comments - convert.total_tpb_comments;
+                let solved_with_require_request = convert.solved_with_require_request;
+                let solved_without_require_request = convert.solved_without_require_request;
+                let pending_tpb_decisions = convert.pending_tpb_decisions;
+                let indicator_view_name = convert.indicator_view_name;
 
-            data = {
-                pending_highlight_comments,
-                solved_with_require_request,
-                solved_without_require_request,
-                pending_tpb_decisions,
-                indicator_view_name
+                data.push({
+                    pending_highlight_comments,
+                    solved_with_require_request,
+                    solved_without_require_request,
+                    pending_tpb_decisions,
+                    indicator_view_name
+                });
             }
 
-            res.status(200).json({ data: [data], message: 'All highlights status' });
+            res.status(200).json({ data: data, message: 'All highlights status' });
+
+            res.status(200).json({ data: [{ data }], message: 'All highlights status' });
             console.log("🚀 ~ file: EvaluationsController.ts:1379 ~ EvaluationsController ~ pendingHighlights= ~ data", data)
         } catch (error) {
             res.status(200).json({ data: error, message: 'Could not retrieve the highlighted status' });
