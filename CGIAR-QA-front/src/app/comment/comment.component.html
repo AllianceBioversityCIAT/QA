@@ -107,8 +107,7 @@
                 comment.highlight_comment == false &&
                 currentUser.cycle.cycle_stage == 2 &&
                 !isCRP &&
-                comment.replies.replies_count > 0 &&
-                dataFromItem.is_core == 1
+                dataFromItem.is_core == 1 && comment.tpb == 0
               " (click)="
                 UpdateHighlightComment(
                   comment.id,
@@ -332,14 +331,16 @@
         commentsByColSelected?.require_changes != 1 && 
         commentsByColSelected?.tpb != 1 &&
         currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0
+        commentsByCol.length > 0 &&
+        dataFromItem.is_core == 1
       " class="checkbox-style" type="checkbox" id="require_changes" />
     <label *ngIf="
         dataFromItem.require_changes != 1 &&
         commentsByColSelected?.require_changes != 1 && 
         commentsByColSelected?.tpb != 1 &&
         currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0
+        commentsByCol.length > 0 &&
+        dataFromItem.is_core == 1
       " class="checkbox-label" for="changes" for="require_changes">
       <!-- dataFromItem.require_changes != 1 && dataFromItem.replies_count > 0 -->
       Click here to indicate if your comment requires changes in the result
