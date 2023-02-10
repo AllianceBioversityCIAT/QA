@@ -1378,8 +1378,6 @@ class EvaluationsController {
             }
 
             res.status(200).json({ data: data, message: 'All highlights status' });
-
-            res.status(200).json({ data: [{ data }], message: 'All highlights status' });
             console.log("🚀 ~ file: EvaluationsController.ts:1379 ~ EvaluationsController ~ pendingHighlights= ~ data", data)
         } catch (error) {
             res.status(200).json({ data: error, message: 'Could not retrieve the highlighted status' });
