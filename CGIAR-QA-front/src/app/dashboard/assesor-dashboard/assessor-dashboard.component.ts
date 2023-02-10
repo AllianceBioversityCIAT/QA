@@ -105,8 +105,6 @@ export class AssessorDashboardComponent implements OnInit {
     this.showSpinner()
     console.log({ currentUser: this.currentUser });
     this.loadDashData();
-
-    console.log(this.dashService.getHighlightedData())
   }
 
   loadDashData() {
@@ -134,7 +132,6 @@ export class AssessorDashboardComponent implements OnInit {
           // console.log({ dashData });
 
           this.dashboardData = this.dashService.groupData(dashData.data);
-          console.log(this.dashboardData);
           // this.selectedIndicator = Object.keys(this.dashboardData)[0]
           this.dataSelected = this.dashboardData[this.selectedIndicator];
         }
@@ -160,8 +157,6 @@ export class AssessorDashboardComponent implements OnInit {
 
         if (highlightData) {
           this.highlightedData = highlightData.data;
-          console.log("🚀 ~ file: assessor-dashboard.component.ts:163 ~ AssessorDashboardComponent ~ loadDashData ~ highlightData", this.highlightedData)
-
         }
 
         //UPDATE CHARTS
@@ -378,9 +373,7 @@ export class AssessorDashboardComponent implements OnInit {
     let dataset = [];
     let brushes = { domain: [] };
 
-    console.log(data)
     if (data != undefined && data != 'undefined') {
-      console.log(data)
 
       let pending_highlight_comment = { name: 'Pending', value: +data.pending_highlight_comments }
       dataset.push(pending_highlight_comment);
@@ -417,7 +410,7 @@ export class AssessorDashboardComponent implements OnInit {
     dataset.forEach(tag => {
       brushes.domain.push(colors[tag.name]);
     });
-    console.log({ dataset, brushes });
+    // console.log({ dataset, brushes });
 
 
     return { dataset, brushes };
@@ -430,13 +423,8 @@ export class AssessorDashboardComponent implements OnInit {
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(this.dashboardCommentsData[this.selectedIndicator]);
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
     // this.dataCharts.highlitedPendingComments = this.formatPendingHighlight(this.dashboardCommentsData[this.selectedIndicator])
-    console.log("🚀 ~ file: assessor-dashboard.component.ts:443 ~ AssessorDashboardComponent ~ updateDataCharts ~ this.highlightedData", this.highlightedData)
-
     let find = this.highlightedData.find(indi => indi.indicator_view_name == this.selectedIndicator)
-    // console.log(find)
-
     this.dataCharts.highlitedPendingComments = this.getHighlightData(find, this.selectedIndicator)
-    console.log("🚀 ~ file: assessor-dashboard.component.ts:441 ~ AssessorDashboardComponent ~ updateDataCharts ~ this.dataCharts.highlitedPendingComments", this.dataCharts.highlitedPendingComments)
   }
 
   updateFeedTags(tagTypeId) {

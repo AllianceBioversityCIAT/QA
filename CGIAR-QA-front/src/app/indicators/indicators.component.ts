@@ -198,6 +198,7 @@ export class IndicatorsComponent implements OnInit {
   showhighlightColum() {
     if (this.currentUser.cycle.cycle_stage == 2) {
       this.showHighlightedComments = true
+      this.showTpbComments = true
     }
   }
 
