@@ -349,8 +349,7 @@
                   <span *ngIf="detailedData[i].loading" class="spinner-border spinner-border-sm mr-1"></span>
                   <!-- *ngIf="detailedData[i].is_highlight" -->
                   <div *ngIf="
-                      (detailedData[i].highlight_comment &&
-                        detailedData[i].comments_replies_count > 0) ||
+                      (detailedData[i].highlight_comment) ||
                       detailedData[i].is_highlight ||
                       detailedData[i].highligth_by
                     " class="highlighted-icon">

@@ -158,8 +158,14 @@ export class CommentComponent implements OnInit {
     };
 
     this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
-    this.detailItemFounded.highlight_comment = !isHighlighted,
-      console.log(this.detailedData)
+    console.log("🚀 ~ file:  UpdateHighlightComment ~ this.detailItemFounded", this.detailItemFounded)
+    if (!this.detailItemFounded) {
+      this.detailItemFounded = this.commentsByColSelected;
+      this.detailItemFounded.highlight_comment = !isHighlighted
+    } else {
+      this.detailItemFounded.highlight_comment = !isHighlighted
+    }
+    console.log(this.detailedData)
 
     comment.highlight_comment = !isHighlighted,
       console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)

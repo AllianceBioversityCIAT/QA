@@ -12,7 +12,7 @@
     </div>
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
-        <div class="highlight-view-section" *ngIf="comment.highlight_comment">
+        <div class="highlight-view-section" *ngIf="comment.highlight_comment && !comment.is_deleted">
           <img class="fa-shake" src="assets/icons/highlight.svg" alt="" srcset="" />
           <p class="highligt-header">
             Comment highlighted by {{ comment.replies.highlight_by }}
@@ -53,7 +53,7 @@
             <p class="comment">
               {{ comment.detail }}
             </p>
-            <app-tags-bar *ngIf="currentUser.roles[0].id != 3 && !tpbUser?.isTPB" [comment]="comment"
+            <app-tags-bar *ngIf="currentUser.roles[0].id != 3 && !tpbUser?.isTPB && !comment.tpb" [comment]="comment"
               [currentUser]="currentUser" (tagEvent)="toggleTag($event)"></app-tags-bar>
 
             <!-- currentUser.indicators.isTPB != 1 -->
