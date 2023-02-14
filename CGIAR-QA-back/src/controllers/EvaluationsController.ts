@@ -1302,14 +1302,16 @@ class EvaluationsController {
                 `SELECT
                     SUM(
                         IF(
-                            comments.highlight_comment = 1,
+                            comments.highlight_comment = 1
+                            AND comments.is_deleted = 0,
                             1,
                             0
                         )
                     ) AS pending_highlight_comments,
                     SUM(
                         IF(
-                            comments.tpb = 1,
+                            comments.tpb = 1
+                            AND comments.is_deleted = 0,
                             1,
                             0
                         )
@@ -1317,7 +1319,9 @@ class EvaluationsController {
                     SUM(
                         IF(
                             comments.highlight_comment = 1
-                            AND comments.require_changes = 1,
+                            AND comments.require_changes = 1
+                            AND comments.ppu = 1
+                            AND comments.is_deleted = 0,
                             1,
                             0
                         )
@@ -1325,6 +1329,7 @@ class EvaluationsController {
                     SUM(
                         IF(
                             comments.highlight_comment = 1
+                            AND comments.ppu = 1
                             AND comments.require_changes = 0,
                             1,
                             0
@@ -1334,7 +1339,8 @@ class EvaluationsController {
                         IF(
                             comments.highlight_comment = 1
                             AND comments.require_changes = 1
-                            AND comments.ppu = 0,
+                            AND comments.ppu = 0
+                            AND comments.is_deleted = 0,
                             1,
                             0
                         )
@@ -1378,7 +1384,6 @@ class EvaluationsController {
             }
 
             res.status(200).json({ data: data, message: 'All highlights status' });
-            console.log("🚀 ~ file: EvaluationsController.ts:1379 ~ EvaluationsController ~ pendingHighlights= ~ data", data)
         } catch (error) {
             res.status(200).json({ data: error, message: 'Could not retrieve the highlighted status' });
         }
