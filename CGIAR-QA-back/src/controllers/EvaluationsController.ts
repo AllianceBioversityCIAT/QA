@@ -1318,8 +1318,7 @@ class EvaluationsController {
                     ) AS total_tpb_comments,
                     SUM(
                         IF(
-                            comments.highlight_comment = 1
-                            AND comments.require_changes = 1
+                            comments.require_changes = 1
                             AND comments.ppu = 1
                             AND comments.is_deleted = 0,
                             1,
