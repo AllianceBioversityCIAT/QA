@@ -1319,7 +1319,6 @@ class EvaluationsController {
                     SUM(
                         IF(
                             comments.require_changes = 1
-                            AND comments.ppu = 1
                             AND comments.is_deleted = 0,
                             1,
                             0
@@ -1327,8 +1326,8 @@ class EvaluationsController {
                     ) AS solved_with_require_request,
                     SUM(
                         IF(
-                            comments.ppu = 1
-                            AND comments.require_changes = 0
+                            comments.require_changes = 0
+                            AND comments.tpb = 1
                             AND comments.is_deleted = 0,
                             1,
                             0
