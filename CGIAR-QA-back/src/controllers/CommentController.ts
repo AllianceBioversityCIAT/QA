@@ -109,9 +109,10 @@ class CommentController {
                             ) AS solved_without_require_request,
                             SUM(
                                 IF(
-                                    comments.highlight_comment = 1
+                                    comments.tpb = 1
                                     AND comments.require_changes = 1
-                                    AND comments.ppu = 0,
+                                    AND comments.ppu = 0
+                                    AND comments.is_deleted = 0,
                                     1,
                                     0
                                 )
