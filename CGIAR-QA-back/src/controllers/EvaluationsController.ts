@@ -251,6 +251,8 @@ class EvaluationsController {
                                                  AND is_deleted = 0
                                                  AND is_visible = 1
                                                  AND detail IS NOT NULL
+                                                 AND tpb = 1
+                                                 AND ppu = 0
                                  ) <= (
                                          SELECT COUNT(id)
                                          FROM qa_comments_replies
@@ -264,6 +266,8 @@ class EvaluationsController {
                                                                  AND is_deleted = 0
                                                                  AND is_visible = 1
                                                                  AND detail IS NOT NULL
+                                                                 AND tpb = 1
+                                                                 AND ppu 1
                                                  )
                                      
                                  ),
@@ -387,7 +391,9 @@ class EvaluationsController {
                                                 AND is_deleted = 0
                                                 AND is_visible = 1
                                                 AND detail IS NOT NULL
-                                ) <= (
+                                                AND tpb = 1
+                                                AND ppu = 0
+                                ) = (
                                         SELECT
                                                 COUNT(id)
                                         FROM
@@ -406,6 +412,8 @@ class EvaluationsController {
                                                                 AND is_deleted = 0
                                                                 AND is_visible = 1
                                                                 AND detail IS NOT NULL
+                                                                AND tpb = 1
+                                                                AND ppu = 1
                                                 )
                                 ),
                                 "complete",
