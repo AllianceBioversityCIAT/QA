@@ -113,6 +113,7 @@ export class CRPIndicatorsComponent implements OnInit {
     if (this.currentUser.cycle.cycle_stage == 2) {
       this.showHighlightedComments = true
       this.showTpbComments = true
+      this.showImplementedDecisions = true
     }
   }
 
