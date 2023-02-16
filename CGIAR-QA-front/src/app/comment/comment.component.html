@@ -136,8 +136,9 @@
             </button>
           </div>
 
+          <!-- crpComment && comment.crp_approved === null && comment.tpb == 0 -->
           <div *ngIf="
-              crpComment && comment.crp_approved === null && comment.tpb == 0
+              crpComment && comment.crp_approved === null && comment.tpb == 0 && adminUser
             " style="flex-direction: row" class="add-comment-container">
             <button type="button" class="btn accept" (click)="openModal(confirmModal, $event)">
               ACCEPT
