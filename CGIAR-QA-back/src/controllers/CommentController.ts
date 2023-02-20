@@ -62,7 +62,9 @@ class CommentController {
                             ) AS comments_discarded,
                             SUM(
                                 IF (
-                                    comments.replyTypeId IS NULL AND comments.tpb = 0,
+                                    comments.replyTypeId IS NULL 
+                                    AND comments.tpb = 0
+                                    AND comments.cycle_id = 1,
                                     1,
                                     0
                                 )
@@ -141,6 +143,7 @@ class CommentController {
                 );
                 // // console.log('role === RolesHandler.crp', query, parameters)
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: CommentController.ts:146 ~ CommentController ~ commentsCount= ~ rawData:", rawData)
             } else {
 
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
@@ -165,10 +168,10 @@ class CommentController {
                         SUM(IF(comments.replyTypeId = 3, 1, 0)) AS comments_clarification,
                         SUM(IF(comments.replyTypeId = 5, 1, 0)) AS comments_discarded,
                         SUM(
-                            IF(
-                                comments.replyTypeId IS NULL
+                            IF (
+                                comments.replyTypeId IS NULL 
                                 AND comments.tpb = 0
-                                AND comments.is_deleted = 0,
+                                AND comments.cycle_id = 1,
                                 1,
                                 0
                             )
@@ -259,6 +262,7 @@ class CommentController {
                     {}
                 );
                 rawData = await queryRunner.connection.query(query, parameters);
+                console.log("🚀 ~ file: CommentController.ts:265 ~ CommentController ~ commentsCount= ~ rawData:", rawData)
 
                 /* 
                 if (crp_id !== 'undefined') {
