@@ -64,7 +64,7 @@ class CommentController {
                                 IF (
                                     comments.replyTypeId IS NULL 
                                     AND comments.tpb = 0
-                                    AND comments.cycle_id = 1,
+                                    AND comments.cycleId = 1,
                                     1,
                                     0
                                 )
@@ -171,7 +171,7 @@ class CommentController {
                             IF (
                                 comments.replyTypeId IS NULL 
                                 AND comments.tpb = 0
-                                AND comments.cycle_id = 1,
+                                AND comments.cycleId = 1,
                                 1,
                                 0
                             )
