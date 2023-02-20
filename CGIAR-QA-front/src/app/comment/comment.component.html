@@ -32,6 +32,12 @@
                 <div>
                   <p>On {{ comment.createdAt | date : "long" }}</p>
                 </div>
+                <!-- <br *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0"> -->
+                <div style="padding: 8px 0px"
+                  *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0 && comment.tpb != 1">
+                  <p>Comment made in <span style="font-weight: bold;">2nd round</span>
+                  </p>
+                </div>
               </div>
               <div>
                 <i *ngIf="
@@ -73,6 +79,7 @@
                         <span *ngIf="comment.replyType?.id != replyTypes.accepted">ADDED BY {{ reply.user.username }}
                         </span>
                         <p>On {{ reply.updatedAt | date : "long" }}</p>
+
                       </div>
 
                       <i style="height: 1.7em" *ngIf="reply.user.id === currentUser.id"
