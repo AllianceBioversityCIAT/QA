@@ -19,6 +19,7 @@
   .done-button {
     display: flex;
     justify-content: end;
+    margin-top: 12px;
 
     button {
       background-color: #6253e1;
@@ -60,6 +61,10 @@
       left: 50%;
       transform: translate(-50%) rotate(45deg);
     }
+  }
+
+  .remove-implemented-changes {
+    margin-top: 12px;
   }
 
   .highlight-view-section {

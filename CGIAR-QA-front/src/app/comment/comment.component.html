@@ -201,7 +201,9 @@
             </button>
           </div>
 
-          <div *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 1" class="remove-implemented-changes">
+          <div
+            *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 1 && adminUser && currentUser.cycle.cycle_stage == 2"
+            class="remove-implemented-changes">
             <button class="btn remove-implemented-changes btn-block" (click)="
                 implementedChange(commentsByColSelected?.id, comment.ppu)
               ">
