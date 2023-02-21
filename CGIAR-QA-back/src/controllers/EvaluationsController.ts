@@ -251,6 +251,7 @@ class EvaluationsController {
                                                  AND is_deleted = 0
                                                  AND is_visible = 1
                                                  AND detail IS NOT NULL
+                                                 AND cycleId = 1
 
                                  ) <= (
                                          SELECT COUNT(id)
@@ -265,6 +266,7 @@ class EvaluationsController {
                                                                  AND is_deleted = 0
                                                                  AND is_visible = 1
                                                                  AND detail IS NOT NULL
+                                                                 AND cycleId = 1
                                                  )
                                      
                                  ),
