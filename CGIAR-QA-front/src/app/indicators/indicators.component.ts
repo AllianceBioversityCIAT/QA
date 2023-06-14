@@ -1,32 +1,36 @@
-import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Component, OnInit } from "@angular/core";
+import { ActivatedRoute, Router } from "@angular/router";
 
-import { NgxSpinnerService } from 'ngx-spinner';
-import { PageChangedEvent } from 'ngx-bootstrap/pagination';
-import { OrderPipe } from 'ngx-order-pipe';
+import { NgxSpinnerService } from "ngx-spinner";
+import { PageChangedEvent } from "ngx-bootstrap/pagination";
+import { OrderPipe } from "ngx-order-pipe";
 
 import { DashboardService } from "../services/dashboard.service";
 import { AuthenticationService } from "../services/authentication.service";
 import { CommentService } from "../services/comment.service";
-import { AlertService } from '../services/alert.service';
+import { AlertService } from "../services/alert.service";
 
-import { User } from '../_models/user.model';
-import { DetailedStatus, GeneralIndicatorName, StatusIcon } from '../_models/general-status.model';
+import { User } from "../_models/user.model";
+import {
+  DetailedStatus,
+  GeneralIndicatorName,
+  StatusIcon,
+} from "../_models/general-status.model";
 import { saveAs } from "file-saver";
-import { Title } from '@angular/platform-browser';
-import { SortByPipe } from '../pipes/sort-by.pipe';
+import { Title } from "@angular/platform-browser";
+import { SortByPipe } from "../pipes/sort-by.pipe";
 
-import * as moment from 'moment';
-import { FormBuilder } from '@angular/forms';
-import { IndicatorsService } from '../services/indicators.service';
+import * as moment from "moment";
+import { FormBuilder } from "@angular/forms";
+import { IndicatorsService } from "../services/indicators.service";
 
-import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
-import { EvaluationsService } from '../services/evaluations.service';
+import { SafeResourceUrl, DomSanitizer } from "@angular/platform-browser";
+import { EvaluationsService } from "../services/evaluations.service";
 @Component({
-  selector: 'app-indicators',
-  templateUrl: './indicators.component.html',
-  styleUrls: ['./indicators.component.scss'],
-  providers: [SortByPipe]
+  selector: "app-indicators",
+  templateUrl: "./indicators.component.html",
+  styleUrls: ["./indicators.component.scss"],
+  providers: [SortByPipe],
 })
 export class IndicatorsComponent implements OnInit {
   indicatorType: string;
@@ -38,8 +42,8 @@ export class IndicatorsComponent implements OnInit {
 
   currentPageList = {
     startItem: 0,
-    endItem: 10
-  }
+    endItem: 10,
+  };
   currentPage = {
     qa_impact_contribution: 1,
     qa_capacity_change: 1,
@@ -49,38 +53,39 @@ export class IndicatorsComponent implements OnInit {
     qa_knowledge_product: 1,
     qa_innovation_development: 1,
     qa_policy_change: 1,
-    qa_innovation_use: 1
+    qa_innovation_use: 1,
+    qa_innovation_use_ipsr: 1,
   };
   stageHeaderText = {
-    policies: 'Stage',
-    oicr: 'Maturity Stage',
-    innovations: 'Stage',
-    melia: 'Type',
-    publications: 'ISI',
-    milestones: 'Milestone Status',
-  }
+    policies: "Stage",
+    oicr: "Maturity Stage",
+    innovations: "Stage",
+    melia: "Type",
+    publications: "ISI",
+    milestones: "Milestone Status",
+  };
   indicatorTypePage = null;
   maxSize = 5;
   pageSize = 4;
   collectionSize = 0;
   searchText;
-  evalStatusFilter = '';
+  evalStatusFilter = "";
   rsaFilter: boolean = false;
   // uncheckableRadioModel = '';
 
   hasTemplate = false;
 
-  notProviedText = '<No provided>'
+  notProviedText = "<No provided>";
 
-  order: string = 'status';
+  order: string = "status";
   configTemplate: string;
   reverse: boolean = false;
   btonFilterForm: any;
   chatRooms = null;
 
   assessorsChat = {
-    isOpen: false
-  }
+    isOpen: false,
+  };
 
   detailedStatus = DetailedStatus;
   statusIcon = StatusIcon;
@@ -89,12 +94,13 @@ export class IndicatorsComponent implements OnInit {
 
   submission_dates: any[] = [];
   showAcceptedComments = false;
-  showDisagreedComments = false
+  showDisagreedComments = false;
   showHighlightedComments = false;
   showTpbComments = false;
   showImplementedDecisions = false;
 
-  constructor(private activeRoute: ActivatedRoute,
+  constructor(
+    private activeRoute: ActivatedRoute,
     private router: Router,
     private dashService: DashboardService,
     private authenticationService: AuthenticationService,
@@ -107,77 +113,83 @@ export class IndicatorsComponent implements OnInit {
     // private orderPipe: OrderPipe,
     private evaluationService: EvaluationsService,
     private titleService: Title,
-    private alertService: AlertService) {
+    private alertService: AlertService
+  ) {
     this.getBatchDates();
 
-    this.activeRoute.params.subscribe(routeParams => {
-      this.authenticationService.currentUser.subscribe(x => {
+    this.activeRoute.params.subscribe((routeParams) => {
+      this.authenticationService.currentUser.subscribe((x) => {
         this.currentUser = x;
         console.log(this.currentUser);
-
-
       });
 
       this.indicatorType = routeParams.type;
       this.indicatorTypePage = null;
 
-      this.configTemplate = this.currentUser.config[`${this.indicatorType}_guideline`]
+      this.configTemplate =
+        this.currentUser.config[`${this.indicatorType}_guideline`];
       this.indicatorTypeName = GeneralIndicatorName[`qa_${this.indicatorType}`];
 
       this.getEvaluationsList(routeParams);
       this.getIndicatorCriteria(`qa_${routeParams.type}`);
 
       this.btonFilterForm = this.formBuilder.group({
-        radio: 'A'
+        radio: "A",
       });
       /** set page title */
       this.titleService.setTitle(`List of ${this.indicatorTypeName}`);
     });
-
   }
 
   getBatchDates() {
-    this.commentService.getBatches().subscribe(res => {
-
-      const batches = res.data;
-      for (let index = 0; index < batches.length; index++) {
-        let batch = { date: moment(batches[index].submission_date).format('ll'), batch_name: +batches[index].batch_name, checked: false, is_active: null };
-        batch.is_active = moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
-        // batch.checked = batch.is_active;
-        batch.checked = batch.batch_name == 3 ? true : false;
-        this.submission_dates.push(batch);
+    this.commentService.getBatches().subscribe(
+      (res) => {
+        const batches = res.data;
+        for (let index = 0; index < batches.length; index++) {
+          let batch = {
+            date: moment(batches[index].submission_date).format("ll"),
+            batch_name: +batches[index].batch_name,
+            checked: false,
+            is_active: null,
+          };
+          batch.is_active =
+            moment(Date.now()).isSameOrAfter(batch.date) || index === 0
+              ? true
+              : false;
+          // batch.checked = batch.is_active;
+          batch.checked = batch.batch_name == 3 ? true : false;
+          this.submission_dates.push(batch);
+        }
+      },
+      (error) => {
+        console.log(error);
+        this.alertService.error(error);
       }
-
-    }, error => {
-      console.log(error)
-      this.alertService.error(error);
-    }
-    )
+    );
   }
 
   getIndicatorCriteria(id) {
     this.criteria_loading = true;
     this.evaluationService.getCriteriaByIndicator(id).subscribe(
-      res => {
+      (res) => {
         this.criteriaData = res.data[0];
         console.log("CRITERIA DATA", this.criteriaData);
         console.log("CRITERIA DATA", res.message);
 
         this.criteria_loading = false;
       },
-      error => {
+      (error) => {
         this.criteria_loading = false;
         this.alertService.error(error);
       }
-    )
+    );
   }
-
 
   ngOnInit() {
     console.log(this.indicatorType);
 
-    if (this.indicatorType == 'slo') {
-      this.order = 'status';
+    if (this.indicatorType == "slo") {
+      this.order = "status";
     }
     // console.log('loaded indicators')
     // setTimeout(() => {                           //<<<---using ()=> syntax
@@ -187,66 +199,79 @@ export class IndicatorsComponent implements OnInit {
     //   this.verifyIfOrderByClarification();
     // }, 5000);
     this.chatRooms = {
-      general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/am16H1Vlj?username=${this.currentUser.name}`),
-    }
-    this.showhighlightColum()
+      general: this.sanitizer.bypassSecurityTrustResourceUrl(
+        `https://deadsimplechat.com/am16H1Vlj?username=${this.currentUser.name}`
+      ),
+    };
+    this.showhighlightColum();
 
-    console.log('NEW INDICATOR');
-
+    console.log("NEW INDICATOR");
   }
 
   showhighlightColum() {
     if (this.currentUser.cycle.cycle_stage == 2) {
-      this.showHighlightedComments = true
-      this.showTpbComments = true
+      this.showHighlightedComments = true;
+      this.showTpbComments = true;
     }
   }
-
 
   getEvaluationsList(params) {
     this.showSpinner();
 
-    this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column).subscribe(
-      res => {
+    this.dashService
+      .geListDashboardEvaluations(
+        this.currentUser.id,
+        `qa_${params.type}`,
+        params.primary_column
+      )
+      .subscribe(
+        (res) => {
+          // console.log(res)
+          if (this.indicatorType == "slo") {
+            this.order = "status";
+          } else {
+            this.order = "status";
+          }
+          this.evaluationList = this.orderPipe.transform(res.data, this.order);
+          console.log("LISTA", this.evaluationList);
 
-        // console.log(res)
-        if (this.indicatorType == 'slo') {
-          this.order = 'status';
-        } else {
-          this.order = 'status';
+          this.collectionSize = this.evaluationList.length;
+          this.returnedArray = this.evaluationList.slice(0, 10);
+          console.log(
+            "🚀 ~ file: indicators.component.ts:215 ~ IndicatorsComponent ~ getEvaluationsList ~ returnedArray",
+            this.returnedArray
+          );
+          this.returnedArrayHasStage = this.returnedArray.find(
+            (e) => e.stage != null
+          );
+          // console.log('RETURNED_ARRAY', this.returnedArray);
+
+          this.hasTemplate = this.currentUser.config[0][
+            `${params.type}_guideline`
+          ]
+            ? true
+            : false;
+
+          this.hideSpinner();
+          setTimeout(() => {
+            this.currentPage = this.indicatorService.getPagesIndicatorList();
+            this.indicatorTypePage = `qa_${this.indicatorType}`;
+            if (!this.verifyOrder()) this.setOrder(this.order, this.reverse);
+            this.indicatorService.cleanAllOrders();
+            // this.setOrder(this.order, this.reverse);
+          }, 200);
+          // this.currentPage = this.indicatorService.getPagesIndicatorList();
+          console.log("PAGES", this.currentPage);
+          console.log(`CURRENT PAGE ${this.indicatorType}`, this.currentPage);
+          console.log("Spinner hided");
+        },
+        (error) => {
+          this.hideSpinner();
+          this.returnedArray = [];
+          console.log(error);
+          this.alertService.error(error);
         }
-        this.evaluationList = this.orderPipe.transform(res.data, this.order);
-        console.log('LISTA', this.evaluationList);
-
-        this.collectionSize = this.evaluationList.length;
-        this.returnedArray = this.evaluationList.slice(0, 10);
-        console.log("🚀 ~ file: indicators.component.ts:215 ~ IndicatorsComponent ~ getEvaluationsList ~ returnedArray", this.returnedArray)
-        this.returnedArrayHasStage = this.returnedArray.find(e => e.stage != null)
-        // console.log('RETURNED_ARRAY', this.returnedArray);
-
-        this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
-
-        this.hideSpinner();
-        setTimeout(() => {
-          this.currentPage = this.indicatorService.getPagesIndicatorList()
-          this.indicatorTypePage = (`qa_${this.indicatorType}`);
-          if (!this.verifyOrder()) this.setOrder(this.order, this.reverse);
-          this.indicatorService.cleanAllOrders();
-          // this.setOrder(this.order, this.reverse);
-        }, 200);
-        // this.currentPage = this.indicatorService.getPagesIndicatorList();
-        console.log('PAGES', this.currentPage);
-        console.log(`CURRENT PAGE ${this.indicatorType}`, this.currentPage);
-        console.log('Spinner hided');
-
-      },
-      error => {
-        this.hideSpinner();
-        this.returnedArray = []
-        console.log(error)
-        this.alertService.error(error);
-      }
-    )
+      );
   }
 
   fixAccent(value) {
@@ -259,15 +284,18 @@ export class IndicatorsComponent implements OnInit {
     // // console.log(this.evaluationList.length, this.returnedArray.length)
     this.currentPageList = {
       startItem,
-      endItem
-    }
+      endItem,
+    };
 
     console.log(this.currentPage);
 
-    this.evaluationList = this.orderPipe.transform(this.evaluationList, (this.reverse) ? 'asc' : 'desc', this.order);
+    this.evaluationList = this.orderPipe.transform(
+      this.evaluationList,
+      this.reverse ? "asc" : "desc",
+      this.order
+    );
     this.returnedArray = this.evaluationList.slice(startItem, endItem);
   }
-
 
   setOrder(value: string, reverseValue?: boolean) {
     if (value == null) {
@@ -284,33 +312,38 @@ export class IndicatorsComponent implements OnInit {
     console.log(this.order, this.reverse);
 
     // console.log(this.evaluationList, (this.reverse) ? 'asc':'desc', this.order)
-    this.evaluationList = this.orderPipe.transform(this.evaluationList, (this.reverse) ? 'asc' : 'desc', this.order);
+    this.evaluationList = this.orderPipe.transform(
+      this.evaluationList,
+      this.reverse ? "asc" : "desc",
+      this.order
+    );
     window.scroll({
       top: 150,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
     // this.returnedArray = this.evaluationList.slice(this.currentPageList.startItem, this.currentPageList.endItem);
   }
 
   filterByEvalStatus() {
-    this.evalStatusFilter = 'Removed'
+    this.evalStatusFilter = "Removed";
   }
 
   filterByAdded() {
-    this.evalStatusFilter = 'Added'
+    this.evalStatusFilter = "Added";
   }
 
   goToView(indicatorId) {
-
-    this.router.navigate(['./detail', indicatorId], { relativeTo: this.activeRoute });
+    this.router.navigate(["./detail", indicatorId], {
+      relativeTo: this.activeRoute,
+    });
     // this.router.navigate(['/reload']).then(() => { this.router.navigate(['./detail', indicatorId], { relativeTo: this.activeRoute }) });
   }
 
   goToPDF(type: string) {
     let pdf_url;
     switch (type) {
-      case 'AR':
+      case "AR":
         pdf_url = this.currentUser.config[0]["anual_report_guideline"];
         break;
       default:
@@ -322,53 +355,65 @@ export class IndicatorsComponent implements OnInit {
     window.open(pdf_url, "_blank");
   }
 
-
   exportComments(item) {
     this.showSpinner();
-    let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}-${item.id}_${moment().format('YYYYMMDD_HHmm')}`
-    if (this.authenticationService.getBrowser() === 'Safari')
-      filename += `.xlsx`
+    let filename = `QA-${this.indicatorType
+      .charAt(0)
+      .toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}-${
+      item.id
+    }_${moment().format("YYYYMMDD_HHmm")}`;
+    if (this.authenticationService.getBrowser() === "Safari")
+      filename += `.xlsx`;
     // console.log('filename',filename)
-    this.commentService.getCommentsExcel({ evaluationId: item.evaluation_id, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.indicatorType}` }).subscribe(
-      res => {
-        // console.log(res)
-        let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
-        saveAs(blob, filename);
-        this.hideSpinner();
-      },
-      error => {
-        // console.log("exportComments", error);
-        this.hideSpinner();
-        this.alertService.error(error);
-      }
-    )
+    this.commentService
+      .getCommentsExcel({
+        evaluationId: item.evaluation_id,
+        id: this.currentUser.id,
+        name: filename,
+        indicatorName: `qa_${this.indicatorType}`,
+      })
+      .subscribe(
+        (res) => {
+          // console.log(res)
+          let blob = new Blob([res], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
+          });
+          saveAs(blob, filename);
+          this.hideSpinner();
+        },
+        (error) => {
+          // console.log("exportComments", error);
+          this.hideSpinner();
+          this.alertService.error(error);
+        }
+      );
   }
 
   // * Para darle nombre a la columna primaria
   returnListName(indicator: string, type: string) {
     let r;
-    if (type === 'header') {
+    if (type === "header") {
       switch (indicator) {
-        case 'slo':
-          r = 'Contribution to SLO targets'
-          this.indicatorType = 'slo'
+        case "slo":
+          r = "Contribution to SLO targets";
+          this.indicatorType = "slo";
           break;
 
         default:
-          r = `${this.indicatorTypeName}`
+          r = `${this.indicatorTypeName}`;
           break;
       }
-    } else if (type === 'list') {
+    } else if (type === "list") {
       switch (indicator) {
-        case 'slo':
-          r = 'SLO target'
+        case "slo":
+          r = "SLO target";
           break;
-        case 'milestones':
-          r = 'Milestone statement'
+        case "milestones":
+          r = "Milestone statement";
           break;
 
         default:
-          r = `Title`
+          r = `Title`;
           break;
       }
     }
@@ -380,20 +425,23 @@ export class IndicatorsComponent implements OnInit {
     let currentOrder = this.indicatorService.getCurrentOrder();
 
     switch (currentOrder.type) {
-      case 'orderByAcceptedWC':
-        this.setOrder('comments_accepted_with_comment_count', currentOrder.value);
+      case "orderByAcceptedWC":
+        this.setOrder(
+          "comments_accepted_with_comment_count",
+          currentOrder.value
+        );
         return true;
 
-      case 'orderByDisagree':
-        this.setOrder('comments_disagreed_count', currentOrder.value);
+      case "orderByDisagree":
+        this.setOrder("comments_disagreed_count", currentOrder.value);
         return true;
 
-      case 'orderByClarification':
-        this.setOrder('comments_clarification_count', currentOrder.value);
+      case "orderByClarification":
+        this.setOrder("comments_clarification_count", currentOrder.value);
         return true;
 
-      case 'orderByStatus':
-        this.setOrder('status', currentOrder.value);
+      case "orderByStatus":
+        this.setOrder("status", currentOrder.value);
         return true;
 
       default:
@@ -401,15 +449,15 @@ export class IndicatorsComponent implements OnInit {
     }
   }
 
-
-
   toggleAssessorsChat() {
     this.assessorsChat.isOpen = !this.assessorsChat.isOpen;
   }
 
   formatBrief(brief: string) {
     if (brief) {
-      return brief.split("<p>")[1] ? brief.split("<p>")[1].split("</p>")[0] : brief;
+      return brief.split("<p>")[1]
+        ? brief.split("<p>")[1].split("</p>")[0]
+        : brief;
     }
     return;
   }
@@ -422,15 +470,17 @@ export class IndicatorsComponent implements OnInit {
   onDateChange(e, subDate) {
     if (subDate) {
       console.log(e.target.checked, e.target.value);
-      const foundIndex = this.submission_dates.findIndex(sd => sd.date == e.target.value);
-      this.submission_dates[foundIndex]['checked'] = e.target.checked;
+      const foundIndex = this.submission_dates.findIndex(
+        (sd) => sd.date == e.target.value
+      );
+      this.submission_dates[foundIndex]["checked"] = e.target.checked;
       this.submission_dates = [...this.submission_dates];
     }
   }
   /***
-   * 
-   *  Spinner 
-   * 
+   *
+   *  Spinner
+   *
    ***/
   showSpinner() {
     this.spinner.show();
@@ -438,6 +488,4 @@ export class IndicatorsComponent implements OnInit {
   hideSpinner() {
     this.spinner.hide();
   }
-
-
 }

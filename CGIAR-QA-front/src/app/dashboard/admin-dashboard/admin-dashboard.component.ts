@@ -54,7 +54,8 @@ export class AdminDashboardComponent implements OnInit {
       qa_knowledge_product: false,
       qa_innovation_development: false,
       qa_policy_change: false,
-      qa_innovation_use: false
+      qa_innovation_use: false,
+      qa_innovation_use_ipsr: false,
     }
   }
 
@@ -70,6 +71,7 @@ export class AdminDashboardComponent implements OnInit {
     { name: 'Innovation Development', viewname: 'qa_innovation_development' },
     { name: 'Policy Change', viewname: 'qa_policy_change' },
     { name: 'Innovation Use', viewname: 'qa_innovation_use' },
+    { name: 'Innovation Use (IPSR)', viewname: 'qa_innovation_use_ipsr' },
   ];
 
   activeCompleteDash = true;
@@ -99,7 +101,8 @@ export class AdminDashboardComponent implements OnInit {
     qa_knowledge_product: 0,
     qa_innovation_development: 0,
     qa_policy_change: 0,
-    qa_innovation_use: 0
+    qa_innovation_use: 0,
+    qa_innovation_use_ipsr: 0
   }
 
   //new props

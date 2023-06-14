@@ -363,7 +363,8 @@ class IndicatorsController {
             qa_knowledge_product: {},
             qa_innovation_development: {},
             qa_policy_change: {},
-            qa_innovation_use: {}
+            qa_innovation_use: {},
+            qa_innovation_use_ipsr: {}
         };
         const indicators = Object.keys(GeneralIndicatorName);
 
@@ -546,7 +547,8 @@ class IndicatorsController {
             qa_knowledge_product: {},
             qa_innovation_development: {},
             qa_policy_change: {},
-            qa_innovation_use: {}
+            qa_innovation_use: {},
+            qa_innovation_use_ipsr: {}
         };
         const indicators = Object.keys(GeneralIndicatorName);
 
