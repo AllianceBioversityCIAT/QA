@@ -54,7 +54,6 @@ class Util {
             ]
         });
 
-        // console.log(marlo_user, username, password)
         if (marlo_user) {
             let is_marlo = await AuthController.validateAD(marlo_user, password);
             if (is_marlo)
@@ -103,7 +102,6 @@ class Util {
 
         //Check if encrypted password match
         if (!marlo_user && !user.checkIfUnencryptedPasswordIsValid(password)) {
-            console.log(`Password does not match.`);
             throw new BaseError(
                 'NOT FOUND',
                 HttpStatusCode.NOT_FOUND,
@@ -123,7 +121,6 @@ class Util {
         user["token"] = token;
         user["config"] = generalConfig;
         user['cycle'] = current_cycle;
-        // console.log(current_cycle)
         delete user.password;
         delete user.replies;
         //Send the jwt in the response
@@ -165,7 +162,6 @@ class Util {
 
     static parseEvaluationsData(rawData, type?) {
         let response = [];
-        // console.log('parseEvaluationsData', type)
         for (let index = 0; index < rawData.length; index++) {
             if (!type) {
                 response.push(this.formatResponse(rawData[index], type));
@@ -174,7 +170,6 @@ class Util {
                 response.push(this.formatResponse(rawData[index], type));
             }
         }
-        // console.log(response, type)
         return response;
     }
 
@@ -227,7 +222,6 @@ class Util {
                 set.data.push(element[set.sql_name])
             });
         }
-        // console.log(response)
         return response;
     }
 
@@ -273,15 +267,12 @@ class Util {
                 {}
             );
             let user_crp = await queryRunner.connection.query(query, parameters);
-            // console.log('user_crp')
-            // console.log(user_crp)
             if (user && user_crp.length === 0) {
                 user.crps = user.crps.concat(crp);
                 user.roles = user.roles.concat(crpRole);
                 user = await userRepository.save(user);
             }
 
-            // console.log(user, user_crp, crpRole);
 
             //  // get general config by user role
             let generalConfig = await grnlConfg
@@ -314,7 +305,6 @@ class Util {
             delete user.password;
             return user
         } catch (error) {
-            console.log(error);
             throw new Error(error);
         }
     }
@@ -348,7 +338,6 @@ class Util {
             let response = await indicatorMetaRepository.save(savePromises);
             return response;
         } catch (error) {
-            console.log(error);
             return false;
         }
 
@@ -363,11 +352,9 @@ class Util {
             if (evaluations.length > 0) {
                 return [];
             } else {
-                // console.log("Evaluations", indiByUsr.id, indicator.view_name, indicator.primary_field)
                 let view_data = await createQueryBuilder(indicator.view_name)
                     //.getRawMany()
                     .getMany();
-                // console.log("Evaluations", view_data.length)
                 let savePromises = [];
                 for (let index = 0; index < view_data.length; index++) {
                     let element = view_data[index];
@@ -379,21 +366,15 @@ class Util {
                     // evaluations.indicator_user = indiByUsr;
                     evaluations.status = StatusHandler.Pending;
 
-                    // console.log(evaluations, element)
 
                     savePromises.push(evaluations);
 
                 }
 
-                // console.log(savePromises.length)
                 response = await evaluationsRepository.save(savePromises);
-                // //console.log("savePromises")
-                // console.log(response.length)
             }
-            // console.log(evaluations);
             return response;
         } catch (error) {
-            console.log(error)
             return error;
         }
     }
@@ -424,10 +405,8 @@ class Util {
                         );
                         field_value = await queryRunner.connection.query(query, parameters);
                         // field_value = JSON.parse(JSON.stringify(response[0]))[col_name];
-                        console.log(field_value);
 
                     } catch (error) {
-                        console.log(error);
                     }
                     let row = {
                         result_code: rows[i].result_code,
@@ -460,7 +439,6 @@ class Util {
                 });
             });
         } catch (error) {
-            console.log(error)
         }
 
     }
@@ -490,10 +468,8 @@ class Util {
                         );
                         field_value = await queryRunner.connection.query(query, parameters);
                         // field_value = JSON.parse(JSON.stringify(response[0]))[col_name];
-                        // console.log(field_value);
 
                     } catch (error) {
-                        console.log(error);
                     }
                     let row = {
                         id: rows[i].id,
@@ -528,7 +504,6 @@ class Util {
                 });
             });
         } catch (error) {
-            console.log(error)
         }
 
     }
@@ -556,7 +531,6 @@ class Util {
                 .andWhere("qaUsersId = :userId", { userId })
                 .execute();
 
-            console.log({ assessed_by });
             if (assessed_by.length <= 0) {
                 await getConnection().createQueryBuilder()
                     .insert()
@@ -578,14 +552,12 @@ class Util {
 
             // if (current_cycle.id == 1) {
             //     evaluation.assessed_by.push(user);
-            //     console.log('ASSESSORS', evaluation.assessed_by);
 
             // } else {
             //     evaluation.assessed_by_second_round.push(user);
             // }
             // evaluationsRepository.save(evaluation);
 
-            console.log(current_cycle == undefined)
             if (current_cycle == undefined) throw new Error('Could not created comment')
             let comment_ = new QAComments();
             comment_.detail = detail;
@@ -602,7 +574,6 @@ class Util {
 
             return new_comment;
         } catch (error) {
-            console.log(error)
             return null;
         }
     }
@@ -628,7 +599,6 @@ class Util {
 
             return new_tag;
         } catch (error) {
-            console.log(error)
             return null;
         }
     }
@@ -652,11 +622,9 @@ class Util {
             );
 
             let tagId = await queryRunner.connection.query(query, parameters);
-            console.log('TagID', tagId);
 
             return tagId[0].tagId || [];
         } catch (error) {
-            console.log(error);
             return null;
         }
 
@@ -802,7 +770,6 @@ class Util {
         let status = 'pending';
 
         try {
-            console.log(evaluation);
             if (evaluation.phase_year == '2021') {
                 let current_batch = batches.find(b => moment(b.submission_date).isSame(evaluation.batchDate, 'day'));
 
@@ -814,7 +781,6 @@ class Util {
                         status = StatusHandlerMIS[evaluation.status];
                         break;
                     case StatusHandler.Finalized:
-                        // console.log('Quality Assessed');
 
                         if (moment(Date.now()).isBefore(current_batch.programs_start_date)) {
                             status = 'pending';
@@ -822,7 +788,6 @@ class Util {
                             if (evaluation.pending_replies) {
                                 status = 'pending_crp';
                             } else {
-                                console.log('R2A', evaluation.require_second_assessment);
 
                                 status = evaluation.require_second_assessment ? 'in_progress' : StatusHandlerMIS[evaluation.status];
                             }
@@ -837,7 +802,6 @@ class Util {
             }
             return status;
         } catch (error) {
-            console.log(error);
             return status;
         }
 

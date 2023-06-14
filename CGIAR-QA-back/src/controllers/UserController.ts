@@ -33,7 +33,6 @@ class UserController {
             res.status(200).json({ data: users, message: "All users" });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not access to users." });
         }
     };
@@ -93,7 +92,6 @@ class UserController {
         }
 
         } catch (error) {
-            // console.log(error)
             res.status(409).json({ message: "Role does not exists", data: error });
             return;
         }
@@ -117,7 +115,6 @@ class UserController {
             });
             res.status(200).json({ data: user, message: "User" });
         } catch (error) {
-            // console.log(error)
             // throw new ErrorHandler(404, 'User not found.')
             res.status(404).json({ message: "User not found" });
         }
@@ -218,7 +215,6 @@ class UserController {
             res.status(200).json({ data: roles, message: "All roles" });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not access to roles." });
         }
 
@@ -299,7 +295,6 @@ class UserController {
             }
 
         } catch (error) {
-            // console.log(error)
             res.status(409).json({ message: "Error editing role." });
             return;
         }
@@ -394,7 +389,6 @@ class UserController {
             res.status(200).json({ data: permissions, message: "All permissions" });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not access to permissions." });
         }
 
@@ -433,7 +427,6 @@ class UserController {
             // get permission
             _permission = await permissionRepository.findOneOrFail(id);
         } catch (error) {
-            // console.log(error)
             res.status(409).json({ message: "Error editing role." });
             return;
         }
