@@ -36,7 +36,9 @@ export class AssessorDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = "qa_innovation_development";
+  selectedIndicator = "qa_innovation_use_ipsr"
+    ? "qa_innovation_use_ipsr"
+    : "";
   dataSelected: any;
   indicatorData: any;
   feedList: [];
@@ -297,7 +299,11 @@ export class AssessorDashboardComponent implements OnInit {
     return formatDate;
   }
 
-  formatStatusIndicatorData(data) {
+  formatStatusIndicatorData(data: any) {
+    console.log(
+      "🚀 ~ file: assessor-dashboard.component.ts:301 ~ AssessorDashboardComponent ~ formatStatusIndicatorData ~ data:",
+      data
+    );
     // DEFINE COLORS WITH CSS
     const colors = {
       complete: "var(--color-complete)",
@@ -453,7 +459,7 @@ export class AssessorDashboardComponent implements OnInit {
 
   updateDataCharts() {
     this.dataCharts.generalStatus = this.formatStatusIndicatorData(
-      this.dataSelected
+      "qa_innovation_use_ipsr"
     );
     this.dataCharts.assessorsInteractions = this.formatIndicatorTags();
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(
