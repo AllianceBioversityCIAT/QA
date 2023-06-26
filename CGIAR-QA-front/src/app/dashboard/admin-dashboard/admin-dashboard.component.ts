@@ -60,7 +60,7 @@ export class AdminDashboardComponent implements OnInit {
   assessorsChat = {
     isOpen: false,
     indicators: {
-      qa_impact_contribution: true,
+      qa_impact_contribution: false,
       qa_capacity_change: false,
       qa_other_outcome: false,
       qa_other_output: false,
@@ -69,7 +69,7 @@ export class AdminDashboardComponent implements OnInit {
       qa_innovation_development: false,
       qa_policy_change: false,
       qa_innovation_use: false,
-      qa_innovation_use_ipsr: false,
+      qa_innovation_use_ipsr: true,
     },
   };
 
@@ -126,7 +126,7 @@ export class AdminDashboardComponent implements OnInit {
   //new props
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = "qa_impact_contribution";
+  selectedIndicator = "qa_innovation_use_ipsr";
   dataSelected: any;
   indicatorData: any;
   feedList: [];
