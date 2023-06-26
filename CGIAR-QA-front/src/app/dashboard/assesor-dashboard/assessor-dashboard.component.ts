@@ -36,9 +36,7 @@ export class AssessorDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = "qa_innovation_use_ipsr"
-    ? "qa_innovation_use_ipsr"
-    : "";
+  selectedIndicator = "qa_innovation_use_ipsr";
   dataSelected: any;
   indicatorData: any;
   feedList: [];
@@ -141,8 +139,6 @@ export class AssessorDashboardComponent implements OnInit {
 
       //dashData
       if (dashData.data) {
-        // console.log({ dashData });
-
         this.dashboardData = this.dashService.groupData(dashData.data);
         // this.selectedIndicator = Object.keys(this.dashboardData)[0]
         this.dataSelected = this.dashboardData[this.selectedIndicator];
