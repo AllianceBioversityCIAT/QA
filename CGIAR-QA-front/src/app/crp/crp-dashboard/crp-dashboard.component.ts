@@ -189,21 +189,15 @@ export class CrpDashboardComponent implements OnInit {
 
   getEvaluationsStats() {
     this.showSpinner(this.spinner2);
-    // this.commentService.getCommentCRPStats({ crp_id: this.currentUser.crp.crp_id })
     this.dashService
-      .getAllDashboardEvaluationsByCRP(this.currentUser.crp.crp_id)
-      .subscribe(
-        (res) => {
-          this.dashboardData = this.dashService.groupData(res.data);
-          // console.log(this.dashboardData)
-          // this.formatStatusCharts();
-          // console.log('HERE', this.statusChartData)
-
-          this.hideSpinner(this.spinner2);
+    .getAllDashboardEvaluationsByCRP(this.currentUser.crp.crp_id)
+    .subscribe(
+      (res) => {
+        this.dashboardData = this.dashService.groupData(res.data);
+        this.hideSpinner(this.spinner2);
         },
         (error) => {
           this.hideSpinner(this.spinner2);
-          // console.log("getAllDashData", error);
           this.alertService.error(error);
         }
       );
@@ -361,7 +355,6 @@ export class CrpDashboardComponent implements OnInit {
   }
 
   formatStatusCharts() {
-    // console.log(this.dashboardData);
     const colors = {
       Answered: "var(--color-agree)",
       pending: "var(--color-pending)",
@@ -474,6 +467,20 @@ export class CrpDashboardComponent implements OnInit {
 
     return { dataset, brushes };
   }
+
+  isDashboardDataEmpty(): boolean {
+    return !this.dashboardData || Object.keys(this.dashboardData).length === 0;
+  }
+
+  loadData(): void {
+    if (this.isDashboardDataEmpty()) {
+      this.showSpinner('spinner-dashboard'); 
+
+      this.hideSpinner('spinner-dashboard'); // Ocultar el spinner de carga una vez que los datos se hayan cargado
+    }
+  }
+
+  
 
   goToPendingItems(indicator: string) {
     this.indicatorService.setOrderByStatus(false);
