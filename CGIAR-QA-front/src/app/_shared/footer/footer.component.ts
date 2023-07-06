@@ -11,7 +11,7 @@ import { environment } from "../../../environments/environment";
 export class FooterComponent {
   routes: Routes[] = [
     { path: "/dashboard/admin", marginTop: 700, mode: "floating" },
-    { path: "/indicator/", marginTop: 0, mode: "" },
+    { path: "/indicator/", marginTop: 100, mode: "" },
     { path: "/login", mode: "floatingAbsolute" },
   ];
   currentRoute: Routes = new Routes();
