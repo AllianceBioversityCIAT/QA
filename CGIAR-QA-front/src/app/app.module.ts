@@ -36,6 +36,7 @@ import { CommentComponentModule } from './comment/comment.module';
 import { SafeUrlPipe } from './pipes/safe-url.pipe';
 import { AssessorsChatComponent } from './assessors-chat/assessors-chat.component';
 import { AssessorsChatWindowComponent } from './_shared/assessors-chat-window/assessors-chat-window.component';
+import { FooterModule } from './_shared/footer/footer.module';
 
 // import { CrpComponent } from './crp/crp.component';
 
@@ -70,6 +71,7 @@ import { AssessorsChatWindowComponent } from './_shared/assessors-chat-window/as
     NgxSpinnerModule,
     CommonModule,
     CommentComponentModule,
+    FooterModule
   ],
   providers: [
     { provide: HTTP_INTERCEPTORS, useClass: JwtInterceptor, multi: true },
