@@ -83,11 +83,9 @@
       </div>
     </a>
 
-    <a tooltip="{{ tooltips.redirectTo }}" href="https://reporting.cgiar.org/result/result-detail/{{
-        detailedData[0].result_code
-      }}/general-information" target="_blank" rel="noopener noreferrer">
+    <a tooltip="{{ tooltips.redirectTo }}" [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer">
       <i class="cgiar-logo"></i>
-    </a>
+    </a>    
 
     <div tooltip="{{ tooltips.download_excel }}" container="body" placement="top" *ngIf="detailedData"
       (click)="getCommentsExcel(detailedData[0])" class="btn btn-primary file-button">

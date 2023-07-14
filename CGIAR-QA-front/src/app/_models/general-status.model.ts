@@ -18,7 +18,8 @@ export enum GeneralIndicatorName {
     qa_knowledge_product = 'Knowledge Product',
     qa_innovation_development = 'Innovation Development',
     qa_policy_change = 'Policy Change',
-    qa_innovation_use = 'Innovation Use'
+    qa_innovation_use = 'Innovation Use',
+    qa_innovation_use_ipsr = 'Innovation Use (IPSR)'
 }
 
 export enum IndicatorsID {
@@ -30,7 +31,8 @@ export enum IndicatorsID {
     knowledge_product = 6, 
     innovation_development = 7, 
     policy_change = 8,
-    innovation_use = 9 
+    innovation_use = 9, 
+    qa_innovation_use_ipsr = 10
 }
 
 export enum TagMessage {
