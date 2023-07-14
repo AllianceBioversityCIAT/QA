@@ -122,9 +122,7 @@ export class AssessorDashboardComponent implements OnInit {
       this.getDashData(),
       this.getCommentStats(),
       this.getAllTags(),
-      // this.getFeedTags(this.selectedIndicator),
       this.getItemStatusByIndicatorService(this.selectedIndicator),
-      // this.getAllItemStatusByIndicator()
       this.dashService.getHighlightedData(),
     ]);
     responses.subscribe((res) => {
@@ -132,44 +130,32 @@ export class AssessorDashboardComponent implements OnInit {
         dashData,
         commentsStats,
         allTags,
-        // feedTags,
         assessmentByField,
         highlightData,
       ] = res;
 
-      //dashData
       if (dashData.data) {
         this.dashboardData = this.dashService.groupData(dashData.data);
-        // this.selectedIndicator = Object.keys(this.dashboardData)[0]
         this.dataSelected = this.dashboardData[this.selectedIndicator];
+        this.showSpinner();
       }
 
-      //commentsStats
       if (commentsStats) {
         this.dashboardCommentsData = this.dashService.groupData(
           commentsStats.data
         );
-        // console.log('COUNT COMMENTS', this.dashboardCommentsData);
       }
 
-      //allTags
       if (allTags)
         this.indicatorsTags = this.commentService.groupTags(allTags.data);
 
-      //feedTags
-      // if(feedTags)
-      // this.feedList = feedTags.data;
-
-      //assessmentByField
       if (assessmentByField)
         this.itemStatusByIndicator = assessmentByField.data;
-      // console.log(this.itemStatusByIndicator);
 
       if (highlightData) {
         this.highlightedData = highlightData.data;
       }
 
-      //UPDATE CHARTS
       if (dashData.data && commentsStats.data && allTags.data)
         this.updateDataCharts();
 
@@ -296,10 +282,6 @@ export class AssessorDashboardComponent implements OnInit {
   }
 
   formatStatusIndicatorData(data: any) {
-    console.log(
-      "🚀 ~ file: assessor-dashboard.component.ts:301 ~ AssessorDashboardComponent ~ formatStatusIndicatorData ~ data:",
-      data
-    );
     // DEFINE COLORS WITH CSS
     const colors = {
       complete: "var(--color-complete)",
@@ -455,7 +437,7 @@ export class AssessorDashboardComponent implements OnInit {
 
   updateDataCharts() {
     this.dataCharts.generalStatus = this.formatStatusIndicatorData(
-      "qa_innovation_use_ipsr"
+      this.dataSelected
     );
     this.dataCharts.assessorsInteractions = this.formatIndicatorTags();
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(
