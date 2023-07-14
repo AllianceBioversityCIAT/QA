@@ -766,6 +766,4 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
       return 'https://reporting.cgiar.org/result/result-detail/' + this.detailedData[0].result_code + '/general-information';
     }
   }
-  
-
 }

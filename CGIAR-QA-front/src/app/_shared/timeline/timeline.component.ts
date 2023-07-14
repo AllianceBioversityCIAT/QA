@@ -28,7 +28,6 @@ export class TimelineComponent implements OnInit {
   getState() {
     this.dashboardService.getAllBatches().subscribe(res => {
       let datetime = res.data
-      console.log("🚀 ~ file: timeline.component.ts:37 ~ TimelineComponent ~ this.dashboardService.getAllBatches ~ datetime", datetime)
       const currentDate = moment();
       if (currentDate.isBefore(datetime[2].assessors_start_date)) {
         this.timelineState = 'before';
