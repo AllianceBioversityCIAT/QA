@@ -759,4 +759,11 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     this.spinner.hide(name);
   }
 
+  getCurrentTypeUrl(): string {
+    if (this.currentType === 'Innovation Use (IPSR)') {
+      return 'https://prtest.ciat.cgiar.org/ipsr/detail/' + this.detailedData[0].result_code + '/general-information';
+    } else {
+      return 'https://reporting.cgiar.org/result/result-detail/' + this.detailedData[0].result_code + '/general-information';
+    }
+  }
 }

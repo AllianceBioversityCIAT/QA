@@ -82,7 +82,6 @@ class EvaluationsController {
             let result = Util.groupBy(response, 'indicator_view_name');
             res.status(200).json({ data: result, message: "User evaluations" });
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "User evaluations Could not access to evaluations." });
         }
     }
@@ -100,7 +99,6 @@ class EvaluationsController {
 
 
             let rawData;
-            // console.log('getAllEvaluationsDash', crp_id)
             if (crp_id !== undefined && crp_id !== "undefined") {
 
                 let sqlQuery = '';
@@ -149,7 +147,6 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                // console.log(query);
 
                 rawData = await queryRunner.connection.query(query, parameters);
             } else {
@@ -182,7 +179,6 @@ class EvaluationsController {
                     {},
                     {}
                 );
-                // // console.log(query, parameters);
 
                 rawData = await queryRunner.connection.query(query, parameters);
             }
@@ -205,12 +201,10 @@ class EvaluationsController {
                 })
 
             }
-            // // console.log(response)
             let result = Util.groupBy(response, 'indicator_view_name');
             // res.status(200).json({ data: rawData, message: "All evaluations" });
             res.status(200).json({ data: result, message: "All evaluations" });
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "All evaluations could not access to evaluations." });
         }
 
@@ -229,7 +223,6 @@ class EvaluationsController {
 
 
             let rawData;
-            // console.log('getAllEvaluationsDash', crp_id)
             if (crp_id !== undefined && crp_id !== "undefined") {
 
                 let sqlQuery = '';
@@ -251,6 +244,7 @@ class EvaluationsController {
                                                  AND is_deleted = 0
                                                  AND is_visible = 1
                                                  AND detail IS NOT NULL
+                                                 AND cycleId = 1
 
                                  ) <= (
                                          SELECT COUNT(id)
@@ -265,6 +259,7 @@ class EvaluationsController {
                                                                  AND is_deleted = 0
                                                                  AND is_visible = 1
                                                                  AND detail IS NOT NULL
+                                                                 AND cycleId = 1
                                                  )
                                      
                                  ),
@@ -356,12 +351,10 @@ class EvaluationsController {
                 })
 
             }
-            // // console.log(response)
             let result = Util.groupBy(response, 'indicator_view_name');
             // res.status(200).json({ data: rawData, message: "All evaluations" });
             res.status(200).json({ data: result, message: "All evaluations by crp" });
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "All evaluations by crp could not access to evaluations." });
         }
 
@@ -436,8 +429,6 @@ class EvaluationsController {
         const view_primary_field = req.body.view_primary_field;
         const levelQuery = EvaluationsController.getLevelQuery(view_name);
 
-        // // console.log(view_name, levelQuery.innovations_stage);
-        // // console.log(levelQuery);
 
 
         let queryRunner = getConnection().createQueryBuilder();
@@ -445,7 +436,6 @@ class EvaluationsController {
             const userRepository = getRepository(QAUsers);
             let user = await userRepository.findOneOrFail({ where: { id } });
             let isAdmin = user.roles.find(x => x.description == RolesHandler.admin);
-            // // console.log('getListEvaluationsDash', crp_id)
             if (isAdmin && (crp_id == null || crp_id == 'undefined')) {
                 let sql = `
                 SELECT
@@ -706,8 +696,6 @@ class EvaluationsController {
                     { crp_id: crp_id, view_name },
                     {}
                 );
-                // // console.log('crp')
-                // // console.log(sql)
                 let rawData = await queryRunner.connection.query(query, parameters);
                 res.status(200).json({ data: Util.parseEvaluationsData(rawData), message: "CRP evaluations list" });
 
@@ -835,8 +823,6 @@ class EvaluationsController {
                         ${levelQuery.innovations_stage}
                         indicator_user.indicatorId
                 `;
-                // console.log('isasessor')
-                // // console.log(sql)
                 const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                     sql,
                     { user_Id: id, view_name },
@@ -849,7 +835,6 @@ class EvaluationsController {
 
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "User evaluations list could not access to evaluations." });
         }
     }
@@ -905,7 +890,6 @@ class EvaluationsController {
         const indicatorId = req.body.indicatorId;
         let queryRunner = getConnection().createQueryBuilder();
 
-        // // console.log(view_name, view_primary_field)
         //Get indicator item data from view
         try {
             const userRepository = getRepository(QAUsers);
@@ -1109,21 +1093,17 @@ class EvaluationsController {
 
     // FIX TODO
     static updateDetailedEvaluation = async (req: Request, res: Response) => {
-        console.time('update_evaluation');
         const id = req.params.id;
         const userId = res.locals.jwtPayload.userId;
         const { general_comments, status } = req.body;
 
         // const userRepository = getRepository(QAUsers);
         // let user = await userRepository.findOneOrFail({ where: { id: userId } });
-        // // console.log('EnteredService UpdateEvaluation', { user });
 
         const evaluationsRepository = getRepository(QAEvaluations);
         let queryRunner = getConnection().createQueryBuilder().connection;
-        // // console.log({ general_comments, status }, id)
         try {
             let evaluation = await evaluationsRepository.findOne({ where: { id: id } });
-            // console.log('Got the Evaluation', evaluation);
 
             // evaluation.general_comments = general_comments;
             evaluation.status = status;
@@ -1138,18 +1118,15 @@ class EvaluationsController {
                     {}
                 );
                 // evaluation.assessed_by_second_round.push(user);
-                // // console.log('Pushed user', evaluation);
 
                 let metaId = await queryRunner.query(query, parameters);
                 // let comment = await Util.createComment(null, true, userId, metaId[0].id, evaluation.id, require_changes);
             }
 
             let updatedEva = await evaluationsRepository.save(evaluation);
-            console.timeEnd('update_evaluation');
             res.status(200).json({ data: updatedEva, message: "Evaluation updated." });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not update evaluation.", data: error });
         }
     }
@@ -1165,7 +1142,6 @@ class EvaluationsController {
             let allCRP = await crpRepository.find({ where: { active: true } });
             res.status(200).json({ data: allCRP, message: "All CRPs" });
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not get crp." });
         }
 
@@ -1203,7 +1179,6 @@ class EvaluationsController {
             res.status(200).json({ data: evalData, message: "Indicators settings" });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not get indicators settings." });
         }
     }
@@ -1227,7 +1202,6 @@ class EvaluationsController {
             res.status(200).json({ data: evalData, message: "Indicator evaluation criteria" });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not get any evaluation criteria." });
         }
     }
@@ -1261,14 +1235,11 @@ class EvaluationsController {
             );
 
             let assessorByEvalR2 = await queryRunner.connection.query(query2, parameters2);
-            // console.log({ assessorByEvalR2 });
             const response = { assessed_r1: assessorByEvalR1[0].assessed_r1 || 'Not yet assessed', assessed_r2: assessorByEvalR2[0].assessed_r2 || 'Not yet assessed' }
-            // console.log(response);
 
             res.status(200).json({ data: response, message: `Assessors in  evaluation ${evaluationId}` });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not get any assesor for this evaluation." });
         }
     }
@@ -1283,12 +1254,10 @@ class EvaluationsController {
             let evaluation = await evaluationsRepository.findOne(evaluationId);
             evaluation.require_second_assessment = require_second_assessment;
             evaluationsRepository.save(evaluation);
-            // console.log(evaluation);
 
             res.status(200).json({ data: evaluation, message: `Evaluation ${evaluationId} updated.` });
 
         } catch (error) {
-            // console.log(error);
             res.status(404).json({ message: "Could not update the evaluation." });
         }
     }

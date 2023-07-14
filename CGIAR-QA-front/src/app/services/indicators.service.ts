@@ -23,7 +23,8 @@ export class IndicatorsService {
     qa_knowledge_product: 1,
     qa_innovation_development: 1,
     qa_policy_change: 1,
-    qa_innovation_use: 1
+    qa_innovation_use: 1,
+    qa_innovation_use_ipsr: 1
   }
   constructor(private http: HttpClient) { }
 
