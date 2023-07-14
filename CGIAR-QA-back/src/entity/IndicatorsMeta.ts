@@ -75,4 +75,10 @@ export class QAIndicatorsMeta {
         default: 0
     })
     is_core: number;
+
+    @Column({
+        nullable : true,
+        type: 'text',
+    })
+    indicator_slug: string;
 }
