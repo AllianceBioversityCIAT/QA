@@ -1,3 +1,9 @@
+SET
+	SQL_SAFE_UPDATES = 0;
+
+SET
+	group_concat_max_len = 25000;
+
 TRUNCATE TABLE qa_innovation_use_ipsr_data;
 
 INSERT INTO
