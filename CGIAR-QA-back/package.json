@@ -28,6 +28,7 @@
       "jsonwebtoken": "^8.5.1",
       "module-alias": "^2.2.2",
       "moment": "^2.29.1",
+      "morgan": "^1.10.0",
       "mysql": "^2.18.1",
       "reflect-metadata": "^0.1.10",
       "retext-keywords": "^6.0.0",

@@ -10,6 +10,8 @@ import Routes from "./routes/IndexRoute";
 import config from "./config/config";
 const { handleError } = require('./_helpers/ErrorHandler');
 const parentDir = require('path').resolve(process.cwd(), '../');
+const morgan = require('morgan');
+
 
 // Connects to the Database -> then starts the express
 createConnection()
@@ -17,6 +19,7 @@ createConnection()
         // Create a new express application instance
         const app = express();
         // Call midlewares
+        app.use(morgan('dev'))
         app.use(cors());
         app.use(helmet(
             { frameguard: false }
