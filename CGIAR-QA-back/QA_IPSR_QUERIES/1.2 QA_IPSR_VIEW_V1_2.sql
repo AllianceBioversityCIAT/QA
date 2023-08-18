@@ -604,7 +604,7 @@ SELECT
                     '<br>',
                     rcin.short_title,
                     '<br>',
-                    r3.description,
+                    IFNULL(r3.description, 'Data not provided.'),
                     '<br>',
                     IFNULL(
                         (
@@ -639,15 +639,16 @@ SELECT
                             '<br>'
                         )
                     )
+                    SEPARATOR '<br>'
                 )
             FROM
                 prdb.result_by_innovation_package rbip3
-                JOIN prdb.result r3 ON r3.id = rbip3.result_id
+                LEFT JOIN prdb.result r3 ON r3.id = rbip3.result_id
                 AND r3.result_type_id = 11
-                JOIN prdb.results_by_inititiative rbi4 ON rbi4.result_id = r3.id
+                LEFT JOIN prdb.results_by_inititiative rbi4 ON rbi4.result_id = r3.id
                 AND rbi4.initiative_role_id = 1
-                JOIN prdb.clarisa_initiatives ci4 ON ci4.id = rbi4.inititiative_id
-                JOIN prdb.results_complementary_innovation rcin ON rcin.result_id = r3.id
+                LEFT JOIN prdb.clarisa_initiatives ci4 ON ci4.id = rbi4.inititiative_id
+                LEFT JOIN prdb.results_complementary_innovation rcin ON rcin.result_id = r3.id
                 AND rcin.is_active = 1
             WHERE
                 rbip3.result_innovation_package_id = r.id
