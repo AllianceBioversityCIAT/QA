@@ -25,6 +25,8 @@ import * as moment from 'moment';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 
+import { environment } from 'src/environments/environment';
+
 @Component({
   selector: 'app-general-detailed-indicator',
   templateUrl: './general-detailed-indicator.component.html',
@@ -71,6 +73,7 @@ import { Subscription } from 'rxjs';
   ]
 })
 export class GeneralDetailedIndicatorComponent implements OnInit {
+  prUrl: string;
   suscription: Subscription;
   indicatorType: string;
   currentUser: User;
@@ -178,6 +181,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
       /** set page title */
       this.titleService.setTitle(`${this.currentType} / QA-${this.params.type.charAt(0).toUpperCase()}${this.params.type.charAt(1).toUpperCase()}-${this.params.indicatorId}`);
 
+      this.prUrl = environment.prUrl
 
     })
 
@@ -760,10 +764,6 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   }
 
   getCurrentTypeUrl(): string {
-    if (this.currentType === 'Innovation Use (IPSR)') {
-      return 'https://prtest.ciat.cgiar.org/ipsr/detail/' + this.detailedData[0].result_code + '/general-information';
-    } else {
-      return 'https://reporting.cgiar.org/result/result-detail/' + this.detailedData[0].result_code + '/general-information';
-    }
+      return this.prUrl + 'ipsr/detail/' + this.detailedData[0].result_code + '/general-information';
   }
 }
