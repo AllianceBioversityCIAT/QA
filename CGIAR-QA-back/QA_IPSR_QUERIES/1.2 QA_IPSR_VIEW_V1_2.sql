@@ -638,8 +638,7 @@ SELECT
                             rcin.other_funcions,
                             '<br>'
                         )
-                    )
-                    SEPARATOR '<br>'
+                    ) SEPARATOR '<br>'
                 )
             FROM
                 prdb.result_by_innovation_package rbip3
@@ -858,7 +857,7 @@ SELECT
                 ),
                 '<br><br>',
                 IF(
-                    (rbip.use_level_evidence_based = 11),
+                    (rbip.use_level_evidence_based = 1),
                     '<b>Innovation use level evidence-based: </b>Innovation is not used.',
                     (
                         CONCAT(
@@ -931,7 +930,11 @@ SELECT
                                 ),
                                 '<br>',
                                 '<b>Readiness evidence link: </b>',
-                                rbip4.readinees_evidence_link,
+                                IF(
+                                    (rbip4.readiness_level_evidence_based = 11),
+                                    'Not applicable',
+                                    rbip4.readinees_evidence_link
+                                ),
                                 IF(
                                     (
                                         rbip4.readiness_details_of_evidence IS NULL
@@ -948,7 +951,7 @@ SELECT
                     ),
                     '<br><br>',
                     IF(
-                        (rbip4.use_level_evidence_based = 11),
+                        (rbip4.use_level_evidence_based = 1),
                         '<b>Innovation use level evidence-based: </b>Innovation is not used.',
                         (
                             CONCAT(
@@ -970,7 +973,11 @@ SELECT
                                 ),
                                 '<br>',
                                 '<b>Use evidence link: </b>',
-                                rbip4.use_evidence_link,
+                                IF(
+                                    (rbip4.use_level_evidence_based = 1),
+                                    'Not applicable',
+                                    rbip4.use_evidence_link
+                                ),
                                 IF(
                                     (
                                         rbip4.use_details_of_evidence IS NULL
