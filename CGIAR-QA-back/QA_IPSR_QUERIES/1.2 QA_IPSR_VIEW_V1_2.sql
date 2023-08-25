@@ -152,27 +152,69 @@ SELECT
     r.reported_year_id AS reported_year,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
-    IFNULL(
-        (
-            SELECT
-                gtl.description
-            FROM
-                prdb.gender_tag_level gtl
-            WHERE
-                gtl.id = r.gender_tag_level_id
+    CONCAT(
+        IFNULL(
+            (
+                SELECT
+                    gtl.description
+                FROM
+                    prdb.gender_tag_level gtl
+                WHERE
+                    gtl.id = r.gender_tag_level_id
+            ),
+            'Data not provided.'
         ),
-        'Data not provided.'
+        '<br>',
+        IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        DISTINCT CONCAT(
+                            '• Link: ',
+                            e.link
+                        ) SEPARATOR '<br>'
+                    )
+                FROM
+                    prdb.evidence e
+                WHERE
+                    e.result_id = r.id
+                    AND e.gender_related = 1
+                    AND e.is_active = 1
+            ),
+            ''
+        )
     ) AS gender_tag_level,
-    IFNULL(
-        (
-            SELECT
-                gtl.description
-            FROM
-                prdb.gender_tag_level gtl
-            WHERE
-                gtl.id = r.climate_change_tag_level_id
+    CONCAT(
+        IFNULL(
+            (
+                SELECT
+                    gtl.description
+                FROM
+                    prdb.gender_tag_level gtl
+                WHERE
+                    gtl.id = r.climate_change_tag_level_id
+            ),
+            'Data not provided.'
         ),
-        'Data not provided.'
+        '<br>',
+        IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        DISTINCT CONCAT(
+                            '• Link: ',
+                            e.link
+                        ) SEPARATOR '<br>'
+                    )
+                FROM
+                    prdb.evidence e
+                WHERE
+                    e.result_id = r.id
+                    AND e.youth_related = 1
+                    AND e.is_active = 1
+            ),
+            ''
+        )
     ) AS climate_change_tag_level,
     IF ((r.is_krs = 1), 'Yes', 'No') AS is_krs,
     IFNULL (
