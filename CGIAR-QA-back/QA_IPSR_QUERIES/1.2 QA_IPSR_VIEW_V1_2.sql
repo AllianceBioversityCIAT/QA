@@ -54,7 +54,7 @@ SELECT
     (
         SELECT
             CONCAT(
-                '<a href="https://prtest.ciat.cgiar.org/reports/result-details/',
+                '<a href="https://reporting.cgiar.org/result/result-detail/',
                 r2.result_code,
                 '?phase=1">',
                 r2.result_code,
@@ -602,7 +602,7 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '• ',
-                    '<a href="https://prtest.ciat.cgiar.org/reports/result-details/',
+                    '<a href="https://reporting.cgiar.org/result/result-detail/',
                     r2.result_code,
                     '?phase=1">',
                     '<b>',
@@ -1169,7 +1169,7 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '• ',
-                    '<a href="https://prtest.ciat.cgiar.org/reports/result-details/',
+                    '<a href="https://reporting.cgiar.org/result/result-detail/',
                     r5.result_code,
                     '?phase=1">',
                     '<b>',
