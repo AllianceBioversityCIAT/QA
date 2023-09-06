@@ -54,7 +54,7 @@ SELECT
     (
         SELECT
             CONCAT(
-                '<a href="https://prtest.ciat.cgiar.org/reports/result-details/',
+                '<a href="https://reporting.cgiar.org/result/result-detail/',
                 r2.result_code,
                 '?phase=1">',
                 r2.result_code,
@@ -152,27 +152,69 @@ SELECT
     r.reported_year_id AS reported_year,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
-    IFNULL(
-        (
-            SELECT
-                gtl.description
-            FROM
-                prdb.gender_tag_level gtl
-            WHERE
-                gtl.id = r.gender_tag_level_id
+    CONCAT(
+        IFNULL(
+            (
+                SELECT
+                    gtl.description
+                FROM
+                    prdb.gender_tag_level gtl
+                WHERE
+                    gtl.id = r.gender_tag_level_id
+            ),
+            'Data not provided.'
         ),
-        'Data not provided.'
+        '<br>',
+        IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        DISTINCT CONCAT(
+                            '• Link: ',
+                            e.link
+                        ) SEPARATOR '<br>'
+                    )
+                FROM
+                    prdb.evidence e
+                WHERE
+                    e.result_id = r.id
+                    AND e.gender_related = 1
+                    AND e.is_active = 1
+            ),
+            ''
+        )
     ) AS gender_tag_level,
-    IFNULL(
-        (
-            SELECT
-                gtl.description
-            FROM
-                prdb.gender_tag_level gtl
-            WHERE
-                gtl.id = r.climate_change_tag_level_id
+    CONCAT(
+        IFNULL(
+            (
+                SELECT
+                    gtl.description
+                FROM
+                    prdb.gender_tag_level gtl
+                WHERE
+                    gtl.id = r.climate_change_tag_level_id
+            ),
+            'Data not provided.'
         ),
-        'Data not provided.'
+        '<br>',
+        IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        DISTINCT CONCAT(
+                            '• Link: ',
+                            e.link
+                        ) SEPARATOR '<br>'
+                    )
+                FROM
+                    prdb.evidence e
+                WHERE
+                    e.result_id = r.id
+                    AND e.youth_related = 1
+                    AND e.is_active = 1
+            ),
+            ''
+        )
     ) AS climate_change_tag_level,
     IF ((r.is_krs = 1), 'Yes', 'No') AS is_krs,
     IFNULL (
@@ -560,7 +602,7 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '• ',
-                    '<a href="https://prtest.ciat.cgiar.org/reports/result-details/',
+                    '<a href="https://reporting.cgiar.org/result/result-detail/',
                     r2.result_code,
                     '?phase=1">',
                     '<b>',
@@ -638,8 +680,7 @@ SELECT
                             rcin.other_funcions,
                             '<br>'
                         )
-                    )
-                    SEPARATOR '<br>'
+                    ) SEPARATOR '<br>'
                 )
             FROM
                 prdb.result_by_innovation_package rbip3
@@ -858,7 +899,7 @@ SELECT
                 ),
                 '<br><br>',
                 IF(
-                    (rbip.use_level_evidence_based = 11),
+                    (rbip.use_level_evidence_based = 1),
                     '<b>Innovation use level evidence-based: </b>Innovation is not used.',
                     (
                         CONCAT(
@@ -931,7 +972,11 @@ SELECT
                                 ),
                                 '<br>',
                                 '<b>Readiness evidence link: </b>',
-                                rbip4.readinees_evidence_link,
+                                IF(
+                                    (rbip4.readiness_level_evidence_based = 11),
+                                    'Not applicable',
+                                    rbip4.readinees_evidence_link
+                                ),
                                 IF(
                                     (
                                         rbip4.readiness_details_of_evidence IS NULL
@@ -948,7 +993,7 @@ SELECT
                     ),
                     '<br><br>',
                     IF(
-                        (rbip4.use_level_evidence_based = 11),
+                        (rbip4.use_level_evidence_based = 1),
                         '<b>Innovation use level evidence-based: </b>Innovation is not used.',
                         (
                             CONCAT(
@@ -970,7 +1015,11 @@ SELECT
                                 ),
                                 '<br>',
                                 '<b>Use evidence link: </b>',
-                                rbip4.use_evidence_link,
+                                IF(
+                                    (rbip4.use_level_evidence_based = 1),
+                                    'Not applicable',
+                                    rbip4.use_evidence_link
+                                ),
                                 IF(
                                     (
                                         rbip4.use_details_of_evidence IS NULL
@@ -1120,7 +1169,7 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '• ',
-                    '<a href="https://prtest.ciat.cgiar.org/reports/result-details/',
+                    '<a href="https://reporting.cgiar.org/result/result-detail/',
                     r5.result_code,
                     '?phase=1">',
                     '<b>',
