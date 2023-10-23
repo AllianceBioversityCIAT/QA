@@ -764,6 +764,6 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   }
 
   getCurrentTypeUrl(): string {
-      return this.prUrl + 'ipsr/detail/' + this.detailedData[0].result_code + '/general-information';
+      return this.prUrl + 'result/result-detail/' + this.detailedData[0].result_code + '/general-information?phase=18';
   }
 }
