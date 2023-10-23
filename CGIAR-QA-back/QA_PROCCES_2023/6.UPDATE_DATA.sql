@@ -1,10 +1,12 @@
 SET
-    SQL_SAFE_UPDATES = 0;
+	SQL_SAFE_UPDATES = 0;
 
 SET
-    group_concat_max_len = 25000;
+	group_concat_max_len = 25000;
 
--- CAP SHARING
+TRUNCATE TABLE qa_innovation_use_ipsr_data;
+
+-- CAP DEV
 INSERT INTO
     qa_capdev_data (
         crp_id,

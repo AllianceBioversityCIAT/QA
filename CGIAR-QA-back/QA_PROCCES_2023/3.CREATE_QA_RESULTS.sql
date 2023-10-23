@@ -31,7 +31,7 @@ SELECT
     qa_capdev_data.climate_change_level AS climate_change_level,
     qa_capdev_data.nutrition_tag_level AS nutrition_tag_level,
     qa_capdev_data.environmental_biodiversity_tag_level AS environmental_biodiversity_tag_level,
-    qa_capdev_data.poverty_tag_level_id AS poverty_tag_level,
+    qa_capdev_data.poverty_tag_level AS poverty_tag_level,
     qa_capdev_data.evidence AS evidence,
     qa_capdev_data.climate_related_evidence AS climate_related_evidence,
     qa_capdev_data.gender_related_evidence AS gender_related_evidence,
@@ -49,4 +49,5 @@ SELECT
     qa_capdev_data.sdg AS sdg,
     qa_capdev_data.number_of_people_trained AS number_of_people_trained
 FROM
-    qa_capdev_data;
+    qadbtest.qa_capdev_data
+WHERE qa_capdev_data.phase_year = 2023;

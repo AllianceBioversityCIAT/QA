@@ -25,18 +25,19 @@ SELECT
     SYSDATE() updated,
     IF (
         (cc.is_replicated = 1),
-        'Replicated',
+        'Updated',
         'New'
     ),
     cc.phase_year
 FROM
-    qa_capdev cc
+    qa_capdev_view cc
 WHERE
     cc.phase_name = 'AR'
     AND cc.phase_year = 2023
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
-    AND cc.submitted = 1
+    AND cc.id IS NOT NULL
+    AND cc.crp_id IS NOT NULL
     AND NOT EXISTS (
         SELECT
             1

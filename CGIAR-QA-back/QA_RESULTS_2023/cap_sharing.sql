@@ -1,4 +1,3 @@
--- Active: 1696254695788@@192.168.20.22@3306
 SELECT
     DISTINCT r.id AS id,
     (
@@ -35,7 +34,7 @@ SELECT
     IF(
         (r.is_replicated = 0),
         'New Result',
-        'Replicated Result'
+        'Updated Result'
     ) AS new_or_updated_result,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
@@ -263,6 +262,28 @@ SELECT
         ),
         '<Not applicable>'
     ) AS contributing_non_pooled_project,
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    '<b>',
+                    ci9.acronym,
+                    '</b>',
+                    ' - ',
+                    ci9.name,
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_center rc9
+                LEFT JOIN prdb.clarisa_center cc9 ON rc9.center_id = cc9.code
+                LEFT JOIN prdb.clarisa_institutions ci9 ON ci9.id = cc9.institutionId
+            WHERE
+                rc9.result_id = r.id
+                AND rc9.is_active = 1
+        ),
+        'Data not provided.'
+    ) AS contributing_centers,
     IF (
         r.result_level_id = 1
         OR r.result_level_id = 2,
@@ -591,7 +612,7 @@ SELECT
                 AND lr.legacy_link IS NULL
         ),
         '<Not applicable>'
-    ) AS linked_result,
+    ) AS linked_results,
     IFNULL(
         (
             SELECT
@@ -655,14 +676,14 @@ SELECT
             '<br>',
             (
                 SELECT
-                    GROUP_CONCAT (
+                    GROUP_CONCAT(
                         '<li>',
                         '<b>',
                         cii.acronym,
                         '</b>',
                         ' - ',
                         cii.name,
-                        '</li>' SEPARATOR ''
+                        '</li>' SEPARATOR ' '
                     )
                 FROM
                     prdb.results_by_institution rbi3
