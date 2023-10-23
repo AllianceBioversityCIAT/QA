@@ -6,8 +6,6 @@ ADD
 ADD
     COLUMN is_replicated BOOLEAN NULL,
 ADD
-    COLUMN result_code bigint DEFAULT NULL,
-ADD
     COLUMN action_area text,
 ADD
     COLUMN impact_area_targets text,
@@ -16,10 +14,8 @@ ADD
 ADD
     COLUMN number_of_people_trained text,
 ADD
-    COLUMN non_binary_using bigint DEFAULT NULL
-ADD
     COLUMN nutrition_tag_level text,
 ADD
     COLUMN environmental_biodiversity_tag_level text,
 ADD
-    COLUMN poverty_tag_level_id text;
+    COLUMN poverty_tag_level text;

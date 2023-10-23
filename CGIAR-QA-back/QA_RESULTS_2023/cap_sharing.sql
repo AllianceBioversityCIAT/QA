@@ -32,6 +32,11 @@ SELECT
         WHERE
             rt.id = r.result_type_id
     ) AS result_type,
+    IF(
+        (r.is_replicated = 0),
+        'New Result',
+        'Replicated Result'
+    ) AS new_or_updated_result,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
     (
@@ -99,7 +104,7 @@ SELECT
             prdb.gender_tag_level gtl
         WHERE
             gtl.id = r.nutrition_tag_level_id
-    ) AS nutrition_tag_level_id,
+    ) AS nutrition_tag_level,
     (
         SELECT
             CONCAT(
@@ -143,7 +148,7 @@ SELECT
             prdb.gender_tag_level gtl
         WHERE
             gtl.id = r.poverty_tag_level_id
-    ) AS poverty_tag_level_id,
+    ) AS poverty_tag_level,
     IF (
         r.result_level_id = 4,
         '<Not applicable>',

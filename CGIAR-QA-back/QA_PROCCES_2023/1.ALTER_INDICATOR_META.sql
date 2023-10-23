@@ -1,0 +1,106 @@
+INSERT INTO
+    qadbtest.qa_indicators_meta (
+        col_name,
+        display_name,
+        enable_comments,
+        is_primay,
+        include_general,
+        include_detail,
+        `order`,
+        description,
+        indicatorId,
+        is_core,
+        indicator_slug
+    )
+VALUES
+    (
+        'nutrition_tag_level',
+        'Nutrition Tag Level',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Nutrition Tag Level',
+        5,
+        0,
+        NULL
+    ),
+    (
+        'environmental_biodiversity_tag_level',
+        'Environmental Biodiversity Tag Level',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Environmental Biodiversity Tag Level',
+        5,
+        0,
+        NULL
+    ),
+    (
+        'poverty_tag_level',
+        'Poverty Tag Level',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Poverty Tag Level',
+        5,
+        0,
+        NULL
+    ),
+    (
+        'action_area',
+        'Action Area',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Action Area',
+        5,
+        0,
+        NULL
+    ),
+    (
+        'impact_area_targets',
+        'Impact Area Targets',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Impact Area Targets',
+        5,
+        0,
+        NULL
+    ),
+    (
+        'sdg',
+        'SDG',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'SDG',
+        5,
+        0,
+        NULL
+    ),
+    (
+        'number_of_people_trained',
+        'Number of People Trained',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Number of People Trained',
+        5,
+        0,
+        NULL
+    );
