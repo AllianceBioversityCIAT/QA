@@ -643,259 +643,32 @@ SELECT
         ),
         '<Not applicable>'
     ) AS previous_portfolio,
-    rind.short_title AS short_title,
-    (
-        SELECT
-            CONCAT(
-                '<b>',
-                cic.name,
-                '</b>',
-                '<br>',
-                cic.definition
-            )
-        FROM
-            prdb.clarisa_innovation_characteristic cic
-        WHERE
-            cic.id = rind.innovation_characterization_id
-    ) AS innovation_characterization,
-    (
-        SELECT
-            CONCAT(
-                '<b>',
-                cit.name,
-                '</b>',
-                '<br>',
-                cit.definition
-            )
-        FROM
-            prdb.clarisa_innovation_type cit
-        WHERE
-            cit.code = rind.innovation_nature_id
-    ) AS typology,
     IF(
-        rind.is_new_variety = 1,
-        CONCAT(
-            'Yes',
-            '<br>',
-            'Number of individual new or improved lines/ varieties: ',
-            rind.number_of_varieties
-        ),
+        rkp.is_melia = 1,
+        'Yes',
         'No'
-    ) AS number_of_varieties,
+    ) AS is_melia,
     IF(
-        rind.innovation_user_to_be_determined = 0,
-        'This is yet to be determinated',
-        (
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        '<b>',
-                        grouped_questions.main_question,
-                        '</b>',
-                        IFNULL(grouped_questions.sub_answers, ''),
-                        '</li>' SEPARATOR '<br>'
-                    )
-                FROM
-                    (
-                        SELECT
-                            rq2.question_text as main_question,
-                            GROUP_CONCAT(
-                                CONCAT(
-                                    '<li>',
-                                    rq.question_text,
-                                    '  ',
-                                    IFNULL(ra2.answer_text, ''),
-                                    '</li>'
-                                ) SEPARATOR ''
-                            ) as sub_answers
-                        FROM
-                            result_answers ra2
-                            LEFT JOIN result_questions rq ON rq.result_question_id = ra2.result_question_id
-                            LEFT JOIN result_questions rq2 ON rq2.result_question_id = rq.parent_question_id
-                        WHERE
-                            ra2.result_id = r.id
-                            AND ra2.is_active = TRUE
-                            AND ra2.answer_boolean = TRUE
-                        GROUP BY
-                            rq2.question_text,
-                            rq.parent_question_id
-                    ) AS grouped_questions
-            )
-        )
-    ) AS questions,
-    rind.innovation_developers AS innovation_developers,
-    rind.innovation_collaborators AS innovation_collaborators,
-    (
-        SELECT
-            CONCAT(
-                '<b>',
-                cir.level,
-                ' - ',
-                cir.name,
-                '</b>',
-                '<br>',
-                cir.definition
-            )
-        FROM
-            prdb.clarisa_innovation_readiness_level cir
-        WHERE
-            cir.id = rind.innovation_readiness_level_id
-    ) AS innovation_readiness_level,
-    rind.evidences_justification AS innovation_readiness_level_justification,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    '<b>',
-                    ci9.official_code,
-                    '</b>',
-                    ' - ',
-                    ci9.name,
-                    '<br>',
-                    IF(
-                        rib.is_determined = 1,
-                        'This yet to be determinated',
-                        CONCAT(
-                            '<b>',
-                            'Total USD Value (in-cash + in-kind): ',
-                            '</b>',
-                            rib.kind_cash
-                        )
-                    ),
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_initiative_budget rib
-                LEFT JOIN prdb.results_by_inititiative rbi9 ON rbi9.id = rib.result_initiative_id
-                LEFT JOIN prdb.clarisa_initiatives ci9 ON rbi9.inititiative_id = ci9.id
-            WHERE
-                rib.is_active = 1
-                AND rbi9.result_id = r.id
-                AND rbi9.is_active = 1
-        ),
-        '<Not applicable>'
-    ) AS initiatives_investment,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    npp.grant_title,
-                    '<br>',
-                    IF(
-                        nppb.is_determined = 1,
-                        'This yet to be determinated',
-                        CONCAT(
-                            '<b>Total USD Value (in-cash + in-kind)</b> ',
-                            nppb.kind_cash
-                        )
-                    ),
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.non_pooled_projetct_budget nppb
-                LEFT JOIN non_pooled_project npp ON npp.id = nppb.non_pooled_projetct_id
-            WHERE
-                nppb.is_active = 1
-                AND npp.is_active = 1
-                AND npp.results_id = r.id
-        ),
-        '<Not applicable>'
-    ) AS npp_investment,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    '<b>',
-                    ci8.name,
-                    '</b>',
-                    '<br>',
-                    IF(
-                        rib8.is_determined = 1,
-                        'This yet to be determinated',
-                        CONCAT(
-                            '<b>Total USD Value (in-cash + in-kind):</b> ',
-                            rib8.kind_cash
-                        )
-                    ),
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_institutions_budget rib8
-                LEFT JOIN prdb.results_by_institution rbi8 ON rbi8.id = rib8.result_institution_id
-                LEFT JOIN prdb.clarisa_institutions ci8 ON rbi8.institutions_id = ci8.id
-            WHERE
-                rib8.is_active = 1
-                AND rbi8.result_id = r.id
-                AND rbi8.is_active = 1
-        ),
-        '<Not applicable>'
-    ) AS partner_investment,
-    IFNULL(
+        (rkp.is_melia = 1),
         IF(
-            rind.innovation_pdf = 0,
-            'No, not necessary at this stage',
-            rind.innovation_acknowledgement
+            (rkp.melia_previous_submitted = 1),
+            'Yes',
+            'No'
         ),
         '<Not applicable>'
-    ) AS innovation_acknowledgement,
-    IFNULL(
-        IF(
-            rind.innovation_pdf = 1,
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        e9.link,
-                        '</li>' SEPARATOR '<br>'
-                    )
-                FROM
-                    prdb.evidence e9
-                WHERE
-                    e9.result_id = r.id
-                    AND e9.is_active = 1
-                    AND e9.evidence_type_id = 3
-            ),
-            '<Not applicable>'
-        ),
-        'Data not provided.'
-    ) AS pictures,
-    IFNULL(
-        IF(
-            rind.innovation_pdf = 1,
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        e8.link,
-                        '</li>' SEPARATOR '<br>'
-                    )
-                FROM
-                    prdb.evidence e8
-                WHERE
-                    e8.result_id = r.id
-                    AND e8.is_active = 1
-                    AND e8.evidence_type_id = 4
-            ),
-            '<Not applicable>'
-        ),
-        'Data not provided.'
-    ) AS materials
+    ) AS melia_previous_submitted
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.evidence e ON e.result_id = r.id
     AND e.is_active = 1
-    LEFT JOIN prdb.results_innovations_dev rind ON rind.results_id = r.id
-    AND rind.is_active = 1
+    LEFT JOIN prdb.results_knowledge_product rkp ON rkp.results_id = r.id
+    AND rkp.is_active = 1
 WHERE
     r.is_active = 1
     AND rbi.is_active = 1
-    AND r.result_type_id = 7
+    AND r.result_type_id = 6
     AND r.version_id IN (
         SELECT
             id
