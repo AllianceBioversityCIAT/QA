@@ -38,6 +38,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
+    AND cc.submitted = 3
     AND NOT EXISTS (
         SELECT
             1

@@ -2,7 +2,7 @@
 ALTER TABLE
     qa_capdev_data
 ADD
-    COLUMN submitted BOOLEAN NULL,
+    COLUMN submitted BIGINT NULL,
 ADD
     COLUMN is_replicated BOOLEAN NULL,
 ADD

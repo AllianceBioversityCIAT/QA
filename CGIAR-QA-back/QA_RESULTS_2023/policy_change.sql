@@ -634,78 +634,87 @@ SELECT
         ),
         '<Not applicable>'
     ) AS previous_portfolio,
+    (
+        SELECT
+            cpt.name
+        FROM
+            prdb.clarisa_policy_type cpt
+        WHERE
+            cpt.id = rpc.policy_type_id
+    ) AS policy_type,
+    IFNULL ((rpc.amount), '<Not applicable>') AS usd_amount,
     IF(
-        (rcd.unkown_using = 1),
-        CONCAT(
-            'Unknown: ',
-            rcd.has_unkown_using
+        (rpc.policy_type_id = 1),
+        (
+            CASE
+                WHEN (rpc.status_amount = 1) THEN 'Confirmed'
+                WHEN (rpc.status_amount = 2) THEN 'Estimated'
+                ELSE 'Unkown'
+            END
         ),
-        CONCAT (
-            'Female: ',
-            rcd.female_using,
-            '<br>',
-            'Male: ',
-            rcd.male_using,
-            '<br>',
-            'Non-binary: ',
-            rcd.non_binary_using
-        )
-    ) AS number_of_people_trained,
+        '<Not applicable>'
+    ) AS status,
     (
         SELECT
-            ct.name
+            rq.question_text
         FROM
-            prdb.capdevs_term ct
+            prdb.result_answers ran
+            LEFT JOIN result_questions rq ON ran.result_question_id = rq.result_question_id
         WHERE
-            ct.capdev_term_id = rcd.capdev_term_id
-    ) AS long_term_short_term,
-    (
-        SELECT
-            cdm.name
-        FROM
-            prdb.capdevs_delivery_methods cdm
-        WHERE
-            cdm.capdev_delivery_method_id = rcd.capdev_delivery_method_id
-    ) AS capdev_delivery_method,
-    IF (
-        (rcd.is_attending_for_organization = 0),
-        'No',
-        CONCAT (
-            'Yes',
-            '<br>',
-            '<br>',
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        '<b>',
-                        cii.acronym,
-                        '</b>',
-                        ' - ',
-                        cii.name,
-                        '</li>' SEPARATOR ' '
-                    )
-                FROM
-                    prdb.results_by_institution rbi3
-                    LEFT JOIN prdb.clarisa_institutions cii ON rbi3.institutions_id = cii.id
-                WHERE
-                    rbi3.result_id = r.id
-                    AND rbi3.is_active = 1
-                    AND rbi3.institution_roles_id = 3
-            )
-        )
-    ) AS trainees_attending_on_behalf_of_an_organization
+            ran.result_id = r.id
+            AND ran.answer_boolean
+            AND ran.is_active = 1
+    ) AS result_related,
+    IFNULL (
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<b>',
+                    cps.name,
+                    '</b>',
+                    ' - ',
+                    cps.definition
+                )
+            FROM
+                prdb.clarisa_policy_stage cps
+            WHERE
+                cps.id = rpc.policy_stage_id
+        ),
+        '<Not applicable>'
+    ) AS stage,
+    IFNULL (
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    '<b>',
+                    ci4.acronym,
+                    '</b>',
+                    ' - ',
+                    ci4.name,
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_by_institution rbi4
+                LEFT JOIN prdb.clarisa_institutions ci4 ON rbi4.institutions_id = ci4.id
+            WHERE
+                rbi4.result_id = r.id
+                AND rbi4.is_active = 1
+                AND rbi4.institution_roles_id = 4
+        ),
+        '<Not applicable>'
+    ) AS implementing_organizations
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.evidence e ON e.result_id = r.id
     AND e.is_active = 1
-    LEFT JOIN prdb.results_capacity_developments rcd ON rcd.result_id = r.id
-    AND rcd.is_active = 1
+    LEFT JOIN prdb.results_policy_changes rpc ON rpc.result_id = r.id
+    AND rpc.is_active = 1
 WHERE
     r.is_active = 1
-    AND r.result_type_id = 5
+    AND r.result_type_id = 1
     AND r.version_id IN (
         SELECT
             id

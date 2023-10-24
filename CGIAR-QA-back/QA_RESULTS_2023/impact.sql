@@ -1,4 +1,3 @@
--- Active: 1696254695788@@192.168.20.22@3306
 SELECT
     DISTINCT r.id AS id,
     (
@@ -13,7 +12,7 @@ SELECT
     r.reported_year_id AS phase_year,
     'yes' AS included_AR,
     r.is_active AS is_active,
-    r.status AS submitted,
+    r.status_id AS submitted,
     r.is_replicated AS is_replicated,
     r.result_code AS result_code,
     (
@@ -32,6 +31,11 @@ SELECT
         WHERE
             rt.id = r.result_type_id
     ) AS result_type,
+    IF(
+        (r.is_replicated = 0),
+        'New Result',
+        'Updated Result'
+    ) AS new_or_updated_result,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
     (
@@ -99,7 +103,7 @@ SELECT
             prdb.gender_tag_level gtl
         WHERE
             gtl.id = r.nutrition_tag_level_id
-    ) AS nutrition_tag_level_id,
+    ) AS nutrition_tag_level,
     (
         SELECT
             CONCAT(
@@ -143,7 +147,7 @@ SELECT
             prdb.gender_tag_level gtl
         WHERE
             gtl.id = r.poverty_tag_level_id
-    ) AS poverty_tag_level_id,
+    ) AS poverty_tag_level,
     IF (
         r.result_level_id = 4,
         '<Not applicable>',
@@ -258,6 +262,28 @@ SELECT
         ),
         '<Not applicable>'
     ) AS contributing_non_pooled_project,
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    '<b>',
+                    ci9.acronym,
+                    '</b>',
+                    ' - ',
+                    ci9.name,
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_center rc9
+                LEFT JOIN prdb.clarisa_center cc9 ON rc9.center_id = cc9.code
+                LEFT JOIN prdb.clarisa_institutions ci9 ON ci9.id = cc9.institutionId
+            WHERE
+                rc9.result_id = r.id
+                AND rc9.is_active = 1
+        ),
+        'Data not provided.'
+    ) AS contributing_centers,
     IF (
         r.result_level_id = 1
         OR r.result_level_id = 2,
@@ -586,7 +612,7 @@ SELECT
                 AND lr.legacy_link IS NULL
         ),
         '<Not applicable>'
-    ) AS linked_result,
+    ) AS linked_results,
     IFNULL(
         (
             SELECT
@@ -616,7 +642,7 @@ FROM
     AND e.is_active = 1
 WHERE
     r.is_active = 1
-    AND r.result_type_id = 7
+    AND r.result_type_id = 9
     AND r.version_id IN (
         SELECT
             id
@@ -624,6 +650,7 @@ WHERE
             prdb.version v1
         WHERE
             v1.phase_year = 2023
+            AND v1.is_active = 1
     )
 ORDER BY
     r.result_code DESC;
