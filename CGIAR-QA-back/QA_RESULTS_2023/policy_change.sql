@@ -724,6 +724,7 @@ FROM
 WHERE
     r.is_active = 1
     AND r.result_type_id = 1
+    AND rbi.is_active = 1
     AND r.version_id IN (
         SELECT
             id
@@ -731,6 +732,7 @@ WHERE
             prdb.version v1
         WHERE
             v1.phase_year = 2023
+            AND v1.phase_name LIKE '%Reporting%'
             AND v1.is_active = 1
     )
 ORDER BY
