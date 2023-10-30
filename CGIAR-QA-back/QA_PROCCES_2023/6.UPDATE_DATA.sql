@@ -1,12 +1,195 @@
 SET
-	SQL_SAFE_UPDATES = 0;
+    SQL_SAFE_UPDATES = 0;
 
 SET
-	group_concat_max_len = 25000;
+    group_concat_max_len = 25000;
 
-TRUNCATE TABLE qa_innovation_use_ipsr_data;
+-- POLICY CHANGE
+TRUNCATE TABLE qa_policy_change_data;
+INSERT INTO
+    qadbtest.qa_policy_change_data (
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        id,
+        result_level,
+        result_type,
+        title,
+        description,
+        toc_planned,
+        geographic_focus,
+        regions,
+        countries,
+        actors,
+        contributing_centers,
+        partners,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        new_or_updated_result,
+        linked_results,
+        previous_portfolio,
+        gender_tag_level,
+        climate_change_level,
+        policy_type,
+        usd_amount,
+        status,
+        stage,
+        implementing_organizations,
+        result_code,
+        submitted,
+        is_replicated,
+        action_area,
+        impact_area_targets,
+        sdg,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        result_related
+    )
+SELECT
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.id,
+    cc.result_level,
+    cc.result_type,
+    cc.title,
+    cc.description,
+    cc.toc_planned,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.actors,
+    cc.contributing_centers,
+    cc.partners,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.new_or_updated_result,
+    cc.linked_results,
+    cc.previous_portfolio,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.policy_type,
+    cc.usd_amount,
+    cc.status,
+    cc.stage,
+    cc.implementing_organizations,
+    cc.result_code,
+    cc.submitted,
+    cc.is_replicated,
+    cc.action_area,
+    cc.impact_area_targets,
+    cc.sdg,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.result_related
+FROM
+    qa_policy_change_view cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_policy_change_data qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- INNO USE
+TRUNCATE TABLE qa_innovation_use_data;
+INSERT INTO
+    qadbtest.qa_innovation_use_data (
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        id,
+        result_level,
+        result_type,
+        title,
+        description,
+        toc_planned,
+        geographic_focus,
+        regions,
+        countries,
+        contributing_centers,
+        partners,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        new_or_updated_result,
+        linked_results,
+        previous_portfolio,
+        gender_tag_level,
+        climate_change_level,
+        result_code,
+        submitted,
+        is_replicated,
+        action_area,
+        impact_area_targets,
+        sdg,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        actors,
+        organizations,
+        other_quantitative
+    )
+SELECT
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.id,
+    cc.result_level,
+    cc.result_type,
+    cc.title,
+    cc.description,
+    cc.toc_planned,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.contributing_centers,
+    cc.partners,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.new_or_updated_result,
+    cc.linked_results,
+    cc.previous_portfolio,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.result_code,
+    cc.submitted,
+    cc.is_replicated,
+    cc.action_area,
+    cc.impact_area_targets,
+    cc.sdg,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.actors,
+    cc.organizations,
+    cc.other_quantitative
+FROM
+    qadbtest.qa_innovation_use_view cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_innovation_use_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 -- CAP DEV
+TRUNCATE TABLE qa_policy_change_data
 INSERT INTO
     qa_capdev_data (
         crp_id,

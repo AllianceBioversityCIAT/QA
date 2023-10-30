@@ -42,15 +42,23 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.gender_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Gender evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.gender_related = 1
                     ),
                     '<Not applicable>'
                 )
@@ -64,15 +72,23 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.youth_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Climate evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.youth_related = 1
                     ),
                     '<Not applicable>'
                 )
@@ -86,15 +102,23 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.nutrition_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Nutrition evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.nutrition_related = 1
                     ),
                     '<Not applicable>'
                 )
@@ -108,15 +132,23 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.environmental_biodiversity_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Enviromental evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.environmental_biodiversity_related = 1
                     ),
                     '<Not applicable>'
                 )
@@ -130,15 +162,23 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.poverty_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Poverty evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.poverty_related = 1
                     ),
                     '<Not applicable>'
                 )
@@ -148,30 +188,6 @@ SELECT
         WHERE
             gtl.id = r.poverty_tag_level_id
     ) AS poverty_tag_level,
-    IF (
-        r.result_level_id = 4,
-        '<Not applicable>',
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    ci.name,
-                    '<br>',
-                    '<b>Actor type(s): </b>',
-                    cit.name,
-                    '<br>',
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.results_by_institution rbi3
-                LEFT JOIN prdb.clarisa_institutions ci ON rbi3.institutions_id = ci.id
-                INNER JOIN prdb.clarisa_institution_types cit ON ci.institution_type_code = cit.code
-            WHERE
-                rbi3.result_id = r.id
-                AND rbi3.is_active = 1
-                AND rbi3.institution_roles_id = 1
-        )
-    ) AS actors,
     (
         SELECT
             GROUP_CONCAT(
@@ -332,7 +348,7 @@ SELECT
                     ) SEPARATOR '<br>'
                 )
             FROM
-                `Integration_information`.toc_results tr
+                Integration_information.toc_results tr
                 LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
                 AND rtr.is_active = 1
             WHERE
@@ -622,100 +638,81 @@ SELECT
         ),
         '<Not applicable>'
     ) AS linked_results,
-    IFNULL(
+    group_concat(distinct if((`rkp`.`is_melia` = 1), 'Yes', 'No') separator ',') AS `is_melia`,
+    group_concat(distinct if((`rkp`.`is_melia` = 1), if((`rkp`.`melia_previous_submitted` = 1), 'YES', 'No'), '<Not applicable>') separator ',') AS `melia_previous_submitted`,
+    group_concat(distinct concat('https://cgspace.cgiar.org/handle/', `rkp`.`handle`) separator ',') AS `handle`,
+    group_concat(distinct concat(`rkpm`.`source`, ': ', `rkpm`.`year`) separator ', ') AS `issue_date`,
+    (
         (
             SELECT
                 GROUP_CONCAT(
                     '<li>',
-                    '<a href="',
-                    lr.legacy_link,
-                    '" target="_blank">',
-                    lr.legacy_link,
-                    '</a>',
-                    '</li>' SEPARATOR '<br>'
+                    rka.author_name,
+                    '</li>' SEPARATOR ' '
                 )
             FROM
-                prdb.linked_result lr
+                prdb.results_kp_authors rka
             WHERE
-                lr.origin_result_id = r.id
-                AND lr.is_active = 1
-                AND lr.legacy_link IS NOT NULL
-        ),
-        '<Not applicable>'
-    ) AS previous_portfolio,
-    IF(
-        (rcd.unkown_using = 1),
-        CONCAT(
-            'Unknown: ',
-            rcd.has_unkown_using
-        ),
-        CONCAT (
-            'Female: ',
-            rcd.female_using,
-            '<br>',
-            'Male: ',
-            rcd.male_using,
-            '<br>',
-            'Non-binary: ',
-            rcd.non_binary_using
+                rka.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rka.is_active = 1
         )
-    ) AS number_of_people_trained,
+    ) AS authors,
+    group_concat(distinct `rkp`.`knowledge_product_type` separator ',') AS `knowledge_product_type`,
+    group_concat(distinct if((`rkpm`.`is_peer_reviewed` = 1), concat(`rkpm`.`source`, ': ', 'Yes'), concat(`rkpm`.`source`, ': ', 'No')) separator ', ') AS `peer_reviewed`,
+    group_concat(distinct if((`rkpm`.`is_isi` = 1), concat(`rkpm`.`source`, ': ', 'Yes'), concat(`rkpm`.`source`, ': ', 'No')) separator ', ') AS `wos_isi`,
+    group_concat(distinct concat(`rkpm`.`source`, ': ', convert(if(((`rkpm`.`accesibility` = 'yes') or (`rkpm`.`accesibility` = 'Yes')), 'Open Access', 'Limited Access') using utf8mb3)) separator ', ') AS `accesibility`,
+    group_concat(distinct trim(`rkp`.`licence`) separator ', ') AS `license`,
     (
         SELECT
-            ct.name
-        FROM
-            prdb.capdevs_term ct
-        WHERE
-            ct.capdev_term_id = rcd.capdev_term_id
-    ) AS long_term_short_term,
-    (
-        SELECT
-            cdm.name
-        FROM
-            prdb.capdevs_delivery_methods cdm
-        WHERE
-            cdm.capdev_delivery_method_id = rcd.capdev_delivery_method_id
-    ) AS capdev_delivery_method,
-    IF (
-        (rcd.is_attending_for_organization = 0),
-        'No',
-        CONCAT (
-            'Yes',
-            '<br>',
-            '<br>',
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        '<b>',
-                        cii.acronym,
-                        '</b>',
-                        ' - ',
-                        cii.name,
-                        '</li>' SEPARATOR ' '
-                    )
-                FROM
-                    prdb.results_by_institution rbi3
-                    LEFT JOIN prdb.clarisa_institutions cii ON rbi3.institutions_id = cii.id
-                WHERE
-                    rbi3.result_id = r.id
-                    AND rbi3.is_active = 1
-                    AND rbi3.institution_roles_id = 3
+            GROUP_CONCAT(
+                '<li>',
+                rkpk.keyword,
+                '</li>' SEPARATOR ' '
             )
-        )
-    ) AS trainees_attending_on_behalf_of_an_organization
+        FROM
+            prdb.results_kp_keywords rkpk
+        WHERE
+            rkpk.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpk.is_active = 1
+    ) AS keywords,
+    ifnull(convert(group_concat(distinct `rkpal`.`score` separator ',') using utf8mb4), '<Not applicable>') AS `altmetrics`,
+    group_concat(distinct convert(concat(cast((`rkp`.`findable` * 100) as decimal(10, 0))) using utf8mb4), '%' separator ',') AS `findable`,
+    group_concat(distinct convert(concat(cast((`rkp`.`accesible` * 100) as decimal(10, 0))) using utf8mb4), '%' separator ',') AS `accesible`,
+    group_concat(distinct convert(concat(cast((`rkp`.`interoperable` * 100) as decimal(10, 0))) using utf8mb4), '%' separator ',') AS `interoperable`,
+    group_concat(distinct convert(concat(cast((`rkp`.`reusable` * 100) as decimal(10, 0))) using utf8mb4), '%' separator ',') AS `reusable`,
+    group_concat(distinct if((`rkp`.`doi` is not null), 1, 0) separator ',') AS `doi`,
+    group_concat(distinct if((`rkpm`.`source` is null), `rkpm`.`source`, NULL) separator ',') AS `source_null`,
+    group_concat(distinct if(((`rkpm`.`is_isi` = 1) and (`rkpm`.`source` = 'CGSpace')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_isi_cgspace`,
+    group_concat(distinct if(((`rkpm`.`is_peer_reviewed` = 1) and (`rkpm`.`source` = 'CGSpace')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_peer_cgspace`,
+    group_concat(distinct if((`rkpm`.`source` = 'CGSpace'), `rkpm`.`accesibility`, NULL) separator ',') AS `accesibility_cgspace`,
+    group_concat(distinct if((`rkpm`.`source` = 'CGSpace'), `rkpm`.`source`, NULL) separator ',') AS `cgspace`,
+    group_concat(distinct if((`rkpm`.`source` = 'CGSpace'), `rkpm`.`year`, NULL) separator ',') AS `cgspace_year`,
+    group_concat(distinct if(((`rkpm`.`is_isi` = 1) and (`rkpm`.`source` = 'WOS')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_isi_wos`,
+    group_concat(distinct if(((`rkpm`.`is_peer_reviewed` = 1) and (`rkpm`.`source` = 'WOS')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_peer_wos`,
+    group_concat(distinct if((`rkpm`.`source` = 'WOS'), `rkpm`.`accesibility`, NULL) separator ',') AS `accesibility_wos`,
+    group_concat(distinct if((`rkpm`.`source` = 'WOS'), `rkpm`.`source`, NULL) separator ',') AS `wos`,
+    group_concat(distinct if((`rkpm`.`source` = 'WOS'), `rkpm`.`year`, NULL) separator ',') AS `wos_year`,
+    group_concat(distinct if(((`rkpm`.`is_isi` = 1) and (`rkpm`.`source` = 'Scopus')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_isi_scopus`,
+    group_concat(distinct if(((`rkpm`.`is_peer_reviewed` = 1) and (`rkpm`.`source` = 'Scopus')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_peer_scopus`,
+    group_concat(distinct if((`rkpm`.`source` = 'Scopus'), `rkpm`.`source`, NULL) separator ',') AS `scopus`,
+    group_concat(distinct if((`rkpm`.`source` = 'Scopus'), `rkpm`.`year`, NULL) separator ',') AS `scopus_year`,
+    group_concat(distinct if(((`rkpm`.`is_isi` = 1) and (`rkpm`.`source` = 'Unpaywall')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_isi_unpaywall`,
+    group_concat(distinct if(((`rkpm`.`is_peer_reviewed` = 1) and (`rkpm`.`source` = 'Unpaywall')), `rkpm`.`is_isi`, NULL) separator ',') AS `is_peer_unpaywall`,
+    group_concat(distinct if((`rkpm`.`source` = 'Unpaywall'), `rkpm`.`source`, NULL) separator ',') AS `unpaywall`,
+    group_concat(distinct if((`rkpm`.`source` = 'Unpaywall'), `rkpm`.`year`, NULL) separator ',') AS `unpaywall_year`
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
-    LEFT JOIN prdb.evidence e ON e.result_id = r.id
-    AND e.is_active = 1
-    LEFT JOIN prdb.results_capacity_developments rcd ON rcd.result_id = r.id
-    AND rcd.is_active = 1
+    LEFT JOIN prdb.results_knowledge_product rkp ON rkp.results_id = r.id
+    AND rkp.is_active = 1
+    LEFT JOIN prdb.results_kp_metadata rkpm ON rkpm.result_knowledge_product_id = rkp.result_knowledge_product_id
+    AND rkpm.is_active = 1
+    LEFT JOIN prdb.results_kp_altmetrics rkpal ON rkpal.result_knowledge_product_id = rkp.result_knowledge_product_id
 WHERE
     r.is_active = 1
     AND rbi.is_active = 1
-    AND r.result_type_id = 5
+    AND r.result_type_id = 6
     AND r.version_id IN (
         SELECT
             id
@@ -726,5 +723,14 @@ WHERE
             AND v1.phase_name LIKE '%Reporting%'
             AND v1.is_active = 1
     )
-ORDER BY
-    r.result_code DESC;
+    AND (
+        (rkp.is_melia = 1)
+        OR (
+            rkp.knowledge_product_type = 'Journal Article'
+        )
+    )
+GROUP BY
+    r.id,
+    rbi.inititiative_id,
+    rkp.result_knowledge_product_id,
+    rkpm.result_kp_metadata_id;

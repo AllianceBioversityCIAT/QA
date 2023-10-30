@@ -42,17 +42,25 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.gender_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Gender evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.gender_related = 1
                     ),
-                    '<Not applicable>'
+                    ''
                 )
             )
         FROM
@@ -64,17 +72,25 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.youth_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Climate evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.youth_related = 1
                     ),
-                    '<Not applicable>'
+                    ''
                 )
             )
         FROM
@@ -86,17 +102,25 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.nutrition_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Nutrition evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.nutrition_related = 1
                     ),
-                    '<Not applicable>'
+                    ''
                 )
             )
         FROM
@@ -108,17 +132,25 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.environmental_biodiversity_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Enviromental evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.environmental_biodiversity_related = 1
                     ),
-                    '<Not applicable>'
+                    ''
                 )
             )
         FROM
@@ -130,17 +162,25 @@ SELECT
         SELECT
             CONCAT(
                 gtl.description,
-                ': ',
-                IF(
-                    (e.poverty_related = 1),
-                    CONCAT(
-                        '<a href="',
-                        e.link,
-                        '" target="_blank">',
-                        'See Poverty evidence',
-                        '</a>'
+                '<br>',
+                IFNULL(
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<a href="',
+                                e1.link,
+                                '" target="_blank">',
+                                e1.link,
+                                '</a>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.evidence e1
+                        WHERE
+                            e1.result_id = r.id
+                            AND e1.is_active = 1
+                            AND e1.poverty_related = 1
                     ),
-                    '<Not applicable>'
+                    ''
                 )
             )
         FROM
@@ -148,30 +188,6 @@ SELECT
         WHERE
             gtl.id = r.poverty_tag_level_id
     ) AS poverty_tag_level,
-    IF (
-        r.result_level_id = 4,
-        '<Not applicable>',
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    ci.name,
-                    '<br>',
-                    '<b>Actor type(s): </b>',
-                    cit.name,
-                    '<br>',
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.results_by_institution rbi3
-                LEFT JOIN prdb.clarisa_institutions ci ON rbi3.institutions_id = ci.id
-                INNER JOIN prdb.clarisa_institution_types cit ON ci.institution_type_code = cit.code
-            WHERE
-                rbi3.result_id = r.id
-                AND rbi3.is_active = 1
-                AND rbi3.institution_roles_id = 1
-        )
-    ) AS actors,
     (
         SELECT
             GROUP_CONCAT(
@@ -642,17 +658,80 @@ SELECT
                 AND lr.legacy_link IS NOT NULL
         ),
         '<Not applicable>'
-    ) AS previous_portfolio
+    ) AS previous_portfolio,
+    IF(
+        (rcd.unkown_using = 1),
+        CONCAT(
+            'Unknown: ',
+            rcd.has_unkown_using
+        ),
+        CONCAT (
+            'Female: ',
+            rcd.female_using,
+            '<br>',
+            'Male: ',
+            rcd.male_using,
+            '<br>',
+            'Non-binary: ',
+            rcd.non_binary_using
+        )
+    ) AS number_of_people_trained,
+    (
+        SELECT
+            ct.name
+        FROM
+            prdb.capdevs_term ct
+        WHERE
+            ct.capdev_term_id = rcd.capdev_term_id
+    ) AS long_term_short_term,
+    (
+        SELECT
+            cdm.name
+        FROM
+            prdb.capdevs_delivery_methods cdm
+        WHERE
+            cdm.capdev_delivery_method_id = rcd.capdev_delivery_method_id
+    ) AS capdev_delivery_method,
+    IF (
+        (rcd.is_attending_for_organization = 0),
+        'No',
+        CONCAT (
+            'Yes',
+            '<br>',
+            '<br>',
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        '<b>',
+                        cii.acronym,
+                        '</b>',
+                        ' - ',
+                        cii.name,
+                        '</li>' SEPARATOR ' '
+                    )
+                FROM
+                    prdb.results_by_institution rbi3
+                    LEFT JOIN prdb.clarisa_institutions cii ON rbi3.institutions_id = cii.id
+                WHERE
+                    rbi3.result_id = r.id
+                    AND rbi3.is_active = 1
+                    AND rbi3.institution_roles_id = 3
+            )
+        )
+    ) AS trainees_attending_on_behalf_of_an_organization
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.evidence e ON e.result_id = r.id
     AND e.is_active = 1
+    LEFT JOIN prdb.results_capacity_developments rcd ON rcd.result_id = r.id
+    AND rcd.is_active = 1
 WHERE
     r.is_active = 1
     AND rbi.is_active = 1
-    AND r.result_type_id = 9
+    AND r.result_type_id = 5
     AND r.version_id IN (
         SELECT
             id
