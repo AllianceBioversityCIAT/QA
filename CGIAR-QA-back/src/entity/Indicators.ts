@@ -65,6 +65,13 @@ export class QAIndicators {
   })
   qa_criteria: string;
 
+  @Column({
+    nullable: true,
+    type: "boolean",
+    default: 1
+  })
+  is_active: boolean;
+
   @Column()
   @CreateDateColumn()
   createdAt: Date;

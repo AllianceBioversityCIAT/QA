@@ -75,6 +75,8 @@ class IndicatorsController {
                         DISTINCT (name), description, primary_field, view_name, qa_indicators.order AS indicator_order
                     FROM
                         qa_indicators
+                    WHERE
+                        qa_indicators.is_active = 1
                     ORDER BY 
                         indicator_order ASC
                     `,
