@@ -264,10 +264,10 @@ export class DetailIndicatorComponent implements OnInit {
 
     this.commentService.getCommentsExcel({ evaluationId, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.params.type}` }).subscribe(
       res => {
-        // console.log(res)
-        let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
-        saveAs(blob, filename);
-        this.hideSpinner('spinner1');
+        console.log(res)
+        // let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
+        // saveAs(blob, filename);
+        // this.hideSpinner('spinner1');
       },
       error => {
         console.log("getCommentsExcel", error);

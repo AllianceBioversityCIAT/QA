@@ -193,9 +193,9 @@ export class CRPIndicatorsComponent implements OnInit {
     this.commentService.getCommentsExcel({ evaluationId: (item) ? item.evaluation_id : undefined, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.indicatorType}`, crp_id: all ? this.currentUser.crp.crp_id : undefined }).subscribe(
       res => {
         console.log(res)
-        let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
-        saveAs(blob, filename);
-        this.hideSpinner(this.spinner_name);
+        // let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
+        // saveAs(blob, filename);
+        // this.hideSpinner(this.spinner_name);
       },
       error => {
         // console.log("exportComments", error);

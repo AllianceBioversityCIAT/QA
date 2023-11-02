@@ -373,12 +373,12 @@ export class IndicatorsComponent implements OnInit {
       })
       .subscribe(
         (res) => {
-          // console.log(res)
-          let blob = new Blob([res], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
-          });
-          saveAs(blob, filename);
-          this.hideSpinner();
+          console.log(res)
+          // let blob = new Blob([res], {
+          //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
+          // });
+          // saveAs(blob, filename);
+          // this.hideSpinner();
         },
         (error) => {
           // console.log("exportComments", error);

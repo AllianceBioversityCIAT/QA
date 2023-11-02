@@ -257,12 +257,12 @@ export class CrpDashboardComponent implements OnInit {
 
     this.commentService.getCommentsRawExcel(crp_id).subscribe(
       (res) => {
-        // console.log(res)
-        let blob = new Blob([res], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
-        });
-        saveAs(blob, filename);
-        this.hideSpinner(this.spinner1);
+        console.log(res)
+        // let blob = new Blob([res], {
+        //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
+        // });
+        // saveAs(blob, filename);
+        // this.hideSpinner(this.spinner1);
       },
       (error) => {
         // console.log("downloadRawComments", error);
