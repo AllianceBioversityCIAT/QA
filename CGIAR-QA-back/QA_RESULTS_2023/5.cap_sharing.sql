@@ -307,7 +307,7 @@ SELECT
         (
             SELECT
                 GROUP_CONCAT(
-                    '<b><a href="https://toc.mel.cgiar.org/toc/',
+                    '<b><a href="https://toc.loc.codeobia.com/toc/',
                     (
                         SELECT
                             i.toc_id
@@ -659,6 +659,26 @@ SELECT
         ),
         '<Not applicable>'
     ) AS previous_portfolio,
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    '<a href="',
+                    e.link,
+                    '" target="_blank">',
+                    e.link,
+                    '</a>',
+                    '</li>' SEPARATOR '<br>'
+                )
+            FROM
+                prdb.evidence e
+            WHERE
+                e.result_id = r.id
+                AND e.is_active = 1
+        ),
+        '<Not applicable>'
+    ) AS evidence,
     IF(
         (rcd.unkown_using = 1),
         CONCAT(

@@ -38,7 +38,7 @@ SELECT
     ) AS new_or_updated_result,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
-     (
+    (
         SELECT
             CONCAT(
                 gtl.description,
@@ -307,7 +307,7 @@ SELECT
         (
             SELECT
                 GROUP_CONCAT(
-                    '<b><a href="https://toc.mel.cgiar.org/toc/',
+                    '<b><a href="https://toc.loc.codeobia.com/toc/',
                     (
                         SELECT
                             i.toc_id
@@ -659,6 +659,26 @@ SELECT
         ),
         '<Not applicable>'
     ) AS previous_portfolio,
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    '<a href="',
+                    e.link,
+                    '" target="_blank">',
+                    e.link,
+                    '</a>',
+                    '</li>' SEPARATOR '<br>'
+                )
+            FROM
+                prdb.evidence e
+            WHERE
+                e.result_id = r.id
+                AND e.is_active = 1
+        ),
+        '<Not applicable>'
+    ) AS evidence,
     rind.short_title AS short_title,
     (
         SELECT
@@ -688,15 +708,29 @@ SELECT
         WHERE
             cit.code = rind.innovation_nature_id
     ) AS typology,
-    IF(
-        rind.is_new_variety = 1,
-        CONCAT(
-            'Yes',
-            '<br>',
-            'Number of individual new or improved lines/ varieties: ',
-            rind.number_of_varieties
+    (
+        SELECT
+            IF(
+                cit2.code = 12,
+                IF(
+                    rind.is_new_variety = 1,
+                    'Yes',
+                    'No'
+                ),
+                '<Not applicable>'
+            )
+        FROM
+            prdb.clarisa_innovation_type cit2
+        WHERE
+            cit2.code = rind.innovation_nature_id
+    ) AS is_new_varieties,
+    IFNULL(
+        IF(
+            rind.is_new_variety = 1,
+            rind.number_of_varieties,
+            '<Not applicable>'
         ),
-        'No'
+        '<Not applicable>'
     ) AS number_of_variety,
     IF(
         rind.innovation_user_to_be_determined = 0,

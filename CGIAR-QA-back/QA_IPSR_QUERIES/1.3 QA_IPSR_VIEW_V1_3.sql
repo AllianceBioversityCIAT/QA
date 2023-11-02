@@ -222,7 +222,7 @@ SELECT
             SELECT
 			    CONCAT(
 			        CONCAT(
-			            '<b><a href="https://toc.mel.cgiar.org/toc/',
+			            '<b><a href="https://toc.loc.codeobia.com/toc/',
 			            (
 			                SELECT
 			                    i.toc_id
