@@ -360,7 +360,6 @@ class IndicatorsController {
     const crp_id = req.query.crp_id;
     let totalEvaluationsByIndicator = {
       qa_impact_contribution: {},
-      qa_capacity_change: {},
       qa_other_outcome: {},
       qa_other_output: {},
       qa_capdev: {},
@@ -562,7 +561,6 @@ class IndicatorsController {
   static getAllItemStatusByIndicator = async (req: Request, res: Response) => {
     let totalEvaluationsByIndicator = {
       qa_impact_contribution: {},
-      qa_capacity_change: {},
       qa_other_outcome: {},
       qa_other_output: {},
       qa_capdev: {},
