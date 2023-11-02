@@ -46,7 +46,6 @@ export class IndicatorsComponent implements OnInit {
   };
   currentPage = {
     qa_impact_contribution: 1,
-    qa_capacity_change: 1,
     qa_other_outcome: 1,
     qa_other_output: 1,
     qa_capdev: 1,

@@ -61,15 +61,14 @@ export class AdminDashboardComponent implements OnInit {
     isOpen: false,
     indicators: {
       qa_impact_contribution: false,
-      qa_capacity_change: false,
       qa_other_outcome: false,
       qa_other_output: false,
-      qa_capdev: false,
+      qa_capdev: true,
       qa_knowledge_product: false,
       qa_innovation_development: false,
       qa_policy_change: false,
       qa_innovation_use: false,
-      qa_innovation_use_ipsr: true,
+      qa_innovation_use_ipsr: false,
     },
   };
 
@@ -79,7 +78,7 @@ export class AdminDashboardComponent implements OnInit {
     { name: "Impact Contribution", viewname: "qa_impact_contribution" },
     { name: "Other Outcome", viewname: "qa_other_outcome" },
     { name: "Other Output", viewname: "qa_other_output" },
-    { name: "CapDev", viewname: "qa_capdev" },
+    { name: "Cap Sharing", viewname: "qa_capdev" },
     { name: "Knowledge Product", viewname: "qa_knowledge_product" },
     { name: "Innovation Development", viewname: "qa_innovation_development" },
     { name: "Policy Change", viewname: "qa_policy_change" },
@@ -111,7 +110,6 @@ export class AdminDashboardComponent implements OnInit {
 
   totalPendings = {
     qa_impact_contribution: 0,
-    qa_capacity_change: 0,
     qa_other_outcome: 0,
     qa_other_output: 0,
     qa_capdev: 0,

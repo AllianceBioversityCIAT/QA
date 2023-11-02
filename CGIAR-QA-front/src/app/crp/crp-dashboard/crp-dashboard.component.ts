@@ -38,7 +38,6 @@ export class CrpDashboardComponent implements OnInit {
   indicators = [];
   statusChartData = {
     qa_impact_contribution: [],
-    qa_capacity_change: [],
     qa_other_outcome: [],
     qa_other_output: [],
     qa_capdev: [],
@@ -50,7 +49,6 @@ export class CrpDashboardComponent implements OnInit {
   };
   totalPendings = {
     qa_impact_contribution: 0,
-    qa_capacity_change: 0,
     qa_other_outcome: 0,
     qa_other_output: 0,
     qa_capdev: 0,
@@ -62,7 +60,6 @@ export class CrpDashboardComponent implements OnInit {
   };
   pendings = {
     qa_impact_contribution: 0,
-    qa_capacity_change: 0,
     qa_other_outcome: 0,
     qa_other_output: 0,
     qa_capdev: 0,

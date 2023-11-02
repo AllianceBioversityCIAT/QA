@@ -66,7 +66,6 @@ export class AssessorDashboardComponent implements OnInit {
   totalPendings = {
     qa_innovation_development: 0,
     qa_impact_contribution: 0,
-    qa_capacity_change: 0,
     qa_other_outcome: 0,
     qa_other_output: 0,
     qa_capdev: 0,
@@ -81,7 +80,7 @@ export class AssessorDashboardComponent implements OnInit {
     { name: "Impact Contribution", viewname: "qa_impact_contribution" },
     { name: "Other Outcome", viewname: "qa_other_outcome" },
     { name: "Other Output", viewname: "qa_other_output" },
-    { name: "CapDev", viewname: "qa_capdev" },
+    { name: "Cap Sharing", viewname: "qa_capdev" },
     { name: "Knowledge Product", viewname: "qa_knowledge_product" },
     { name: "Policy Change", viewname: "qa_policy_change" },
     { name: "Innovation Use", viewname: "qa_innovation_use" },
