@@ -83,8 +83,7 @@ export class CommentService {
   getCommentsExcel(params) {
     // return this.http.get(`${environment.apiUrl}/comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}`, { responseType: HttpRequest })
     return this.http.get(
-      `${environment.apiUrl}/comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}&crp_id=${params.crp_id}&indicatorName=${params.indicatorName}`,
-      { responseType: "blob" as "blob" }
+      `${environment.apiUrl}/comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}&crp_id=${params.crp_id}&indicatorName=${params.indicatorName}`
     );
   }
 
