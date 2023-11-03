@@ -34,7 +34,6 @@
     "chart.js": "^2.9.3",
     "chartjs-plugin-datalabels": "^0.7.0",
     "file-saver": "^2.0.5",
-    "xlsx": "^0.18.5",
     "igniteui-angular-charts": "^11.1.0",
     "igniteui-angular-core": "^11.1.0",
     "moment": "^2.29.1",
@@ -48,6 +47,7 @@
     "ngx-type-ahead": "^2.0.1",
     "rxjs": "~6.6.7",
     "tslib": "^2.0.0",
+    "xlsx": "^0.18.5",
     "zone.js": "~0.10.2"
   },
   "devDependencies": {

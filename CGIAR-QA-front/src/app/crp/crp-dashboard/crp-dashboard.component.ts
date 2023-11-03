@@ -21,8 +21,7 @@ import { Title } from "@angular/platform-browser";
 import { ChartOptions, ChartType, ChartDataSets } from "chart.js";
 import { Label, BaseChartDirective } from "ng2-charts";
 
-import { saveAs } from "file-saver";
-
+import { ExportTablesService } from '../../services/export-tables.service';
 import * as moment from "moment";
 import { IndicatorsService } from "src/app/services/indicators.service";
 
@@ -135,7 +134,8 @@ export class CrpDashboardComponent implements OnInit {
     private alertService: AlertService,
     private titleService: Title,
     private spinner: NgxSpinnerService,
-    private indicatorService: IndicatorsService
+    private indicatorService: IndicatorsService,
+    private _exportTableSE: ExportTablesService
   ) {
     this.activeRoute.params.subscribe((routeParams) => {
       // console.log({ routeParams });
@@ -258,11 +258,8 @@ export class CrpDashboardComponent implements OnInit {
     this.commentService.getCommentsRawExcel(crp_id).subscribe(
       (res) => {
         console.log(res)
-        // let blob = new Blob([res], {
-        //   type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
-        // });
-        // saveAs(blob, filename);
-        // this.hideSpinner(this.spinner1);
+        this._exportTableSE.exportExcel(res, filename)
+        this.hideSpinner(this.spinner1);
       },
       (error) => {
         // console.log("downloadRawComments", error);
