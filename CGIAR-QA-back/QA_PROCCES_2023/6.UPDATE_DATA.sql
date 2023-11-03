@@ -5,8 +5,7 @@ SET
     group_concat_max_len = 25000;
 
 -- POLICY CHANGE
-TRUNCATE TABLE qa_policy_change_data;
-
+TRUNCATE TABLE qa_policy_change_data WHERE phase_year = 2023;
 INSERT INTO
     qadbtest.qa_policy_change_data (
         crp_id,
@@ -102,7 +101,7 @@ WHERE
     );
 
 -- INNO USE
-TRUNCATE TABLE qa_innovation_use_data;
+TRUNCATE TABLE qa_innovation_use_data WHERE;
 INSERT INTO
     qadbtest.qa_innovation_use_data (
         crp_id,
@@ -192,7 +191,7 @@ WHERE
     );
 
 -- CAP DEV
-TRUNCATE TABLE qa_capdev_data;
+TRUNCATE TABLE qa_capdev_data WHERE;
 
 INSERT INTO
     qa_capdev_data (
@@ -285,7 +284,7 @@ WHERE
     );
 
 -- INNO DEV
-TRUNCATE TABLE qa_innovation_development_data;
+TRUNCATE TABLE qa_innovation_development_data WHERE;
 
 INSERT INTO
     qadbtest.qa_innovation_development_data (
@@ -400,7 +399,7 @@ WHERE
     );
 
 -- OTHER OUTPUT
-TRUNCATE TABLE qa_other_output_data;
+TRUNCATE TABLE qa_other_output_data WHERE;
 
 INSERT INTO
     qadbtest.qa_other_output_data (
@@ -485,8 +484,7 @@ WHERE
     );
 
 -- OTHER OUTCOME
-TRUNCATE TABLE qa_other_outcome_data;
-
+TRUNCATE TABLE qa_other_outcome_data WHERE;
 INSERT INTO
     qadbtest.qa_other_outcome_data (
         crp_id,
@@ -570,7 +568,7 @@ WHERE
     );
 
 -- IMPACT CONTRIBUTION
-TRUNCATE TABLE qa_impact_contribution_data;
+TRUNCATE TABLE qa_impact_contribution_data WHERE;
 
 INSERT INTO
     qadbtest.qa_impact_contribution_data (
@@ -655,7 +653,7 @@ WHERE
     );
 
 -- KNOWLEDGE PRODUCT
-TRUNCATE TABLE qa_knowledge_product_data;
+TRUNCATE TABLE qa_knowledge_product_data WHERE;
 
 INSERT INTO
     qadbtest.qa_knowledge_product_data (
