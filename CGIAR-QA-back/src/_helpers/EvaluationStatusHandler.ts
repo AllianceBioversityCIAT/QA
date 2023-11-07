@@ -3,4 +3,5 @@ export enum EvaluationStatusHandler {
     Added = 'Added',
     Removed = 'Removed',
     Deleted = 'Deleted',
+    Updated = 'Updated'
 }

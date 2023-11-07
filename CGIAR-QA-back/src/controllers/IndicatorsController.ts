@@ -75,6 +75,8 @@ class IndicatorsController {
                         DISTINCT (name), description, primary_field, view_name, qa_indicators.order AS indicator_order
                     FROM
                         qa_indicators
+                    WHERE
+                        qa_indicators.is_active = 1
                     ORDER BY 
                         indicator_order ASC
                     `,
@@ -360,7 +362,6 @@ class IndicatorsController {
     const crp_id = req.query.crp_id;
     let totalEvaluationsByIndicator = {
       qa_impact_contribution: {},
-      qa_capacity_change: {},
       qa_other_outcome: {},
       qa_other_output: {},
       qa_capdev: {},
@@ -562,7 +563,6 @@ class IndicatorsController {
   static getAllItemStatusByIndicator = async (req: Request, res: Response) => {
     let totalEvaluationsByIndicator = {
       qa_impact_contribution: {},
-      qa_capacity_change: {},
       qa_other_outcome: {},
       qa_other_output: {},
       qa_capdev: {},

@@ -21,8 +21,7 @@ import { Title } from "@angular/platform-browser";
 import { ChartOptions, ChartType, ChartDataSets } from "chart.js";
 import { Label, BaseChartDirective } from "ng2-charts";
 
-import { saveAs } from "file-saver";
-
+import { ExportTablesService } from '../../services/export-tables.service';
 import * as moment from "moment";
 import { IndicatorsService } from "src/app/services/indicators.service";
 
@@ -38,7 +37,6 @@ export class CrpDashboardComponent implements OnInit {
   indicators = [];
   statusChartData = {
     qa_impact_contribution: [],
-    qa_capacity_change: [],
     qa_other_outcome: [],
     qa_other_output: [],
     qa_capdev: [],
@@ -50,7 +48,6 @@ export class CrpDashboardComponent implements OnInit {
   };
   totalPendings = {
     qa_impact_contribution: 0,
-    qa_capacity_change: 0,
     qa_other_outcome: 0,
     qa_other_output: 0,
     qa_capdev: 0,
@@ -62,7 +59,6 @@ export class CrpDashboardComponent implements OnInit {
   };
   pendings = {
     qa_impact_contribution: 0,
-    qa_capacity_change: 0,
     qa_other_outcome: 0,
     qa_other_output: 0,
     qa_capdev: 0,
@@ -138,7 +134,8 @@ export class CrpDashboardComponent implements OnInit {
     private alertService: AlertService,
     private titleService: Title,
     private spinner: NgxSpinnerService,
-    private indicatorService: IndicatorsService
+    private indicatorService: IndicatorsService,
+    private _exportTableSE: ExportTablesService
   ) {
     this.activeRoute.params.subscribe((routeParams) => {
       // console.log({ routeParams });
@@ -260,11 +257,8 @@ export class CrpDashboardComponent implements OnInit {
 
     this.commentService.getCommentsRawExcel(crp_id).subscribe(
       (res) => {
-        // console.log(res)
-        let blob = new Blob([res], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
-        });
-        saveAs(blob, filename);
+        console.log(res)
+        this._exportTableSE.exportExcel(res, filename)
         this.hideSpinner(this.spinner1);
       },
       (error) => {

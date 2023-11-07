@@ -220,43 +220,38 @@ SELECT
     IFNULL (
         (
             SELECT
-                CONCAT(
-                    '<b>',
-                    tl.name,
-                    '</b>',
-                    ' - ',
-                    CONCAT(
-                        '<b><a href="https://toc.loc.codeobia.com/toc/',
-                        (
-                            SELECT
-                                i.toc_id
-                            FROM
-                                prdb.clarisa_initiatives i
-                            WHERE
-                                i.id = rbi.inititiative_id
-                                AND active = 1
-                        ),
-                        '" target="_blank">',
-                        'See ToC',
-                        '</a></b>'
-                    ),
-                    '<br>',
-                    '<b>Title: </b>',
-                    tr.title,
-                    '<br>',
-                    IF(
-                        (
-                            tr.description IS NULL
-                            OR tr.description = ''
-                        ),
-                        '',
-                        CONCAT('<b>Description: </b>', tr.description)
-                    )
-                )
+			    CONCAT(
+			        CONCAT(
+			            '<b><a href="https://toc.loc.codeobia.com/toc/',
+			            (
+			                SELECT
+			                    i.toc_id
+			                FROM
+			                    prdb.clarisa_initiatives i
+			                WHERE
+			                    i.id = rbi.inititiative_id
+			                    AND active = 1
+			            ),
+			            '" target="_blank">',
+			            'See ToC',
+			            '</a></b>'
+			        ),
+			        '<br>',
+			        '<b>Title: </b>',
+			        tr.result_title,
+			        '<br>',
+			        IF(
+			            (
+			                tr.result_description IS NULL
+			                OR tr.result_description = ''
+			            ),
+			            '',
+			            CONCAT('<b>Description: </b>', tr.result_description)
+			        )
+			    )
             FROM
-                prdb.results_toc_result rtr
-                JOIN prdb.toc_result tr On tr.toc_result_id = rtr.toc_result_id
-                JOIN prdb.toc_level tl On tl.toc_level_id = tr.toc_level_id
+			    prdb.results_toc_result rtr
+			    LEFT JOIN Integration_information.toc_results tr ON tr.id = rtr.toc_result_id
             WHERE
                 rtr.results_id = r.id
                 AND rtr.initiative_id = rbi.inititiative_id
@@ -1215,6 +1210,7 @@ FROM
     AND rbip.ipsr_role_id = 1
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
+    LEFT JOIN prdb.`version` v ON v.id = r.version_id
 WHERE
     r.is_active = 1
     AND r.result_type_id = 10

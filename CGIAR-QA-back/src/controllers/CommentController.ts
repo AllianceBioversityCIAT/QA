@@ -894,41 +894,90 @@ class CommentController {
 
                 if (currentRole !== RolesHandler.crp) {
                     const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                        `
+                        `SELECT
+                            evaluations.crp_id AS 'Init short name',
+                            qcd.result_code AS 'Result code',
+                            (
                                 SELECT
-                                comments.detail,
-                                comments.id AS comment_id,
-                                evaluations.indicator_view_id AS id,
-                            comments.updatedAt,
-                            comments.createdAt,
-                            comments.crp_approved,
-                            evaluations.crp_id,
-                            evaluations.id AS evaluation_id,
-                            users.username,
-                            users.email,
-                            meta.display_name,
-                            meta.col_name,
-                            replies.createdAt AS reply_createdAt,
-                            replies.updatedAt AS reply_updatedAt,
-                            replies.detail AS reply,
-                            (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
-                            (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS result_code,
-                            (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
-                            (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
-                            FROM
+                                    title
+                                FROM
+                                    ${indicatorName}
+                                WHERE
+                                    id = evaluations.indicator_view_id
+                            ) AS 'Result title',
+                            evaluations.phase_year AS 'Year',
+                            evaluations.id AS 'Evaluation ID',
+                            meta.display_name AS 'Field name',
+                            comments.id AS 'Comment ID',
+                            comments.detail AS 'Comment',
+                            comments.createdAt AS 'Created date',
+                            users.username AS 'Assessor username',
+                            users.email AS 'Assessor email',
+                            (
+                                SELECT
+                                    qrt.name    	
+                                FROM
+                                    qa_reply_type qrt
+                                WHERE 
+                                    qrt.id = comments.replyTypeId
+                            ) AS 'Init reply type',
+                            replies.detail AS 'Init reply',
+                            replies.createdAt AS 'Reply created date',
+                            (
+                                SELECT
+                                    username
+                                FROM
+                                    qa_users
+                                WHERE
+                                    id = replies.userId
+                            ) AS 'Init user',
+                            (
+                                SELECT
+                                    cycle_stage
+                                FROM
+                                    qa_cycle
+                                WHERE
+                                    id = comments.cycleId
+                            ) as 'Round'
+                        FROM
                             qa_comments comments
                             LEFT JOIN qa_users users ON users.id = comments.userId
                             LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                            LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
+                            LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+                            AND replies.is_deleted = 0
                             LEFT JOIN qa_indicators_meta meta ON meta.id = comments.metaId
-                            WHERE
+                            LEFT JOIN ${indicatorName} qcd ON qcd.id = evaluations.indicator_view_id 
+                        WHERE
                             comments.detail IS NOT NULL
-                            AND evaluations.id = :evaluationId
-                            AND (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
+                            AND qcd.result_code IN (
+                                SELECT
+                                    qcd2.result_code
+                                FROM
+                                    ${indicatorName} qcd2
+                                    JOIN qa_evaluations qe ON qe.indicator_view_id = qcd2.id
+                                WHERE
+                                    qe.indicator_view_id = qcd2.id
+                                    AND qe.id = :evaluationId
+                            )
+                            AND (
+                                evaluations.evaluation_status <> 'Deleted'
+                                OR evaluations.evaluation_status IS NULL
+                            )
                             AND comments.approved = 1
                             AND comments.is_visible = 1
                             AND comments.is_deleted = 0
-                            ORDER BY createdAt ASC
+                            AND comments.approved_no_comment IS NULL
+                        GROUP BY
+                            evaluations.phase_year,
+                            comments.detail,
+                            comments.id,
+                            replies.createdAt,
+                            replies.updatedAt,
+                            replies.detail,
+                            replies.userId
+                        ORDER BY
+                            evaluations.phase_year ASC,
+                            comments.createdAt ASC;
                             `,
                         { evaluationId },
                         {}
@@ -937,41 +986,90 @@ class CommentController {
                 }
                 else {
                     const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                        `
+                        `SELECT
+                            evaluations.crp_id AS 'Init short name',
+                            qcd.result_code AS 'Result code',
+                            (
                                 SELECT
-                                comments.detail,
-                                comments.id AS comment_id,
-                                evaluations.indicator_view_id AS id,
-                            comments.updatedAt,
-                            comments.createdAt,
-                            comments.crp_approved,
-                            evaluations.crp_id,
-                            evaluations.id AS evaluation_id,
-                            users.username,
-                            users.email,
-                            meta.display_name,
-                            meta.col_name,
-                            replies.createdAt AS reply_createdAt,
-                            replies.updatedAt AS reply_updatedAt,
-                            replies.detail AS reply,
-                            (SELECT title FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS indicator_title,
-                            (SELECT result_code FROM ${indicatorName} WHERE id = evaluations.indicator_view_id) AS result_code,
-                            (SELECT username FROM qa_users WHERE id = replies.userId) AS reply_user,
-                            (SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId) as cycle_stage
-                            FROM
+                                    title
+                                FROM
+                                    ${indicatorName}
+                                WHERE
+                                    id = evaluations.indicator_view_id
+                            ) AS 'Result title',
+                            evaluations.phase_year AS 'Year',
+                            evaluations.id AS 'Evaluation ID',
+                            meta.display_name AS 'Field name',
+                            comments.id AS 'Comment ID',
+                            comments.detail AS 'Comment',
+                            comments.createdAt AS 'Created date',
+                            users.username AS 'Assessor username',
+                            users.email AS 'Assessor email',
+                            (
+                                SELECT
+                                    qrt.name    	
+                                FROM
+                                    qa_reply_type qrt
+                                WHERE 
+                                    qrt.id = comments.replyTypeId
+                            ) AS 'Init reply type',
+                            replies.detail AS 'Init reply',
+                            replies.createdAt AS 'Reply created date',
+                            (
+                                SELECT
+                                    username
+                                FROM
+                                    qa_users
+                                WHERE
+                                    id = replies.userId
+                            ) AS 'Init user',
+                            (
+                                SELECT
+                                    cycle_stage
+                                FROM
+                                    qa_cycle
+                                WHERE
+                                    id = comments.cycleId
+                            ) as 'Round'
+                        FROM
                             qa_comments comments
                             LEFT JOIN qa_users users ON users.id = comments.userId
                             LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                            LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
+                            LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+                            AND replies.is_deleted = 0
                             LEFT JOIN qa_indicators_meta meta ON meta.id = comments.metaId
-                            WHERE
+                            LEFT JOIN ${indicatorName} qcd ON qcd.id = evaluations.indicator_view_id 
+                        WHERE
                             comments.detail IS NOT NULL
-                            AND evaluations.id = :evaluationId
-                            AND (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
+                            AND qcd.result_code IN (
+                                SELECT
+                                    qcd2.result_code
+                                FROM
+                                    ${indicatorName} qcd2
+                                    JOIN qa_evaluations qe ON qe.indicator_view_id = qcd2.id
+                                WHERE
+                                    qe.indicator_view_id = qcd2.id
+                                    AND qe.id = :evaluationId
+                            )
+                            AND (
+                                evaluations.evaluation_status <> 'Deleted'
+                                OR evaluations.evaluation_status IS NULL
+                            )
                             AND comments.approved = 1
                             AND comments.is_visible = 1
                             AND comments.is_deleted = 0
-                            ORDER BY createdAt ASC
+                            AND comments.approved_no_comment IS NULL
+                        GROUP BY
+                            evaluations.phase_year,
+                            comments.detail,
+                            comments.id,
+                            replies.createdAt,
+                            replies.updatedAt,
+                            replies.detail,
+                            replies.userId
+                        ORDER BY
+                            evaluations.phase_year ASC,
+                            comments.createdAt ASC;
                             `,
                         { evaluationId },
                         {}
@@ -979,28 +1077,28 @@ class CommentController {
                     comments = await queryRunner.connection.query(query, parameters);
                 }
             }
-
-            const stream: Buffer = await Util.createCommentsExcel([
-                { header: 'Comment id', key: 'comment_id' },
-                { header: 'Result code', key: 'result_code' },
-                { header: 'Indicator Title', key: 'indicator_title' },
-                { header: 'Field', key: 'field' },
-                { header: 'Value', key: 'value' },
-                { header: 'User', key: 'user' },
-                { header: 'Comment', key: 'comment' },
-                { header: 'Cycle', key: 'cycle_stage' },
-                { header: 'Created Date', key: 'createdAt' },
-                { header: 'Updated Date', key: 'updatedAt' },
-                { header: 'Accepted comment?', key: 'crp_approved' },
-                { header: 'Comment reply', key: 'reply' },
-                { header: 'User Replied', key: 'user_replied' },
-                { header: 'Reply Date', key: 'reply_createdAt' },
-                // { header: 'Public Link', key: 'public_link' },
-            ], comments, 'comments', indicatorName);
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', `attachment; filename=${name}.xlsx`);
-            res.setHeader('Content-Length', stream.length);
-            res.status(200).send(stream);
+            res.status(200).send(comments);
+            // const stream: Buffer = await Util.createCommentsExcel([
+            //     { header: 'Comment id', key: 'comment_id' },
+            //     { header: 'Result code', key: 'result_code' },
+            //     { header: 'Indicator Title', key: 'indicator_title' },
+            //     { header: 'Field', key: 'field' },
+            //     { header: 'Value', key: 'value' },
+            //     { header: 'User', key: 'user' },
+            //     { header: 'Comment', key: 'comment' },
+            //     { header: 'Cycle', key: 'cycle_stage' },
+            //     { header: 'Created Date', key: 'createdAt' },
+            //     { header: 'Updated Date', key: 'updatedAt' },
+            //     { header: 'Accepted comment?', key: 'crp_approved' },
+            //     { header: 'Comment reply', key: 'reply' },
+            //     { header: 'User Replied', key: 'user_replied' },
+            //     { header: 'Reply Date', key: 'reply_createdAt' },
+            //     // { header: 'Public Link', key: 'public_link' },
+            // ], comments, 'comments', indicatorName);
+            // res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            // res.setHeader('Content-Disposition', `attachment; filename=${name}.xlsx`);
+            // res.setHeader('Content-Length', stream.length);
+            // res.status(200).send(stream);
             // res.status(200).send({ data: stream, message: 'File download' });
         } catch (error) {
             res.status(404).json({ message: 'Comments not found.', data: error });
@@ -1472,7 +1570,6 @@ class CommentController {
                             crp_id = evaluations.crp_id
                     ) AS 'crp_acronym',
                     evaluations.indicator_view_id AS 'id',
-                    
                     comments.createdAt AS createdAt,
                     comments.updatedAt AS updatedAt,
                     (SELECT name FROM qa_indicators WHERE view_name = evaluations.indicator_view_name) AS 'indicator_title',
@@ -1510,28 +1607,29 @@ class CommentController {
                 );
                 rawData = await queryRunner.connection.query(query, parameters);
             }
-            const stream: Buffer = await Util.createRawCommentsExcel([
-                { header: 'CRP', key: 'crp_acronym' },
-                { header: 'Comment id', key: 'comment_id' },
-                { header: 'Indicator id', key: 'id' },
-                { header: 'Indicator Title', key: 'indicator_title' },
-                { header: 'Field', key: 'field' },
-                { header: 'Value', key: 'value' },
-                { header: 'Assessor', key: 'assessor' },
-                { header: 'Comment', key: 'comment' },
-                { header: 'Cycle', key: 'cycle_stage' },
-                { header: 'Created Date', key: 'createdAt' },
-                { header: 'Updated Date', key: 'updatedAt' },
-                { header: 'Accepted comment?', key: 'crp_approved' },
-                { header: 'Comment reply', key: 'reply' },
-                { header: 'User Replied', key: 'user_replied' },
-                { header: 'Reply Date', key: 'reply_createdAt' },
-                // { header: 'Public Link', key: 'public_link' },
-            ], rawData, 'comments');
-            res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            res.setHeader('Content-Disposition', `attachment; filename=qa_raw_comments.xlsx`);
-            res.setHeader('Content-Length', stream.length);
-            res.status(200).send(stream);
+            res.status(200).send(rawData);
+            // const stream: Buffer = await Util.createRawCommentsExcel([
+            //     { header: 'CRP', key: 'crp_acronym' },
+            //     { header: 'Comment id', key: 'comment_id' },
+            //     { header: 'Indicator id', key: 'id' },
+            //     { header: 'Indicator Title', key: 'indicator_title' },
+            //     { header: 'Field', key: 'field' },
+            //     { header: 'Value', key: 'value' },
+            //     { header: 'Assessor', key: 'assessor' },
+            //     { header: 'Comment', key: 'comment' },
+            //     { header: 'Cycle', key: 'cycle_stage' },
+            //     { header: 'Created Date', key: 'createdAt' },
+            //     { header: 'Updated Date', key: 'updatedAt' },
+            //     { header: 'Accepted comment?', key: 'crp_approved' },
+            //     { header: 'Comment reply', key: 'reply' },
+            //     { header: 'User Replied', key: 'user_replied' },
+            //     { header: 'Reply Date', key: 'reply_createdAt' },
+            //     // { header: 'Public Link', key: 'public_link' },
+            // ], rawData, 'comments');
+            // res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            // res.setHeader('Content-Disposition', `attachment; filename=qa_raw_comments.xlsx`);
+            // res.setHeader('Content-Length', stream.length);
+            // res.status(200).send(stream);
             return;
             // res.status(200).json({ message: "Comments raw excel", data: rawData });
         } catch (error) {

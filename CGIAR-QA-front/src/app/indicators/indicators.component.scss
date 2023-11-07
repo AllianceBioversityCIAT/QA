@@ -109,6 +109,13 @@ h2 {
       background-color: #fff;
     }
   }
+  .updated-results {
+    display: flex;
+    align-items: center;
+    .removed-inactive {
+      background-color: #fff;
+    }
+  }
   .form-group {
     display: flex;
     align-items: center;

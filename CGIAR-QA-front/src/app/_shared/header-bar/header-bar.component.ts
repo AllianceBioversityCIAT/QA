@@ -40,10 +40,9 @@ export class HeaderBarComponent implements OnInit {
 
   indicatorsName = [
     { name: "Impact Contribution", viewname: "qa_impact_contribution" },
-    { name: "Capacity Change", viewname: "qa_capacity_change" },
     { name: "Other Outcome", viewname: "qa_other_outcome" },
     { name: "Other Output", viewname: "qa_other_output" },
-    { name: "CapDev", viewname: "qa_capdev" },
+    { name: "Cap Sharing", viewname: "qa_capdev" },
     { name: "Knowledge Product", viewname: "qa_knowledge_product" },
     { name: "Innovation Development", viewname: "qa_innovation_development" },
     { name: "Policy Change", viewname: "qa_policy_change" },

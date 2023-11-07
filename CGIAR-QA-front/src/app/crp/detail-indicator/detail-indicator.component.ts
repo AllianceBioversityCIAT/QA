@@ -19,6 +19,7 @@ import { WordCounterPipe } from 'src/app/pipes/word-counter.pipe';
 import * as moment from 'moment';
 import { animate, style, transition, trigger } from '@angular/animations';
 import { environment } from 'src/environments/environment';
+import { ExportTablesService } from 'src/app/services/export-tables.service';
 
 
 @Component({
@@ -136,7 +137,8 @@ export class DetailIndicatorComponent implements OnInit {
     private wordCount: WordCounterPipe,
     private authenticationService: AuthenticationService,
     private evaluationService: EvaluationsService,
-    private _sanitizer: DomSanitizer
+    private _sanitizer: DomSanitizer,
+    private _exportTableSE: ExportTablesService
   ) {
 
     this.activeRoute.params.subscribe(routeParams => {
@@ -264,9 +266,8 @@ export class DetailIndicatorComponent implements OnInit {
 
     this.commentService.getCommentsExcel({ evaluationId, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.params.type}` }).subscribe(
       res => {
-        // console.log(res)
-        let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
-        saveAs(blob, filename);
+        console.log(res)
+        this._exportTableSE.exportExcel(res, filename)
         this.hideSpinner('spinner1');
       },
       error => {

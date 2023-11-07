@@ -21,6 +21,7 @@ import { SafeUrlPipe } from 'src/app/pipes/safe-url.pipe';
 import * as moment from 'moment';
 import { FormBuilder } from '@angular/forms';
 import { IndicatorsService } from 'src/app/services/indicators.service';
+import { ExportTablesService } from 'src/app/services/export-tables.service';
 
 @Component({
   selector: 'app-indicators',
@@ -85,7 +86,8 @@ export class CRPIndicatorsComponent implements OnInit {
     private indicatorService: IndicatorsService,
     // private orderPipe: OrderPipe,
     private titleService: Title,
-    private alertService: AlertService) {
+    private alertService: AlertService,
+    private _exportTableSE: ExportTablesService) {
     this.getBatchDates();
 
     this.activeRoute.params.subscribe(routeParams => {
@@ -193,8 +195,8 @@ export class CRPIndicatorsComponent implements OnInit {
     this.commentService.getCommentsExcel({ evaluationId: (item) ? item.evaluation_id : undefined, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.indicatorType}`, crp_id: all ? this.currentUser.crp.crp_id : undefined }).subscribe(
       res => {
         console.log(res)
-        let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
-        saveAs(blob, filename);
+        // let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
+        this._exportTableSE.exportExcel(res, filename)
         this.hideSpinner(this.spinner_name);
       },
       error => {

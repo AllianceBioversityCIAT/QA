@@ -16,7 +16,7 @@ import {
   GeneralIndicatorName,
   StatusIcon,
 } from "../_models/general-status.model";
-import { saveAs } from "file-saver";
+import { ExportTablesService } from "../services/export-tables.service";
 import { Title } from "@angular/platform-browser";
 import { SortByPipe } from "../pipes/sort-by.pipe";
 
@@ -46,7 +46,6 @@ export class IndicatorsComponent implements OnInit {
   };
   currentPage = {
     qa_impact_contribution: 1,
-    qa_capacity_change: 1,
     qa_other_outcome: 1,
     qa_other_output: 1,
     qa_capdev: 1,
@@ -113,7 +112,8 @@ export class IndicatorsComponent implements OnInit {
     // private orderPipe: OrderPipe,
     private evaluationService: EvaluationsService,
     private titleService: Title,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private _exportTableSE: ExportTablesService
   ) {
     this.getBatchDates();
 
@@ -365,7 +365,7 @@ export class IndicatorsComponent implements OnInit {
     if (this.authenticationService.getBrowser() === "Safari")
       filename += `.xlsx`;
     // console.log('filename',filename)
-    this.commentService
+    const comments = this.commentService
       .getCommentsExcel({
         evaluationId: item.evaluation_id,
         id: this.currentUser.id,
@@ -373,12 +373,9 @@ export class IndicatorsComponent implements OnInit {
         indicatorName: `qa_${this.indicatorType}`,
       })
       .subscribe(
-        (res) => {
-          // console.log(res)
-          let blob = new Blob([res], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
-          });
-          saveAs(blob, filename);
+        res => {
+          console.log(res)
+          this._exportTableSE.exportExcel(res, filename)
           this.hideSpinner();
         },
         (error) => {

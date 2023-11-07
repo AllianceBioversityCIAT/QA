@@ -14,7 +14,7 @@ import { DetailedStatus, GeneralIndicatorName, GeneralStatus, StatusNames } from
 import { Role } from "../../_models/roles.model"
 import { CommentService } from 'src/app/services/comment.service';
 
-import { saveAs } from "file-saver";
+import { ExportTablesService } from '../../services/export-tables.service';
 import { UrlTransformPipe } from 'src/app/pipes/url-transform.pipe';
 import { Title } from '@angular/platform-browser';
 import { WordCounterPipe } from 'src/app/pipes/word-counter.pipe';
@@ -149,6 +149,7 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private evaluationService: EvaluationsService,
     private sanitizer: DomSanitizer,
+    private _exportTableSE: ExportTablesService
   ) {
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
@@ -443,9 +444,8 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
 
     this.commentService.getCommentsExcel({ evaluationId, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.params.type}` }).subscribe(
       res => {
-        // console.log(res)
-        let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
-        saveAs(blob, filename);
+        console.log(res)
+        this._exportTableSE.exportExcel(res, filename)
         this.hideSpinner('spinner1');
       },
       error => {
@@ -764,6 +764,6 @@ export class GeneralDetailedIndicatorComponent implements OnInit {
   }
 
   getCurrentTypeUrl(): string {
-      return this.prUrl + 'ipsr/detail/' + this.detailedData[0].result_code + '/general-information';
+    return this.prUrl + 'result/result-detail/' + this.detailedData[0].result_code + '/general-information?phase=18';
   }
 }

@@ -11,10 +11,9 @@ export enum GeneralStatus {
 
 export enum GeneralIndicatorName {
     qa_impact_contribution = 'Impact Contribution',
-    qa_capacity_change = 'Capacity Change',
     qa_other_outcome = 'Other Outcome',
     qa_other_output = 'Other Output',
-    qa_capdev = 'CapDev',
+    qa_capdev = 'Cap Sharing',
     qa_knowledge_product = 'Knowledge Product',
     qa_innovation_development = 'Innovation Development',
     qa_policy_change = 'Policy Change',
