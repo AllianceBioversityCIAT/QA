@@ -939,7 +939,147 @@ SELECT
             '<Not applicable>'
         ),
         'Data not provided.'
-    ) AS materials
+    ) AS materials,
+    IF(
+        rind.innovation_user_to_be_determined = 0
+        OR rind.innovation_user_to_be_determined IS NULL,
+        CONCAT(
+            IFNULL(
+                (
+                    SELECT
+                        CONCAT(
+                            '<b>Actors: </b>',
+                            GROUP_CONCAT(
+                                '<li>',
+                                '<b>',
+                                at.name,
+                                '</b>',
+                                IF(
+                                    ra.actor_type_id = 5,
+                                    CONCAT(
+                                        ' - ',
+                                        'Other actor type: ',
+                                        ra.other_actor_type
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    (ra.sex_and_age_disaggregation != 1),
+                                    CONCAT(
+                                        '<br>',
+                                        'Women: ',
+                                        IF(ra.has_women = 1, 'Yes', 'No'),
+                                        ' - ',
+                                        'Women youth: ',
+                                        IF(ra.has_women_youth = 1, 'Yes', 'No'),
+                                        '<br>',
+                                        'Men: ',
+                                        IF(ra.has_men = 1, 'Yes', 'No'),
+                                        ' - ',
+                                        'Men youth: ',
+                                        IF(ra.has_men_youth = 1, 'Yes', 'No'),
+                                        '<br>'
+                                    ),
+                                    CONCAT(
+                                        '<br>',
+                                        'Sex and age disaggregation does not apply',
+                                        '<br>'
+                                    )
+                                ),
+                                '</li>' SEPARATOR '<br>'
+                            )
+                        )
+                    FROM
+                        prdb.result_actors ra
+                        LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
+                    WHERE
+                        ra.result_id = r.id
+                        AND ra.is_active = 1
+                ),
+                CONCAT(
+                    '<b>Actors: </b>',
+                    '<br>',
+                    'Data not provided.'
+                )
+            ),
+            '<br><br>',
+            IFNULL(
+                (
+                    SELECT
+                        CONCAT(
+                            '<b>Organizations: </b>',
+                            GROUP_CONCAT(
+                                '<li>',
+                                '<b>',
+                                cit.name,
+                                '</b>',
+                                IF(
+                                    rbit.institution_types_id = 78,
+                                    CONCAT(
+                                        ' - ',
+                                        'Other actor type: ',
+                                        rbit.other_institution
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    (
+                                        rbit.graduate_students IS NOT NULL
+                                    ),
+                                    (
+                                        CONCAT(
+                                            '<br>',
+                                            'Graduate students: ',
+                                            rbit.graduate_students
+                                        )
+                                    ),
+                                    ''
+                                ),
+                                '</li>' SEPARATOR '<br>'
+                            )
+                        )
+                    FROM
+                        prdb.results_by_institution_type rbit
+                        LEFT JOIN prdb.clarisa_institution_types cit ON rbit.institution_types_id = cit.code
+                    WHERE
+                        rbit.results_id = r.id
+                        AND rbit.is_active = 1
+                        AND rbit.institution_roles_id = 5
+                ),
+                CONCAT(
+                    '<b>Organizations: </b>',
+                    '<br>',
+                    'Data not provided.'
+                )
+            ),
+            '<br><br>',
+            IFNULL(
+                (
+                    SELECT
+                        CONCAT(
+                            '<b>Other quantitative measures of innovation use: <b>',
+                            GROUP_CONCAT(
+                                '<li>',
+                                'Unit of measures: ',
+                                rim.unit_of_measure,
+                                '<br>' '</li>' SEPARATOR '<br>'
+                            )
+                        )
+                    FROM
+                        prdb.result_ip_measure rim
+                    WHERE
+                        rim.result_id = r.id
+                        AND rim.is_active = 1
+                ),
+                CONCAT(
+                    '<b>Other quantitative measures of innovation use: </b>',
+                    '<br>',
+                    'Data not provided.'
+                )
+            )
+        ),
+        'This is yet to be determinated'
+    ) AS anticipated
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id

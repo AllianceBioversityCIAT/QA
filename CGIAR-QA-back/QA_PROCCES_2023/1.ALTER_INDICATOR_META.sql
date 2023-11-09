@@ -614,6 +614,32 @@ VALUES
         7,
         0,
         NULL
+    ),
+    (
+        'actors',
+        'Actors',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Actors',
+        7,
+        0,
+        NULL
+    ),
+    (
+        'anticipated',
+        'Anticipated innovation user ',
+        0,
+        0,
+        1,
+        0,
+        0,
+        'Anticipated innovation user ',
+        7,
+        0,
+        NULL
     );
 
 -- OTHER OUTPUT

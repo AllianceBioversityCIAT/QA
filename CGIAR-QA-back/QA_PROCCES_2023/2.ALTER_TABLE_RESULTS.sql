@@ -108,6 +108,8 @@ ADD
 ADD
     COLUMN questions TEXT,
 ADD
+    COLUMN anticipated TEXT,
+ADD
     COLUMN initiatives_investment TEXT,
 ADD
     COLUMN npp_investment TEXT,
