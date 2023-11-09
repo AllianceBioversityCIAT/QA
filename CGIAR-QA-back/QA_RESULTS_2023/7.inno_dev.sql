@@ -14,6 +14,7 @@ SELECT
     r.is_active AS is_active,
     r.status_id AS submitted,
     r.is_replicated AS is_replicated,
+    r.in_qa AS in_qa,
     r.result_code AS result_code,
     (
         SELECT
@@ -307,7 +308,7 @@ SELECT
         (
             SELECT
                 GROUP_CONCAT(
-                    '<b><a href="https://toc.loc.codeobia.com/toc/',
+                    '<b><a href="https://toc.mel.cgiar.org/toc/',
                     (
                         SELECT
                             i.toc_id
@@ -580,7 +581,7 @@ SELECT
                     '<li>',
                     '<b>',
                     'Result: ',
-                    '<a href="https://prtest.ciat.cgiar.org/result/result-detail/',
+                    '<a href="https://reporting.cgiar.org/result/result-detail/',
                     r2.result_code,
                     '?phase=',
                     r2.version_id,
@@ -708,27 +709,32 @@ SELECT
         WHERE
             cit.code = rind.innovation_nature_id
     ) AS typology,
-    (
-        SELECT
-            IF(
-                cit2.code = 12,
+    IFNULL(
+        (
+            SELECT
                 IF(
-                    rind.is_new_variety = 1,
-                    'Yes',
-                    'No'
-                ),
-                '<Not applicable>'
-            )
-        FROM
-            prdb.clarisa_innovation_type cit2
-        WHERE
-            cit2.code = rind.innovation_nature_id
+                    cit2.code = 12,
+                    IF(
+                        rind.is_new_variety = 0
+                        OR rind.is_new_variety IS NULL,
+                        'No',
+                        'Yes'
+                    ),
+                    '<Not applicable>'
+                )
+            FROM
+                prdb.clarisa_innovation_type cit2
+            WHERE
+                cit2.code = rind.innovation_nature_id
+        ),
+        '<Not applicable>'
     ) AS is_new_varieties,
     IFNULL(
         IF(
-            rind.is_new_variety = 1,
-            rind.number_of_varieties,
-            '<Not applicable>'
+            rind.is_new_variety = 0
+            OR rind.is_new_variety IS NULL,
+            '<Not applicable>',
+            rind.number_of_varieties
         ),
         '<Not applicable>'
     ) AS number_of_variety,

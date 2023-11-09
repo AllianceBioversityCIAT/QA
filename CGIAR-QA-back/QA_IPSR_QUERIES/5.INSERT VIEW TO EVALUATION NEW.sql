@@ -31,8 +31,7 @@ WHERE
     AND cc.phase_year = 2023
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
-    AND cc.submitted = 1
-    AND cc.submission_date < TIMESTAMP '2023-08-15 00:00:00.000000'
+    AND cc.submitted = 3
     AND NOT EXISTS (
         SELECT
             1

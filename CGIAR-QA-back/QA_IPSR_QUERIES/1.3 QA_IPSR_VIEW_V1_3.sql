@@ -3,7 +3,7 @@ SELECT
     r.reported_year_id AS phase_year,
     'yes' AS included_AR,
     r.is_active AS is_active,
-    r.status AS submitted,
+    r.status_id AS submitted,
     (
         SELECT
             s.created_date
@@ -222,7 +222,7 @@ SELECT
             SELECT
 			    CONCAT(
 			        CONCAT(
-			            '<b><a href="https://toc.loc.codeobia.com/toc/',
+			            '<b><a href="https://toc.mel.cgiar.org/toc/',
 			            (
 			                SELECT
 			                    i.toc_id
