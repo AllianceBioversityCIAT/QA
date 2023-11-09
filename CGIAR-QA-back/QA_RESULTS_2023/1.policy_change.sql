@@ -14,6 +14,7 @@ SELECT
     r.is_active AS is_active,
     r.status_id AS submitted,
     r.is_replicated AS is_replicated,
+    r.in_qa AS in_qa,
     r.result_code AS result_code,
     (
         SELECT
@@ -307,7 +308,7 @@ SELECT
         (
             SELECT
                 GROUP_CONCAT(
-                    '<b><a href="https://toc.loc.codeobia.com/toc/',
+                    '<b><a href="https://toc.mel.cgiar.org/toc/',
                     (
                         SELECT
                             DISTINCT i.toc_id
@@ -580,7 +581,7 @@ SELECT
                     '<li>',
                     '<b>',
                     'Result: ',
-                    '<a href="https://prtest.ciat.cgiar.org/result/result-detail/',
+                    '<a href="https://reporting.cgiar.org/result/result-detail/',
                     r2.result_code,
                     '?phase=',
                     r2.version_id,

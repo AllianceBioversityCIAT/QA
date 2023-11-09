@@ -5,9 +5,13 @@ SET
     group_concat_max_len = 25000;
 
 -- POLICY CHANGE
-TRUNCATE TABLE qa_policy_change_data WHERE phase_year = 2023;
+DELETE FROM
+    qa_policy_change_data
+WHERE
+    phase_year = 2023;
+
 INSERT INTO
-    qadbtest.qa_policy_change_data (
+    qa_policy_change_data (
         crp_id,
         phase_name,
         phase_year,
@@ -101,9 +105,13 @@ WHERE
     );
 
 -- INNO USE
-TRUNCATE TABLE qa_innovation_use_data WHERE;
+DELETE FROM
+    qa_innovation_use_data
+WHERE
+    phase_year = 2023;
+
 INSERT INTO
-    qadbtest.qa_innovation_use_data (
+    qa_innovation_use_data (
         crp_id,
         phase_name,
         phase_year,
@@ -179,7 +187,7 @@ SELECT
     cc.organizations,
     cc.other_quantitative
 FROM
-    qadbtest.qa_innovation_use_view cc
+    qa_innovation_use_view cc
 WHERE
     NOT EXISTS (
         SELECT
@@ -191,7 +199,10 @@ WHERE
     );
 
 -- CAP DEV
-TRUNCATE TABLE qa_capdev_data WHERE;
+DELETE FROM
+    qa_capdev_data
+WHERE
+    phase_year = 2023;
 
 INSERT INTO
     qa_capdev_data (
@@ -284,10 +295,13 @@ WHERE
     );
 
 -- INNO DEV
-TRUNCATE TABLE qa_innovation_development_data WHERE;
+DELETE FROM
+    qa_innovation_development_data
+WHERE
+    phase_year = 2023;
 
 INSERT INTO
-    qadbtest.qa_innovation_development_data (
+    qadb.qa_innovation_development_data (
         crp_id,
         phase_name,
         phase_year,
@@ -314,6 +328,7 @@ INSERT INTO
         climate_change_level,
         short_title,
         typology,
+        is_new_varieties,
         number_of_variety,
         innovation_developers,
         innovation_collaborators,
@@ -364,6 +379,7 @@ SELECT
     cc.climate_change_level,
     cc.short_title,
     cc.typology,
+    cc.is_new_varieties,
     cc.number_of_variety,
     cc.innovation_developers,
     cc.innovation_collaborators,
@@ -399,10 +415,13 @@ WHERE
     );
 
 -- OTHER OUTPUT
-TRUNCATE TABLE qa_other_output_data WHERE;
+DELETE FROM
+    qa_other_output_data
+WHERE
+    phase_year = 2023;
 
 INSERT INTO
-    qadbtest.qa_other_output_data (
+    qa_other_output_data (
         crp_id,
         phase_name,
         phase_year,
@@ -484,9 +503,13 @@ WHERE
     );
 
 -- OTHER OUTCOME
-TRUNCATE TABLE qa_other_outcome_data WHERE;
+DELETE FROM
+    qa_other_outcome_data
+WHERE
+    phase_year = 2023;
+
 INSERT INTO
-    qadbtest.qa_other_outcome_data (
+    qa_other_outcome_data (
         crp_id,
         phase_name,
         phase_year,
@@ -568,10 +591,13 @@ WHERE
     );
 
 -- IMPACT CONTRIBUTION
-TRUNCATE TABLE qa_impact_contribution_data WHERE;
+DELETE FROM
+    qa_impact_contribution_data
+WHERE
+    phase_year = 2023;
 
 INSERT INTO
-    qadbtest.qa_impact_contribution_data (
+    qa_impact_contribution_data (
         crp_id,
         phase_name,
         phase_year,
@@ -653,10 +679,13 @@ WHERE
     );
 
 -- KNOWLEDGE PRODUCT
-TRUNCATE TABLE qa_knowledge_product_data WHERE;
+DELETE FROM
+    qa_knowledge_product_data
+WHERE
+    phase_year = 2023;
 
 INSERT INTO
-    qadbtest.qa_knowledge_product_data (
+    qa_knowledge_product_data (
         crp_id,
         phase_name,
         phase_year,

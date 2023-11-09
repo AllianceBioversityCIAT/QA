@@ -6,7 +6,7 @@ SET
 
 -- POLICY CHANGE
 INSERT INTO
-    qadbtest.qa_policy_change_data (
+    qadb.qa_policy_change_data (
         crp_id,
         phase_name,
         phase_year,
@@ -21,7 +21,6 @@ INSERT INTO
         geographic_focus,
         regions,
         countries,
-        actors,
         contributing_centers,
         partners,
         contributing_initiatives,
@@ -62,7 +61,6 @@ SELECT
     cc.geographic_focus,
     cc.regions,
     cc.countries,
-    cc.actors,
     cc.contributing_centers,
     cc.partners,
     cc.contributing_initiatives,
@@ -101,7 +99,7 @@ WHERE
 
 -- INOOVATION USE
 INSERT INTO
-    qadbtest.qa_innovation_use_data (
+    qadb.qa_innovation_use_data (
         crp_id,
         phase_name,
         phase_year,
@@ -175,7 +173,7 @@ SELECT
     cc.organizations,
     cc.other_quantitative
 FROM
-    qadbtest.qa_innovation_use_view cc
+    qadb.qa_innovation_use_view cc
 WHERE
     NOT EXISTS (
         SELECT
@@ -188,7 +186,7 @@ WHERE
 
 -- OTHER OUTCOME
 INSERT INTO
-    qadbtest.qa_other_outcome_data (
+    qadb.qa_other_outcome_data (
         crp_id,
         phase_name,
         phase_year,
@@ -203,7 +201,6 @@ INSERT INTO
         geographic_focus,
         regions,
         countries,
-        actors,
         contributing_centers,
         partners,
         contributing_initiatives,
@@ -238,7 +235,6 @@ SELECT
     cc.geographic_focus,
     cc.regions,
     cc.countries,
-    cc.actors,
     cc.contributing_centers,
     cc.partners,
     cc.contributing_initiatives,
@@ -287,7 +283,6 @@ INSERT INTO
         geographic_focus,
         regions,
         countries,
-        actors,
         contributing_centers,
         partners,
         contributing_initiatives,
@@ -326,7 +321,6 @@ SELECT
     cc.geographic_focus,
     cc.regions,
     cc.countries,
-    cc.actors,
     cc.contributing_centers,
     cc.partners,
     cc.contributing_initiatives,
@@ -362,7 +356,7 @@ WHERE
 
 -- INNO DEV
 INSERT INTO
-    qadbtest.qa_innovation_development_data (
+    qadb.qa_innovation_development_data (
         crp_id,
         phase_name,
         phase_year,
@@ -473,7 +467,7 @@ WHERE
 
 -- OTHER OUTPUT
 INSERT INTO
-    qadbtest.qa_other_output_data (
+    qadb.qa_other_output_data (
         crp_id,
         phase_name,
         phase_year,
@@ -554,7 +548,7 @@ WHERE
 
 -- IMPACT CONTRIBUTION
 INSERT INTO
-    qadbtest.qa_impact_contribution_data (
+    qadb.qa_impact_contribution_data (
         crp_id,
         phase_name,
         phase_year,
@@ -635,7 +629,7 @@ WHERE
 
 -- KNOWLEDGE PRODUCT
 INSERT INTO
-    qadbtest.qa_knowledge_product_data (
+    qadb.qa_knowledge_product_data (
         crp_id,
         phase_name,
         phase_year,

@@ -23,7 +23,7 @@ VALUES
         0,
         0,
         'Nutrition Tag Level',
-        1,
+        8,
         0,
         NULL
     ),
@@ -36,7 +36,7 @@ VALUES
         0,
         0,
         'Environmental Biodiversity Tag Level',
-        1,
+        8,
         0,
         NULL
     ),
@@ -49,7 +49,7 @@ VALUES
         0,
         0,
         'Poverty Tag Level',
-        1,
+        8,
         0,
         NULL
     ),
@@ -62,7 +62,7 @@ VALUES
         0,
         0,
         'Action Area',
-        1,
+        8,
         0,
         NULL
     ),
@@ -75,7 +75,7 @@ VALUES
         0,
         0,
         'Impact Area Targets',
-        1,
+        8,
         0,
         NULL
     ),
@@ -88,7 +88,7 @@ VALUES
         0,
         0,
         'SDG',
-        1,
+        8,
         0,
         NULL
     ),
@@ -101,7 +101,7 @@ VALUES
         0,
         0,
         'Result related to',
-        1,
+        8,
         0,
         NULL
     );

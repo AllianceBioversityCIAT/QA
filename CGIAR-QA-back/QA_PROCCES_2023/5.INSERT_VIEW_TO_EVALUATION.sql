@@ -38,7 +38,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -84,7 +84,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -130,7 +130,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -176,7 +176,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -222,7 +222,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -268,7 +268,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -314,7 +314,7 @@ WHERE
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
     AND cc.crp_id IS NOT NULL
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1

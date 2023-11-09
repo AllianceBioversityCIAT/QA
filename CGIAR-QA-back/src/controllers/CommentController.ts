@@ -901,7 +901,7 @@ class CommentController {
                                 SELECT
                                     title
                                 FROM
-                                    ${indicatorName}
+                                    ${indicatorName}_data
                                 WHERE
                                     id = evaluations.indicator_view_id
                             ) AS 'Result title',
@@ -946,7 +946,7 @@ class CommentController {
                             LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
                             AND replies.is_deleted = 0
                             LEFT JOIN qa_indicators_meta meta ON meta.id = comments.metaId
-                            LEFT JOIN ${indicatorName} qcd ON qcd.id = evaluations.indicator_view_id 
+                            LEFT JOIN ${indicatorName}_data qcd ON qcd.id = evaluations.indicator_view_id 
                         WHERE
                             comments.detail IS NOT NULL
                             AND qcd.result_code IN (

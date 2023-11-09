@@ -44,7 +44,7 @@ ADD
 ADD
     COLUMN other_quantitative TEXT;
 
--- ALTER OTHER OUTCOME TABLE MATERIALIZE
+-- ALTER OTHER OUTPUT TABLE MATERIALIZE
 ALTER TABLE
     qa_other_output_data
 ADD
@@ -118,9 +118,9 @@ ADD
 ADD
     COLUMN materials TEXT;
 
--- ALTER OTHER OUTPUT TABLE MATERIALIZE
+-- ALTER OTHER OUTCOME TABLE MATERIALIZE
 ALTER TABLE
-    qa_other_output_data
+    qa_other_outcome_data
 ADD
     COLUMN submitted BIGINT NULL,
 ADD
