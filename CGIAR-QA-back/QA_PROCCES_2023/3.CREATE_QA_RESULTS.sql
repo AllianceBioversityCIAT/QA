@@ -185,7 +185,7 @@ FROM
 WHERE
     qa_capdev_data.phase_year = 2023;
 
--- CAP SHARING
+-- INNO DEV
 CREATE
 OR REPLACE VIEW qa_innovation_development AS
 SELECT
@@ -233,6 +233,8 @@ SELECT
     qa_innovation_development_data.environmental_biodiversity_tag_level AS environmental_biodiversity_tag_level,
     qa_innovation_development_data.poverty_tag_level AS poverty_tag_level,
     qa_innovation_development_data.questions AS questions,
+    qa_innovation_development_data.anticipated AS anticipated,
+    qa_innovation_development_data.other_quantitative AS other_quantitative,
     qa_innovation_development_data.initiatives_investment AS initiatives_investment,
     qa_innovation_development_data.npp_investment AS npp_investment,
     qa_innovation_development_data.partner_investment AS partner_investment,

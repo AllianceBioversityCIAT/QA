@@ -909,6 +909,7 @@ class CommentController {
                             evaluations.id AS 'Evaluation ID',
                             meta.display_name AS 'Field name',
                             comments.id AS 'Comment ID',
+                            comments.original_field AS 'Field value',
                             comments.detail AS 'Comment',
                             comments.createdAt AS 'Created date',
                             users.username AS 'Assessor username',
@@ -993,7 +994,7 @@ class CommentController {
                                 SELECT
                                     title
                                 FROM
-                                    ${indicatorName}
+                                    ${indicatorName}_data
                                 WHERE
                                     id = evaluations.indicator_view_id
                             ) AS 'Result title',
@@ -1001,6 +1002,7 @@ class CommentController {
                             evaluations.id AS 'Evaluation ID',
                             meta.display_name AS 'Field name',
                             comments.id AS 'Comment ID',
+                            comments.original_field AS 'Field value',
                             comments.detail AS 'Comment',
                             comments.createdAt AS 'Created date',
                             users.username AS 'Assessor username',
@@ -1038,7 +1040,7 @@ class CommentController {
                             LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
                             AND replies.is_deleted = 0
                             LEFT JOIN qa_indicators_meta meta ON meta.id = comments.metaId
-                            LEFT JOIN ${indicatorName} qcd ON qcd.id = evaluations.indicator_view_id 
+                            LEFT JOIN ${indicatorName}_data qcd ON qcd.id = evaluations.indicator_view_id 
                         WHERE
                             comments.detail IS NOT NULL
                             AND qcd.result_code IN (
