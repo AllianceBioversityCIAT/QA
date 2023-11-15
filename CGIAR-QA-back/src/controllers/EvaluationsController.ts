@@ -1154,24 +1154,27 @@ class EvaluationsController {
         try {
 
             const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                `SELECT
-                        indicators.id,
-                        meta.enable_assessor,
-                        meta.enable_crp,
-                        indicators.name AS indicator_view_name,
-                        indicators.order AS indicator_order
-                    FROM
-                        qa_indicators indicators
+                `
+                SELECT
+                    indicators.id,
+                    meta.enable_assessor,
+                    meta.enable_crp,
+                    indicators.name AS indicator_view_name,
+                    indicators.order AS indicator_order
+                FROM
+                    qa_indicators indicators
                     LEFT JOIN qa_comments_meta meta ON indicators.id = meta.indicatorId
-                    GROUP BY
-                        indicators.id,
-                        indicator_order,
-                        meta.enable_assessor,
-                        meta.enable_crp,
-                        indicators.name
-                    ORDER BY
-                        indicators.order ASC
-                       `,
+                WHERE
+                    indicators.is_active = 1
+                GROUP BY
+                    indicators.id,
+                    indicator_order,
+                    meta.enable_assessor,
+                    meta.enable_crp,
+                    indicators.name
+                ORDER BY
+                    indicators.order ASC
+                `,
                 {},
                 {}
             );

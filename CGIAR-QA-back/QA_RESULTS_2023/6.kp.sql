@@ -746,65 +746,74 @@ SELECT
         )
     ) AS authors,
     IFNULL(rkp.knowledge_product_type, '<Not applicable>') AS knowledge_product_type,
-    (
-        SELECT
-            GROUP_CONCAT(
-                '<li>',
-                rkpm2.source,
-                ': ',
-                IF(
-                    rkpm2.is_peer_reviewed = 1,
-                    'Yes',
-                    'No'
-                ),
-                '</li>' SEPARATOR ' '
-            )
-        FROM
-            prdb.results_kp_metadata rkpm2
-        WHERE
-            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
-            AND rkpm2.is_active = 1
-            AND rkpm2.is_peer_reviewed = 1
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    rkpm2.source,
+                    ': ',
+                    IF(
+                        rkpm2.is_peer_reviewed = 1,
+                        'Yes',
+                        'No'
+                    ),
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_kp_metadata rkpm2
+            WHERE
+                rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpm2.is_active = 1
+                AND rkpm2.is_peer_reviewed = 1
+        ),
+        'No'
     ) AS peer_reviewed,
-    (
-        SELECT
-            GROUP_CONCAT(
-                '<li>',
-                rkpm2.source,
-                ': ',
-                IF(
-                    rkpm2.is_isi = 1,
-                    'Yes',
-                    'No'
-                ),
-                '</li>' SEPARATOR ' '
-            )
-        FROM
-            prdb.results_kp_metadata rkpm2
-        WHERE
-            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
-            AND rkpm2.is_active = 1
-            AND rkpm2.is_isi = 1
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    rkpm2.source,
+                    ': ',
+                    IF(
+                        rkpm2.is_isi = 1,
+                        'Yes',
+                        'No'
+                    ),
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_kp_metadata rkpm2
+            WHERE
+                rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpm2.is_active = 1
+                AND rkpm2.is_isi = 1
+        ),
+        'No'
     ) AS wos_isi,
-    (
-        SELECT
-            GROUP_CONCAT(
-                '<li>',
-                rkpm2.source,
-                ': ',
-                IF(
-                    rkpm2.accesibility = 'yes'
-                    or rkpm2.accesibility = 'Yes',
-                    'Open Access',
-                    'Limited Access'
-                ),
-                '</li>' SEPARATOR ' '
-            )
-        FROM
-            prdb.results_kp_metadata rkpm2
-        WHERE
-            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
-            AND rkpm2.is_active = 1
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    rkpm2.source,
+                    ': ',
+                    IF(
+                        rkpm2.accesibility = 'yes'
+                        or rkpm2.accesibility = 'Yes',
+                        'Open Access',
+                        'Limited Access'
+                    ),
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_kp_metadata rkpm2
+            WHERE
+                rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpm2.is_active = 1
+        ),
+        'No'
     ) AS accesibility,
     TRIM(rkp.licence) AS license,
     (
@@ -818,14 +827,17 @@ SELECT
             rkpk.result_knowledge_product_id = rkp.result_knowledge_product_id
             AND rkpk.is_active = 1
     ) AS keywords,
-    (
-        SELECT
-            rkpal.score
-        FROM
-            prdb.results_kp_altmetrics rkpal
-        WHERE
-            rkpal.result_knowledge_product_id = rkp.result_knowledge_product_id
-            AND rkpal.is_active = 1
+    IFNULL(
+        (
+            SELECT
+                rkpal.score
+            FROM
+                prdb.results_kp_altmetrics rkpal
+            WHERE
+                rkpal.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpal.is_active = 1
+        ),
+        '<Not applicable>'
     ) AS altmetrics,
     CONVERT(
         CONCAT(
@@ -949,7 +961,7 @@ SELECT
                 rkpm2.is_isi = 1
                 AND rkpm2.source = 'WOS',
                 rkpm2.is_isi,
-                NULL
+                0
             )
         FROM
             prdb.results_kp_metadata rkpm2

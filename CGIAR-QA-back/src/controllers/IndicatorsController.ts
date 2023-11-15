@@ -28,7 +28,9 @@ class IndicatorsController {
     //Get indicators from database
     try {
       const indicatorRepository = getRepository(QAIndicators);
-      const indicators = await indicatorRepository.find({});
+      const indicators = await indicatorRepository.find({
+        where: { is_active: true },
+      });
 
       //Send the indicators object
       res.status(200).json({ data: indicators, message: "All indicators" });
@@ -186,12 +188,10 @@ class IndicatorsController {
           indicator.primary_field
         );
         //If all ok, send 200 response
-        res
-          .status(200)
-          .json({
-            message: "Indicator created",
-            data: { indicator, indicatorMeta },
-          });
+        res.status(200).json({
+          message: "Indicator created",
+          data: { indicator, indicatorMeta },
+        });
         return;
       }
     } catch (e) {
@@ -321,12 +321,10 @@ class IndicatorsController {
           .getMany();
 
         if (hasAssignedIndicators.length > 0) {
-          res
-            .status(200)
-            .json({
-              message: "Indicator already assigned to user",
-              data: selectedIndicator,
-            });
+          res.status(200).json({
+            message: "Indicator already assigned to user",
+            data: selectedIndicator,
+          });
           return;
         }
       } catch (error) {
@@ -446,12 +444,10 @@ class IndicatorsController {
         } catch (error) {}
       }
     } catch (error) {
-      res
-        .status(404)
-        .json({
-          message: "All items status by indicators can not be retrived.",
-          data: error,
-        });
+      res.status(404).json({
+        message: "All items status by indicators can not be retrived.",
+        data: error,
+      });
     }
 
     let queryRunner = getConnection().createQueryBuilder();
@@ -543,19 +539,15 @@ class IndicatorsController {
       totalEvaluationsByIndicator[indicator] = Object.values(
         totalEvaluationsByIndicator[indicator]
       );
-      res
-        .status(200)
-        .send({
-          data: totalEvaluationsByIndicator[indicator],
-          message: "Items by indicator",
-        });
+      res.status(200).send({
+        data: totalEvaluationsByIndicator[indicator],
+        message: "Items by indicator",
+      });
     } catch (error) {
-      res
-        .status(404)
-        .json({
-          message: "Item status by indicators can not be retrived.",
-          data: error,
-        });
+      res.status(404).json({
+        message: "Item status by indicators can not be retrived.",
+        data: error,
+      });
     }
   };
 
@@ -599,12 +591,10 @@ class IndicatorsController {
         };
       });
     } catch (error) {
-      res
-        .status(404)
-        .json({
-          message: "items by indicators can not be retrived.",
-          data: error,
-        });
+      res.status(404).json({
+        message: "items by indicators can not be retrived.",
+        data: error,
+      });
     }
 
     let queryRunner = getConnection().createQueryBuilder();
@@ -662,19 +652,15 @@ class IndicatorsController {
         }
       }
 
-      res
-        .status(200)
-        .send({
-          data: totalEvaluationsByIndicator,
-          message: "All items by indicator",
-        });
+      res.status(200).send({
+        data: totalEvaluationsByIndicator,
+        message: "All items by indicator",
+      });
     } catch (error) {
-      res
-        .status(404)
-        .json({
-          message: "items by indicators can not be retrived.",
-          data: error,
-        });
+      res.status(404).json({
+        message: "items by indicators can not be retrived.",
+        data: error,
+      });
     }
   };
 
@@ -780,14 +766,12 @@ class IndicatorsController {
 
       // queryRunner.close();
 
-      res
-        .status(200)
-        .send({
-          data: data,
-          message: `List of ${
-            indicator_view_name[0].view_name.split("qa_")[1]
-          } indicator items`,
-        });
+      res.status(200).send({
+        data: data,
+        message: `List of ${
+          indicator_view_name[0].view_name.split("qa_")[1]
+        } indicator items`,
+      });
     } catch (error) {
       res
         .status(404)
@@ -915,14 +899,12 @@ class IndicatorsController {
 
       // queryRunner.close();
 
-      res
-        .status(200)
-        .send({
-          data: data,
-          message: `Item ${data.id} of  ${
-            indicator_view_name[0].view_name.split("qa_")[1]
-          } indicator.`,
-        });
+      res.status(200).send({
+        data: data,
+        message: `Item ${data.id} of  ${
+          indicator_view_name[0].view_name.split("qa_")[1]
+        } indicator.`,
+      });
     } catch (error) {
       res
         .status(404)

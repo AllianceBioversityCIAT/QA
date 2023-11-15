@@ -321,19 +321,22 @@ SELECT
                     'See ToC',
                     '</a></b>',
                     '<br>',
-                    (
-                        SELECT
-                            CONCAT(
-                                '<b>',
-                                wp.acronym,
-                                '</b>',
-                                ' - ',
-                                wp.name
-                            )
-                        FROM
-                            Integration_information.work_packages wp
-                        WHERE
-                            wp.id = tr.work_packages_id
+                    IFNULL(
+                        (
+                            SELECT
+                                CONCAT(
+                                    '<b>',
+                                    wp.acronym,
+                                    '</b>',
+                                    ' - ',
+                                    wp.name
+                                )
+                            FROM
+                                Integration_information.work_packages wp
+                            WHERE
+                                wp.id = tr.work_packages_id
+                        ),
+                        ''
                     ),
                     '<br>',
                     '<b>Title: </b>',
