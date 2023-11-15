@@ -364,7 +364,7 @@
       (!availableComment &&
         !crpComment && commentsByColSelected?.tpb != 1 &&
         currentUser.hasOwnProperty('cycle') &&
-        !isCRP) ||
+        !isCRP && dataFromItem.is_core) ||
       currentUser.roles[0].description === allRoles.admin ||
       tpbUser?.isTPB && (commentsByColSelected?.tpb != 1 && dataFromItem.is_core) 
     " class="add-comment-container">
