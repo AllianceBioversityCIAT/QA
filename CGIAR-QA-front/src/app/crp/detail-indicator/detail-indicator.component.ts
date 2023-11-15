@@ -125,6 +125,7 @@ export class DetailIndicatorComponent implements OnInit {
 
   totalChar = 6500;
 
+  phase = environment.phase;
 
   constructor(private activeRoute: ActivatedRoute,
     private router: Router,
