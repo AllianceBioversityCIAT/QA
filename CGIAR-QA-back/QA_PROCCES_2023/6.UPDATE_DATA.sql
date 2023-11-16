@@ -301,7 +301,7 @@ WHERE
     phase_year = 2023;
 
 INSERT INTO
-    qadb.qa_innovation_development_data (
+    qa_innovation_development_data (
         crp_id,
         phase_name,
         phase_year,
