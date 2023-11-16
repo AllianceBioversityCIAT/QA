@@ -860,7 +860,6 @@ class CommentController {
                     evaluations.crp_id,
                     evaluations.id AS evaluation_id,
                     users.username,
-                    users.email,
                     meta.display_name,
                     meta.col_name,
                     replies.createdAt AS reply_createdAt,
@@ -1006,7 +1005,6 @@ class CommentController {
                             comments.detail AS 'Comment',
                             comments.createdAt AS 'Created date',
                             users.username AS 'Assessor username',
-                            users.email AS 'Assessor email',
                             (
                                 SELECT
                                     qrt.name    	
