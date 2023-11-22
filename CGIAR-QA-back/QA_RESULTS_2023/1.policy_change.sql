@@ -308,15 +308,13 @@ SELECT
         (
             SELECT
                 GROUP_CONCAT(
+                    '<li>',
+                    ci9.official_code,
+                    ' - ',
+                    ci9.name,
+                    '<br>',
                     '<b><a href="https://toc.mel.cgiar.org/toc/',
-                    (
-                        SELECT
-                            DISTINCT i.toc_id
-                        FROM
-                            prdb.clarisa_initiatives i
-                        WHERE
-                            i.id = rbi.inititiative_id
-                    ),
+                    ci9.toc_id,
                     '" target="_blank">',
                     'See ToC',
                     '</a></b>',
@@ -349,12 +347,14 @@ SELECT
                         ),
                         '',
                         CONCAT('<b>Description: </b>', tr.result_description)
-                    ) SEPARATOR '<br>'
+                    ),
+                    '</li>' SEPARATOR '<br>'
                 )
             FROM
                 `Integration_information`.toc_results tr
                 LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
                 AND rtr.is_active = 1
+                LEFT JOIN prdb.clarisa_initiatives ci9 ON ci9.id = rtr.initiative_id
             WHERE
                 tr.id = rtr.toc_result_id
         )
@@ -756,13 +756,11 @@ SELECT
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
+    AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_policy_changes rpc ON rpc.result_id = r.id
     AND rpc.is_active = 1
 WHERE
-    r.is_active = 1
-    AND r.result_type_id = 1
-    AND rbi.initiative_role_id = 1
-    AND rbi.is_active = 1
+    r.result_type_id = 1
     AND r.version_id IN (
         SELECT
             id
