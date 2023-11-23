@@ -98,6 +98,9 @@ h2 {
   .removed-filter {
     display: flex;
     align-items: center;
+    label {
+      font-size: 8px;
+    }
     .removed-inactive {
       background-color: #fff;
     }
@@ -105,6 +108,9 @@ h2 {
   .added-results {
     display: flex;
     align-items: center;
+    label {
+      font-size: 8px;
+    }
     .removed-inactive {
       background-color: #fff;
     }
@@ -112,6 +118,9 @@ h2 {
   .updated-results {
     display: flex;
     align-items: center;
+    label {
+      font-size: 8px;
+    }
     .removed-inactive {
       background-color: #fff;
     }
@@ -120,6 +129,9 @@ h2 {
   .changed-results {
     display: flex;
     align-items: center;
+    label {
+      font-size: 8px;
+    }
     .removed-inactive {
       background-color: #fff;
     }
