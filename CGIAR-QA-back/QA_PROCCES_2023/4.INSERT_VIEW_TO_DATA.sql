@@ -404,7 +404,8 @@ INSERT INTO
         npp_investment,
         partner_investment,
         pictures,
-        materials
+        materials,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -454,7 +455,8 @@ SELECT
     cc.npp_investment,
     cc.partner_investment,
     cc.pictures,
-    cc.materials
+    cc.materials,
+    cc.evidence
 FROM
     qa_innovation_development_view cc
 WHERE

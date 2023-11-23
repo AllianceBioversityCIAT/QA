@@ -140,6 +140,14 @@
               uncheckable tabindex="0" role="button">Updated items</label>
           </div>
         </div>
+        <div class="changed-results">
+          <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+            <!-- <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added"
+                            uncheckable tabindex="0" role="button">Added item</label> -->
+            <label class="btn btn-outline-secondary" [class.active]="evalStatusFilter === 'Changed'" btnRadio="Changed"
+              uncheckable tabindex="0" role="button">Type Changed</label>
+          </div>
+        </div>
 
         <div class="form-group">
           <input type="text" class="form-control" placeholder="Search Here" [(ngModel)]="searchText" />

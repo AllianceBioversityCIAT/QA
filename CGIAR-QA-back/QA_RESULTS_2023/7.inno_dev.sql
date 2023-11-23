@@ -308,32 +308,33 @@ SELECT
         (
             SELECT
                 GROUP_CONCAT(
+                    '<li>',
+                    ci9.official_code,
+                    ' - ',
+                    ci9.name,
+                    '<br>',
                     '<b><a href="https://toc.mel.cgiar.org/toc/',
-                    (
-                        SELECT
-                            i.toc_id
-                        FROM
-                            prdb.clarisa_initiatives i
-                        WHERE
-                            i.id = rbi.inititiative_id
-                    ),
+                    ci9.toc_id,
                     '" target="_blank">',
                     'See ToC',
                     '</a></b>',
                     '<br>',
-                    (
-                        SELECT
-                            CONCAT(
-                                '<b>',
-                                wp.acronym,
-                                '</b>',
-                                ' - ',
-                                wp.name
-                            )
-                        FROM
-                            Integration_information.work_packages wp
-                        WHERE
-                            wp.id = tr.work_packages_id
+                    IFNULL(
+                        (
+                            SELECT
+                                CONCAT(
+                                    '<b>',
+                                    wp.acronym,
+                                    '</b>',
+                                    ' - ',
+                                    wp.name
+                                )
+                            FROM
+                                Integration_information.work_packages wp
+                            WHERE
+                                wp.id = tr.work_packages_id
+                        ),
+                        ''
                     ),
                     '<br>',
                     '<b>Title: </b>',
@@ -346,12 +347,14 @@ SELECT
                         ),
                         '',
                         CONCAT('<b>Description: </b>', tr.result_description)
-                    ) SEPARATOR '<br>'
+                    ),
+                    '</li>' SEPARATOR '<br>'
                 )
             FROM
                 `Integration_information`.toc_results tr
                 LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
                 AND rtr.is_active = 1
+                LEFT JOIN prdb.clarisa_initiatives ci9 ON ci9.id = rtr.initiative_id
             WHERE
                 tr.id = rtr.toc_result_id
         )
@@ -677,6 +680,10 @@ SELECT
             WHERE
                 e.result_id = r.id
                 AND e.is_active = 1
+                AND (
+                    e.evidence_type_id != 3
+                    AND e.evidence_type_id != 4
+                )
         ),
         '<Not applicable>'
     ) AS evidence,
@@ -967,17 +974,21 @@ SELECT
                                     (ra.sex_and_age_disaggregation != 1),
                                     CONCAT(
                                         '<br>',
-                                        'Women: ',
-                                        IF(ra.has_women = 1, 'Yes', 'No'),
-                                        ' - ',
-                                        'Women youth: ',
-                                        IF(ra.has_women_youth = 1, 'Yes', 'No'),
+                                        '<b>Women</b>',
                                         '<br>',
-                                        'Men: ',
-                                        IF(ra.has_men = 1, 'Yes', 'No'),
+                                        'Youth: ',
+                                        IF(ra.has_women_youth = 1, 'Yes', 'No'),
                                         ' - ',
-                                        'Men youth: ',
+                                        'Non-youth: ',
+                                        IF(ra.has_women = 1, 'Yes', 'No'),
+                                        '<br>',
+                                        '<b>Men</b>',
+                                        '<br>',
+                                        'Youth: ',
                                         IF(ra.has_men_youth = 1, 'Yes', 'No'),
+                                        ' - ',
+                                        'Non-youth: ',
+                                        IF(ra.has_men = 1, 'Yes', 'No'),
                                         '<br>'
                                     ),
                                     CONCAT(
@@ -1087,9 +1098,7 @@ FROM
     LEFT JOIN prdb.results_innovations_dev rind ON rind.results_id = r.id
     AND rind.is_active = 1
 WHERE
-    r.is_active = 1
-    AND rbi.is_active = 1
-    AND r.result_type_id = 7
+    r.result_type_id = 7
     AND r.version_id IN (
         SELECT
             id

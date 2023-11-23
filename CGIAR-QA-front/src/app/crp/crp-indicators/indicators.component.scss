@@ -87,6 +87,9 @@ h2 {
     .updated-results {
       background-color: #fff;
     }
+    .changed-results {
+      background-color: #fff;
+    }
   }
   .form-group {
     flex: auto;
@@ -95,7 +98,7 @@ h2 {
 
 .evaluation-status {
   border-radius: 0.3em;
-  font-size: 0.5em;
+  font-size: 8px !important;
   padding: 2px 5px;
   display: block !important;
   float: right;
