@@ -429,7 +429,7 @@ class EvaluationsController {
         const view_primary_field = req.body.view_primary_field;
         const levelQuery = EvaluationsController.getLevelQuery(view_name);
 
-
+        
 
         let queryRunner = getConnection().createQueryBuilder();
         try {
@@ -501,7 +501,6 @@ class EvaluationsController {
                     ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
                     ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type,
                     ( SELECT COUNT(id) FROM qa_comments_replies WHERE commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) AND is_deleted = 0 ) AS comments_replies_count,
-
                     ${levelQuery.view_sql}
                     (
                         SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
@@ -520,12 +519,13 @@ class EvaluationsController {
                     ) comment_by,
                     (
                         SELECT
-                        group_concat(DISTINCT users2.username)
+                            group_concat(DISTINCT users2.username)
                         FROM
-                        qa_evaluations_assessed_by_second_round_qa_users qea2
-                            LEFT JOIN qa_users users2 ON users2.id = qea2.qaUsersId
+                            qa_users users2
+                            LEFT JOIN qa_comments comments2 ON evaluations.id = comments2.evaluationId
                         WHERE
-                            qea2.qaEvaluationsId = evaluations.id
+                            users2.id = comments2.highlightById
+                            AND comments2.cycleId = 2
                     ) assessed_r2
                 FROM
                     qa_evaluations evaluations
@@ -798,13 +798,14 @@ class EvaluationsController {
                         ) comment_by,
                         (
                             SELECT
-                            group_concat(DISTINCT users2.username)
+                                group_concat(DISTINCT users2.username)
                             FROM
-                            qa_evaluations_assessed_by_second_round_qa_users qea2
-                                LEFT JOIN qa_users users2 ON users2.id = qea2.qaUsersId
+                                qa_users users2
+                                LEFT JOIN qa_comments comments2 ON evaluations.id = comments2.evaluationId
                             WHERE
-                                qea2.qaEvaluationsId = evaluations.id
-                        ) assessed_r2,
+                                users2.id = comments2.highlightById
+                                AND comments2.cycleId = 2
+                        ) assessed_r2
                         ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
                         ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
                     FROM
