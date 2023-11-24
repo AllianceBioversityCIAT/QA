@@ -805,7 +805,7 @@ class EvaluationsController {
                             WHERE
                                 users2.id = comments2.highlightById
                                 AND comments2.cycleId = 2
-                        ) assessed_r2
+                        ) assessed_r2,
                         ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
                         ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
                     FROM
