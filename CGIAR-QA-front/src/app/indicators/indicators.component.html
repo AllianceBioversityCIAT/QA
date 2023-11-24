@@ -293,6 +293,22 @@
         </div>
       </th>
       <th *ngIf="
+            returnedArray &&
+            returnedArray[0].comments_accepted_with_comment_count &&
+            currentUser.cycle.cycle_stage == 2
+          " scope="col" [class.active]="order === 'comments_accepted_with_comment_count'"
+          (click)="setOrder('comments_accepted_with_comment_count')">
+          <div class="header-row">
+            Accepted
+            <div class="legend-xs">w. comment</div>
+            <div class="flag">INIT Reply</div>
+            <div class="order-icon" *ngIf="order === 'comments_accepted_with_comment_count'">
+              <span [hidden]="reverse">▼</span>
+              <span [hidden]="!reverse">▲</span>
+            </div>
+          </div>
+      </th>
+      <th *ngIf="
                 returnedArray &&
                 returnedArray[0].comments_disagreed_count &&
                 showDisagreedComments
@@ -384,22 +400,6 @@
           </div>
         </div>
       </th> -->
-      <th *ngIf="
-          returnedArray &&
-          returnedArray[0].comments_accepted_with_comment_count &&
-          currentUser.cycle.cycle_stage == 2
-        " scope="col" [class.active]="order === 'comments_accepted_with_comment_count'"
-        (click)="setOrder('comments_accepted_with_comment_count')">
-        <div class="header-row">
-          Accepted
-          <div class="legend-xs">w. comment</div>
-          <div class="flag">INIT Reply</div>
-          <div class="order-icon" *ngIf="order === 'comments_accepted_with_comment_count'">
-            <span [hidden]="reverse">▼</span>
-            <span [hidden]="!reverse">▲</span>
-          </div>
-        </div>
-      </th>
 
       <!-- <th
         *ngIf="
