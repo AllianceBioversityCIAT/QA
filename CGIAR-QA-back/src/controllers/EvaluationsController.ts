@@ -671,7 +671,7 @@ class EvaluationsController {
                             "complete",
                             "pending"
                     ) AS evaluations_status_round_1,
-                    (
+                    IF(
                         (
                             SELECT COUNT(id)
                             FROM qa_comments
