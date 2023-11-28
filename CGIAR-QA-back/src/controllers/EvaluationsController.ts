@@ -640,7 +640,6 @@ class EvaluationsController {
                         ) AS result_code,
                         ${levelQuery.view_sql}
                         indicator_user.indicatorId,
-
                         IF(
                             (
                                     SELECT COUNT(id)
@@ -671,6 +670,31 @@ class EvaluationsController {
                             ),
                             "complete",
                             "pending"
+                    ) AS evaluations_status_round_1,
+                    IF(
+                        (
+                            SELECT COUNT(id)
+                            FROM qa_comments
+                            WHERE qa_comments.evaluationId = evaluations.id
+                                    AND approved_no_comment IS NULL
+                                    AND metaId IS NOT NULL
+                                    AND is_deleted = 0
+                                    AND is_visible = 1
+                                    AND detail IS NOT NULL
+                                    AND require_changes = 1
+                        ) = (
+                            SELECT COUNT(id)
+                            FROM qa_comments
+                            WHERE qa_comments.evaluationId = evaluations.id
+                                    AND approved_no_comment IS NULL
+                                    AND metaId IS NOT NULL
+                                    AND is_deleted = 0
+                                    AND is_visible = 1
+                                    AND detail IS NOT NULL
+                                    AND ppu = 1                            
+                        ),
+                        "complete",
+                        "pending"
                     ) AS evaluations_status,
                     ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
                     ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
@@ -684,7 +708,6 @@ class EvaluationsController {
                     AND evaluations.indicator_view_name = :view_name
                     AND evaluations.crp_id = :crp_id
                     AND evaluations.phase_year = actual_phase_year()
-
                     GROUP BY
                         crp.crp_id,
                         evaluations.id,
