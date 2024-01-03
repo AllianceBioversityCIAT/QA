@@ -17,6 +17,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -40,6 +41,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -63,6 +65,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -86,6 +89,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -109,6 +113,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -132,6 +137,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -155,6 +161,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -178,6 +185,7 @@ WHERE
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
 			AND o.in_qa = 1
+			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
@@ -190,7 +198,8 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_innovation_use_ipsr'
 	AND evaluation_status != 'Removed'
-	AND not EXISTS (
+	AND e.phase_year = 2023
+	AND NOT EXISTS (
 		SELECT
 			1
 		FROM
@@ -199,7 +208,10 @@ WHERE
 			o.phase_name = 'AR'
 			AND o.included_AR = 'yes'
 			AND o.is_active = 1
-			AND o.submitted = 1
+			AND (
+				o.submitted = 2
+				OR o.submitted = 3
+			)
 			AND e.indicator_view_id = o.id
 			AND o.phase_year = 2023
 	);
