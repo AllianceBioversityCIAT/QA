@@ -787,8 +787,8 @@ SELECT
             )
         )
     ) AS questions,
-    rind.innovation_developers AS innovation_developers,
-    rind.innovation_collaborators AS innovation_collaborators,
+    IFNULL(rind.innovation_developers, '<Not applicable>') AS innovation_developers,
+    IFNULL(rind.innovation_collaborators, '<Not applicable>') AS innovation_collaborators,
     (
         SELECT
             CONCAT(
