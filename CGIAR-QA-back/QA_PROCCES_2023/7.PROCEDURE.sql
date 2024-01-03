@@ -1,3 +1,15 @@
+CREATE DEFINER=`prmsadmin`@`%` PROCEDURE `qadb`.`qa_update_indicator_ipsr`()
+BEGIN DECLARE start_time TIMESTAMP;
+
+SET
+	start_time = SYSDATE();
+
+SET
+	SQL_SAFE_UPDATES = 0;
+
+SET
+	group_concat_max_len = 25000;
+
 -- * POLICY CHANGE
 CREATE TABLE qa_policy_change_data_tmp LIKE qa_policy_change_data;
 
@@ -207,7 +219,6 @@ INSERT INTO
         included_AR,
         is_active,
         id,
-        result_code,
         result_level,
         result_type,
         title,
@@ -223,21 +234,22 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
-        nutrition_tag_level,
-        environmental_biodiversity_tag_level,
-        poverty_tag_level,
+        evidence,
         long_term_short_term,
         capdev_delivery_method,
         trainees_attending_on_behalf_of_an_organization,
+        result_code,
         submitted,
         is_replicated,
         action_area,
         impact_area_targets,
         sdg,
-        number_of_people_trained
+        number_of_people_trained,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level
     )
 SELECT
     cc.crp_id,
@@ -246,7 +258,6 @@ SELECT
     cc.included_AR,
     cc.is_active,
     cc.id,
-    cc.result_code,
     cc.result_level,
     cc.result_type,
     cc.title,
@@ -262,21 +273,22 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
-    cc.nutrition_tag_level,
-    cc.environmental_biodiversity_tag_level,
-    cc.poverty_tag_level,
+    cc.evidence,
     cc.long_term_short_term,
     cc.capdev_delivery_method,
     cc.trainees_attending_on_behalf_of_an_organization,
+    cc.result_code,
     cc.submitted,
     cc.is_replicated,
     cc.action_area,
     cc.impact_area_targets,
     cc.sdg,
-    cc.number_of_people_trained
+    cc.number_of_people_trained,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level
 FROM
     qa_capdev_view cc;
 
@@ -921,3 +933,14 @@ FROM
     qa_innovation_use_ipsr_data_tmp;
 
 DROP TABLE qa_innovation_use_ipsr_data_tmp;
+
+INSERT INTO
+	qa_data_refresh_log
+SELECT
+	'result_ipsr_data',
+	start_time,
+	DATE_ADD(start_time, INTERVAL -5 HOUR),
+	null,
+	TIME_TO_SEC(TIMEDIFF(sysdate(), start_time)) diff;
+
+END
