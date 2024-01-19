@@ -1078,28 +1078,6 @@ class CommentController {
                 }
             }
             res.status(200).send(comments);
-            // const stream: Buffer = await Util.createCommentsExcel([
-            //     { header: 'Comment id', key: 'comment_id' },
-            //     { header: 'Result code', key: 'result_code' },
-            //     { header: 'Indicator Title', key: 'indicator_title' },
-            //     { header: 'Field', key: 'field' },
-            //     { header: 'Value', key: 'value' },
-            //     { header: 'User', key: 'user' },
-            //     { header: 'Comment', key: 'comment' },
-            //     { header: 'Cycle', key: 'cycle_stage' },
-            //     { header: 'Created Date', key: 'createdAt' },
-            //     { header: 'Updated Date', key: 'updatedAt' },
-            //     { header: 'Accepted comment?', key: 'crp_approved' },
-            //     { header: 'Comment reply', key: 'reply' },
-            //     { header: 'User Replied', key: 'user_replied' },
-            //     { header: 'Reply Date', key: 'reply_createdAt' },
-            //     // { header: 'Public Link', key: 'public_link' },
-            // ], comments, 'comments', indicatorName);
-            // res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-            // res.setHeader('Content-Disposition', `attachment; filename=${name}.xlsx`);
-            // res.setHeader('Content-Length', stream.length);
-            // res.status(200).send(stream);
-            // res.status(200).send({ data: stream, message: 'File download' });
         } catch (error) {
             res.status(404).json({ message: 'Comments not found.', data: error });
         }
