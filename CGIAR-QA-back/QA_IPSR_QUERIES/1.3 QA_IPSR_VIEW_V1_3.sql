@@ -4,6 +4,7 @@ SELECT
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status_id AS submitted,
+    r.in_qa,
     (
         SELECT
             s.created_date
@@ -222,7 +223,7 @@ SELECT
             SELECT
 			    CONCAT(
 			        CONCAT(
-			            '<b><a href="https://toc.mel.cgiar.org/toc/',
+			            '<b><a href="https://toc.loc.codeobia.com/toc/',
 			            (
 			                SELECT
 			                    i.toc_id

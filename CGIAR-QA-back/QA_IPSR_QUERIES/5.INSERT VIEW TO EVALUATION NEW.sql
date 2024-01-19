@@ -31,7 +31,7 @@ WHERE
     AND cc.phase_year = 2023
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
-    AND cc.submitted = 3
+    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1

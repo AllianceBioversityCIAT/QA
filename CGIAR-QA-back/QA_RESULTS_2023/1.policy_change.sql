@@ -313,7 +313,7 @@ SELECT
                     ' - ',
                     ci9.name,
                     '<br>',
-                    '<b><a href="https://toc.mel.cgiar.org/toc/',
+                    '<b><a href="https://toc.loc.codeobia.com/toc/',
                     ci9.toc_id,
                     '" target="_blank">',
                     'See ToC',
@@ -668,6 +668,35 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '<li>',
+                    '<b>Source of the evidence</b>: ',
+                    IF(
+                        e.is_sharepoint = 1,
+                        'Uploaded in Sharepoint',
+                        'Link'
+                    ),
+                    '<br>',
+                    IF(
+                        e.is_sharepoint = 1,
+                        CONCAT(
+                            '<b>Is this a public file?: </b>',
+                            (
+                                SELECT
+                                    IF(
+                                        es.is_public_file = 1,
+                                        'Yes',
+                                        'No'
+                                    )
+                                FROM
+                                    prdb.evidence_sharepoint es
+                                WHERE
+                                    es.evidence_id = e.id
+                                    AND es.is_active = 1
+                            ),
+                            '<br>'
+                        ),
+                        ''
+                    ),
+                    '<br>',
                     '<a href="',
                     e.link,
                     '" target="_blank">',
@@ -680,6 +709,10 @@ SELECT
             WHERE
                 e.result_id = r.id
                 AND e.is_active = 1
+                AND (
+                    e.evidence_type_id != 3
+                    AND e.evidence_type_id != 4
+                )
         ),
         '<Not applicable>'
     ) AS evidence,
