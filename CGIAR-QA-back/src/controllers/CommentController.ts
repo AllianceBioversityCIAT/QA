@@ -890,7 +890,6 @@ class CommentController {
                 );
                 comments = await queryRunner.connection.query(query, parameters);
             } else {
-
                 if (currentRole !== RolesHandler.crp) {
                     const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
                         `SELECT
@@ -907,9 +906,60 @@ class CommentController {
                             evaluations.phase_year AS 'Year',
                             evaluations.id AS 'Evaluation ID',
                             meta.display_name AS 'Field name',
-                            comments.id AS 'Comment ID',
-                            comments.original_field AS 'Field value',
-                            comments.detail AS 'Comment',
+                            IFNULL(
+                                (
+                                    SELECT 
+                                        clean_html_tags(qc.original_field)
+                                    FROM
+                                        ${indicatorName}_data qcd2
+                                        LEFT JOIN qa_evaluations qe ON qcd2.id = qe.indicator_view_id
+                                        LEFT JOIN qa_comments qc ON qc.evaluationId = qe.id
+                                        LEFT JOIN qa_indicators_meta qim ON qim.id = qc.metaId
+                                    WHERE
+                                        qcd2.result_code = qcd.result_code 
+                                        AND qcd2.phase_year = 2022
+                                        AND qe.phase_year = 2022
+                                        AND qim.id = meta.id
+                                        AND qc.detail IS NOT NULL
+                                        AND (
+                                            qe.evaluation_status <> 'Deleted'
+                                            OR qe.evaluation_status IS NULL
+                                        )
+                                        AND qc.approved = 1
+                                        AND qc.is_visible = 1
+                                        AND qc.is_deleted = 0
+                                        AND qc.approved_no_comment IS NULL
+                                ),
+                                'Not applicable'
+                            ) AS 'Field value 2022',
+                            IFNULL(
+                                (
+                                    SELECT 
+                                        clean_html_tags(qc.detail)
+                                    FROM
+                                        ${indicatorName}_data qcd2
+                                        LEFT JOIN qa_evaluations qe ON qcd2.id = qe.indicator_view_id
+                                        LEFT JOIN qa_comments qc ON qc.evaluationId = qe.id
+                                        LEFT JOIN qa_indicators_meta qim ON qim.id = qc.metaId
+                                    WHERE
+                                        qcd2.result_code = qcd.result_code 
+                                        AND qcd2.phase_year = 2022
+                                        AND qe.phase_year = 2022
+                                        AND qim.id = meta.id
+                                        AND qc.detail IS NOT NULL
+                                        AND (
+                                            qe.evaluation_status <> 'Deleted'
+                                            OR qe.evaluation_status IS NULL
+                                        )
+                                        AND qc.approved = 1
+                                        AND qc.is_visible = 1
+                                        AND qc.is_deleted = 0
+                                        AND qc.approved_no_comment IS NULL
+                                ),
+                                'Not applicable'
+                            ) AS 'Comment 2022',
+                            clean_html_tags(comments.original_field) AS 'Field value 2023',
+                            clean_html_tags(comments.detail) AS 'Comment 2023',
                             comments.createdAt AS 'Created date',
                             users.username AS 'Assessor username',
                             users.email AS 'Assessor email',
@@ -1000,9 +1050,60 @@ class CommentController {
                             evaluations.phase_year AS 'Year',
                             evaluations.id AS 'Evaluation ID',
                             meta.display_name AS 'Field name',
-                            comments.id AS 'Comment ID',
-                            comments.original_field AS 'Field value',
-                            comments.detail AS 'Comment',
+                            IFNULL(
+                                (
+                                    SELECT 
+                                        clean_html_tags(qc.original_field)
+                                    FROM
+                                        ${indicatorName}_data qcd2
+                                        LEFT JOIN qa_evaluations qe ON qcd2.id = qe.indicator_view_id
+                                        LEFT JOIN qa_comments qc ON qc.evaluationId = qe.id
+                                        LEFT JOIN qa_indicators_meta qim ON qim.id = qc.metaId
+                                    WHERE
+                                        qcd2.result_code = qcd.result_code 
+                                        AND qcd2.phase_year = 2022
+                                        AND qe.phase_year = 2022
+                                        AND qim.id = meta.id
+                                        AND qc.detail IS NOT NULL
+                                        AND (
+                                            qe.evaluation_status <> 'Deleted'
+                                            OR qe.evaluation_status IS NULL
+                                        )
+                                        AND qc.approved = 1
+                                        AND qc.is_visible = 1
+                                        AND qc.is_deleted = 0
+                                        AND qc.approved_no_comment IS NULL
+                                ),
+                                'Not applicable'
+                            ) AS 'Field value 2022',
+                            IFNULL(
+                                (
+                                    SELECT 
+                                        clean_html_tags(qc.detail)
+                                    FROM
+                                        ${indicatorName}_data qcd2
+                                        LEFT JOIN qa_evaluations qe ON qcd2.id = qe.indicator_view_id
+                                        LEFT JOIN qa_comments qc ON qc.evaluationId = qe.id
+                                        LEFT JOIN qa_indicators_meta qim ON qim.id = qc.metaId
+                                    WHERE
+                                        qcd2.result_code = qcd.result_code 
+                                        AND qcd2.phase_year = 2022
+                                        AND qe.phase_year = 2022
+                                        AND qim.id = meta.id
+                                        AND qc.detail IS NOT NULL
+                                        AND (
+                                            qe.evaluation_status <> 'Deleted'
+                                            OR qe.evaluation_status IS NULL
+                                        )
+                                        AND qc.approved = 1
+                                        AND qc.is_visible = 1
+                                        AND qc.is_deleted = 0
+                                        AND qc.approved_no_comment IS NULL
+                                ),
+                                'Not applicable'
+                            ) AS 'Comment 2022',
+                            clean_html_tags(comments.original_field) AS 'Field value 2023',
+                            clean_html_tags(comments.detail) AS 'Comment 2023',
                             comments.createdAt AS 'Created date',
                             users.username AS 'Assessor username',
                             (
