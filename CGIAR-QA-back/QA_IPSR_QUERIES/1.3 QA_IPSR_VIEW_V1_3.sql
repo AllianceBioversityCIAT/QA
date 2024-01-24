@@ -4,6 +4,7 @@ SELECT
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status_id AS submitted,
+    r.in_qa,
     (
         SELECT
             s.created_date

@@ -301,7 +301,7 @@ SELECT
         ),
         'Data not provided.'
     ) AS contributing_centers,
-   IF (
+    IF (
         r.result_level_id = 1
         OR r.result_level_id = 2,
         '<Not applicable>',
@@ -668,6 +668,35 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '<li>',
+                    '<b>Source of the evidence</b>: ',
+                    IF(
+                        e.is_sharepoint = 1,
+                        'Uploaded in Sharepoint',
+                        'Link'
+                    ),
+                    '<br>',
+                    IF(
+                        e.is_sharepoint = 1,
+                        CONCAT(
+                            '<b>Is this a public file?: </b>',
+                            (
+                                SELECT
+                                    IF(
+                                        es.is_public_file = 1,
+                                        'Yes',
+                                        'No'
+                                    )
+                                FROM
+                                    prdb.evidence_sharepoint es
+                                WHERE
+                                    es.evidence_id = e.id
+                                    AND es.is_active = 1
+                            ),
+                            '<br>'
+                        ),
+                        ''
+                    ),
+                    '<br>',
                     '<a href="',
                     e.link,
                     '" target="_blank">',
@@ -1159,7 +1188,7 @@ FROM
     LEFT JOIN prdb.results_knowledge_product rkp ON rkp.results_id = r.id
     AND rkp.is_active = 1
 WHERE
-r.result_type_id = 6
+    r.result_type_id = 6
     AND r.version_id IN (
         SELECT
             id
