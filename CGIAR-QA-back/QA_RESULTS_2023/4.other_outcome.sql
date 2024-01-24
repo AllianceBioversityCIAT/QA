@@ -313,7 +313,7 @@ SELECT
                     ' - ',
                     ci9.name,
                     '<br>',
-                    '<b><a href="https://toc.loc.codeobia.com/toc/',
+                    '<b><a href="https://toc.mel.cgiar.org/toc/',
                     ci9.toc_id,
                     '" target="_blank">',
                     'See ToC',
