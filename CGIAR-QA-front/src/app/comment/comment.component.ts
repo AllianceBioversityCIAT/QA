@@ -9,7 +9,6 @@ import {
   ElementRef,
   Renderer2,
   Inject,
-
 } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
 
@@ -35,7 +34,7 @@ import { convertToObject } from "typescript";
 import { notDeepStrictEqual } from "assert";
 import { not } from "@angular/compiler/src/output/output_ast";
 
-import * as moment from 'moment';
+import * as moment from "moment";
 @Component({
   selector: "app-comment",
   templateUrl: "./comment.component.html",
@@ -49,7 +48,7 @@ export class CommentComponent implements OnInit {
   statusHandler = DetailedStatus;
   commentsByCol: any = [];
   commentsByColSelected: any = null;
-  commentByTpb: any
+  commentByTpb: any;
   // limitCommentsByTpb: any = null
   commentsByColReplies: any = [];
   mainComment: any = null;
@@ -65,7 +64,6 @@ export class CommentComponent implements OnInit {
   detailItemFounded = null;
   detailItemFounded2 = null;
   adminUser: any = false;
-
 
   // require_changes = false;
 
@@ -104,7 +102,7 @@ export class CommentComponent implements OnInit {
     private commentService: CommentService,
     private wordCount: WordCounterPipe,
     private spinner: NgxSpinnerService,
-    private modalService: BsModalService,
+    private modalService: BsModalService
   ) {
     this.authenticationService.currentUser.subscribe((x) => {
       this.currentUser = x;
@@ -121,7 +119,7 @@ export class CommentComponent implements OnInit {
     });
     this.dataFromItem = [];
     // console.log("IS_CRP", this.isCRP);
-    this.istpbUser()
+    this.istpbUser();
 
     if (
       this.isCRP &&
@@ -133,22 +131,20 @@ export class CommentComponent implements OnInit {
     if (!this.isCRP) {
       this.getQuickComments();
     }
-    this.findAdminUser()
-
-
+    this.findAdminUser();
   }
 
   findAdminUser() {
-    const adminUser = this.currentUser.config.find((res) => res.roleId == 1)
-    this.adminUser = adminUser != undefined ? true : false
+    const adminUser = this.currentUser.config.find((res) => res.roleId == 1);
+    this.adminUser = adminUser != undefined ? true : false;
   }
 
   istpbUser() {
-    const found = this.currentUser.indicators.find(element => {
-      return element?.isTPB === true
-    })
+    const found = this.currentUser.indicators.find((element) => {
+      return element?.isTPB === true;
+    });
     // console.log(found, '🔥 🔥');
-    this.tpbUser = found
+    this.tpbUser = found;
   }
 
   UpdateHighlightComment(commentId: Number, isHighlighted: Boolean, comment?) {
@@ -157,55 +153,62 @@ export class CommentComponent implements OnInit {
       highlight_comment: !isHighlighted,
     };
 
-    this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id)
-    console.log("🚀 ~ file:  UpdateHighlightComment ~ this.detailItemFounded", this.detailItemFounded)
+    this.detailItemFounded = this.detailedData.find(
+      (detailItem) => detailItem.general_comment_id == comment.id
+    );
+    console.log(
+      "🚀 ~ file:  UpdateHighlightComment ~ this.detailItemFounded",
+      this.detailItemFounded
+    );
     if (!this.detailItemFounded) {
       this.detailItemFounded = this.commentsByColSelected;
-      this.detailItemFounded.highlight_comment = !isHighlighted
+      this.detailItemFounded.highlight_comment = !isHighlighted;
     } else {
-      this.detailItemFounded.highlight_comment = !isHighlighted
+      this.detailItemFounded.highlight_comment = !isHighlighted;
     }
-    console.log(this.detailedData)
+    console.log(this.detailedData);
 
-    comment.highlight_comment = !isHighlighted,
-      console.log("🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment", comment)
-    console.log(params, '<===id')
+    (comment.highlight_comment = !isHighlighted),
+      console.log(
+        "🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment",
+        comment
+      );
+    console.log(params, "<===id");
 
     this.showSpinner(this.spinner_comment);
     // console.log()
     isHighlighted = !isHighlighted;
-    this.commentService.patchHighlightComment(params).subscribe((res) => {
-      this.alertService.success(res.message);
-      this.getItemCommentData();
-
-    }, (error) => {
-      this.getItemCommentData();
-      this.showSpinner(this.spinner_comment);
-    });
+    this.commentService.patchHighlightComment(params).subscribe(
+      (res) => {
+        this.alertService.success(res.message);
+        this.getItemCommentData();
+      },
+      (error) => {
+        this.getItemCommentData();
+        this.showSpinner(this.spinner_comment);
+      }
+    );
     this.is_highlight.emit({
       is_highlight: isHighlighted,
     });
   }
 
-
-
   implementedChange(commentByTpb, implementedChanges: boolean) {
-
     let params = {
       // id: commentId,
       commentReplyId: commentByTpb,
-      ppu: !implementedChanges
-    }
-    console.log(params, '<-- implemented changes by PPU')
+      ppu: !implementedChanges,
+    };
+    console.log(params, "<-- implemented changes by PPU");
     this.commentService.patchPpuChanges(params).subscribe((res) => {
       console.log(res);
-      this.getItemCommentData()
-      this.showSpinner(this.spinner_comment)
-    })
+      this.getItemCommentData();
+      this.showSpinner(this.spinner_comment);
+    });
 
     this.commentService.updateDataComment(params).subscribe((res) => {
-      console.log(res, 'resssssss')
-    })
+      console.log(res, "resssssss");
+    });
   }
 
   getQuickComments() {
@@ -220,11 +223,13 @@ export class CommentComponent implements OnInit {
   }
 
   updateData(data: any, params: any) {
-
-    this.commentsByColSelected = []
+    this.commentsByColSelected = [];
 
     console.log(data);
-    console.log("🚀 ~ file: comment.component.ts ~ line 201 ~ CommentComponent ~ updateData ~ data", data)
+    console.log(
+      "🚀 ~ file: comment.component.ts ~ line 201 ~ CommentComponent ~ updateData ~ data",
+      data
+    );
     Object.assign(this.dataFromItem, data, params);
     this.availableComment = false;
     this.showSpinner(this.spinner_comment);
@@ -291,22 +296,21 @@ export class CommentComponent implements OnInit {
   }
 
   UpdateRequireChanges(commentId: number, requireChanges: boolean) {
-
-    console.log(requireChanges, 'checked')
+    console.log(requireChanges, "checked");
     let params = {
       id: commentId,
       // id: commentIdCreated,
       require_changes: requireChanges,
-      tpb: true
-    }
-    console.log("🚀 ~ line ~ params", params)
-    console.log(commentId, '<===id')
+      tpb: true,
+    };
+    console.log("🚀 ~ line ~ params", params);
+    console.log(commentId, "<===id");
 
     this.showSpinner(this.spinner_comment);
     this.commentService.patchRequireChanges(params).subscribe((res) => {
-      console.log(res, '<-- response require changes');
+      console.log(res, "<-- response require changes");
       this.getItemCommentData();
-    })
+    });
   }
 
   addComment() {
@@ -323,10 +327,10 @@ export class CommentComponent implements OnInit {
     //   }
     // })
 
-    const found = this.currentUser.indicators.find(element => {
-      return element?.isTPB === true
-    })
-    this.tpbUser = found
+    const found = this.currentUser.indicators.find((element) => {
+      return element?.isTPB === true;
+    });
+    this.tpbUser = found;
 
     let element = <HTMLInputElement>document.getElementById("require_changes");
     let checked = element?.checked;
@@ -335,7 +339,7 @@ export class CommentComponent implements OnInit {
 
     var offset = new Date().getTimezoneOffset();
     var gmt = new Date().toLocaleString() + " GMT " + -offset / 60;
-    var date = new Date(gmt)
+    var date = new Date(gmt);
 
     this.commentService
       .createDataComment({
@@ -347,18 +351,17 @@ export class CommentComponent implements OnInit {
         original_field: this.original_field,
         require_changes: checked,
         tpb: found?.isTPB,
-        createdAt: date
-
+        createdAt: date,
       })
       .subscribe(
         (res) => {
           console.log("COMMENT ADDED");
-          this.commentByTpb = res.data.id
+          this.commentByTpb = res.data.id;
           this.getItemCommentData(true);
           this.formData.comment.reset();
           this.validateAllFieldsAssessed.emit();
           if (checked && found?.isTPB) {
-            this.UpdateRequireChanges(this.commentByTpb, true)
+            this.UpdateRequireChanges(this.commentByTpb, true);
           }
         },
         (error) => {
@@ -369,7 +372,6 @@ export class CommentComponent implements OnInit {
       );
     // UpdateRequireChanges(this.commentsByCol.id, this.commentsByCol.require_changes);
   }
-
 
   updateComment(type, data: any, parentCommentId) {
     // updateComment(type, data: any, commentId: number) {
@@ -387,13 +389,13 @@ export class CommentComponent implements OnInit {
       id: data.id,
       detail: data.detail,
       userId: data.user.id,
-      require_changes: false
+      require_changes: false,
     };
     this.showSpinner(this.spinner_comment);
 
     this.commentService.updateDataComment(params).subscribe(
       (res) => {
-        this.UpdateRequireChanges(parentCommentId, false)
+        this.UpdateRequireChanges(parentCommentId, false);
         this.getItemCommentData(true);
       },
       (error) => {
@@ -487,10 +489,9 @@ export class CommentComponent implements OnInit {
             comment.isCollapsed = true;
             this.getCommentReplies(comment);
           }
-
         });
         // I can iterate in reverse order
-        this.commentsByCol.forEach(element => {
+        this.commentsByCol.forEach((element) => {
           let found = false;
           if (found === false) {
             if (!element.is_deleted) {
@@ -537,7 +538,6 @@ export class CommentComponent implements OnInit {
     }
   }
 
-
   //ACCEPT COMMENT
   openModal(template: TemplateRef<any>, e) {
     console.log(e.clientY);
@@ -547,8 +547,9 @@ export class CommentComponent implements OnInit {
     this.modalRef = this.modalService.show(template, {
       class: "pos-modal modal-sm",
     });
-    document.querySelector("body").style.cssText = `--position-top: ${this.currentY - 300
-      }px`;
+    document.querySelector("body").style.cssText = `--position-top: ${
+      this.currentY - 300
+    }px`;
     // const modal = this.elem.nativeElement.querySelector('.modal-content');
     // console.log(modal);
     // console.log(template.elementRef.nativeElement);
@@ -605,7 +606,6 @@ export class CommentComponent implements OnInit {
           this.getItemCommentData();
           this.formData.comment.reset();
           this.evalu_stat.emit();
-
         },
         (error) => {
           // console.log("replyComment", error);
@@ -664,6 +664,27 @@ export class CommentComponent implements OnInit {
     }
 
     return response;
+  }
+
+  isCommentAvailable(): boolean {
+    let batchValidation: boolean;
+    if (this.currentUser.cycle.id === 2) {
+      const commentCore = this.dataFromItem.is_core;
+      if (commentCore) batchValidation = true;
+      else batchValidation = false;
+    } else {
+      batchValidation = true;
+    }
+
+    const isCommentUnavailable =
+      !this.availableComment &&
+      !this.crpComment &&
+      this.commentsByColSelected?.tpb !== 1 &&
+      this.currentUser.hasOwnProperty("cycle") &&
+      !this.isCRP &&
+      batchValidation;
+
+    return isCommentUnavailable;
   }
 
   setCommentValue(event, value: string) {
