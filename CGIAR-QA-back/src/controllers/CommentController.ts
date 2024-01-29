@@ -1895,10 +1895,7 @@ class CommentController {
         WHERE
             evaluations.phase_year = actual_phase_year()
             AND evaluations.crp_id = '${crp_id}'
-            AND (
-                evaluations.batchDate >= '2024-01-24 00:00:00'
-                AND evaluations.batchDate <= '2024-01-24 01:00:00'
-            )
+            AND evaluations.batchDate >= '2024-01-24 00:00:00'
         ORDER BY
             evaluations.crp_id ASC;`;
 
@@ -2145,10 +2142,7 @@ class CommentController {
             LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
         WHERE
             evaluations.phase_year = actual_phase_year()
-            AND (
-                evaluations.batchDate >= '2024-01-24 00:00:00'
-                AND evaluations.batchDate <= '2024-01-24 01:00:00'
-            )
+            AND evaluations.batchDate >= '2024-01-24 00:00:00'
         ORDER BY
             evaluations.crp_id ASC;`;
         const query1 = await queryRunner.connection.query(comments);
@@ -2157,10 +2151,6 @@ class CommentController {
       }
       res.status(200).send(rawData);
     } catch (error) {
-      console.log(
-        "🚀 ~ CommentController ~ getRawCommentsExcel= ~ error:",
-        error
-      );
       res.status(404).json({ message: "Comments raw data error", data: error });
     }
   };
