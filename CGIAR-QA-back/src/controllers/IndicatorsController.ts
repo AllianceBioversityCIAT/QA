@@ -657,8 +657,9 @@ class IndicatorsController {
         message: "All items by indicator",
       });
     } catch (error) {
+      console.error("🚀 ~ IndicatorsController ~ getAllItemStatusByIndicator= ~ error:", error)
       res.status(404).json({
-        message: "items by indicators can not be retrived.",
+        message: "Items by indicators can not be retrived.",
         data: error,
       });
     }

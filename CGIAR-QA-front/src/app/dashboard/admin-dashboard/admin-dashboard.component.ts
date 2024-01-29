@@ -36,6 +36,7 @@ import {
 } from "@ng-bootstrap/ng-bootstrap";
 
 import * as moment from "moment";
+import { ExportTablesService } from "../../services/export-tables.service";
 
 @Component({
   selector: "app-admin-dashboard",
@@ -176,7 +177,8 @@ export class AdminDashboardComponent implements OnInit {
     private indicatorService: IndicatorsService,
     private commentService: CommentService,
     private titleService: Title,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private _exportTableSE: ExportTablesService
   ) {
     this.authenticationService.currentUser.subscribe((x) => {
       this.currentUser = x;
@@ -824,29 +826,24 @@ export class AdminDashboardComponent implements OnInit {
     );
   }
 
-  //TO-DO
   downloadRawComments() {
     this.showSpinner();
-    // console.log(this.selectedProg)
     let crp_id = this.selectedProg["crp_id"];
     console.log(this.selectedProg);
 
-    let filename = `QA-COMMENTS-${
+    let filename = `QA-ALL-${
       this.selectedProg.hasOwnProperty("acronym") &&
       this.selectedProg["acronym"] !== "All"
         ? "(" + this.selectedProg["acronym"] + ")"
         : ""
     }${moment().format("YYYYMMDD:HHmm")}`;
+
     if (this.authenticationService.getBrowser() === "Safari")
       filename += `.xlsx`;
 
     this.commentService.getCommentsRawExcel(crp_id).subscribe(
       (res) => {
-        // console.log(res)
-        let blob = new Blob([res], {
-          type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8",
-        });
-        saveAs(blob, filename);
+        this._exportTableSE.exportMultipleSheetsExcel(res[0], filename, null, res[1]);
         this.hideSpinner();
       },
       (error) => {
