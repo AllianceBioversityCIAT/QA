@@ -45,7 +45,7 @@
   </div>
 </div>
 <div class="row filters-container">
-  <!-- <div class="date-filter">
+  <div class="date-filter">
     <span>Filter by submission date</span>
     <div
       *ngFor="let sub of submission_dates"
@@ -54,7 +54,7 @@
       <input
         class="form-check-input"
         type="checkbox"
-        id="sub.id"
+        [id]="sub.id"
         [value]="sub.date"
         [checked]="sub.checked"
         (change)="onDateChange($event, sub.batch_name)"
@@ -64,7 +64,7 @@
         sub.date
       }}</label>
     </div>
-  </div> -->
+  </div>
   <!-- <button
     type="button"
     class="btn btn-outline-primary"

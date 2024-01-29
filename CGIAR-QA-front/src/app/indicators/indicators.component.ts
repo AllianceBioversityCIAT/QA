@@ -237,10 +237,6 @@ export class IndicatorsComponent implements OnInit {
 
           this.collectionSize = this.evaluationList.length;
           this.returnedArray = this.evaluationList.slice(0, 10);
-          console.log(
-            "🚀 ~ file: indicators.component.ts:215 ~ IndicatorsComponent ~ getEvaluationsList ~ returnedArray",
-            this.returnedArray
-          );
           this.returnedArrayHasStage = this.returnedArray.find(
             (e) => e.stage != null
           );
@@ -251,6 +247,17 @@ export class IndicatorsComponent implements OnInit {
           ]
             ? true
             : false;
+
+          this.evaluationList = this.orderPipe.transform(
+            res.data.filter((shi: any) =>
+              this.submission_dates.some(
+                (sub) =>
+                  sub.date === moment(shi.submission_date).format("ll") &&
+                  sub.checked
+              )
+            ),
+            this.order
+          );
 
           this.hideSpinner();
           setTimeout(() => {
@@ -373,9 +380,9 @@ export class IndicatorsComponent implements OnInit {
         indicatorName: `qa_${this.indicatorType}`,
       })
       .subscribe(
-        res => {
-          console.log(res)
-          this._exportTableSE.exportExcel(res, filename)
+        (res) => {
+          console.log(res);
+          this._exportTableSE.exportExcel(res, filename);
           this.hideSpinner();
         },
         (error) => {
@@ -466,14 +473,21 @@ export class IndicatorsComponent implements OnInit {
 
   onDateChange(e, subDate) {
     if (subDate) {
-      console.log(e.target.checked, e.target.value);
       const foundIndex = this.submission_dates.findIndex(
         (sd) => sd.date == e.target.value
       );
-      this.submission_dates[foundIndex]["checked"] = e.target.checked;
-      this.submission_dates = [...this.submission_dates];
+
+      if (foundIndex !== -1) {
+        this.submission_dates[foundIndex]["checked"] = e.target.checked;
+        this.submission_dates = [...this.submission_dates];
+
+        this.getEvaluationsList({ type: this.indicatorType });
+      } else {
+        console.warn("Date not found in submission_dates array.");
+      }
     }
   }
+
   /***
    *
    *  Spinner
