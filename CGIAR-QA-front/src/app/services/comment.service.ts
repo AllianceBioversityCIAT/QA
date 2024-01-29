@@ -90,9 +90,7 @@ export class CommentService {
   // get comments excel
   getCommentsRawExcel(crp_id?) {
     // return this.http.get(`${environment.apiUrl}/comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}`, { responseType: HttpRequest })
-    return this.http.get(`${environment.apiUrl}/comment/excel-raw/${crp_id}`, {
-      responseType: "blob" as "blob",
-    });
+    return this.http.get(`${environment.apiUrl}/comment/excel-raw/${crp_id}`);
   }
 
   // get comments raw data

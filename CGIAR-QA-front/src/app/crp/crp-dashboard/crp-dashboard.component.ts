@@ -21,7 +21,7 @@ import { Title } from "@angular/platform-browser";
 import { ChartOptions, ChartType, ChartDataSets } from "chart.js";
 import { Label, BaseChartDirective } from "ng2-charts";
 
-import { ExportTablesService } from '../../services/export-tables.service';
+import { ExportTablesService } from "../../services/export-tables.service";
 import * as moment from "moment";
 import { IndicatorsService } from "src/app/services/indicators.service";
 
@@ -187,11 +187,11 @@ export class CrpDashboardComponent implements OnInit {
   getEvaluationsStats() {
     this.showSpinner(this.spinner2);
     this.dashService
-    .getAllDashboardEvaluationsByCRP(this.currentUser.crp.crp_id)
-    .subscribe(
-      (res) => {
-        this.dashboardData = this.dashService.groupData(res.data);
-        this.hideSpinner(this.spinner2);
+      .getAllDashboardEvaluationsByCRP(this.currentUser.crp.crp_id)
+      .subscribe(
+        (res) => {
+          this.dashboardData = this.dashService.groupData(res.data);
+          this.hideSpinner(this.spinner2);
         },
         (error) => {
           this.hideSpinner(this.spinner2);
@@ -244,7 +244,6 @@ export class CrpDashboardComponent implements OnInit {
 
   downloadRawComments() {
     this.showSpinner(this.spinner1);
-    // console.log(this.selectedProg)
     let crp_id = this.currentUser.crp["crp_id"];
     let filename = `QA-COMMENTS-${
       this.currentUser.crp.hasOwnProperty("acronym") &&
@@ -257,8 +256,8 @@ export class CrpDashboardComponent implements OnInit {
 
     this.commentService.getCommentsRawExcel(crp_id).subscribe(
       (res) => {
-        console.log(res)
-        this._exportTableSE.exportExcel(res, filename)
+        console.log(res);
+        this._exportTableSE.exportExcel(res, filename);
         this.hideSpinner(this.spinner1);
       },
       (error) => {
@@ -468,13 +467,11 @@ export class CrpDashboardComponent implements OnInit {
 
   loadData(): void {
     if (this.isDashboardDataEmpty()) {
-      this.showSpinner('spinner-dashboard'); 
+      this.showSpinner("spinner-dashboard");
 
-      this.hideSpinner('spinner-dashboard'); // Ocultar el spinner de carga una vez que los datos se hayan cargado
+      this.hideSpinner("spinner-dashboard"); // Ocultar el spinner de carga una vez que los datos se hayan cargado
     }
   }
-
-  
 
   goToPendingItems(indicator: string) {
     this.indicatorService.setOrderByStatus(false);
