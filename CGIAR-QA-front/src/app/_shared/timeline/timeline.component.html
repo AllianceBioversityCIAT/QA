@@ -5,7 +5,7 @@
     <h1>{{ batches[2].qa_batchcol }}</h1>
     <h3>
       Annual Report data submission:
-      <strong>{{ batches[2].submission_date | date : "mediumDate" }}</strong>
+      <strong>{{ batches[2].qa_batch_desc || (batches[2].submission_date  | date : "mediumDate") }}</strong>
     </h3>
   </header>
   <div class="line">
