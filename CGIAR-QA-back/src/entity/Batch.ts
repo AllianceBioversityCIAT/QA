@@ -58,4 +58,10 @@ export class QABatch {
 
   @Column({ nullable: true, name: "ppu_end_date" })
   ppu_end_date: Date;
+
+  @Column({ nullable: true, name: "is_open" })
+  is_open: boolean;
+
+  @Column({ nullable: true, type: "text", name: "qa_batch_desc"})
+  qa_batch_desc: string;
 }
