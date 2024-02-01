@@ -829,7 +829,6 @@ export class AdminDashboardComponent implements OnInit {
   downloadRawComments() {
     this.showSpinner();
     let crp_id = this.selectedProg["crp_id"];
-    console.log(this.selectedProg);
 
     let filename = `QA-ALL-${
       this.selectedProg.hasOwnProperty("acronym") &&
@@ -843,7 +842,12 @@ export class AdminDashboardComponent implements OnInit {
 
     this.commentService.getCommentsRawExcel(crp_id).subscribe(
       (res) => {
-        this._exportTableSE.exportMultipleSheetsExcel(res[0], filename, null, res[1]);
+        this._exportTableSE.exportMultipleSheetsExcel(
+          res[0],
+          filename,
+          null,
+          res[1]
+        );
         this.hideSpinner();
       },
       (error) => {

@@ -20,6 +20,7 @@ import { IndicatorsService } from "src/app/services/indicators.service";
 import { UsersService } from "src/app/services/users.service";
 import { forkJoin, Observable } from "rxjs";
 import { BsModalRef, BsModalService } from "ngx-bootstrap/modal";
+import { ExportTablesService } from "../../services/export-tables.service";
 
 @Component({
   selector: "app-assessor-dashboard",
@@ -97,7 +98,8 @@ export class AssessorDashboardComponent implements OnInit {
     private commentService: CommentService,
     private router: Router,
     private titleService: Title,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private _exportTableSE: ExportTablesService
   ) {
     this.authenticationService.currentUser.subscribe((x) => {
       this.currentUser = x;
@@ -457,6 +459,32 @@ export class AssessorDashboardComponent implements OnInit {
       this.feedList = res.data;
       this.hideSpinner();
     });
+  }
+
+  downloadRawComments() {
+    this.showSpinner();
+
+    let filename = `QA-ALL-COMMENTS-STATUS-${moment().format("YYYYMMDD:HHmm")}`;
+
+    if (this.authenticationService.getBrowser() === "Safari")
+      filename += `.xlsx`;
+
+    this.commentService.getCommentsRawExcel().subscribe(
+      (res) => {
+        this._exportTableSE.exportMultipleSheetsExcel(
+          res[0],
+          filename,
+          null,
+          res[1]
+        );
+        this.hideSpinner();
+      },
+      (error) => {
+        console.log("downloadRawComments", error);
+        this.hideSpinner();
+        this.alertService.error(error);
+      }
+    );
   }
 
   goToPDF(type: string) {
