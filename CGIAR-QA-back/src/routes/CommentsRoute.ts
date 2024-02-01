@@ -30,7 +30,7 @@ router.get("/tags/feed", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.
 router.post("/approved/:evaluationId", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor])], CommentController.toggleApprovedNoComments);
 
 // get comments raw data
-router.get("/excel-raw/:crp_id", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.crp])], CommentController.getRawCommentsExcel);
+router.get("/excel-raw/:crp_id", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.assesor,  RolesHandler.crp])], CommentController.getRawCommentsExcel);
 
 // get comments raw data
 router.get("/raw/:crp_id", [checkJwt, checkRole([RolesHandler.admin, RolesHandler.crp])], CommentController.getRawCommentsData);
