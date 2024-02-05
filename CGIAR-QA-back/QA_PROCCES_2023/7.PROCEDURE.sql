@@ -89,7 +89,16 @@ FROM
 DELETE FROM
     qa_policy_change_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_policy_change'
+    );
 
 INSERT INTO
     qa_policy_change_data
@@ -185,7 +194,16 @@ FROM
 DELETE FROM
     qa_innovation_use_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_innovation_use'
+    );
 
 INSERT INTO
     qa_innovation_use_data
@@ -283,7 +301,16 @@ FROM
 DELETE FROM
     qa_capdev_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_capdev'
+    );
 
 INSERT INTO
     qa_capdev_data
@@ -407,7 +434,16 @@ FROM
 DELETE FROM
     qa_innovation_development_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_innovation_development'
+    );
 
 INSERT INTO
     qa_innovation_development_data
@@ -497,7 +533,16 @@ FROM
 DELETE FROM
     qa_other_output_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_other_output'
+    );
 
 INSERT INTO
     qa_other_output_data
@@ -587,7 +632,16 @@ FROM
 DELETE FROM
     qa_other_outcome_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_other_outcome'
+    );
 
 INSERT INTO
     qa_other_outcome_data
@@ -677,7 +731,16 @@ FROM
 DELETE FROM
     qa_impact_contribution_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_impact_contribution'
+    );
 
 INSERT INTO
     qa_impact_contribution_data
@@ -801,7 +864,16 @@ FROM
 DELETE FROM
     qa_knowledge_product_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_knowledge_product'
+    );
 
 INSERT INTO
     qa_knowledge_product_data
@@ -911,7 +983,16 @@ FROM
 DELETE FROM
     qa_innovation_use_ipsr_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2023
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= '2024-01-24 01:00:00'
+            AND qe.indicator_view_name = 'qa_innovation_use_ipsr'
+    );
 
 INSERT INTO
     qa_innovation_use_ipsr_data
