@@ -2,6 +2,7 @@ import "reflect-metadata";
 require("module-alias/register");
 import { createConnection, ConnectionManager, Connection } from "typeorm";
 import express from "express";
+import urlencoded from "express";
 import { Response } from "express";
 import bodyParser from "body-parser";
 import helmet from "helmet";
@@ -24,6 +25,7 @@ createConnection()
     const app = express();
     app.use(morgan("dev"));
     app.use(cors(corsOptions));
+    app.use(express.urlencoded({ extended: true, limit: '50mb' }));
     app.use(helmet({ frameguard: false }));
     app.use(bodyParser.json());
 
