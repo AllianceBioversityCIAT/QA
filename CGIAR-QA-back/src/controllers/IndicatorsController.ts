@@ -404,7 +404,6 @@ class IndicatorsController {
       let queryRunnerNotApplicable = getConnection().createQueryBuilder();
 
       for (const meta of allMetas) {
-        // let queryNotApplicable = `SELECT count(*) as count FROM ${meta.view_name} WHERE ${meta.col_name}  = "<Not applicable>"`;
         let queryNotApplicable = `SELECT count(*) as count FROM qa_evaluations qe
                     LEFT JOIN ${meta.view_name} qi on qe.indicator_view_id = qi.id AND qe.indicator_view_name = "${meta.view_name}"
                     WHERE qi.${meta.col_name}  = "<Not applicable>" AND qe.phase_year = actual_phase_year() AND qe.status <> "autochecked" `;
@@ -441,8 +440,14 @@ class IndicatorsController {
           totalEvaluationsByIndicator[meta.view_name][meta.display_name][
             "pending"
           ] -= +notApplicableCount[0].count;
-        } catch (error) {}
+        } catch (error) {
+          res.status(404).json({
+            message: "Not applicable items can not be retrived.",
+            data: error,
+          });
+        }
       }
+      return res.status(200).json(totalEvaluationsByIndicator)
     } catch (error) {
       res.status(404).json({
         message: "All items status by indicators can not be retrived.",
@@ -657,7 +662,6 @@ class IndicatorsController {
         message: "All items by indicator",
       });
     } catch (error) {
-      console.error("🚀 ~ IndicatorsController ~ getAllItemStatusByIndicator= ~ error:", error)
       res.status(404).json({
         message: "Items by indicators can not be retrived.",
         data: error,
