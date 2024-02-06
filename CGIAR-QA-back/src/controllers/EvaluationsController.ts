@@ -701,25 +701,29 @@ class EvaluationsController {
                     ) AS evaluations_status_round_1,
                     IF(
                         (
-                            SELECT COUNT(id)
-                            FROM qa_comments
-                            WHERE qa_comments.evaluationId = evaluations.id
-                                    AND approved_no_comment IS NULL
-                                    AND metaId IS NOT NULL
-                                    AND is_deleted = 0
-                                    AND is_visible = 1
-                                    AND detail IS NOT NULL
-                                    AND require_changes = 1
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                AND detail IS NOT NULL
                         ) = (
-                            SELECT COUNT(id)
-                            FROM qa_comments
-                            WHERE qa_comments.evaluationId = evaluations.id
-                                    AND approved_no_comment IS NULL
-                                    AND metaId IS NOT NULL
-                                    AND is_deleted = 0
-                                    AND is_visible = 1
-                                    AND detail IS NOT NULL
-                                    AND ppu = 1                            
+                            SELECT
+                                COUNT(id)
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND qa_comments.approved_no_comment IS NULL
+                                AND qa_comments.metaId IS NOT NULL
+                                AND qa_comments.is_deleted = 0
+                                AND qa_comments.is_visible = 1
+                                AND qa_comments.detail IS NOT NULL
+                                AND qa_comments.crp_approved IS NOT NULL
                         ),
                         "complete",
                         "pending"
