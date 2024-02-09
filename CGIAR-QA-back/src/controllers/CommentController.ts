@@ -140,6 +140,7 @@ class CommentController {
                             AND metaId IS NOT NULL
                             AND evaluation_status <> 'Deleted'
                             AND evaluations.phase_year = actual_phase_year()
+                            AND comments.cycleId = 1
                             -- AND cycleId IN (SELECT id FROM qa_cycle WHERE DATE(start_date) <= CURDATE() AND DATE(end_date) > CURDATE())
                     GROUP BY evaluations.indicator_view_name, comments.replyTypeId
                     ORDER BY type DESC;
@@ -255,6 +256,7 @@ class CommentController {
                         AND metaId IS NOT NULL
                         AND evaluation_status <> 'Deleted'
                         AND evaluations.phase_year = actual_phase_year()
+                        AND comments.cycleId = 1
                     GROUP BY
                         evaluations.indicator_view_name,
                         comments.replyTypeId
