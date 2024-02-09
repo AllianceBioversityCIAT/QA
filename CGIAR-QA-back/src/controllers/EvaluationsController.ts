@@ -527,6 +527,7 @@ class EvaluationsController {
                     (
                         SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                     ) AS title,
+                    crp.action_area AS crp_action_area,
                     (
                         SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                     ) AS result_code,
@@ -663,6 +664,7 @@ class EvaluationsController {
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS title,
+                        crp.action_area AS crp_action_area,
                         (
                             SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS result_code,
@@ -842,6 +844,7 @@ class EvaluationsController {
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS title,
+                        crp.action_area AS crp_action_area,
                         (
                             SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS result_code,

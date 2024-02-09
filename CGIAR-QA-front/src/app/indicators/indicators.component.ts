@@ -97,6 +97,7 @@ export class IndicatorsComponent implements OnInit {
   showHighlightedComments = false;
   showTpbComments = false;
   showImplementedDecisions = false;
+  showActionArea = true;
 
   constructor(
     private activeRoute: ActivatedRoute,
@@ -226,7 +227,6 @@ export class IndicatorsComponent implements OnInit {
       )
       .subscribe(
         (res) => {
-          // console.log(res)
           if (this.indicatorType == "slo") {
             this.order = "status";
           } else {

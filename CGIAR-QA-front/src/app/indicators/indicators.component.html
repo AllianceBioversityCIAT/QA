@@ -103,6 +103,11 @@
           [value]="!showImplementedDecisions" />
         <label for="implemented"> Implemented Decisions </label>
       </div>
+      <div class="form-check">
+        <input type="checkbox" class="checkbox" id="crp_action_area" [(ngModel)]="showActionArea"
+          [value]="!showActionArea" />
+        <label for="gi"> Action area </label>
+      </div>
     </div>
   </div>
   <div class="added-results">
@@ -185,6 +190,15 @@
         <div class="header-row">
           INITIATIVE
           <div class="order-icon" *ngIf="order === 'initiative'">
+            <span [hidden]="reverse">▼</span>
+            <span [hidden]="!reverse">▲</span>
+          </div>
+        </div>
+      </th>
+      <th *ngIf="showActionArea" scope="col" [class.active]="order === 'crp_action_area'" (click)="setOrder('crp_action_area')">
+        <div class="header-row">
+          Action Area
+          <div class="order-icon" *ngIf="order === 'crp_action_area'">
             <span [hidden]="reverse">▼</span>
             <span [hidden]="!reverse">▲</span>
           </div>
@@ -503,6 +517,7 @@
       <!-- INITIATIVES SHOULD BE DISPLAYED IN NEXT LINE -->
       <!-- CRP/PTF - DEBE SER DE TYPE -->
       <td>{{ item.initiative }}-{{ item.short_name }}</td>
+      <td *ngIf="showActionArea">{{ item.crp_action_area }}</td>
       <td *ngIf="indicatorType == 'knowledge_product'">{{ item.is_melia }}</td>
       <td *ngIf="indicatorType == 'knowledge_product'">
         {{ item.knowledge_product_type }}
