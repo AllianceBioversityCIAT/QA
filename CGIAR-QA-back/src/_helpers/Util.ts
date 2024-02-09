@@ -787,6 +787,7 @@ class Util {
       pending_tpb_decisions: element["pending_tpb_decisions"],
       knowledge_product_type: element["knowledge_product_type"],
       result_code: element["result_code"],
+      crp_action_area: element["crp_action_area"],
     };
     if (!type) {
       response = Object.assign(response, {
@@ -822,6 +823,7 @@ class Util {
         indicator_slug: element["indicator_slug"],
         result_code: element["result_code"],
         indicator_view_id: element["indicator_view_id"],
+        crp_action_area: element["crp_action_area"],
       });
     } else {
       response = Object.assign(response, {
@@ -871,6 +873,7 @@ class Util {
         indicator_slug: element["indicator_slug"],
         result_code: element["result_code"],
         indicator_view_id: element["indicator_view_id"],
+        crp_action_area: element["crp_action_area"],
       });
     }
 

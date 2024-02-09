@@ -395,6 +395,7 @@ class EvaluationsController {
                                                 AND is_deleted = 0
                                                 AND is_visible = 1
                                                 AND detail IS NOT NULL
+                                                AND cycleId = 1
                                 ) = (
                                         SELECT
                                                 COUNT(id)
@@ -414,6 +415,7 @@ class EvaluationsController {
                                                                 AND is_deleted = 0
                                                                 AND is_visible = 1
                                                                 AND detail IS NOT NULL
+                                                                AND cycleId = 1
                                                 )
                                 ),
                                 "complete",
@@ -527,6 +529,7 @@ class EvaluationsController {
                     (
                         SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                     ) AS title,
+                    crp.action_area AS crp_action_area,
                     (
                         SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                     ) AS result_code,
@@ -663,6 +666,7 @@ class EvaluationsController {
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS title,
+                        crp.action_area AS crp_action_area,
                         (
                             SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS result_code,
@@ -842,6 +846,7 @@ class EvaluationsController {
                         (
                             SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS title,
+                        crp.action_area AS crp_action_area,
                         (
                             SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
                         ) AS result_code,
