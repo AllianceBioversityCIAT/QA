@@ -1658,8 +1658,16 @@ class CommentController {
         console.log("Si");
 
         const comments = `
-          SELECT
+        SELECT
             evaluations.crp_id AS 'Initiative ID',
+            (
+                SELECT
+                    action_area
+                FROM
+                    qa_crp
+                WHERE
+                    crp_id = evaluations.crp_id
+            ) AS 'Action area',
             CASE
                 comments.replyTypeId
                 WHEN 1 THEN 'Accepted'
@@ -1682,6 +1690,7 @@ class CommentController {
                 WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
                 ELSE NULL
             END AS 'Result Code',
+            comments.id AS 'Comment ID',
             (
                 SELECT
                     name
@@ -1811,7 +1820,7 @@ class CommentController {
             comments.is_deleted = 0
             AND comments.detail IS NOT NULL
             AND evaluations.phase_year = actual_phase_year()
-            AND evaluations.batchDate > '2024-01-22'
+            AND evaluations.batchDate >= actual_batch_date()
             AND evaluations.crp_id = '${crp_id}'
         GROUP BY
             evaluations.crp_id,
@@ -1910,6 +1919,14 @@ class CommentController {
         const comments = `
         SELECT
             evaluations.crp_id AS 'Initiative ID',
+            (
+                SELECT
+                    action_area
+                FROM
+                    qa_crp
+                WHERE
+                    crp_id = evaluations.crp_id
+            ) AS 'Action area',
             CASE
                 comments.replyTypeId
                 WHEN 1 THEN 'Accepted'
@@ -1932,6 +1949,7 @@ class CommentController {
                 WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
                 ELSE NULL
             END AS 'Result Code',
+            comments.id AS 'Comment ID',
             (
                 SELECT
                     name
@@ -2061,7 +2079,7 @@ class CommentController {
             comments.is_deleted = 0
             AND comments.detail IS NOT NULL
             AND evaluations.phase_year = actual_phase_year()
-            AND evaluations.batchDate > '2024-01-22'
+            AND evaluations.batchDate >= actual_batch_date()
         GROUP BY
             evaluations.crp_id,
             'display_name',

@@ -403,54 +403,47 @@ SELECT
             (
                 SELECT
                     GROUP_CONCAT(
-                        (
-                            SELECT
-                                CONCAT(
-                                    '<b>',
-                                    cia.name,
-                                    '</b>'
-                                )
-                            FROM
-                                prdb.clarisa_impact_areas cia
-                            WHERE
-                                cia.id = cgt.impactAreaId
-                        ),
-                        ' - ',
-                        cgt.target SEPARATOR '<br>'
+                        '<b>',
+                        cia.name,
+                        '</b>' ' - ' SEPARATOR '<br>'
                     )
                 FROM
                     prdb.results_impact_area_target riat
                     LEFT JOIN prdb.clarisa_global_targets cgt ON cgt.targetId = riat.impact_area_target_id
+                    LEFT JOIN prdb.clarisa_impact_areas cia ON cia.id = cgt.impactAreaId
                 WHERE
                     riat.result_id = r.id
                     AND riat.is_active = 1
+                ORDER BY
+                    cgt.targetId ASC
             ),
             (
                 SELECT
                     GROUP_CONCAT(
-                        (
-                            SELECT
-                                CONCAT(
-                                    '<b>',
-                                    cia.name,
-                                    '</b>'
-                                )
-                            FROM
-                                prdb.clarisa_impact_areas cia
-                            WHERE
-                                cia.id = cgt.impactAreaId
-                        ),
+                        '<b>',
+                        subquery.name,
+                        '</b>',
                         ' - ',
-                        cgt.target SEPARATOR '<br>'
+                        subquery.target SEPARATOR '<br>'
                     )
                 FROM
-                    prdb.result_toc_impact_area_target rtiat
-                    LEFT JOIN prdb.clarisa_global_targets cgt ON cgt.targetId = rtiat.impact_area_indicator_id
-                    LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
-                    AND rtr.is_active = 1
-                WHERE
-                    rtiat.result_toc_result_id = rtr.result_toc_result_id
-                    AND rtiat.is_active = 1
+                    (
+                        SELECT
+                            DISTINCT rtiat.impact_area_indicator_id,
+                            cia.name,
+                            cgt.target
+                        FROM
+                            prdb.result_toc_impact_area_target rtiat
+                            LEFT JOIN prdb.clarisa_global_targets cgt ON cgt.targetId = rtiat.impact_area_indicator_id
+                            LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
+                            AND rtr.is_active = 1
+                            LEFT JOIN prdb.clarisa_impact_areas cia ON cia.id = cgt.impactAreaId
+                        WHERE
+                            rtiat.result_toc_result_id = rtr.result_toc_result_id
+                            AND rtiat.is_active = 1
+                    ) AS subquery
+                ORDER BY
+                    subquery.impact_area_indicator_id ASC
             )
         ),
         '<Not applicable>'
