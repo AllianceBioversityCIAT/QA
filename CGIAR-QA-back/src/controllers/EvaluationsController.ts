@@ -365,11 +365,9 @@ class EvaluationsController {
       // res.status(200).json({ data: rawData, message: "All evaluations" });
       res.status(200).json({ data: result, message: "All evaluations by crp" });
     } catch (error) {
-      res
-        .status(404)
-        .json({
-          message: "All evaluations by crp could not access to evaluations.",
-        });
+      res.status(404).json({
+        message: "All evaluations by crp could not access to evaluations.",
+      });
     }
   };
 
@@ -428,19 +426,15 @@ class EvaluationsController {
           {}
         );
       let rawData = await queryRunner.connection.query(query, parameters);
-      res
-        .status(200)
-        .json({
-          data: Util.parseEvaluationsData(rawData),
-          message: `Evaluation status for result: ${result_id}`,
-        });
+      res.status(200).json({
+        data: Util.parseEvaluationsData(rawData),
+        message: `Evaluation status for result: ${result_id}`,
+      });
     } catch (error) {
-      res
-        .status(400)
-        .json({
-          message:
-            "An error ocurred qhen trying to retrieve the evaluation status",
-        });
+      res.status(400).json({
+        message:
+          "An error ocurred when trying to retrieve the evaluation status",
+      });
     }
   };
 
@@ -572,12 +566,10 @@ class EvaluationsController {
             {}
           );
         let rawData = await queryRunner.connection.query(query, parameters);
-        res
-          .status(200)
-          .json({
-            data: Util.parseEvaluationsData(rawData),
-            message: "User evaluations list",
-          });
+        res.status(200).json({
+          data: Util.parseEvaluationsData(rawData),
+          message: "User evaluations list",
+        });
         return;
       } else if (user.crps.length > 0) {
         let sql = `
@@ -757,12 +749,10 @@ class EvaluationsController {
             {}
           );
         let rawData = await queryRunner.connection.query(query, parameters);
-        res
-          .status(200)
-          .json({
-            data: Util.parseEvaluationsData(rawData),
-            message: "CRP evaluations list",
-          });
+        res.status(200).json({
+          data: Util.parseEvaluationsData(rawData),
+          message: "CRP evaluations list",
+        });
       } else {
         let sql = `
                     SELECT
@@ -896,19 +886,15 @@ class EvaluationsController {
             {}
           );
         let rawData = await queryRunner.connection.query(query, parameters);
-        res
-          .status(200)
-          .json({
-            data: Util.parseEvaluationsData(rawData),
-            message: "User evaluations list",
-          });
+        res.status(200).json({
+          data: Util.parseEvaluationsData(rawData),
+          message: "User evaluations list",
+        });
       }
     } catch (error) {
-      res
-        .status(404)
-        .json({
-          message: "User evaluations list could not access to evaluations.",
-        });
+      res.status(404).json({
+        message: "User evaluations list could not access to evaluations.",
+      });
     }
   };
 
@@ -1159,18 +1145,14 @@ class EvaluationsController {
         rawData = await queryRunner.connection.query(query, parameters);
       }
 
-      res
-        .status(200)
-        .json({
-          data: Util.parseEvaluationsData(rawData, view_name_psdo),
-          message: "User evaluation detail",
-        });
+      res.status(200).json({
+        data: Util.parseEvaluationsData(rawData, view_name_psdo),
+        message: "User evaluation detail",
+      });
     } catch (error) {
-      res
-        .status(404)
-        .json({
-          message: "User evaluation detail could not access to evaluations.",
-        });
+      res.status(404).json({
+        message: "User evaluation detail could not access to evaluations.",
+      });
     }
   };
 
@@ -1338,12 +1320,10 @@ class EvaluationsController {
         assessed_r2: assessorByEvalR2[0].assessed_r2 || "Not yet assessed",
       };
 
-      res
-        .status(200)
-        .json({
-          data: response,
-          message: `Assessors in  evaluation ${evaluationId}`,
-        });
+      res.status(200).json({
+        data: response,
+        message: `Assessors in  evaluation ${evaluationId}`,
+      });
     } catch (error) {
       res
         .status(404)
@@ -1365,12 +1345,10 @@ class EvaluationsController {
       evaluation.require_second_assessment = require_second_assessment;
       evaluationsRepository.save(evaluation);
 
-      res
-        .status(200)
-        .json({
-          data: evaluation,
-          message: `Evaluation ${evaluationId} updated.`,
-        });
+      res.status(200).json({
+        data: evaluation,
+        message: `Evaluation ${evaluationId} updated.`,
+      });
     } catch (error) {
       res.status(404).json({ message: "Could not update the evaluation." });
     }
@@ -1468,12 +1446,10 @@ class EvaluationsController {
 
       res.status(200).json({ data: data, message: "All highlights status" });
     } catch (error) {
-      res
-        .status(200)
-        .json({
-          data: error,
-          message: "Could not retrieve the highlighted status",
-        });
+      res.status(200).json({
+        data: error,
+        message: "Could not retrieve the highlighted status",
+      });
     }
   };
 }
