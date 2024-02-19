@@ -14,7 +14,8 @@ INSERT INTO
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
 SELECT
     cc.id,
@@ -28,7 +29,8 @@ SELECT
         'Updated',
         'New'
     ),
-    cc.phase_year
+    cc.phase_year,
+    '2024-02-20 00:00:00'
 FROM
     qa_policy_change_view cc
 WHERE
@@ -60,7 +62,8 @@ INSERT INTO
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
 SELECT
     cc.id,
@@ -74,7 +77,8 @@ SELECT
         'Updated',
         'New'
     ),
-    cc.phase_year
+    cc.phase_year,
+    '2024-02-20 00:00:00'
 FROM
     qa_innovation_use_view cc
 WHERE
@@ -106,7 +110,8 @@ INSERT INTO
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
 SELECT
     cc.id,
@@ -120,7 +125,8 @@ SELECT
         'Updated',
         'New'
     ),
-    cc.phase_year
+    cc.phase_year,
+    '2024-02-20 00:00:00'
 FROM
     qa_other_outcome_view cc
 WHERE
@@ -152,7 +158,8 @@ INSERT INTO
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
 SELECT
     cc.id,
@@ -166,7 +173,8 @@ SELECT
         'Updated',
         'New'
     ),
-    cc.phase_year
+    cc.phase_year,
+    '2024-02-20 00:00:00'
 FROM
     qa_capdev_view cc
 WHERE
@@ -198,7 +206,8 @@ INSERT INTO
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
 SELECT
     cc.id,
@@ -212,7 +221,8 @@ SELECT
         'Updated',
         'New'
     ),
-    cc.phase_year
+    cc.phase_year,
+    '2024-02-20 00:00:00'
 FROM
     qa_innovation_development_view cc
 WHERE
@@ -244,7 +254,8 @@ INSERT INTO
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
 SELECT
     cc.id,
@@ -258,7 +269,8 @@ SELECT
         'Updated',
         'New'
     ),
-    cc.phase_year
+    cc.phase_year,
+    '2024-02-20 00:00:00'
 FROM
     qa_other_output_view cc
 WHERE
@@ -290,7 +302,8 @@ INSERT INTO
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
 SELECT
     cc.id,
@@ -304,7 +317,8 @@ SELECT
         'Updated',
         'New'
     ),
-    cc.phase_year
+    cc.phase_year,
+    '2024-02-20 00:00:00'
 FROM
     qa_impact_contribution_view cc
 WHERE
@@ -327,7 +341,7 @@ WHERE
     );
 
 -- KNOWLEDGE PRODUCT
-insert into
+INSERT INTO
     qa_evaluations (
         indicator_view_id,
         status,
@@ -336,32 +350,33 @@ insert into
         createdAt,
         updatedAt,
         evaluation_status,
-        phase_year
+        phase_year,
+        batchDate
     )
-select
+SELECT
     cc.id,
-    if(
+    IF(
         (
             (
                 cc.is_melia != 'Yes'
-                and cc.knowledge_product_type != 'Journal Article'
+                AND cc.knowledge_product_type != 'Journal Article'
             )
         ),
         'autochecked',
-        if(
+        IF(
             (
                 (
                     cc.knowledge_product_type = 'Journal Article'
-                    and (
+                    AND (
                         cgspace_year = wos_year
-                        and is_isi_cgspace = 1
-                        and is_isi_cgspace is not null
-                        and is_peer_cgspace = 1
-                        and is_peer_cgspace is not null
-                        and is_isi_wos = 1
-                        and is_isi_wos is not null
-                        and is_peer_wos = 1
-                        and is_peer_wos is not NULL
+                        AND is_isi_cgspace = 1
+                        AND is_isi_cgspace is not null
+                        AND is_peer_cgspace = 1
+                        AND is_peer_cgspace is not null
+                        AND is_isi_wos = 1
+                        AND is_isi_wos is not null
+                        AND is_peer_wos = 1
+                        AND is_peer_wos is not NULL
                         AND accesibility_cgspace = accesibility_wos
                     )
                 )
@@ -379,21 +394,23 @@ select
         'Updated',
         'New'
     ),
-    2023
-from
+    cc.phase_year,
+    '2024-02-20 00:00:00'
+FROM
     qa_knowledge_product_view cc
-where
+WHERE
     cc.phase_name = 'AR'
-    and cc.phase_year = 2023
-    and cc.included_AR = 'yes'
-    and cc.is_active = 1
-    and not exists (
+    AND cc.phase_year = 2023
+    AND cc.included_AR = 'yes'
+    AND cc.is_active = 1
+    AND cc.in_qa = 1
+    AND not exists (
         select
             1
         from
             qa_evaluations qa
         where
             qa.indicator_view_id = cc.id
-            and qa.phase_year = 2023
-            and qa.indicator_view_name = 'qa_knowledge_product'
+            AND qa.phase_year = 2023
+            AND qa.indicator_view_name = 'qa_knowledge_product'
     );
