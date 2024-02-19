@@ -1855,6 +1855,7 @@ class CommentController {
                 WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
                 ELSE NULL
             END AS 'Result code',
+            evaluations.evaluation_status AS 'Result status',
             CASE
                 evaluations.status
                 WHEN 'pending' THEN 'Pending'
@@ -2112,6 +2113,7 @@ class CommentController {
                 WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
                 ELSE NULL
             END AS 'Result code',
+            evaluations.evaluation_status AS 'Result status',
             CASE
                 evaluations.status
                 WHEN 'pending' THEN 'Pending'
