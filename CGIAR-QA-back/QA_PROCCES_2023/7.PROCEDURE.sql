@@ -1,3 +1,14 @@
+CREATE DEFINER = `prmsadmin` @`%` PROCEDURE `qadb`.`qa_update_indicator_ipsr`() BEGIN DECLARE start_time TIMESTAMP;
+
+SET
+    start_time = SYSDATE();
+
+SET
+    SQL_SAFE_UPDATES = 0;
+
+SET
+    SESSION group_concat_max_len = 2000000;
+
 -- * POLICY CHANGE
 CREATE TABLE qa_policy_change_data_tmp LIKE qa_policy_change_data;
 
@@ -96,7 +107,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_policy_change'
     );
 
@@ -105,7 +116,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_policy_change_data_tmp;
+    qa_policy_change_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_policy_change_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_policy_change_data_tmp;
 
@@ -201,7 +221,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_innovation_use'
     );
 
@@ -210,7 +230,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_innovation_use_data_tmp;
+    qa_innovation_use_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_innovation_use_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_innovation_use_data_tmp;
 
@@ -308,7 +337,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_capdev'
     );
 
@@ -317,7 +346,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_capdev_data_tmp;
+    qa_capdev_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_capdev_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_capdev_data_tmp;
 
@@ -441,7 +479,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_innovation_development'
     );
 
@@ -450,7 +488,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_innovation_development_data_tmp;
+    qa_innovation_development_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_innovation_development_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_innovation_development_data_tmp;
 
@@ -540,7 +587,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_other_output'
     );
 
@@ -549,7 +596,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_other_output_data_tmp;
+    qa_other_output_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_other_output_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_other_output_data_tmp;
 
@@ -639,7 +695,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_other_outcome'
     );
 
@@ -648,7 +704,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_other_outcome_data_tmp;
+    qa_other_outcome_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_other_outcome_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_other_outcome_data_tmp;
 
@@ -738,7 +803,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_impact_contribution'
     );
 
@@ -747,7 +812,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_impact_contribution_data_tmp;
+    qa_impact_contribution_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_impact_contribution_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_impact_contribution_data_tmp;
 
@@ -871,7 +945,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_knowledge_product'
     );
 
@@ -880,7 +954,16 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_knowledge_product_data_tmp;
+    qa_knowledge_product_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_knowledge_product_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_knowledge_product_data_tmp;
 
@@ -990,7 +1073,7 @@ WHERE
         FROM
             qa_evaluations qe
         WHERE
-            qe.batchDate >= '2024-01-24 01:00:00'
+            qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_innovation_use_ipsr'
     );
 
@@ -999,6 +1082,27 @@ INSERT INTO
 SELECT
     *
 FROM
-    qa_innovation_use_ipsr_data_tmp;
+    qa_innovation_use_ipsr_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_innovation_use_ipsr_data qa
+        WHERE
+            qa.id = cc.id
+    );
 
 DROP TABLE qa_innovation_use_ipsr_data_tmp;
+
+-- Insert data logs
+INSERT INTO
+    qa_data_refresh_log
+SELECT
+    'result_ipsr_data',
+    start_time,
+    DATE_ADD(start_time, INTERVAL -5 HOUR),
+    null,
+    TIME_TO_SEC(TIMEDIFF(sysdate(), start_time)) diff;
+
+END
