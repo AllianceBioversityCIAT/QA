@@ -98,10 +98,10 @@ FROM
     qa_policy_change_view cc;
 
 DELETE FROM
-    qa_policy_change_data
+    qa_policy_change_data qa
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -109,6 +109,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_policy_change'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_policy_change_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO
@@ -212,10 +220,10 @@ FROM
     qa_innovation_use_view cc;
 
 DELETE FROM
-    qa_innovation_use_data
+    qa_innovation_use_data qa
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -223,6 +231,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_innovation_use'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_innovation_use_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO
@@ -330,8 +346,8 @@ FROM
 DELETE FROM
     qa_capdev_data
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -339,6 +355,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_capdev'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_capdev_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO
@@ -470,10 +494,10 @@ FROM
     qa_innovation_development_view cc;
 
 DELETE FROM
-    qa_innovation_development_data
+    qa_innovation_development_data qa
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -481,6 +505,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_innovation_development'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_innovation_development_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO
@@ -578,10 +610,10 @@ FROM
     qa_other_output_view cc;
 
 DELETE FROM
-    qa_other_output_data
+    qa_other_output_data qa
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -589,6 +621,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_other_output'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_other_output_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO
@@ -686,10 +726,10 @@ FROM
     qa_other_outcome_view cc;
 
 DELETE FROM
-    qa_other_outcome_data
+    qa_other_outcome_data qa
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -697,6 +737,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_other_outcome'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_other_outcome_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO
@@ -794,10 +842,10 @@ FROM
     qa_impact_contribution_view cc;
 
 DELETE FROM
-    qa_impact_contribution_data
+    qa_impact_contribution_data qa
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -805,6 +853,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_impact_contribution'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_impact_contribution_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO
@@ -936,10 +992,10 @@ FROM
     qa_knowledge_product_view cc;
 
 DELETE FROM
-    qa_knowledge_product_data
+    qa_knowledge_product_data qa
 WHERE
-    phase_year = 2023
-    AND id IN (
+    qa.phase_year = 2023
+    AND qa.id IN (
         SELECT
             qe.indicator_view_id
         FROM
@@ -947,6 +1003,14 @@ WHERE
         WHERE
             qe.batchDate >= actual_batch_date()
             AND qe.indicator_view_name = 'qa_knowledge_product'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_knowledge_product_view cc
+        WHERE
+            cc.id = qa.id
     );
 
 INSERT INTO

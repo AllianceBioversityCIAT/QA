@@ -573,35 +573,169 @@ class EvaluationsController {
         return;
       } else if (user.crps.length > 0) {
         let sql = `
-                    SELECT
-                        evaluations.id AS evaluation_id,
-                        evaluations.indicator_view_name,
-                        evaluations.indicator_view_id,
-                        evaluations.evaluation_status,
-                        evaluations.status as assessment_status,
-                        evaluations.batchDate as submission_date,
-                        evaluations.require_second_assessment,
-                        evaluations.crp_id AS initiative,
-                        crp.acronym AS short_name,
-                        crp.name AS crp_name,
-                        (
-                            SELECT
-                                COUNT(id)
-                            FROM
-                                qa_comments
-                            WHERE
-                                qa_comments.evaluationId = evaluations.id
+        SELECT
+            evaluations.id AS evaluation_id,
+            evaluations.indicator_view_name,
+            evaluations.indicator_view_id,
+            evaluations.evaluation_status,
+            evaluations.status as assessment_status,
+            evaluations.batchDate as submission_date,
+            evaluations.require_second_assessment,
+            evaluations.crp_id AS initiative,
+            crp.acronym AS short_name,
+            crp.name AS crp_name,
+            (
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments
+                WHERE
+                    qa_comments.evaluationId = evaluations.id
+                    AND approved_no_comment IS NULL
+                    AND metaId IS NOT NULL
+                    AND is_deleted = 0
+                    AND is_visible = 1
+                    AND detail IS NOT NULL
+                    AND cycleId = 1
+                    AND createdAt >= actual_batch_date()
+            ) AS comments_count,
+            (
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments
+                WHERE
+                    qa_comments.evaluationId = evaluations.id
+                    AND approved_no_comment IS NULL
+                    AND metaId IS NOT NULL
+                    AND is_deleted = 0
+                    AND is_visible = 1
+                    AND replyTypeId = 2
+                    AND createdAt >= actual_batch_date()
+            ) AS comments_disagreed_count,
+            (
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments
+                WHERE
+                    qa_comments.evaluationId = evaluations.id
+                    AND approved_no_comment IS NULL
+                    AND metaId IS NOT NULL
+                    AND is_deleted = 0
+                    AND is_visible = 1
+                    AND crp_approved = 1
+                    AND createdAt >= actual_batch_date()
+            ) AS comments_accepted_count,
+            (
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments
+                WHERE
+                    qa_comments.evaluationId = evaluations.id
+                    AND highlight_comment = 1
+                    AND metaId IS NOT NULL
+                    AND is_deleted = 0
+                    AND is_visible = 1
+                    AND createdAt >= actual_batch_date()
+                LIMIT
+                    1
+            ) AS comments_highlight_count,
+            (
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments
+                WHERE
+                    qa_comments.evaluationId = evaluations.id
+                    AND tpb = 1
+                    AND metaId IS NOT NULL
+                    AND is_deleted = 0
+                    AND is_visible = 1
+                    AND createdAt >= actual_batch_date()
+                LIMIT
+                    1
+            ) AS comments_tpb_count,
+            (
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments
+                WHERE
+                    qa_comments.evaluationId = evaluations.id
+                    AND ppu = 1
+                    AND metaId IS NOT NULL
+                    AND is_deleted = 0
+                    AND is_visible = 1
+                LIMIT
+                    1
+            ) AS comments_ppu_count,
+            (
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments_replies
+                WHERE
+                    is_deleted = 0
+                    AND commentId IN (
+                        SELECT
+                            id
+                        FROM
+                            qa_comments
+                        WHERE
+                            qa_comments.evaluationId = evaluations.id
                             AND approved_no_comment IS NULL
                             AND metaId IS NOT NULL
                             AND is_deleted = 0
                             AND is_visible = 1
-                            AND detail IS NOT NULL
-                            AND cycleId = 1
-                        ) AS comments_count,
-
-                        (
+                            AND createdAt >= actual_batch_date()
+                    )
+                    AND is_deleted = 0
+            ) AS comments_replies_count,
+            (
+                SELECT
+                    title
+                FROM
+                    qa_capdev qa_capdev
+                WHERE
+                    qa_capdev.id = evaluations.indicator_view_id
+            ) AS title,
+            crp.action_area AS crp_action_area,
+            (
+                SELECT
+                    result_code
+                FROM
+                    qa_capdev qa_capdev
+                WHERE
+                    qa_capdev.id = evaluations.indicator_view_id
+            ) AS result_code,
+            indicator_user.indicatorId,
+            IF(
+                (
+                    SELECT
+                        COUNT(id)
+                    FROM
+                        qa_comments
+                    WHERE
+                        qa_comments.evaluationId = evaluations.id
+                        AND approved_no_comment IS NULL
+                        AND metaId IS NOT NULL
+                        AND is_deleted = 0
+                        AND is_visible = 1
+                        AND detail IS NOT NULL
+                        AND cycleId = 1
+                      AND createdAt >= actual_batch_date()
+                ) = (
+                    SELECT
+                        COUNT(id)
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        is_deleted = 0
+                        AND commentId IN (
                             SELECT
-                                COUNT(id)
+                                id
                             FROM
                                 qa_comments
                             WHERE
@@ -610,144 +744,95 @@ class EvaluationsController {
                                 AND metaId IS NOT NULL
                                 AND is_deleted = 0
                                 AND is_visible = 1
-                                AND replyTypeId = 2
-                        ) AS comments_disagreed_count,
-
-                        (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
-                        NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
-                        (
-                            SELECT
-                                COUNT(id)
-                            FROM
-                                qa_comments
-                            WHERE
-                                qa_comments.evaluationId = evaluations.id
-                                AND highlight_comment = 1
-                                AND metaId IS NOT NULL
-                                AND is_deleted = 0
-                                AND is_visible = 1
-                                LIMIT 1
-                        ) AS comments_highlight_count,
-                        (
-                            SELECT
-                                COUNT(id)
-                            FROM
-                                qa_comments
-                            WHERE
-                                qa_comments.evaluationId = evaluations.id
-                                AND tpb = 1
-                                AND metaId IS NOT NULL
-                                AND is_deleted = 0
-                                AND is_visible = 1
-                                LIMIT 1
-                        ) AS comments_tpb_count,
-                        (
-                            SELECT
-                                COUNT(id)
-                            FROM
-                                qa_comments
-                            WHERE
-                                qa_comments.evaluationId = evaluations.id
-                                AND ppu = 1
-                                AND metaId IS NOT NULL
-                                AND is_deleted = 0
-                                AND is_visible = 1
-                                LIMIT 1
-                        ) AS comments_ppu_count,
-                        ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 ) AND is_deleted = 0 ) AS comments_replies_count,
-                        (
-                            SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
-                        ) AS title,
-                        crp.action_area AS crp_action_area,
-                        (
-                            SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
-                        ) AS result_code,
-                        ${levelQuery.view_sql}
-                        indicator_user.indicatorId,
-                        IF(
-                            (
-                                    SELECT COUNT(id)
-                                    FROM qa_comments
-                                    WHERE qa_comments.evaluationId = evaluations.id
-                                            AND approved_no_comment IS NULL
-                                            AND metaId IS NOT NULL
-                                            AND is_deleted = 0
-                                            AND is_visible = 1
-                                            AND detail IS NOT NULL
-                                            AND cycleId = 1
-                            ) <= (
-                                    SELECT COUNT(id)
-                                    FROM qa_comments_replies
-                                    WHERE is_deleted = 0
-                                            AND commentId IN (
-                                                    SELECT id
-                                                    FROM qa_comments
-                                                    WHERE qa_comments.evaluationId = evaluations.id
-                                                            AND approved_no_comment IS NULL
-                                                            AND metaId IS NOT NULL
-                                                            AND is_deleted = 0
-                                                            AND is_visible = 1
-                                                            AND detail IS NOT NULL
-                                                            AND cycleId = 1
-                                            )
-                                
-                            ),
-                            "complete",
-                            "pending"
-                    ) AS evaluations_status_round_1,
-                    IF(
-                        (
-                            SELECT
-                                COUNT(id)
-                            FROM
-                                qa_comments
-                            WHERE
-                                qa_comments.evaluationId = evaluations.id
-                                AND metaId IS NOT NULL
-                                AND is_deleted = 0
-                                AND is_visible = 1
                                 AND detail IS NOT NULL
-                        ) = (
-                            SELECT
-                                COUNT(id)
-                            FROM
-                                qa_comments
-                            WHERE
-                                qa_comments.evaluationId = evaluations.id
-                                AND qa_comments.approved_no_comment IS NULL
-                                AND qa_comments.metaId IS NOT NULL
-                                AND qa_comments.is_deleted = 0
-                                AND qa_comments.is_visible = 1
-                                AND qa_comments.detail IS NOT NULL
-                                AND qa_comments.crp_approved IS NOT NULL
-                        ),
-                        "complete",
-                        "pending"
-                    ) AS evaluations_status,
-                    ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
-                    ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
+                                AND cycleId = 1
+                                AND createdAt >= actual_batch_date()
+                        )
+                ),
+                "complete",
+                "pending"
+            ) AS evaluations_status_round_1,
+            IF(
+                (
+                    SELECT
+                        COUNT(id)
                     FROM
-                        qa_evaluations evaluations
-                    LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
-                    LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id AND crp.active = 1 AND crp.qa_active = 'open'
-                    LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
-                    LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
-                    WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
-                    AND evaluations.indicator_view_name = :view_name
-                    AND evaluations.crp_id = :crp_id
-                    AND evaluations.phase_year = actual_phase_year()
-                    GROUP BY
-                        crp.crp_id,
-                        evaluations.id,
-                        ${levelQuery.innovations_stage}
-                        indicator_user.indicatorId
-                `;
+                        qa_comments
+                    WHERE
+                        qa_comments.evaluationId = evaluations.id
+                        AND metaId IS NOT NULL
+                        AND is_deleted = 0
+                        AND is_visible = 1
+                        AND detail IS NOT NULL
+                      AND createdAt >= actual_batch_date()
+                ) = (
+                    SELECT
+                        COUNT(id)
+                    FROM
+                        qa_comments
+                    WHERE
+                        qa_comments.evaluationId = evaluations.id
+                        AND qa_comments.approved_no_comment IS NULL
+                        AND qa_comments.metaId IS NOT NULL
+                        AND qa_comments.is_deleted = 0
+                        AND qa_comments.is_visible = 1
+                        AND qa_comments.detail IS NOT NULL
+                        AND qa_comments.crp_approved IS NOT NULL
+                        AND createdAt >= actual_batch_date()
+                ),
+                "complete",
+                "pending"
+            ) AS evaluations_status,
+            (
+                SELECT
+                    kp.is_melia
+                FROM
+                    qa_knowledge_product_data kp
+                WHERE
+                    evaluations.indicator_view_id = kp.id
+            ) AS is_melia,
+            (
+                SELECT
+                    kp.knowledge_product_type
+                FROM
+                    qa_knowledge_product_data kp
+                WHERE
+                    evaluations.indicator_view_id = kp.id
+            ) AS knowledge_product_type
+        FROM
+            qa_evaluations evaluations
+            LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
+            LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
+            AND crp.active = 1
+            AND crp.qa_active = 'open'
+            LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
+            LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
+        WHERE
+            (
+                evaluations.evaluation_status <> 'Deleted'
+                OR evaluations.evaluation_status IS NULL
+            )
+            AND evaluations.indicator_view_name = :view_name
+            AND evaluations.crp_id = :crp_id
+            AND evaluations.phase_year = actual_phase_year()
+            AND evaluations.batchDate >= actual_batch_date()
+        GROUP BY
+            crp.crp_id,
+            evaluations.id,
+            ${levelQuery.innovations_stage}
+            indicator_user.indicatorId;
+        `;
+
         const [query, parameters] =
           await queryRunner.connection.driver.escapeQueryWithParameters(
             sql,
             { crp_id: crp_id, view_name },
             {}
           );
+        console.log(
+          "🚀 ~ EvaluationsController ~ getListEvaluationsDash= ~ query:",
+          query
+        );
         let rawData = await queryRunner.connection.query(query, parameters);
         res.status(200).json({
           data: Util.parseEvaluationsData(rawData),
