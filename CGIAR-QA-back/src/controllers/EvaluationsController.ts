@@ -694,21 +694,11 @@ class EvaluationsController {
                     AND is_deleted = 0
             ) AS comments_replies_count,
             (
-                SELECT
-                    title
-                FROM
-                    qa_capdev qa_capdev
-                WHERE
-                    qa_capdev.id = evaluations.indicator_view_id
+              SELECT title FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
             ) AS title,
             crp.action_area AS crp_action_area,
             (
-                SELECT
-                    result_code
-                FROM
-                    qa_capdev qa_capdev
-                WHERE
-                    qa_capdev.id = evaluations.indicator_view_id
+              SELECT result_code FROM ${view_name} ${view_name} WHERE ${view_name}.id = evaluations.indicator_view_id
             ) AS result_code,
             indicator_user.indicatorId,
             IF(
@@ -829,10 +819,6 @@ class EvaluationsController {
             { crp_id: crp_id, view_name },
             {}
           );
-        console.log(
-          "🚀 ~ EvaluationsController ~ getListEvaluationsDash= ~ query:",
-          query
-        );
         let rawData = await queryRunner.connection.query(query, parameters);
         res.status(200).json({
           data: Util.parseEvaluationsData(rawData),
