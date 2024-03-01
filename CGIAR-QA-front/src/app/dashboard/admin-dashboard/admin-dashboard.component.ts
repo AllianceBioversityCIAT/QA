@@ -124,7 +124,7 @@ export class AdminDashboardComponent implements OnInit {
   //new props
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = "qa_innovation_use_ipsr";
+  selectedIndicator = "qa_innovation_development";
   dataSelected: any;
   indicatorData: any;
   feedList: [];
