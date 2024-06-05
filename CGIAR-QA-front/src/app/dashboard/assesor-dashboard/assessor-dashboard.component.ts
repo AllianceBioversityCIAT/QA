@@ -78,6 +78,7 @@ export class AssessorDashboardComponent implements OnInit {
   };
 
   indicatorsNameDropdwon = [
+    { name: "Innovation Use (IPSR)", viewname: "qa_innovation_use_ipsr" },
     { name: "Innovation Development", viewname: "qa_innovation_development" },
     { name: "Impact Contribution", viewname: "qa_impact_contribution" },
     { name: "Other Outcome", viewname: "qa_other_outcome" },
@@ -86,7 +87,6 @@ export class AssessorDashboardComponent implements OnInit {
     { name: "Knowledge Product", viewname: "qa_knowledge_product" },
     { name: "Policy Change", viewname: "qa_policy_change" },
     { name: "Innovation Use", viewname: "qa_innovation_use" },
-    { name: "Innovation Use (IPSR)", viewname: "qa_innovation_use_ipsr" },
   ];
 
   constructor(

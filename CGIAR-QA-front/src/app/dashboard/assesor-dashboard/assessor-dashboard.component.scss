@@ -416,6 +416,23 @@
   }
 }
 
+.no-data-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 1px solid #bee5eb;
+  background-color: #d1ecf1;
+  color: #0c5460;
+  padding: 1em;
+  border-radius: 4px;
+  width: 100%;
+  .no-data-message {
+    text-align: center;
+    font-size: 1em;
+    margin: 0;
+  }   
+} 
+
 .css-button-3d--sand {
   min-width: 130px;
   // height: 40px;
