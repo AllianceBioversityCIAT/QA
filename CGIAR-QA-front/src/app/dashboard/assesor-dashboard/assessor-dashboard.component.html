@@ -63,8 +63,13 @@
           </ul>
         </div>
       </div>
+      <div *ngIf="isDataNull" class="no-data-container">
+        <div class="no-data-message">No results available at the moment.</div>
+      </div>
       <div
-        *ngIf="dashboardData && (dashboardData | json) != ({} | json)"
+        *ngIf="
+          dashboardData && (dashboardData | json) != ({} | json) && !isDataNull
+        "
         class="w-100"
         [ngClass]="{
           'grid-container': currentUser.cycle.cycle_stage == '1',
@@ -136,7 +141,6 @@
             </app-donut-chart>
           </div>
         </div>
-        <!-- 'responses-to-comments-r2': currentUser.cycle.cycle_stage == '2' -->
         <div
           class="chart"
           [ngClass]="{
@@ -155,8 +159,6 @@
             *ngIf="dataCharts.highlitedPendingComments"
             class="chart-container"
           >
-            <!-- [data]="dataCharts.highlitedPendingComments" -->
-            <!-- [chartName]="'comments'" -->
             <app-donut-chart
               [data]="dataCharts.highlitedPendingComments"
               [chartName]="'highlight_comments'"
@@ -188,7 +190,6 @@
             ></app-line-chart>
           </div>
         </div>
-        <!-- <button class="btn btn-green-secondary">Download all comments and replies</button> -->
         <button class="btn btn-assessment" (click)="openChart(chartD, $event)">
           See Assessment by field <i class="icon-analytics-chart"></i>
         </button>
@@ -220,38 +221,7 @@
         >
           Go to {{ getIndicatorName(selectedIndicator) }}
         </button>
-        <!-- <a *ngIf="dashboardData && ((dashboardData | json) != ({} | json)) && actualStatusIndicator(dataSelected)"
-                    routerLinkActive="active" [routerLinkActive]="['active']"
-                    routerLink="../../indicator/{{selectedIndicator.split('qa_')[1]}}/id">
-                    Go to {{getIndicatorName(selectedIndicator)}}
-                </a>
-                <a *ngIf="dashboardData && ((dashboardData | json) != ({} | json)) && !actualStatusIndicator(dataSelected)">
-                    Go to {{getIndicatorName(selectedIndicator)}}
-                </a> -->
       </div>
-      <!-- <ng-container *ngIf="(dashboardData | json) != ({} | json)">
-                <div *ngFor="let item of dashboardData | keyvalue | sortBy:'asc':'value.order' "
-                    [ngClass]="{'closed': !item.value[0].indicator_status }" class="progress-container">
-                    <p>{{item.value.total}} {{getIndicatorName(item.key)}}</p>
-                    <progressbar class="progress" [value]="item.value" [max]="item.value.total">
-                        <span>{{item.value.total}}</span>
-                    </progressbar>
-                    <p *ngIf="item && dashboardCommentsData[item.key]">Total comments:
-                        {{dashboardCommentsData[item.key].total}}</p>
-                    <progressbar id="comments-progessbar" *ngIf="dashboardCommentsData[item.key]" class="progress"
-                        [value]="dashboardCommentsData[item.key]" [max]="dashboardCommentsData[item.key].total">
-                        <span>{{dashboardCommentsData[item.key].value}}</span>
-                    </progressbar>
-                    <a *ngIf="item.value[0].indicator_status == 1" routerLinkActive="active"
-                        [routerLinkActive]="['active']" routerLink="../../indicator/{{item.key.split('qa_')[1]}}/id">
-                        Go to {{getIndicatorName(item.key)}}
-                    </a>
-                    <a *ngIf="item.value[0].indicator_status == 0">
-                        Go to {{getIndicatorName(item.key)}}
-                    </a>
-                </div>
-
-            </ng-container> -->
       <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
         You don't have any indicator assingned. Please contact your
         Administrator.
@@ -263,66 +233,6 @@
     ></div>
   </div>
 </div>
-<!-- <div class="asesor-dashboard row col offset-md-3 col-sm-8">
-    <div class="row col col-sm-8">
-        <h4>Progress on Quality Assessment</h4>
-    </div>
-    <div class="card col-sm-8">
-        <div class="card-body">
-            <div class="card-title example-container d-flex"
-                [ngClass]="{'no-data': (dashboardData | json) == ({} | json)}">
-                <p><strong>By indicator: </strong></p>
-                <div class="circle complete"></div>
-                <p>Complete</p>
-                <div class="circle pending" style="margin-left: 50px;"></div>
-                <p>Pending</p>
-                <div class="circle finalized" style="margin-left: 50px;" *ngIf="currentUser.cycle.cyle_stage != '1' ">
-                </div>
-                <p>Closed</p>
-            </div>
-            <div class="card-title example-container d-flex"
-                [ngClass]="{'no-data': (dashboardData | json) == ({} | json)}">
-                <p><strong>By field: </strong></p>
-                <div class="circle complete"></div>
-                <p>Approved comments</p>
-                <div class="circle pending" style="margin-left: 50px;"></div>
-                <p>Rejected replies</p>
-                <div class="circle unanswered" style="margin-left: 50px;"></div>
-                <p>Pending response</p>
-            </div>
-
-            <ng-container *ngIf="(dashboardData | json) != ({} | json)">
-                <div *ngFor="let item of dashboardData | keyvalue | sortBy:'asc':'value.order' "
-                    [ngClass]="{'closed': !item.value[0].indicator_status }" class="progress-container">
-                    <p>{{item.value.total}} {{getIndicatorName(item.key)}}</p>
-                    <progressbar class="progress" [value]="item.value" [max]="item.value.total">
-                        <span>{{item.value.total}}</span>
-                    </progressbar>
-                    <p *ngIf="item && dashboardCommentsData[item.key]">Total comments:
-                        {{dashboardCommentsData[item.key].total}}</p>
-                    <progressbar id="comments-progessbar" *ngIf="dashboardCommentsData[item.key]" class="progress"
-                        [value]="dashboardCommentsData[item.key]" [max]="dashboardCommentsData[item.key].total">
-                        <span>{{dashboardCommentsData[item.key].value}}</span>
-                    </progressbar>
-                    <a *ngIf="item.value[0].indicator_status == 1" routerLinkActive="active"
-                        [routerLinkActive]="['active']" routerLink="../../indicator/{{item.key.split('qa_')[1]}}/id">
-                        Go to {{getIndicatorName(item.key)}}
-                    </a>
-                    <a *ngIf="item.value[0].indicator_status == 0">
-                        Go to {{getIndicatorName(item.key)}}
-                    </a>
-                </div>
-
-            </ng-container>
-            <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
-                You don't have any indicator assingned.
-                Please contact your Administrator.
-            </div>
-
-
-        </div>
-    </div>
-</div> -->
 <ng-template #chartD style="max-width: 1800px">
   <div class="options-modal">
     <button

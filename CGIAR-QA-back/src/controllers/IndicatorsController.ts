@@ -110,7 +110,9 @@ class IndicatorsController {
                             qa_indicators indicators
                     LEFT JOIN qa_comments_meta comment_meta ON comment_meta.indicatorId = indicators.id
                     LEFT JOIN qa_evaluations evaluations ON evaluations.indicator_view_name = indicators.view_name
-                    WHERE evaluations.crp_id = :crp_id
+                    WHERE 
+                      evaluations.crp_id = :crp_id
+                      AND indicators.is_active = 1
                     ORDER BY 
                             indicator_order ASC
                     `,
@@ -143,7 +145,8 @@ class IndicatorsController {
                     LEFT JOIN qa_indicators indicators ON indicators.id = qa_indicator_user.indicatorId
                     LEFT JOIN qa_comments_meta meta ON meta.indicatorId = qa_indicator_user.indicatorId
                     WHERE
-                        qa_indicator_user.userId = :userId 
+                        qa_indicator_user.userId = :userId
+                        AND indicators.is_active = 1
                     ORDER BY 
                         indicator_order ASC`,
             { userId: id },
