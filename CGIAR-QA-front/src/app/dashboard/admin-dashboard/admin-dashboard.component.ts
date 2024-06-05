@@ -57,6 +57,7 @@ export class AdminDashboardComponent implements OnInit {
   programsForm: FormGroup;
   generalStatus = GeneralStatus;
   indicatorsName = GeneralIndicatorName;
+  isDataNull: boolean = false;
 
   assessorsChat = {
     isOpen: false,
@@ -76,6 +77,7 @@ export class AdminDashboardComponent implements OnInit {
   indicator_status: string = "indicators_status";
 
   indicatorsNameDropdwon = [
+    { name: "Innovation Use (IPSR)", viewname: "qa_innovation_use_ipsr" },
     { name: "Impact Contribution", viewname: "qa_impact_contribution" },
     { name: "Other Outcome", viewname: "qa_other_outcome" },
     { name: "Other Output", viewname: "qa_other_output" },
@@ -84,7 +86,6 @@ export class AdminDashboardComponent implements OnInit {
     { name: "Innovation Development", viewname: "qa_innovation_development" },
     { name: "Policy Change", viewname: "qa_policy_change" },
     { name: "Innovation Use", viewname: "qa_innovation_use" },
-    { name: "Innovation Use (IPSR)", viewname: "qa_innovation_use_ipsr" },
   ];
 
   activeCompleteDash = true;
@@ -124,7 +125,7 @@ export class AdminDashboardComponent implements OnInit {
   //new props
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = "qa_innovation_development";
+  selectedIndicator = "qa_innovation_use_ipsr";
   dataSelected: any;
   indicatorData: any;
   feedList: [];
@@ -307,8 +308,7 @@ export class AdminDashboardComponent implements OnInit {
     return formatDate;
   }
 
-  formatStatusIndicatorData(data) {
-    // DEFINE COLORS WITH CSS
+  formatStatusIndicatorData(data: any) {
     const colors = {
       complete: "var(--color-complete)",
       pending: "var(--color-pending)",
@@ -317,27 +317,34 @@ export class AdminDashboardComponent implements OnInit {
     };
     let dataset = [];
     let brushes = { domain: [] };
-    for (const item of data) {
-      if (item.status != null) {
-        dataset.push({ name: item.status, value: +item.label });
-        brushes.domain.push(colors[item.status]);
-      }
-    }
-    let complete = dataset.find((item) => item.name == "complete");
-    if (complete) complete.name = "Assessed 1st round";
-    let finalized = dataset.find((item) => item.name == "finalized");
-    if (finalized) finalized.name = "Assessed 2nd round";
-
-    let autochecked = dataset.find((item) => item.name == "autochecked");
-    if (autochecked) {
-      this.indicator_status = "publications_status";
-      autochecked.name = "Automatically validated";
+    if (!data) {
+      this.isDataNull = true;
+      return null;
     } else {
       this.indicator_status = "indicator_status";
-    }
-    // console.log('DATA SELECTED', { dataset, brushes });
+      for (const item of data) {
+        if (item.status != null) {
+          dataset.push({ name: item.status, value: +item.label });
+          brushes.domain.push(colors[item.status]);
+        }
+      }
+      let pending = dataset.find((item) => item.name == "pending");
+      if (pending) pending.name = "Pending";
+      let complete = dataset.find((item) => item.name == "complete");
+      if (complete) complete.name = "Assessed 1st round";
+      let finalized = dataset.find((item) => item.name == "finalized");
+      if (finalized) finalized.name = "Quality Assessed";
 
-    return { dataset, brushes };
+      let autochecked = dataset.find((item) => item.name == "autochecked");
+      if (autochecked) {
+        this.indicator_status = "publications_status";
+        autochecked.name = "Automatically validated";
+      } else {
+        this.indicator_status = "indicator_status";
+      }
+      this.isDataNull = false;
+      return { dataset, brushes };
+    }
   }
 
   formatCommentsIndicatorData(data, indicator?) {

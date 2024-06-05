@@ -221,7 +221,7 @@ SELECT
     IFNULL (
         (
             SELECT
-			    CONCAT(
+			    GROUP_CONCAT(
 			        CONCAT(
 			            '<b><a href="https://toc.mel.cgiar.org/toc/',
 			            (
@@ -248,7 +248,7 @@ SELECT
 			            ),
 			            '',
 			            CONCAT('<b>Description: </b>', tr.result_description)
-			        )
+			        ) SEPARATOR '<br><br>'
 			    )
             FROM
 			    prdb.results_toc_result rtr
@@ -371,7 +371,7 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '• ',
-                    tr3.title,
+                    tr3.result_title,
                     IF(
                         (rieo.contributing_toc = 1),
                         ' <b>CONTRIBUTING EoI</b>',
@@ -380,7 +380,7 @@ SELECT
                 )
             FROM
                 prdb.result_ip_eoi_outcomes rieo
-                JOIN prdb.toc_result tr3 ON tr3.toc_result_id = rieo.toc_result_id
+                JOIN Integration_information.toc_results tr3 ON tr3.id = rieo.toc_result_id
             WHERE
                 rieo.result_by_innovation_package_id = rbip.result_by_innovation_package_id
                 AND rieo.is_active = 1

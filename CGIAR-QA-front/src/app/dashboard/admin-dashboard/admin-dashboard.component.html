@@ -302,8 +302,17 @@
                 </ul>
               </div>
             </div>
+            <div *ngIf="isDataNull" class="no-data-container">
+              <div class="no-data-message">
+                No results available at the moment.
+              </div>
+            </div>
             <div
-              *ngIf="dashboardData && (dashboardData | json) != ({} | json)"
+              *ngIf="
+                dashboardData &&
+                (dashboardData | json) != ({} | json) &&
+                !isDataNull
+              "
               class="w-100 grid-container"
             >
               <div class="chart chart-1">

@@ -37,13 +37,14 @@ export class AssessorDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = "qa_innovation_development";
+  selectedIndicator = "qa_innovation_use_ipsr";
   dataSelected: any;
   indicatorData: any;
   feedList: [];
   itemStatusByIndicator = {};
   indicator_status: string = "indicators_status";
   highlightedData = [];
+  isDataNull: boolean = false;
 
   descriptionCharts = {
     generalStatus:
@@ -77,6 +78,7 @@ export class AssessorDashboardComponent implements OnInit {
   };
 
   indicatorsNameDropdwon = [
+    { name: "Innovation Use (IPSR)", viewname: "qa_innovation_use_ipsr" },
     { name: "Innovation Development", viewname: "qa_innovation_development" },
     { name: "Impact Contribution", viewname: "qa_impact_contribution" },
     { name: "Other Outcome", viewname: "qa_other_outcome" },
@@ -85,7 +87,6 @@ export class AssessorDashboardComponent implements OnInit {
     { name: "Knowledge Product", viewname: "qa_knowledge_product" },
     { name: "Policy Change", viewname: "qa_policy_change" },
     { name: "Innovation Use", viewname: "qa_innovation_use" },
-    { name: "Innovation Use (IPSR)", viewname: "qa_innovation_use_ipsr" },
   ];
 
   constructor(
@@ -182,21 +183,13 @@ export class AssessorDashboardComponent implements OnInit {
     this.showSpinner();
 
     let responses = forkJoin([
-      // this.getFeedTags(this.selectedIndicator),
       this.getItemStatusByIndicatorService(this.selectedIndicator),
     ]);
     responses.subscribe((res) => {
-      const [
-        // feedTags,
-        assessmentByField,
-      ] = res;
-      //feedTags
-      // this.feedList = feedTags.data;
+      const [assessmentByField] = res;
 
-      //assessmentByField
       this.itemStatusByIndicator = assessmentByField.data;
 
-      //UPDATE CHARTS
       this.updateDataCharts();
 
       this.hideSpinner();
@@ -205,14 +198,11 @@ export class AssessorDashboardComponent implements OnInit {
 
   actualStatusIndicator(data) {
     let indicator_status = false;
-    // console.log(data);
     let i = 0;
     if (data) {
       for (const item of data) {
         if (item.indicator_status == 1) indicator_status = true;
         i++;
-        // console.log(i);
-        // console.log('INDICATOR STATUS',indicator_status);
       }
     }
     return indicator_status;
@@ -226,33 +216,26 @@ export class AssessorDashboardComponent implements OnInit {
     ]);
   }
 
-  //Observables
   getDashData(): Observable<any> {
-    // this.showSpinner();
     return this.dashService.getDashboardEvaluations(this.currentUser.id).pipe();
   }
 
-  // comments by crp
   getCommentStats(crp_id?): Observable<any> {
     return this.commentService.getCommentCRPStats({ crp_id, id: null }).pipe();
   }
 
-  //Assessment by field
   getAllItemStatusByIndicator(): Observable<any> {
     return this.indicatorService.getAllItemStatusByIndicator().pipe();
   }
 
-  //Assessment by field and by indicator
   getItemStatusByIndicatorService(indicator: string): Observable<any> {
     return this.indicatorService.getItemStatusByIndicator(indicator).pipe();
   }
 
-  //Comments tags
   getAllTags(crp_id?): Observable<any> {
     return this.commentService.getAllTags(crp_id).pipe();
   }
 
-  //Feed Tags
   getFeedTags(indicator_view_name, tagTypeId?): Observable<any> {
     return this.commentService
       .getFeedTags(indicator_view_name, tagTypeId)
@@ -282,7 +265,6 @@ export class AssessorDashboardComponent implements OnInit {
   }
 
   formatStatusIndicatorData(data: any) {
-    // DEFINE COLORS WITH CSS
     const colors = {
       complete: "var(--color-complete)",
       pending: "var(--color-pending)",
@@ -291,27 +273,34 @@ export class AssessorDashboardComponent implements OnInit {
     };
     let dataset = [];
     let brushes = { domain: [] };
-    for (const item of data) {
-      if (item.status != null) {
-        dataset.push({ name: item.status, value: +item.label });
-        brushes.domain.push(colors[item.status]);
-      }
-    }
-    let complete = dataset.find((item) => item.name == "complete");
-    if (complete) complete.name = "Assessed 1st round";
-    let finalized = dataset.find((item) => item.name == "finalized");
-    if (finalized) finalized.name = "Quality Assessed";
-
-    let autochecked = dataset.find((item) => item.name == "autochecked");
-    if (autochecked) {
-      this.indicator_status = "publications_status";
-      autochecked.name = "Automatically validated";
+    if (!data) {
+      this.isDataNull = true;
+      return null;
     } else {
       this.indicator_status = "indicator_status";
-    }
-    // console.log('DATA SELECTED', { dataset, brushes });
+      for (const item of data) {
+        if (item.status != null) {
+          dataset.push({ name: item.status, value: +item.label });
+          brushes.domain.push(colors[item.status]);
+        }
+      }
+      let pending = dataset.find((item) => item.name == "pending");
+      if (pending) pending.name = "Pending";
+      let complete = dataset.find((item) => item.name == "complete");
+      if (complete) complete.name = "Assessed 1st round";
+      let finalized = dataset.find((item) => item.name == "finalized");
+      if (finalized) finalized.name = "Quality Assessed";
 
-    return { dataset, brushes };
+      let autochecked = dataset.find((item) => item.name == "autochecked");
+      if (autochecked) {
+        this.indicator_status = "publications_status";
+        autochecked.name = "Automatically validated";
+      } else {
+        this.indicator_status = "indicator_status";
+      }
+      this.isDataNull = false;
+      return { dataset, brushes };
+    }
   }
 
   formatCommentsIndicatorData(data, indicator?) {
@@ -430,7 +419,6 @@ export class AssessorDashboardComponent implements OnInit {
     dataset.forEach((tag) => {
       brushes.domain.push(colors[tag.name]);
     });
-    // console.log({ dataset, brushes });
 
     return { dataset, brushes };
   }
@@ -444,7 +432,6 @@ export class AssessorDashboardComponent implements OnInit {
       this.dashboardCommentsData[this.selectedIndicator]
     );
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
-    // this.dataCharts.highlitedPendingComments = this.formatPendingHighlight(this.dashboardCommentsData[this.selectedIndicator])
     let find = this.highlightedData.find(
       (indi) => indi.indicator_view_name == this.selectedIndicator
     );

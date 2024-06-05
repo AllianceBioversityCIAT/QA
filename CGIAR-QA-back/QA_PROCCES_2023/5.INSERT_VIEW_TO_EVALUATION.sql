@@ -30,7 +30,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_policy_change_view cc
 WHERE
@@ -78,7 +78,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_innovation_use_view cc
 WHERE
@@ -126,7 +126,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_other_outcome_view cc
 WHERE
@@ -174,7 +174,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_capdev_view cc
 WHERE
@@ -222,7 +222,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_innovation_development_view cc
 WHERE
@@ -270,7 +270,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_other_output_view cc
 WHERE
@@ -318,7 +318,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_impact_contribution_view cc
 WHERE
@@ -395,7 +395,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-02-20 00:00:00'
+    '2024-03-01 12:00:00'
 FROM
     qa_knowledge_product_view cc
 WHERE
