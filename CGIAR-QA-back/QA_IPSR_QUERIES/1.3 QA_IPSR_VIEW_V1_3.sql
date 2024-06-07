@@ -4,6 +4,7 @@ SELECT
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status_id AS submitted,
+    r.version_id AS version,
     r.in_qa,
     (
         SELECT
@@ -642,7 +643,7 @@ SELECT
                     '<br>',
                     rcin.short_title,
                     '<br>',
-                    IFNULL(r3.description, 'Data not provided.'),
+                    IFNULL(r3.description, ''),
                     '<br>',
                     IFNULL(
                         (
@@ -941,6 +942,11 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '• ',
+                    IF(
+                        (r.id = r4.id),
+                        '<b>Core innovation</b> ',
+                        '<b>Complementary innovation / enabler / solution</b> '
+                    ),
                     r4.result_code,
                     ' - ',
                     r4.title,
@@ -1167,7 +1173,9 @@ SELECT
                     '• ',
                     '<a href="https://reporting.cgiar.org/result/result-detail/',
                     r5.result_code,
-                    '?phase=1">',
+                    '?phase='
+                    r5.version_id,
+                    '">',
                     '<b>',
                     r5.result_code,
                     '</b>',

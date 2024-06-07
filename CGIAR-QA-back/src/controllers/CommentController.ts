@@ -25,15 +25,6 @@ import { QAReplyType } from "./../entity/ReplyType";
 import { StatusHandler } from "../_helpers/StatusHandler";
 const { htmlToText } = require("html-to-text");
 
-// const vfile = require('to-vfile')
-// const retext = require('retext')
-// const pos = require('retext-pos')
-// const keywords = require('retext-keywords')
-// const toString = require('nlcst-to-string')
-
-// import { QAIndicatorsMeta } from "./../entity/IndicatorsMeta";
-// import { createSecretKey } from "crypto";
-
 class CommentController {
   static commentsCount = async (req: Request, res: Response) => {
     const { crp_id } = req.query;
@@ -283,6 +274,7 @@ class CommentController {
                         AND metaId IS NOT NULL
                         AND evaluation_status <> 'Deleted'
                         AND evaluations.phase_year = actual_phase_year()
+                        AND evaluations.batchDate >= actual_batch_date()
                         AND comments.cycleId = 1
                     GROUP BY
                         evaluations.indicator_view_name,
@@ -295,64 +287,6 @@ class CommentController {
             {}
           );
         rawData = await queryRunner.connection.query(query, parameters);
-
-        /* 
-                if (crp_id !== 'undefined') {
-                     const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                         `
-                         SELECT
-                             COUNT( CASE comments.crp_approved  WHEN 1 THEN 1 ELSE NULL END) AS approved_comment_crp,
-                             COUNT( CASE comments.crp_approved  WHEN 0 THEN 1 ELSE NULL END) AS rejected_comment_crp,
-                             SUM( IF(ISNULL(comments.crp_approved) AND !ISNULL(comments.detail),1,NULL)) AS crp_no_commented,
-                             COUNT( CASE comments.approved WHEN 1 THEN 1 ELSE NULL END) AS comments_total,
-                             COUNT( comments.detail) AS assessor_comments,
-                             COUNT(comments.approved_no_comment) AS approved_no_comment,
-                             evaluations.indicator_view_name,
-                             indicators.order AS orderBy
-                         FROM
-                                 qa_evaluations evaluations
-                         LEFT JOIN qa_comments comments ON comments.evaluationId = evaluations.id
-                         LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
-                         
-                         WHERE comments.is_deleted = 0
-                         AND evaluations.crp_id = :crp_id
-                         GROUP BY evaluations.indicator_view_name, indicators.order
-                         ORDER BY indicators.order
-                             `,
-                         { crp_id },
-                         {}
-                     );
-                     rawData = await queryRunner.connection.query(query, parameters);
-                     // res.status(200).json({ data: Util.parseCommentData(rawData, 'indicator_view_name'), message: 'Comments by crp' });
-                 }
-                 else if (crp_id == 'undefined') {
- 
-                     const [query, parameters] = await queryRunner.connection.driver.escapeQueryWithParameters(
-                         `
-                         SELECT
-                             COUNT( CASE comments.crp_approved  WHEN 1 THEN 1 ELSE NULL END) AS approved_comment_crp,
-                             COUNT( CASE comments.crp_approved  WHEN 0 THEN 1 ELSE NULL END) AS rejected_comment_crp,
-                             SUM( IF(ISNULL(comments.crp_approved) AND !ISNULL(comments.detail),1,NULL)) AS crp_no_commented,
-                             COUNT( CASE comments.approved WHEN 1 THEN 1 ELSE NULL END) AS comments_total,
-                             COUNT( comments.detail) AS assessor_comments,
-                             COUNT(comments.approved_no_comment) AS approved_no_comment,
-                             evaluations.indicator_view_name,
-                             indicators.order AS orderBy
-                         FROM
-                                 qa_evaluations evaluations
-                         LEFT JOIN qa_comments comments ON comments.evaluationId = evaluations.id
-                         LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
-                         
-                         WHERE comments.is_deleted = 0
-                         GROUP BY evaluations.indicator_view_name, indicators.order
-                         ORDER BY indicators.order
-                             `,
-                         {},
-                         {}
-                     );
-                     rawData = await queryRunner.connection.query(query, parameters);
-                 }
-                 */
       }
 
       res.status(200).json({
@@ -366,12 +300,9 @@ class CommentController {
     }
   };
 
-  // create reply by comment
   static createCommentReply = async (req: Request, res: Response) => {
-    //Check if username and password are set
     const { detail, userId, commentId, crp_approved, approved, replyTypeId } =
       req.body;
-    // const evaluationId = req.params.id;
 
     const userRepository = getRepository(QAUsers);
     const commentReplyRepository = getRepository(QACommentsReplies);
@@ -397,10 +328,6 @@ class CommentController {
         comment.crp_approved = crp_approved;
         comment = await commentsRepository.save(comment);
       }
-      // else if(user.roles.find(x => x.description == RolesHandler.admin)){
-      //     comment.approved = approved;
-      //     comment = await commentsRepository.save(comment);
-      // }
       res.status(200).send({ data: new_replay, message: "Comment created" });
     } catch (error) {
       res
@@ -409,10 +336,7 @@ class CommentController {
     }
   };
 
-  // create comment by indicator
   static createComment = async (req: Request, res: Response) => {
-    // approved
-    //Check if username and password are set
     const {
       detail,
       approved,
@@ -444,9 +368,7 @@ class CommentController {
     }
   };
 
-  // update comment by indicator
   static updateComment = async (req: Request, res: Response) => {
-    //Check if username and password are set
     const {
       approved,
       is_visible,
@@ -487,9 +409,7 @@ class CommentController {
     }
   };
 
-  // update reply to comment
   static updateCommentReply = async (req: Request, res: Response) => {
-    //Check if username and password are set
     const { is_deleted, id, detail, userId } = req.body;
     const repliesRepository = getRepository(QACommentsReplies);
 
@@ -519,9 +439,7 @@ class CommentController {
     }
   };
 
-  // get total indicator tags for chart
   static getAllIndicatorTags = async (req: Request, res: Response) => {
-    //TODO
     const { crp_id } = req.query;
 
     let queryRunner = getConnection().createQueryBuilder();
@@ -580,7 +498,6 @@ class CommentController {
     }
   };
 
-  // get all QA recent tags
   static getFeedTags = async (req: Request, res: Response) => {
     const { indicator_view_name, tagTypeId } = req.query;
 
@@ -647,12 +564,10 @@ class CommentController {
     }
   };
 
-  // get comments by indicator
   static getComments = async (req: Request, res: Response) => {
     const evaluationId = req.params.evaluationId;
     const metaId = req.params.metaId;
 
-    // const commentsRepository = getRepository(QAComments);
     let queryRunner = getConnection().createQueryBuilder();
     try {
       const [query, parameters] =
@@ -719,7 +634,6 @@ class CommentController {
     }
   };
 
-  // * Updated ppu status ---------------------------------------------------------------------------------------------------------------------
   static patchPpuChanges = async (req: Request, res: Response) => {
     const commentsRepository = getRepository(QAComments);
     const { ppu, commentReplyId } = req.body;
@@ -751,25 +665,21 @@ class CommentController {
     }
   };
 
-  // * Updated require changes ---------------------------------------------------------------------------------------------------------------------
   static patchRequireChanges = async (req: Request, res: Response) => {
     const commentsRepository = getRepository(QAComments);
     const { require_changes, id } = req.body;
     let update_require_changes;
     let message: String;
-    // let tpb = 1;
 
     try {
       let comment_ = await commentsRepository.findOneOrFail(id);
 
       if (require_changes != 0) {
         comment_.require_changes = require_changes;
-        // comment_.tpb = tpb;
         update_require_changes = await commentsRepository.save(comment_);
         message = `The TPB instruction was successfully created with require changes`;
       } else {
         comment_.require_changes = 0;
-        // comment_.tpb = tpb;
         update_require_changes = await commentsRepository.save(comment_);
         message = "The TPB instruction was successfully created";
       }
@@ -781,7 +691,6 @@ class CommentController {
     }
   };
 
-  // * Updated highlight comment -----------------------------------------------------------------------------------------------------------------------
   static patchHighlightComment = async (req: Request, res: Response) => {
     const commentsRepository = getRepository(QAComments);
     const userId = res.locals.jwtPayload;
@@ -813,11 +722,9 @@ class CommentController {
     }
   };
 
-  // get comments replies
   static getCommentsReplies = async (req: Request, res: Response) => {
     const commentId = req.params.commentId;
 
-    // let queryRunner = getConnection().createQueryBuilder();
     if (commentId != undefined && commentId != null) {
       try {
         let replies = await getRepository(QACommentsReplies).find({
@@ -848,7 +755,6 @@ class CommentController {
     }
   };
 
-  //create comment meta data
   static createcommentsMeta = async (req: Request, res: Response) => {
     const commentMetaRepository = getRepository(QACommentsMeta);
     let queryRunner = getConnection().createQueryBuilder();
@@ -885,20 +791,13 @@ class CommentController {
         .status(200)
         .send({ data: response, message: "Comments meta created" });
     } catch (error) {
-      //If not found, send a 404 response
       res
         .status(404)
         .json({ message: "Comment meta was not created.", data: error });
-      // throw new ErrorHandler(404, 'User not found.');
     }
-
-    //If all ok, send 200 response
-    // res.status(200).json({ message: "User indicator updated", data: commentMeta });
   };
 
-  //edit comment meta data
   static editCommentsMeta = async (req: Request, res: Response) => {
-    //Get the ID from the url
     const id = req.params.id;
 
     let { enable, isActive } = req.body;
@@ -911,34 +810,27 @@ class CommentController {
         .createQueryBuilder("qa_comments_meta")
         .select("id, enable_crp, enable_assessor")
         .where("qa_comments_meta.indicatorId=:indicatorId", { indicatorId: id })
-        // .getSql()
         .getRawOne();
       commentMeta[enable] = isActive;
 
-      //Validade if the parameters are ok
       const errors = await validate(commentMeta);
       if (errors.length > 0) {
         res.status(400).json({ data: errors, message: "Error found" });
         return;
       }
 
-      // update indicator by user
       commentMeta = await commentMetaRepository.save(commentMeta);
     } catch (error) {
-      //If not found, send a 404 response
       res
         .status(404)
         .json({ message: "User indicator not found.", data: error });
-      // throw new ErrorHandler(404, 'User not found.');
     }
 
-    //If all ok, send 200 response
     res
       .status(200)
       .json({ message: "User indicator updated", data: commentMeta });
   };
 
-  //get comments in excel
   static getCommentsExcel = async (req: Request, res: Response) => {
     const { evaluationId } = req.params;
     const { userId, name, crp_id, indicatorName } = req.query;
@@ -1294,11 +1186,9 @@ class CommentController {
   };
 
   static toggleApprovedNoComments = async (req: Request, res: Response) => {
-    //TODO - Improve performance
     const { evaluationId } = req.params;
     const { meta_array, userId, isAll, noComment } = req.body;
     let comments;
-    // let queryRunner = getConnection().createQueryBuilder().connection;
     const userRepository = getRepository(QAUsers);
     const evaluationsRepository = getRepository(QAEvaluations);
     const commentsRepository = getRepository(QAComments);
@@ -1307,44 +1197,17 @@ class CommentController {
     try {
       const comments = await commentsRepository
         .createQueryBuilder("qc")
-        // .select("qc.metaId")
         .leftJoinAndSelect("qc.meta", "meta")
         .where("qc.evaluationId = :evaluationId", { evaluationId })
         .andWhere("qc.metaId IN (:meta_array)", { meta_array })
         .andWhere("qc.approved_no_comment IS NOT NULL")
         .getMany();
 
-      // await getConnection()
-      //     .createQueryBuilder()
-      //     .select("*")
-      //     .from(QAComments, "qc")
-      //     .where("evaluationId = :evaluationId", {evaluationId})
-      //     .andWhere("metaId IN (:meta_array)", {meta_array})
-      //     .andWhere("approved_no_comment IS NOT NULL")
-      //     .getMany();
-
-      // const [query, parameters] = await queryRunner.driver.escapeQueryWithParameters(
-      //     `SELECT
-      //     *
-      //     FROM
-      //         qa_comments
-      //         WHERE
-      //         evaluationId = :evaluationId
-      //         AND metaId IN (:meta_array)
-      //         AND approved_no_comment IS NOT NULL
-      //         `,
-      //     { meta_array, evaluationId },
-      //     {}
-      // );
-      // comments = await queryRunner.query(query, parameters);
       let user = await userRepository.findOneOrFail({ where: { id: userId } });
 
       let evaluation = await evaluationsRepository.findOne({
         where: { id: evaluationId },
       });
-
-      // let evaluation = await evaluationsRepository.findOneOrFail({ where: { id: evaluationId }});
-      // evaluationsRepository.queryRunner.connection.close;
 
       let current_cycle = await cycleRepo
         .createQueryBuilder("qa_cycle")
@@ -1352,10 +1215,6 @@ class CommentController {
         .where("DATE(qa_cycle.start_date) <= CURDATE()")
         .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
         .getRawOne();
-
-      // TO-DO Assessed by per batch
-      // if(current_cycle.id == 1) {
-      //INSERT ASSESSED BY
 
       const assessed_by = await getConnection()
         .createQueryBuilder()
@@ -1376,13 +1235,6 @@ class CommentController {
           })
           .execute();
       }
-
-      // evaluation.assessed_by.push(user);
-      // } else {
-      //     evaluation.assessed_by_second_round.push(user);
-      // }
-      // evaluation.assessed_by.push(user);
-      // evaluationsRepository.save(evaluation);
 
       let response = [];
 
@@ -1428,10 +1280,8 @@ class CommentController {
     }
   };
 
-  //get raw comments data
   static getRawCommentsData = async (req: Request, res: Response) => {
     const { crp_id } = req.params;
-    // const userId = res.locals.jwtPayload.userId;
     let rawData;
     const queryRunner = getConnection().createQueryBuilder();
     const userRepository = getRepository(QAUsers);
@@ -1602,10 +1452,7 @@ class CommentController {
     }
   };
 
-  // create tag by comment
   static createTag = async (req: Request, res: Response) => {
-    // approved
-    //Check if username and password are set
     const { userId, tagTypeId, commentId } = req.body;
 
     const tagsRepository = getRepository(QATags);
@@ -1628,7 +1475,6 @@ class CommentController {
   };
 
   static deleteTag = async (req: Request, res: Response) => {
-    //Get id from URL
     const { id } = req.params;
 
     const tagsRepository = getRepository(QATags);
@@ -1640,7 +1486,6 @@ class CommentController {
     }
     tagsRepository.delete(id);
 
-    //After all send a 204 (no content, but accepted) response
     res.status(200).json({ message: "Tag deleted sucessfully" });
   };
 
@@ -1672,11 +1517,8 @@ class CommentController {
     }
   };
 
-  //get raw comments excel
   static getRawCommentsExcel = async (req: Request, res: Response) => {
     const { crp_id } = req.params;
-    console.log("🚀 ~ CommentController ~ getRawCommentsExcel= ~ crp_id:", crp_id)
-    // const userId = res.locals.jwtPayload.userId;
     let rawData;
     const queryRunner = getConnection().createQueryBuilder();
 
@@ -1859,7 +1701,7 @@ class CommentController {
             indicator_view_id;
           `;
 
-          const evaluation = `
+        const evaluation = `
         SELECT
             evaluations.crp_id AS 'Initiative ID',
             (
@@ -1938,10 +1780,9 @@ class CommentController {
         ORDER BY
             evaluations.crp_id ASC;`;
 
-
-          const query1 = await queryRunner.connection.query(comments);
-          const query2 = await queryRunner.connection.query(evaluation);
-          rawData = [query1, query2 ];
+        const query1 = await queryRunner.connection.query(comments);
+        const query2 = await queryRunner.connection.query(evaluation);
+        rawData = [query1, query2];
       } else {
         console.log("No");
         const comments = `
@@ -2196,7 +2037,7 @@ class CommentController {
             evaluations.crp_id ASC;`;
         const query1 = await queryRunner.connection.query(comments);
         const query2 = await queryRunner.connection.query(evaluation);
-        rawData = [query1, query2 ];
+        rawData = [query1, query2];
       }
       res.status(200).send(rawData);
     } catch (error) {
@@ -2204,7 +2045,6 @@ class CommentController {
     }
   };
 
-  //get cycles
   static getCycles = async (req: Request, res: Response) => {
     let rawData;
     const queryRunner = getConnection().createQueryBuilder().connection;
@@ -2251,10 +2091,8 @@ class CommentController {
     }
   };
 
-  //get keywords by indicator
   static getIndicatorKeywords = async (req: Request, res: Response) => {
     const { crp_id, view_name } = req.params;
-    // const userId = res.locals.jwtPayload.userId;
     let rawData;
     const queryRunner = getConnection().createQueryBuilder();
     const userRepository = getRepository(QAUsers);
@@ -2303,11 +2141,6 @@ class CommentController {
         rawData = await queryRunner.connection.query(query, parameters);
       }
 
-      // retext()
-      //     .use(pos) // Make sure to use `retext-pos` before `retext-keywords`.
-      //     .use(keywords)
-      //     .process(vfile.readSync('example.txt'), done)
-
       res
         .status(200)
         .json({ message: "Comments keywords data", data: rawData });
@@ -2318,7 +2151,6 @@ class CommentController {
     }
   };
 
-  //
   /*
    **
    */
@@ -2351,12 +2183,9 @@ class CommentController {
   }
 
   private apiOn(event) {
-    return new Promise((resolve) => {
-      // api.on(event, response => resolve(response));
-    });
+    return new Promise((resolve) => {});
   }
 
-  //get QuickComments
   static getQuickComments = async (req: Request, res: Response) => {
     let rawData;
     const queryRunner = getConnection().createQueryBuilder();
@@ -2381,7 +2210,6 @@ class CommentController {
     }
   };
 
-  //get batches
   static getBatches = async (req: Request, res: Response) => {
     let rawData;
     const queryRunner = getConnection().createQueryBuilder();
