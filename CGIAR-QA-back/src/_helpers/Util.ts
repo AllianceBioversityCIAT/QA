@@ -12,7 +12,7 @@ import { QAUsers } from "./../entity/User";
 import { QARoles } from "./../entity/Roles";
 import { QACrp } from "./../entity/CRP";
 import { QAGeneralConfiguration } from "./../entity/GeneralConfig";
-import { config } from "process";
+import { config, title } from "process";
 import config_ from "./../config/config";
 import { QAIndicators } from "./../entity/Indicators";
 import { QAIndicatorsMeta } from "./../entity/IndicatorsMeta";
@@ -788,6 +788,8 @@ class Util {
       knowledge_product_type: element["knowledge_product_type"],
       result_code: element["result_code"],
       crp_action_area: element["crp_action_area"],
+      title: element["title"],
+      version: element["version"],
     };
     if (!type) {
       response = Object.assign(response, {
@@ -796,6 +798,7 @@ class Util {
         id: element["indicator_view_id"],
         display_name: element["meta_display_name"],
         title: element["title"],
+        version: element["version"],
         comment_by: element["comment_by"],
         assessed_r2: element["assessed_r2"],
         submission_date: moment(element["submission_date"]).format("ll"), // Sep 8, 2021
@@ -874,6 +877,8 @@ class Util {
         result_code: element["result_code"],
         indicator_view_id: element["indicator_view_id"],
         crp_action_area: element["crp_action_area"],
+        title: element["title"],
+        version: element["version"],
       });
     }
 
