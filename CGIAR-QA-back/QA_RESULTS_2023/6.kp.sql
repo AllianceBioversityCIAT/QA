@@ -13,6 +13,7 @@ SELECT
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status_id AS submitted,
+    r.version_id AS version,
     r.is_replicated AS is_replicated,
     r.in_qa AS in_qa,
     r.result_code AS result_code,
@@ -1188,7 +1189,7 @@ WHERE
         FROM
             prdb.version v1
         WHERE
-            v1.phase_year = 2023
+            v1.phase_year = 2022
             AND v1.phase_name LIKE '%Reporting%'
             AND v1.is_active = 1
     )

@@ -37,7 +37,7 @@ export class AssessorDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
   tagMessages = TagMessage;
   indicatorsTags: any;
-  selectedIndicator = "qa_innovation_use_ipsr";
+  selectedIndicator = "qa_knowledge_product";
   dataSelected: any;
   indicatorData: any;
   feedList: [];
