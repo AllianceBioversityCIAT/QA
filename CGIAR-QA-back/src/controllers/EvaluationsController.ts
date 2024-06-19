@@ -18,54 +18,54 @@ class EvaluationsController {
 
   // get evaluations dashboard by user
   static getEvaluationsDash = async (req: Request, res: Response) => {
-    const id = req.params.id;
-    let queryRunner = getConnection().createQueryBuilder();
+    const userId = req.params.id;
+    const queryRunner = getConnection().createQueryBuilder();
 
     try {
       const [query, parameters] =
-        await queryRunner.connection.driver.escapeQueryWithParameters(
+        queryRunner.connection.driver.escapeQueryWithParameters(
           `
-                SELECT
-                    evaluations.status AS status,
-                    meta.enable_crp,
-                    meta.enable_assessor,
-                    indicator.view_name AS indicator_view_name,
-                    indicator.primary_field AS primary_field,
-                    indicator.order AS indicator_order,
-                    COUNT(DISTINCT evaluations.id) AS count
-                FROM
-                    qa_indicator_user qa_indicator_user
-                    LEFT JOIN qa_indicators indicator ON indicator.id = qa_indicator_user.indicatorId
-                    LEFT JOIN qa_evaluations evaluations ON evaluations.indicator_view_name = indicator.view_name
-                    AND evaluations.phase_year = actual_phase_year()
-                    AND (
-                        evaluations.evaluation_status <> 'Deleted'
-                        AND evaluations.evaluation_status <> 'Removed'
-                        OR evaluations.evaluation_status IS NULL
-                    )
-                    LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
-                    AND crp.active = 1
-                    AND crp.qa_active = 'open'
-                    LEFT JOIN qa_comments_meta meta ON meta.indicatorId = indicator.id
-                WHERE
-                    qa_indicator_user.userId = :user_Id
-                    AND evaluations.batchDate >= actual_batch_date()
-                GROUP BY
-                    evaluations.status,
-                    indicator.view_name,
-                    meta.enable_crp,
-                    meta.enable_assessor,
-                    indicator.order,
-                    indicator.primary_field
-                ORDER BY
-                    indicator_order ASC,
-                    evaluations.status
-                `,
-          { user_Id: id },
+          SELECT
+            evaluations.status AS status,
+            meta.enable_crp,
+            meta.enable_assessor,
+            indicator.view_name AS indicator_view_name,
+            indicator.primary_field AS primary_field,
+            indicator.order AS indicator_order,
+            COUNT(DISTINCT evaluations.id) AS count
+          FROM
+            qa_indicator_user qa_indicator_user
+            LEFT JOIN qa_indicators indicator ON indicator.id = qa_indicator_user.indicatorId
+            LEFT JOIN qa_evaluations evaluations ON evaluations.indicator_view_name = indicator.view_name
+              AND evaluations.phase_year = actual_phase_year()
+              AND (
+                evaluations.evaluation_status <> 'Deleted'
+                AND evaluations.evaluation_status <> 'Removed'
+                OR evaluations.evaluation_status IS NULL
+              )
+            LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
+              AND crp.active = 1
+              AND crp.qa_active = 'open'
+            LEFT JOIN qa_comments_meta meta ON meta.indicatorId = indicator.id
+          WHERE
+            qa_indicator_user.userId = :userId
+            AND evaluations.batchDate >= actual_batch_date()
+          GROUP BY
+            evaluations.status,
+            indicator.view_name,
+            meta.enable_crp,
+            meta.enable_assessor,
+            indicator.order,
+            indicator.primary_field
+          ORDER BY
+            indicator_order ASC,
+            evaluations.status
+        `,
+          { userId },
           {}
         );
 
-      let rawData = await queryRunner.connection.query(query, parameters);
+      const rawData = await queryRunner.connection.query(query, parameters);
 
       if (rawData.length === 0) {
         return res
@@ -73,27 +73,24 @@ class EvaluationsController {
           .json({ data: [], message: "No evaluations found for the user." });
       }
 
-      let response = [];
-      for (let index = 0; index < rawData.length; index++) {
-        const element = rawData[index];
-        response.push({
-          indicator_view_name: element["indicator_view_name"],
-          status: element["status"],
-          indicator_status: element["enable_assessor"],
-          type: Util.getType(element["status"]),
-          value: element["count"],
-          label: `${element["count"]}`,
-          primary_field: element["primary_field"],
-          order: element["indicator_order"],
-        });
-      }
+      const response = rawData.map((element) => ({
+        indicator_view_name: element["indicator_view_name"],
+        status: element["status"],
+        indicator_status: element["enable_assessor"],
+        type: Util.getType(element["status"]),
+        value: element["count"],
+        label: `${element["count"]}`,
+        primary_field: element["primary_field"],
+        order: element["indicator_order"],
+      }));
 
-      let result = Util.groupBy(response, "indicator_view_name");
-      res.status(200).json({ data: result, message: "User evaluations" });
-    } catch (error) {
+      const groupedResponse = Util.groupBy(response, "indicator_view_name");
+
       res
-        .status(404)
-        .json({ message: "User evaluations Could not access to evaluations." });
+        .status(200)
+        .json({ data: groupedResponse, message: "User evaluations" });
+    } catch (error) {
+      res.status(500).json({ message: "Could not access evaluations." });
     }
   };
 
@@ -1435,100 +1432,54 @@ class EvaluationsController {
   };
 
   static pendingHighlights = async (req: Request, res: Response) => {
-    let queryRunner = getConnection().createQueryBuilder();
+    const queryRunner = getConnection().createQueryBuilder();
 
     try {
       const [query, parameters] =
-        await queryRunner.connection.driver.escapeQueryWithParameters(
-          `SELECT
-                    SUM(
-                        IF(
-                            comments.highlight_comment = 1
-                            AND comments.is_deleted = 0,
-                            1,
-                            0
-                        )
-                    ) AS pending_highlight_comments,
-                    SUM(
-                        IF(
-                            comments.tpb = 1
-                            AND comments.is_deleted = 0,
-                            1,
-                            0
-                        )
-                    ) AS total_tpb_comments,
-                    SUM(
-                        IF(
-                            comments.require_changes = 1
-                            AND comments.is_deleted = 0,
-                            1,
-                            0
-                        )
-                    ) AS solved_with_require_request,
-                    SUM(
-                        IF(
-                            comments.require_changes = 0
-                            AND comments.tpb = 1
-                            AND comments.is_deleted = 0,
-                            1,
-                            0
-                        )
-                    ) AS solved_without_require_request,
-                    SUM(
-                        IF(
-                            comments.require_changes = 1
-                            AND comments.ppu = 0
-                            AND comments.is_deleted = 0,
-                            1,
-                            0
-                        )
-                    ) AS pending_tpb_decisions,
-                    evaluations.indicator_view_name
-                FROM
-                    qa_comments comments
-                    LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
-                    LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
-                    AND replies.is_deleted = 0
-                WHERE
-                    comments.is_deleted = 0
-                    AND comments.detail IS NOT NULL
-                    AND metaId IS NOT NULL
-                    AND evaluation_status <> 'Deleted'
-                    AND evaluations.phase_year = actual_phase_year()
-                    AND evaluations.batchDate >= actual_batch_date()
-                GROUP BY
-                    evaluations.indicator_view_name;`,
+        queryRunner.connection.driver.escapeQueryWithParameters(
+          `
+        SELECT
+          SUM(IF(comments.highlight_comment = 1 AND comments.is_deleted = 0, 1, 0)) AS pending_highlight_comments,
+          SUM(IF(comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS total_tpb_comments,
+          SUM(IF(comments.require_changes = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_with_require_request,
+          SUM(IF(comments.require_changes = 0 AND comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_without_require_request,
+          SUM(IF(comments.require_changes = 1 AND comments.ppu = 0 AND comments.is_deleted = 0, 1, 0)) AS pending_tpb_decisions,
+          evaluations.indicator_view_name
+        FROM
+          qa_comments comments
+        LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+        LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
+        WHERE
+          comments.is_deleted = 0
+          AND comments.detail IS NOT NULL
+          AND metaId IS NOT NULL
+          AND evaluation_status <> 'Deleted'
+          AND evaluations.phase_year = actual_phase_year()
+          AND evaluations.batchDate >= actual_batch_date()
+        GROUP BY
+          evaluations.indicator_view_name;
+        `,
           {},
           {}
         );
 
-      let highlights = await queryRunner.connection.query(query, parameters);
+      const highlights = await queryRunner.connection.query(query, parameters);
 
-      let data = [];
-      for (let i = 0; i < highlights.length; i++) {
-        const convert = highlights[i];
-        let pending_highlight_comments =
-          convert.pending_highlight_comments - convert.total_tpb_comments;
-        let solved_with_require_request = convert.solved_with_require_request;
-        let solved_without_require_request =
-          convert.solved_without_require_request;
-        let pending_tpb_decisions = convert.pending_tpb_decisions;
-        let indicator_view_name = convert.indicator_view_name;
+      const data = highlights.map((highlight: any) => ({
+        pending_highlight_comments:
+          highlight.pending_highlight_comments - highlight.total_tpb_comments,
+        solved_with_require_request: highlight.solved_with_require_request,
+        solved_without_require_request:
+          highlight.solved_without_require_request,
+        pending_tpb_decisions: highlight.pending_tpb_decisions,
+        indicator_view_name: highlight.indicator_view_name,
+      }));
 
-        data.push({
-          pending_highlight_comments,
-          solved_with_require_request,
-          solved_without_require_request,
-          pending_tpb_decisions,
-          indicator_view_name,
-        });
-      }
-
-      res.status(200).json({ data: data, message: "All highlights status" });
+      res.status(200).json({ data, message: "All highlights status" });
     } catch (error) {
-      res.status(200).json({
-        data: error,
+      res.status(500).json({
         message: "Could not retrieve the highlighted status",
+        error: error.message,
       });
     }
   };

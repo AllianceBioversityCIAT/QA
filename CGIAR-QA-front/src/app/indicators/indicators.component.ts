@@ -110,7 +110,6 @@ export class IndicatorsComponent implements OnInit {
     private orderPipe: SortByPipe,
     private indicatorService: IndicatorsService,
     private sanitizer: DomSanitizer,
-    // private orderPipe: OrderPipe,
     private evaluationService: EvaluationsService,
     private titleService: Title,
     private alertService: AlertService,
@@ -121,7 +120,6 @@ export class IndicatorsComponent implements OnInit {
     this.activeRoute.params.subscribe((routeParams) => {
       this.authenticationService.currentUser.subscribe((x) => {
         this.currentUser = x;
-        console.log(this.currentUser);
       });
 
       this.indicatorType = routeParams.type;
@@ -137,7 +135,6 @@ export class IndicatorsComponent implements OnInit {
       this.btonFilterForm = this.formBuilder.group({
         radio: "A",
       });
-      /** set page title */
       this.titleService.setTitle(`List of ${this.indicatorTypeName}`);
     });
   }
@@ -163,7 +160,6 @@ export class IndicatorsComponent implements OnInit {
         }
       },
       (error) => {
-        console.log(error);
         this.alertService.error(error);
       }
     );
@@ -174,8 +170,6 @@ export class IndicatorsComponent implements OnInit {
     this.evaluationService.getCriteriaByIndicator(id).subscribe(
       (res) => {
         this.criteriaData = res.data[0];
-        console.log("CRITERIA DATA", this.criteriaData);
-        console.log("CRITERIA DATA", res.message);
 
         this.criteria_loading = false;
       },
@@ -187,12 +181,10 @@ export class IndicatorsComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.indicatorType);
 
     if (this.indicatorType == "slo") {
       this.order = "status";
     }
-    // console.log('loaded indicators')
     // setTimeout(() => {                           //<<<---using ()=> syntax
     //   this.verifyIfOrderByStatus();
     //   this.verifyIfOrderByAcceptedWC();
@@ -206,7 +198,6 @@ export class IndicatorsComponent implements OnInit {
     };
     this.showhighlightColum();
 
-    console.log("NEW INDICATOR");
   }
 
   showhighlightColum() {
@@ -233,14 +224,12 @@ export class IndicatorsComponent implements OnInit {
             this.order = "status";
           }
           this.evaluationList = this.orderPipe.transform(res.data, this.order);
-          console.log("LISTA", this.evaluationList);
 
           this.collectionSize = this.evaluationList.length;
           this.returnedArray = this.evaluationList.slice(0, 10);
           this.returnedArrayHasStage = this.returnedArray.find(
             (e) => e.stage != null
           );
-          // console.log('RETURNED_ARRAY', this.returnedArray);
 
           this.hasTemplate = this.currentUser.config[0][
             `${params.type}_guideline`
@@ -268,14 +257,10 @@ export class IndicatorsComponent implements OnInit {
             // this.setOrder(this.order, this.reverse);
           }, 200);
           // this.currentPage = this.indicatorService.getPagesIndicatorList();
-          console.log("PAGES", this.currentPage);
-          console.log(`CURRENT PAGE ${this.indicatorType}`, this.currentPage);
-          console.log("Spinner hided");
         },
         (error) => {
           this.hideSpinner();
           this.returnedArray = [];
-          console.log(error);
           this.alertService.error(error);
         }
       );
@@ -288,13 +273,11 @@ export class IndicatorsComponent implements OnInit {
   pageChanged(event: PageChangedEvent): void {
     const startItem = (event.page - 1) * event.itemsPerPage;
     const endItem = event.page * event.itemsPerPage;
-    // // console.log(this.evaluationList.length, this.returnedArray.length)
     this.currentPageList = {
       startItem,
       endItem,
     };
 
-    console.log(this.currentPage);
 
     this.evaluationList = this.orderPipe.transform(
       this.evaluationList,
@@ -316,9 +299,7 @@ export class IndicatorsComponent implements OnInit {
       }
       this.order = value;
     }
-    console.log(this.order, this.reverse);
 
-    // console.log(this.evaluationList, (this.reverse) ? 'asc':'desc', this.order)
     this.evaluationList = this.orderPipe.transform(
       this.evaluationList,
       this.reverse ? "asc" : "desc",
@@ -355,7 +336,6 @@ export class IndicatorsComponent implements OnInit {
         break;
       default:
         pdf_url = this.currentUser.config[0][`${type}_guideline`];
-        console.log({ pdf_url }, this.currentUser.config[0]);
 
         break;
     }
@@ -371,7 +351,6 @@ export class IndicatorsComponent implements OnInit {
     }_${moment().format("YYYYMMDD_HHmm")}`;
     if (this.authenticationService.getBrowser() === "Safari")
       filename += `.xlsx`;
-    // console.log('filename',filename)
     const comments = this.commentService
       .getCommentsExcel({
         evaluationId: item.evaluation_id,
@@ -381,12 +360,10 @@ export class IndicatorsComponent implements OnInit {
       })
       .subscribe(
         (res) => {
-          console.log(res);
           this._exportTableSE.exportExcel(res, filename);
           this.hideSpinner();
         },
         (error) => {
-          // console.log("exportComments", error);
           this.hideSpinner();
           this.alertService.error(error);
         }
@@ -467,7 +444,6 @@ export class IndicatorsComponent implements OnInit {
   }
 
   savePageList() {
-    console.log(this.currentPage);
     this.indicatorService.setFullPageList(this.currentPage);
   }
 
@@ -483,7 +459,6 @@ export class IndicatorsComponent implements OnInit {
 
         this.getEvaluationsList({ type: this.indicatorType });
       } else {
-        console.warn("Date not found in submission_dates array.");
       }
     }
   }

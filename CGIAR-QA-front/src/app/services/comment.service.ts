@@ -173,11 +173,12 @@ export class CommentService {
               el.indicator_view_name == indicatorName && el.tagType == tagType
           );
           tagsByIndicator[indicatorName][tagType] = element
-            ? +element.total
-            : 0;
+          ? +element.total
+          : 0;
         }
       });
     }
+    console.log("🚀 ~ CommentService ~ tagsType.forEach ~ tagsByIndicator:", tagsByIndicator)
 
     // console.log('TAGS BY INDICATOR',tagsByIndicator);
     return tagsByIndicator;
