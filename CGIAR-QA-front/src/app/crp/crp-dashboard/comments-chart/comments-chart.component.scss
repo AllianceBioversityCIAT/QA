@@ -20,9 +20,11 @@
       font-weight: bold;
     }
   }
-  .pie-container {
-    height: calc(100% - 80px);
-    max-width: 100%;
+  .chart-container {
+    display: flex;
+    justify-self: flex-start;
+    width: 350px;
+    height: 200px;
   }
   .title-indicator {
     text-transform: uppercase;

@@ -1,70 +1,94 @@
-import { Component, EventEmitter, Input, NgModule, OnInit, Output, ViewChild } from '@angular/core';
-import { ChartSeriesEventArgs, DataChartMouseButtonEventArgs, IgxCategoryToolTipLayerComponent, IgxCategoryXAxisComponent, IgxCategoryYAxisComponent, IgxDataChartComponent, IgxItemToolTipLayerComponent, IgxLegendComponent, IgxNumericXAxisComponent, IgxNumericYAxisComponent } from 'igniteui-angular-charts';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+  ElementRef,
+} from "@angular/core";
+import { Chart } from "chart.js";
+import { ChartColors } from "../../../utils/chart-colors";
 
 @Component({
-  selector: 'app-bar-chart',
-  templateUrl: './bar-chart.component.html',
-  styleUrls: ['./bar-chart.component.scss']
+  selector: "app-bar-chart",
+  templateUrl: "./bar-chart.component.html",
+  styleUrls: ["./bar-chart.component.scss"],
 })
 export class BarChartComponent implements OnInit {
-
   @Input() data;
+  @Output() filterTagEvent = new EventEmitter<string>();
+  @ViewChild("barCanvas") barCanvas: ElementRef;
+
+  chart: any;
   chartName = true;
 
   tagTypesId = {
     notsure: 2,
     agree: 3,
-    disagree: 4
-  }
+    disagree: 4,
+  };
 
-  public legendLabels: any = { 
+  public legendLabels: any = {
     tags: [
-    {name:"Agree", class: "agree"},
-    {name:"Disagree", class: "disagree"},
-    {name:"Not sure", class:"not-sure" },
-    ]
-  };
-  // options
-  roundDomains: boolean = true;
-  showDataLabel: boolean = true;
-  showXAxis: boolean = false;
-  showYAxis: boolean = false;
-  gradient: boolean = false;
-  showLegend: boolean = false;
-  showXAxisLabel: boolean = false;
-  yAxisLabel: string = 'Tags';
-  showYAxisLabel: boolean = true;
-  xAxisLabel: string = 'Count';
-  view = "";
-
-  colorScheme = {
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+      { name: "Agree", class: "agree" },
+      { name: "Disagree", class: "disagree" },
+      { name: "Not sure", class: "not-sure" },
+    ],
   };
 
-  @Output() filterTagEvent = new EventEmitter<string>();
-  constructor() {
-  
+  constructor() {}
+
+  ngOnInit() {}
+
+  ngAfterViewInit() {
+    this.createChart();
   }
-  ngOnInit() {
-    // console.log('BAR CHART', this.data);
-    
+
+  createChart() {
+    const colors = this.data.dataset.map((item) => {
+      if (ChartColors.CHART_COLORS[item.name]) {
+        return ChartColors.CHART_COLORS[item.name];
+      } else {
+        const randomColor = ChartColors.generateRandomColor();
+        ChartColors.CHART_COLORS[item.name] = randomColor;
+        return randomColor;
+      }
+    });
+
+    const ctx = this.barCanvas.nativeElement.getContext("2d");
+    this.chart = new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: this.data.dataset.map((item) => item.name),
+        datasets: [
+          {
+            label: "Count",
+            data: this.data.dataset.map((item) => item.value),
+            backgroundColor: colors,
+            barPercentage: 1,
+            categoryPercentage: 1
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+      },
+    });
   }
 
   onSelect(data): void {
-    // console.log('Item clicked', JSON.parse(JSON.stringify(data)));
-    this.filterTagEvent.emit(this.tagTypesId[data.name]);
+    const clickedElementIndex = data[0].index;
+    const label = this.chart.data.labels[clickedElementIndex];
+    this.filterTagEvent.emit(this.tagTypesId[label]);
   }
 
-  onActivate(data): void {
-    // console.log('Activate', JSON.parse(JSON.stringify(data)));
-  }
+  onActivate(data): void {}
 
-  onDeactivate(data): void {
-    // console.log('Deactivate', JSON.parse(JSON.stringify(data)));
-  }
-//   onResize(event) {
-//     this.view = [event.target.innerWidth / 1.35, 400];
-// }
-
+  onDeactivate(data): void {}
 }

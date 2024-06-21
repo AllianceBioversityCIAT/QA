@@ -122,7 +122,6 @@ export class AdminDashboardComponent implements OnInit {
     qa_innovation_use_ipsr: 0,
   };
 
-  //new props
   tagMessages = TagMessage;
   indicatorsTags: any;
   selectedIndicator = "qa_knowledge_product";
@@ -141,7 +140,6 @@ export class AdminDashboardComponent implements OnInit {
   rawCommentsData = [];
   has_comments: boolean = false;
   has_comments_detailed: boolean = false;
-  // options
   showXAxis: boolean = true;
   showYAxis: boolean = true;
   gradient: boolean = false;
@@ -203,14 +201,8 @@ export class AdminDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.showSpinner();
-    // console.log('USER',this.currentUser);
 
     this.loadDashData();
-
-    //*****/ */
-
-    // this.fromDate = this.calendar.getToday();
-    // this.toDate = this.calendar.getNext(this.calendar.getToday(), 'd', 10);
   }
 
   getIndicatorName(indicator: string) {
@@ -231,18 +223,14 @@ export class AdminDashboardComponent implements OnInit {
     ]);
     responses.subscribe((res) => {
       const [feedTags, assessmentByField] = res;
-      //feedTags
       this.feedList = feedTags.data;
 
-      //assessmentByField
       this.itemStatusByIndicator = assessmentByField.data;
 
-      //UPDATE CHARTS
       this.updateDataCharts();
 
       this.hideSpinner();
     });
-    // console.log(this.selectedIndicator, this.dashboardData[this.selectedIndicator]);
   }
 
   actualChatIndicator(indicatorName: string) {
@@ -257,7 +245,6 @@ export class AdminDashboardComponent implements OnInit {
 
   actualStatusIndicator(data: any) {
     let indicator_status = false;
-    // console.log(data);
     let i = 0;
     if (data) {
       for (const item of data) {
@@ -270,7 +257,6 @@ export class AdminDashboardComponent implements OnInit {
     return indicator_status;
   }
 
-  // NEW
   getItemStatusByIndicator(indicator: string) {
     if (this.itemStatusByIndicator.hasOwnProperty(indicator)) {
       return this.itemStatusByIndicator[indicator];
@@ -283,7 +269,6 @@ export class AdminDashboardComponent implements OnInit {
     return this.indicatorService.getAllItemStatusByIndicator().pipe();
   }
 
-  //Assessment by field and by indicator
   getItemStatusByIndicatorService(
     indicator: string,
     crp_id?: string
@@ -428,7 +413,6 @@ export class AdminDashboardComponent implements OnInit {
     dataset.forEach((tag) => {
       brushes.domain.push(colors[tag.name]);
     });
-    // console.log({ dataset, brushes });
 
     return { dataset, brushes };
   }
@@ -437,15 +421,11 @@ export class AdminDashboardComponent implements OnInit {
     return type === "enableQA"
       ? indicator.enable_assessor
       : indicator.enable_crp;
-    // return indicator.status === this.generalStatus.Open ? true : false;
   }
 
   updateConfig(type: string, id: number, isActive: boolean) {
-    // let id =
     let status = isActive ? this.generalStatus.Open : this.generalStatus.Close;
-    // console.log(type, id, status);
     let request = null;
-    // console.log(type, { enable_assessor: null, enable_crp: isActive })
     switch (type) {
       case "enableQA":
         request = this.indicatorService.updateIndicatorsByUser(id, {
@@ -469,8 +449,6 @@ export class AdminDashboardComponent implements OnInit {
     this.showSpinner();
     request.subscribe(
       (res) => {
-        // console.log(res)
-        // this.hideSpinner();
         this.loadDashData();
       },
       (error) => {
@@ -526,8 +504,6 @@ export class AdminDashboardComponent implements OnInit {
         this.getAllDashData(crp_id),
         this.getCommentStats(crp_id),
         this.getAllTags(crp_id),
-        // this.getFeedTags(this.selectedIndicator),
-        // this.getAllItemStatusByIndicator()
         this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id),
       ]);
 
@@ -553,10 +529,8 @@ export class AdminDashboardComponent implements OnInit {
           console.log("RESPONSES", this.dashboardCommentsData);
 
           this.indicatorsTags = this.commentService.groupTags(allTags.data);
-          // this.feedList = feedTags.data;
           this.itemStatusByIndicator = assessmentByField.data;
 
-          // this.itemStatusByIndicator = this.indicatorService.formatAllItemStatusByIndicator(assessmentByField.data);
           this.updateDataCharts();
           this.hideSpinner();
         },
@@ -571,8 +545,6 @@ export class AdminDashboardComponent implements OnInit {
         this.getAllDashData(crp_id),
         this.getCommentStats(crp_id),
         this.getAllTags(crp_id),
-        // this.getFeedTags(this.selectedIndicator),
-        // this.getAllItemStatusByIndicator()
         this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id),
       ]);
 
@@ -594,10 +566,8 @@ export class AdminDashboardComponent implements OnInit {
             commentsStats.data
           );
           this.indicatorsTags = this.commentService.groupTags(allTags.data);
-          // this.feedList = feedTags.data;
           this.itemStatusByIndicator = assessmentByField.data;
 
-          // this.itemStatusByIndicator = this.indicatorService.formatAllItemStatusByIndicator(assessmentByField.data);
           this.updateDataCharts();
           this.hideSpinner();
         },
@@ -616,7 +586,6 @@ export class AdminDashboardComponent implements OnInit {
       view.toLocaleLowerCase(),
       primary_column,
     ]);
-    // this.router.navigate(['/reload']).then(() => { this.router.navigate(['indicator', view.toLocaleLowerCase(), primary_column]); });
   }
 
   getPendings(data) {
@@ -653,27 +622,19 @@ export class AdminDashboardComponent implements OnInit {
         ] = res;
 
         this.dashboardData = this.dashService.groupData(dashData.data);
-        // this.selectedIndicator = Object.keys(this.dashboardData)[1];
         this.dataSelected = this.dashboardData[this.selectedIndicator];
-        // console.log(res)
 
         this.crps = crps.data;
-        // this.crps.unshift(new CRP( 0, 'All', 'undefined',  '0', false ) )
-        // this.selectedProgramName = this.crps[0]['acronym'];
         this.selectedProgramName = "All";
         console.log("PROGRAM NAME", this.selectedProgramName);
 
         this.configurationData = indicatorsByCrps.data;
-        // console.log(this.configurationData)
 
-        // console.log(commentsStats)
         this.dashboardCommentsData = this.dashService.groupData(
           commentsStats.data
         );
-        // console.log(this.dashboardCommentsData)
 
         this.dashboardCyclesData = this.parseCycleDates(cycleData.data);
-        // console.log(this.currenTcycle, this.fromDate, this.toDate)
 
         this.indicatorsTags = this.commentService.groupTags(allTags.data);
 
@@ -681,10 +642,6 @@ export class AdminDashboardComponent implements OnInit {
 
         this.itemStatusByIndicator = assessmentByField.data;
 
-        // this.itemStatusByIndicator = this.indicatorService.formatAllItemStatusByIndicator(assessmentByField.data);
-        // console.log('CHART 3',this.itemStatusByIndicator);
-
-        //UPDATE CHARTS
         this.updateDataCharts();
 
         this.hideSpinner();
@@ -707,8 +664,7 @@ export class AdminDashboardComponent implements OnInit {
       this.selectedIndicator
     );
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
-
-    // this.dataCharts.assessmentByField = this.getItemStatusByIndicator(this.selectedIndicator);
+    console.log("🚀 ~ AdminDashboardComponent ~ updateDataCharts ~ this.dataCharts.assessmentByField:", this.dataCharts.assessmentByField)
   }
 
   updateFeedTags(tagTypeId) {
@@ -724,35 +680,26 @@ export class AdminDashboardComponent implements OnInit {
    * GET DASHBOARD data
    *
    */
-  // all evaluations
   getAllDashData(crp_id?): Observable<any> {
     return this.dashService.getAllDashboardEvaluations(crp_id).pipe();
   }
 
-  // all active CRPS
   getAllCRP(): Observable<any> {
     return this.dashService.getCRPS().pipe();
   }
 
-  // indicators by CRPS
   getIndicatorsByCRP(): Observable<any> {
     return this.dashService.getIndicatorsByCRP().pipe();
   }
 
-  // comments by crp
   getCommentStats(crp_id?) {
-    // this.showSpinner();
-
     return this.commentService.getCommentCRPStats({ crp_id, id: null }).pipe();
   }
 
-  // comments raw data
   getRawComments(crp_id?) {
-    // console.log('asd', crp_id)
     this.showSpinner();
     this.commentService.getRawComments({ crp_id }).subscribe(
       (res) => {
-        // console.log('getRawComments', this.groupCommentsChart(res.data))
         this.rawCommentsData = res.data;
         Object.assign(this, { multi: this.groupCommentsChart(res.data) });
         this.has_comments = res.data.length > 0;
@@ -766,7 +713,6 @@ export class AdminDashboardComponent implements OnInit {
     );
   }
 
-  // cycles data
   getCycles() {
     return this.commentService.getCycles().pipe();
   }
@@ -793,8 +739,6 @@ export class AdminDashboardComponent implements OnInit {
    */
 
   openModal(template: TemplateRef<any>) {
-    // this.dashboardModalData = []
-    // this.getCommentStats()
     this.getRawComments(this.selectedProg["crp_id"]);
     this.modalRef = this.modalService.show(template);
   }
@@ -807,7 +751,6 @@ export class AdminDashboardComponent implements OnInit {
     copyCurrenCycle.end_date = this.formatDate(this.currenTcycle.end_date)[
       "format"
     ]("YYYY-MM-DDT23:59:00.000Z");
-    // console.log(this.currenTcycle, copyCurrenCycle)
     this.showSpinner();
     this.setCycle(copyCurrenCycle).subscribe(
       (res) => {
@@ -908,7 +851,6 @@ export class AdminDashboardComponent implements OnInit {
         this.fromDate = element.start_date;
         this.toDate = element.end_date;
         this.currenTcycle = element;
-        // this.currenTcycle = Object.assign({}, element);
       }
     }
 
@@ -916,7 +858,6 @@ export class AdminDashboardComponent implements OnInit {
   }
   formatDate(date: NgbDate) {
     if (date) {
-      // NgbDates use 1 for Jan, Moement uses 0, must substract 1 month for proper date conversion
       var ngbObj = JSON.parse(JSON.stringify(date));
       var newMoment = moment();
       if (ngbObj) {
@@ -926,10 +867,8 @@ export class AdminDashboardComponent implements OnInit {
         newMoment.year(ngbObj.year);
       }
 
-      // Convert date to "Mon Feb 01" format
       if (newMoment.isValid()) {
         return newMoment;
-        // return newMoment.format('ddd MMM DD');
       } else {
         return "";
       }
@@ -943,7 +882,6 @@ export class AdminDashboardComponent implements OnInit {
     let groupedData = Object.assign([], this.dashService.groupByProp(cp, key));
 
     for (const iterator in groupedData) {
-      // console.log(groupedData[iterator], iterator)
       let d = {
         name: groupedData[iterator][0].indicator_view_display,
         series: [],
@@ -971,7 +909,6 @@ export class AdminDashboardComponent implements OnInit {
   }
 
   onDateSelection(date: NgbDate) {
-    // console.log(date)
     if (!this.fromDate && !this.toDate) {
       this.fromDate = date;
     } else if (
@@ -1026,11 +963,7 @@ export class AdminDashboardComponent implements OnInit {
 
   validateNewDate() {
     let endDate = this.formatDate(this.toDate);
-    // let currDb = this.dashboardCyclesData.find(cycle => cycle.id == this.currenTcycle.id);
-    // let isDiff = currDb.start_date !== this.fromDate && currDb.end_date !== this.toDate;
-    // console.log(isDiff, this.currenTcycle, currDb)
     return this.fromDate && moment().isBefore(endDate, "day");
-    // return false;
   }
 
   /**
@@ -1041,19 +974,12 @@ export class AdminDashboardComponent implements OnInit {
   onSelect(data): void {
     let parsedData = JSON.parse(JSON.stringify(data));
     if (typeof parsedData === "object") {
-      // console.log('Item clicked', parsedData);
-      // this.has_comments_detailed = true;
-      // this.has_comments = false;
     }
   }
 
-  onActivate(data): void {
-    // console.log('Activate', JSON.parse(JSON.stringify(data)));
-  }
+  onActivate(data): void {}
 
-  onDeactivate(data): void {
-    // console.log('Deactivate', JSON.parse(JSON.stringify(data)));
-  }
+  onDeactivate(data): void {}
 
   toggleAssessorsChat() {
     this.assessorsChat.isOpen = !this.assessorsChat.isOpen;
@@ -1062,25 +988,7 @@ export class AdminDashboardComponent implements OnInit {
     this.showSideMenu = !this.showSideMenu;
   }
 
-  // axisFormat(val) {
-  //   if (val % 1 === 0) {
-  //     return val.toLocaleString();
-  //   } else {
-  //     return '';
-  //   }
-  // }
-
   openChart(template: TemplateRef<any>, e) {
-    // console.log(e.clientY)
-
-    // template.elementRef.nativeElement.style.top = `${this.currentY}px`;
     this.modalRef = this.modalService.show(template, { class: "modal-xl" });
-
-    // const modal = this.elem.nativeElement.querySelector('.modal-content');
-    // console.log(modal);
-    // console.log(template.elementRef.nativeElement);
-
-    // template.elementRef.nativeElement.style.top.px = this.currentY;
-    // this.confirmModal.nativeElement.style.top = `${this.currentY}px`;
   }
 }

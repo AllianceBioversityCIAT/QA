@@ -1,73 +1,108 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from "@angular/core";
+import { Chart } from "chart.js";
+import { ChartColors } from "src/app/utils/chart-colors"; // Asegúrate de importar ChartColors
 
 @Component({
-  selector: 'app-status-chart',
-  templateUrl: './status-chart.component.html',
-  styleUrls: ['./status-chart.component.scss']
+  selector: "app-status-chart",
+  templateUrl: "./status-chart.component.html",
+  styleUrls: ["./status-chart.component.scss"],
 })
 export class StatusChartComponent implements OnInit {
   @Input() indicator;
   @Input() indicators;
   @Input() total;
-  multi: any[];
-  view: any[] = [700, 400];
+  @ViewChild("barCanvas") barCanvas: ElementRef;
 
+  chart: any;
   legendLabels = [
     { name: "Answered / No action needed", class: "answered", value: 0 },
     { name: "Pending", class: "pending", value: 0 },
   ];
-
-
-  // options
   results: any[];
-  showXAxis: boolean = true;
-  showYAxis: boolean = false;
-  gradient: boolean = false;
-  showLegend: boolean = false;
-  showXAxisLabel: boolean = false;
-  yAxisLabel: string = 'Country';
-  showYAxisLabel: boolean = false;
-  xAxisLabel: string = 'Normalized Population';
 
   colorScheme = {
-    domain: ['var(--color-answered)', 'var(--color-pending)']
+    domain: ["var(--color-answered)", "var(--color-pending)"],
   };
 
-  constructor() {
-
-
-  }
+  constructor() {}
 
   ngOnInit() {
-    // console.log(this.indicator);
     this.formatIndicator();
   }
+
+  ngAfterViewInit() {
+    this.createChart();
+  }
+
   onSelect(event) {
     console.log(event);
   }
 
   formatIndicator() {
     this.results = [{ name: this.indicator[0].name, series: [] }];
-    this.indicator[0].series.forEach(element => {
-      // this.statusChartData[indicator][element.status] = +element.value;
-      let status = element.status == 'complete' ? 'Answered / No action needed' : 'Pending';
-      this.legendLabels.find(el => el.name == status).value = element.value;
-      this.results[0].series.push({ name: element.status == 'complete' ? 'Answered / No action needed' : 'Pending', value: +element.value })
-
+    this.indicator[0].series.forEach((element) => {
+      let status =
+        element.status == "complete"
+          ? "Answered / No action needed"
+          : "Pending";
+      this.legendLabels.find((el) => el.name == status).value = element.value;
+      this.results[0].series.push({
+        name: status,
+        value: +element.value,
+      });
     });
     this.results[0].series.reverse();
-    console.log(this.results[0].series);
-    const isAllPending = this.results[0].series.find(el => el.name == 'Answered / No action needed' && el.value == 0);
-    console.log({ isAllPending });
+    const isAllPending = this.results[0].series.find(
+      (el) => el.name == "Answered / No action needed" && el.value == 0
+    );
 
+    if (
+      this.results[0].series.find(
+        (el) => el.name == "Pending" && el.value == this.total
+      )
+    ) {
+      this.colorScheme.domain.shift();
+    }
+  }
 
-    if (this.results[0].series.find(el => el.name == 'Pending' && el.value == this.total)) this.colorScheme.domain.shift();
+  createChart() {
+    const ctx = this.barCanvas.nativeElement.getContext("2d");
+    const labels = this.results[0].series.map((item) => item.name);
+    const dataValues = this.results[0].series.map((item) => item.value);
+    const backgroundColors = this.results[0].series.map((item) => {
+      if (item.name === "Answered / No action needed") {
+        return ChartColors.CHART_COLORS["Answered / No action needed"];
+      } else {
+        return ChartColors.CHART_COLORS["Pending"];
+      }
+    });
+
+    this.chart = new Chart(ctx, {
+      type: "doughnut",
+      data: {
+        labels: labels,
+        datasets: [
+          {
+            label: "Status",
+            data: dataValues,
+            backgroundColor: backgroundColors,
+          },
+        ],
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            display: true,
+          },
+        },
+      },
+    });
   }
 
   indicatorIsEnable() {
-    // console.log(this.indicator[0].name);
-
-    return this.indicators.find(indicator => indicator.view_name == this.indicator[0].name)?.comment_meta.enable_crp;
+    return this.indicators.find(
+      (indicator) => indicator.view_name == this.indicator[0].name
+    )?.comment_meta.enable_crp;
   }
-
 }

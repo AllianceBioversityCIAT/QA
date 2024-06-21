@@ -5,29 +5,8 @@
       {{ results[0].name.split("qa_")[1] | replace : "_" : " " }}
     </h4>
   </div>
-  <div class="legend">
-    <div *ngFor="let tag of legendLabels" class="tag">
-      <div [ngClass]="tag.class" class="square"></div>
-      <p>
-        {{ tag.name }} <strong>{{ tag.value }}</strong>
-      </p>
-    </div>
-  </div>
   <div class="chart-container">
-    <ngx-charts-bar-horizontal-normalized
-      [scheme]="colorScheme"
-      [results]="results"
-      [gradient]="gradient"
-      [xAxis]="showXAxis"
-      [yAxis]="showYAxis"
-      [legend]="showLegend"
-      [showXAxisLabel]="showXAxisLabel"
-      [showYAxisLabel]="showYAxisLabel"
-      [xAxisLabel]="xAxisLabel"
-      [yAxisLabel]="yAxisLabel"
-    >
-      <!-- (select)="onSelect($event)" -->
-    </ngx-charts-bar-horizontal-normalized>
+    <canvas #barCanvas></canvas>
   </div>
   <a
     *ngIf="indicatorIsEnable()"
@@ -35,9 +14,10 @@
     routerLinkActive="active"
     [routerLinkActive]="['active']"
     routerLink="../indicator/{{ results[0].name.split('qa_')[1] }}/id"
-    >Go to {{ results[0].name.split("qa_")[1] | replace : "_" : " " }}</a
   >
-  <a *ngIf="!indicatorIsEnable()" class="title-indicator-disabled"
-    >Go to {{ results[0].name.split("qa_")[1] | replace : "_" : " " }}</a
-  >
+    Go to {{ results[0].name.split("qa_")[1] | replace : "_" : " " }}
+  </a>
+  <a *ngIf="!indicatorIsEnable()" class="title-indicator-disabled">
+    Go to {{ results[0].name.split("qa_")[1] | replace : "_" : " " }}
+  </a>
 </div>

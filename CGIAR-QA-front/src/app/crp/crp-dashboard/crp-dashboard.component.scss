@@ -13,7 +13,6 @@
       display: grid;
       grid-template-columns: 100%;
       grid-auto-rows: 320px;
-      grid-gap: 10px;
       padding: 1.5em;
       background-color: var(--background);
       border-radius: 8px;
@@ -21,7 +20,7 @@
         border-radius: 8px;
         background-color: white;
         display: grid;
-        grid-template-columns: 50% 30% 10% 10%;
+        grid-template-columns: 40% 40% 10% 10%;
         grid-template-rows: 100%;
         padding: 0.5em;
         .status-chart {
@@ -140,7 +139,6 @@
           margin-top: 1em;
           text-decoration: underline;
           cursor: pointer;
-          // text-transform: capitalize;
         }
         .progress {
           height: $size-lg;

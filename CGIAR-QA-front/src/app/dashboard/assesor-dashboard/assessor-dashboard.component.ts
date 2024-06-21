@@ -114,7 +114,6 @@ export class AssessorDashboardComponent implements OnInit {
       this.authenticationService.parseUpdateIndicators(res.data.indicators);
     });
     this.showSpinner();
-    console.log({ currentUser: this.currentUser });
     this.loadDashData();
   }
 
@@ -467,7 +466,6 @@ export class AssessorDashboardComponent implements OnInit {
         this.hideSpinner();
       },
       (error) => {
-        console.log("downloadRawComments", error);
         this.hideSpinner();
         this.alertService.error(error);
       }
