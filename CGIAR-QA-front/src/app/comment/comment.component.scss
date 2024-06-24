@@ -18,7 +18,7 @@
 
   .done-button {
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
     margin-top: 12px;
 
     button {
@@ -227,7 +227,7 @@
   .require-changes-set {
     font-size: smaller;
     display: flex;
-    justify-content: end;
+    justify-content: flex-end;
 
     .require-changes-img {
       height: 20px;
@@ -359,7 +359,7 @@ input[type="checkbox"]:checked:after {
 
 .highlight-section {
   display: flex;
-  justify-content: end;
+  justify-content: flex-end;
 
   a.user-highlighted {
     font-size: smaller;

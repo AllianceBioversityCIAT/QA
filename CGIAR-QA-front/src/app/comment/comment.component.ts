@@ -26,15 +26,8 @@ import { from } from "rxjs";
 import { WordCounterPipe } from "../pipes/word-counter.pipe";
 import { mergeMap } from "rxjs/operators";
 import { HttpClient } from "@angular/common/http";
-
 import { BsModalService, BsModalRef } from "ngx-bootstrap/modal";
-import { EvaluationsService } from "../services/evaluations.service";
-import { HighDensityScatterSeries } from "igniteui-angular-charts";
-import { convertToObject } from "typescript";
-import { notDeepStrictEqual } from "assert";
-import { not } from "@angular/compiler/src/output/output_ast";
 
-import * as moment from "moment";
 @Component({
   selector: "app-comment",
   templateUrl: "./comment.component.html",
@@ -49,7 +42,6 @@ export class CommentComponent implements OnInit {
   commentsByCol: any = [];
   commentsByColSelected: any = null;
   commentByTpb: any;
-  // limitCommentsByTpb: any = null
   commentsByColReplies: any = [];
   mainComment: any = null;
   currentUser: User;
@@ -65,8 +57,6 @@ export class CommentComponent implements OnInit {
   detailItemFounded2 = null;
   adminUser: any = false;
 
-  // require_changes = false;
-
   spinner_replies = "spinner_Comment_Rply";
   spinner_comment = "spinner_Comment";
 
@@ -76,13 +66,11 @@ export class CommentComponent implements OnInit {
   quickComments;
 
   currentComment;
-  // @ViewChild('commentsElem', { static: false }) commentsElem: ElementRef;
   @Input() original_field;
   @Input() detailedData;
   @Input() userIsLeader: boolean;
   @Input() isCRP;
   @Input() eval_stat: any;
-  // @Input() require_changes: boolean
   @Output("parentFun") parentFun: EventEmitter<any> = new EventEmitter();
   @Output("validateAllFieldsAssessed")
   validateAllFieldsAssessed: EventEmitter<any> = new EventEmitter();
@@ -91,7 +79,6 @@ export class CommentComponent implements OnInit {
   @Output("is_highlight") is_highlight = new EventEmitter<any>();
   @Output("evalu_stat") evalu_stat = new EventEmitter<any>();
 
-  // @Output("require_change") require_change = new EventEmitter<any>();
   @ViewChild("commentContainer") private commentContainer: ElementRef;
   allRoles = Role;
 
@@ -106,10 +93,6 @@ export class CommentComponent implements OnInit {
   ) {
     this.authenticationService.currentUser.subscribe((x) => {
       this.currentUser = x;
-      // console.log(this.currentUser.cycle_ended);
-
-      // console.log(this.currentUser);
-      // console.log("IS_CRP", this.isCRP);
     });
   }
 
@@ -118,7 +101,6 @@ export class CommentComponent implements OnInit {
       comment: ["", Validators.required],
     });
     this.dataFromItem = [];
-    // console.log("IS_CRP", this.isCRP);
     this.istpbUser();
 
     if (
@@ -126,7 +108,6 @@ export class CommentComponent implements OnInit {
       this.currentUser.roles[0].description == this.allRoles.admin
     ) {
       this.currentUser.roles.shift();
-      // console.log(this.currentUser);
     }
     if (!this.isCRP) {
       this.getQuickComments();
@@ -143,7 +124,6 @@ export class CommentComponent implements OnInit {
     const found = this.currentUser.indicators.find((element) => {
       return element?.isTPB === true;
     });
-    // console.log(found, '🔥 🔥');
     this.tpbUser = found;
   }
 
@@ -156,27 +136,15 @@ export class CommentComponent implements OnInit {
     this.detailItemFounded = this.detailedData.find(
       (detailItem) => detailItem.general_comment_id == comment.id
     );
-    console.log(
-      "🚀 ~ file:  UpdateHighlightComment ~ this.detailItemFounded",
-      this.detailItemFounded
-    );
     if (!this.detailItemFounded) {
       this.detailItemFounded = this.commentsByColSelected;
       this.detailItemFounded.highlight_comment = !isHighlighted;
     } else {
       this.detailItemFounded.highlight_comment = !isHighlighted;
     }
-    console.log(this.detailedData);
 
     (comment.highlight_comment = !isHighlighted),
-      console.log(
-        "🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment",
-        comment
-      );
-    console.log(params, "<===id");
-
-    this.showSpinner(this.spinner_comment);
-    // console.log()
+      this.showSpinner(this.spinner_comment);
     isHighlighted = !isHighlighted;
     this.commentService.patchHighlightComment(params).subscribe(
       (res) => {
@@ -195,20 +163,15 @@ export class CommentComponent implements OnInit {
 
   implementedChange(commentByTpb, implementedChanges: boolean) {
     let params = {
-      // id: commentId,
       commentReplyId: commentByTpb,
       ppu: !implementedChanges,
     };
-    console.log(params, "<-- implemented changes by PPU");
     this.commentService.patchPpuChanges(params).subscribe((res) => {
-      console.log(res);
       this.getItemCommentData();
       this.showSpinner(this.spinner_comment);
     });
 
-    this.commentService.updateDataComment(params).subscribe((res) => {
-      console.log(res, "resssssss");
-    });
+    this.commentService.updateDataComment(params).subscribe((res) => {});
   }
 
   getQuickComments() {
@@ -216,31 +179,22 @@ export class CommentComponent implements OnInit {
       (res) => {
         this.quickComments = res.data;
       },
-      (error) => {
-        console.log(error);
-      }
+      (error) => {}
     );
   }
 
   updateData(data: any, params: any) {
     this.commentsByColSelected = [];
 
-    console.log(data);
-    console.log(
-      "🚀 ~ file: comment.component.ts ~ line 201 ~ CommentComponent ~ updateData ~ data",
-      data
-    );
     Object.assign(this.dataFromItem, data, params);
     this.availableComment = false;
     this.showSpinner(this.spinner_comment);
     this.getItemCommentData(false);
   }
 
-  // convenience getter for easy access to form fields
   get formData() {
     return this.commentGroup.controls;
   }
-  // get replyformData() { return this.replyGroup.controls; }
 
   closeComments() {
     this.parentFun.emit();
@@ -266,10 +220,8 @@ export class CommentComponent implements OnInit {
       .subscribe(
         (res) => {
           this.getItemCommentData();
-          console.log(res.message);
         },
         (error) => {
-          console.log("addTag", error);
           this.hideSpinner(this.spinner_comment);
           this.alertService.error(error);
         }
@@ -285,10 +237,8 @@ export class CommentComponent implements OnInit {
       .subscribe(
         (res) => {
           this.getItemCommentData();
-          console.log(res.message);
         },
         (error) => {
-          console.log("deleteTag", error);
           this.hideSpinner(this.spinner_comment);
           this.alertService.error(error);
         }
@@ -296,36 +246,23 @@ export class CommentComponent implements OnInit {
   }
 
   UpdateRequireChanges(commentId: number, requireChanges: boolean) {
-    console.log(requireChanges, "checked");
     let params = {
       id: commentId,
-      // id: commentIdCreated,
       require_changes: requireChanges,
       tpb: true,
     };
-    console.log("🚀 ~ line ~ params", params);
-    console.log(commentId, "<===id");
 
     this.showSpinner(this.spinner_comment);
     this.commentService.patchRequireChanges(params).subscribe((res) => {
-      console.log(res, "<-- response require changes");
       this.getItemCommentData();
     });
   }
 
   addComment() {
-    console.log("ADDING COMMENT");
     if (this.commentGroup.invalid) {
       this.alertService.error("comment is required", false);
       return;
     }
-
-    // this.commentsByCol.find((tpbComment) => {
-    //   if (tpbComment?.tpb && tpbComment?.is_deleted === false) {
-    //     this.limitCommentsByTpb = tpbComment.tpb
-    //     console.log("🚀 ~this.limitCommentsByTpb", this.limitCommentsByTpb)
-    //   }
-    // })
 
     const found = this.currentUser.indicators.find((element) => {
       return element?.isTPB === true;
@@ -355,7 +292,6 @@ export class CommentComponent implements OnInit {
       })
       .subscribe(
         (res) => {
-          console.log("COMMENT ADDED");
           this.commentByTpb = res.data.id;
           this.getItemCommentData(true);
           this.formData.comment.reset();
@@ -365,23 +301,19 @@ export class CommentComponent implements OnInit {
           }
         },
         (error) => {
-          console.log("getEvaluationsList", error);
           this.hideSpinner(this.spinner_comment);
           this.alertService.error(error);
         }
       );
-    // UpdateRequireChanges(this.commentsByCol.id, this.commentsByCol.require_changes);
   }
 
   updateComment(type, data: any, parentCommentId) {
-    // updateComment(type, data: any, commentId: number) {
     let canUpdate = this.validComment(type, data);
     if (!canUpdate.is_valid) {
       this.alertService.error(canUpdate.message);
       return;
     }
     data[type] = !data[type];
-    // console.log({ data });
     let params = {
       approved: data.approved,
       is_visible: data.is_visible,
@@ -399,7 +331,6 @@ export class CommentComponent implements OnInit {
         this.getItemCommentData(true);
       },
       (error) => {
-        console.log("updateComment", error);
         this.hideSpinner(this.spinner_comment);
 
         this.alertService.error(error);
@@ -420,12 +351,10 @@ export class CommentComponent implements OnInit {
     this.showSpinner(this.spinner_comment);
     this.commentService.updateCommentReply(data).subscribe(
       (res) => {
-        // console.log(res)
         this.evalu_stat.emit();
         this.getItemCommentData(false);
       },
       (error) => {
-        console.log("updateComment", error);
         this.hideSpinner(this.spinner_comment);
 
         this.alertService.error(error);
@@ -441,48 +370,34 @@ export class CommentComponent implements OnInit {
     this.commentService.getDataComment(params).subscribe(
       (res) => {
         this.hideSpinner(this.spinner_comment);
-        console.log("COMMENT DATA", res.data);
-        // const replies_count = res.data.filter(data => data.approved)[0]?  +res.data.filter(data => data.approved)[0].replies.replies_count : 0;
         let replies_count = 0;
         const answered_comments = res.data.filter((data) => data.approved);
-        console.log({ answered_comments });
 
         if (answered_comments.length > 0) {
           answered_comments.map((ac) => {
             replies_count += +ac.replies.replies_count;
           });
         }
-        console.log({ replies_count });
 
         this.updateNumCommnts.emit({
           length: res.data.filter((field) => field.is_deleted == false).length,
           replies_count: replies_count,
           validateFields,
         });
-        //  console.log(this.currentUser.roles[0].description);
 
         switch (this.currentUser.roles[0].description) {
           case this.allRoles.crp:
             this.commentsByCol = res.data.filter((data) => data.approved);
-            console.log(this.commentsByCol + "Commentsbycol");
 
             this.currentComment = this.commentsByCol.find(
               (comment) => comment.approved
             );
             this.crpComment = true;
-            // this.commentsByCol.forEach(comment => {
-            //   console.log(comment)
-            //   if (comment.replies.replies_count != '0') {
-            //     comment.isCollapsed = true;
-            //     this.getCommentReplies(comment)
-            //   }
-            // });
             break;
           default:
             this.commentsByCol = res.data;
             break;
         }
-        // console.log(this.commentsByCol);
 
         this.commentsByCol.forEach((comment) => {
           if (comment.replies.replies_count != "0") {
@@ -490,7 +405,6 @@ export class CommentComponent implements OnInit {
             this.getCommentReplies(comment);
           }
         });
-        // I can iterate in reverse order
         this.commentsByCol.forEach((element) => {
           let found = false;
           if (found === false) {
@@ -500,15 +414,8 @@ export class CommentComponent implements OnInit {
             }
           }
         });
-        // this.limitCommentsByTpb = this.commentsByCol.find((tpbComment) => {
-        //   if (tpbComment?.tpb && tpbComment?.is_deleted === false) {
-        //     this.limitCommentsByTpb = tpbComment.tpb
-        //     console.log("🚀 ~this.limitCommentsByTpb", this.limitCommentsByTpb)
-        //   }
-        // })
       },
       (error) => {
-        console.log("getItemCommentData", error);
         this.hideSpinner(this.spinner_comment);
         this.alertService.error(error);
       }
@@ -517,20 +424,15 @@ export class CommentComponent implements OnInit {
 
   getCommentReplies(comment) {
     if (comment.isCollapsed) {
-      // this.showSpinner(this.spinner_comment);
       let params = {
         commentId: comment.id,
         evaluationId: this.dataFromItem.evaluation_id,
       };
       this.commentService.getDataCommentReply(params).subscribe(
         (res) => {
-          // this.hideSpinner(this.spinner_comment);
-          // console.log('getCommentReplies', res)
           comment.loaded_replies = res.data;
-          // this.commentsByColReplies = res.data
         },
         (error) => {
-          console.log("getItemCommentData", error);
           this.hideSpinner(this.spinner_comment);
           this.alertService.error(error);
         }
@@ -538,33 +440,21 @@ export class CommentComponent implements OnInit {
     }
   }
 
-  //ACCEPT COMMENT
   openModal(template: TemplateRef<any>, e) {
-    console.log(e.clientY);
     this.currentY = e.clientY;
 
-    // template.elementRef.nativeElement.style.top = `${this.currentY}px`;
     this.modalRef = this.modalService.show(template, {
       class: "pos-modal modal-sm",
     });
     document.querySelector("body").style.cssText = `--position-top: ${
       this.currentY - 300
     }px`;
-    // const modal = this.elem.nativeElement.querySelector('.modal-content');
-    // console.log(modal);
-    // console.log(template.elementRef.nativeElement);
-
-    // template.elementRef.nativeElement.style.top.px = this.currentY;
-    // this.confirmModal.nativeElement.style.top = `${this.currentY}px`;
   }
 
   answerComment(is_approved: any, replyTypeId: number, comment: any) {
     comment.crp_response = is_approved;
     comment.replyTypeId = replyTypeId;
     this.evalu_stat.emit();
-    // this.eval_stat.emit();
-    // this.is_approved = is_approved;
-    // this.availableComment = true
   }
   confirm(is_approved: any, replyTypeId: number, comment: any): void {
     let newReplyTypeId = this.formData.comment.value
@@ -580,8 +470,6 @@ export class CommentComponent implements OnInit {
   }
 
   replyComment(currentComment) {
-    // console.log(currentComment.replyTypeId);
-
     if (
       (this.commentGroup.invalid || this.formData.comment.value === "") &&
       currentComment.replyTypeId != this.replyTypes.accepted &&
@@ -590,7 +478,6 @@ export class CommentComponent implements OnInit {
       this.alertService.error("Comment is required", false);
       return;
     }
-    // console.log("CRP_RESPONSE", currentComment.crp_response);
     this.showSpinner(this.spinner_comment);
     this.commentService
       .createDataCommentReply({
@@ -608,7 +495,6 @@ export class CommentComponent implements OnInit {
           this.evalu_stat.emit();
         },
         (error) => {
-          // console.log("replyComment", error);
           this.hideSpinner(this.spinner_comment);
           this.alertService.error(error);
         }
@@ -617,8 +503,6 @@ export class CommentComponent implements OnInit {
 
   validateStartedMssgs() {
     return true;
-    // let isAdmin = this.currentUser.roles.map(role => { return role ? role['description'] : null }).find(role => { return role === Role.admin })
-    // return isAdmin;
   }
 
   getWordCount(value: string) {
@@ -631,12 +515,10 @@ export class CommentComponent implements OnInit {
    *
    ***/
   showSpinner(name: string) {
-    // this.spinner.show();
     this.spinner.show(name);
   }
 
   hideSpinner(name: string) {
-    // this.spinner.hide();
     this.spinner.hide(name);
   }
 
