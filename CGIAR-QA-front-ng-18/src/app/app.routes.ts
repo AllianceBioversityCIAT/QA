@@ -1,40 +1,24 @@
 import { Routes } from '@angular/router';
 
 export const routes: Routes = [
-  // {
-  //   path: '',
-  //   loadComponent: () => import('./pages/core/core.component'),
-  //   children: [
-  //     {
-  //       path: '',
-  //       redirectTo: 'sites-slider',
-  //       pathMatch: 'full'
-  //     },
-  //     {
-  //       path: 'sites-slider',
-  //       loadComponent: () => import('./pages/core/pages/sites-slider/sites-slider.component')
-  //     },
-  //     {
-  //       path: 'sites-list',
-  //       loadComponent: () => import('./pages/core/pages/sites-list/sites-list.component')
-  //     },
-  //     {
-  //       path: 'settings',
-  //       loadComponent: () => import('./pages/core/pages/settings/settings.component')
-  //     }
-  //   ]
-  // }
   {
-    path: '',
-    loadComponent: () => import('./pages/login/login.component')
-  }
-  // {
-  //   path: 'fields',
-  //   loadComponent: () => import('./pages/dynamic-fields/dynamic-fields.component')
-  // },
-  // {
-  //   path: '**',
-  //   redirectTo: 'not-found',
-  //   pathMatch: 'full'
-  // }
+    path: 'dashboard',
+    loadComponent: () => import('./pages/dashboard/dashboard.component')
+    // pathMatch: 'full'
+  },
+  {
+    path: 'crp',
+    loadComponent: () => import('./pages/crp/crp.component')
+  },
+  {
+    path: 'indicator/:type/:primary_column/:type/:primary_column',
+    loadComponent: () => import('./pages/indicator/indicator.component')
+  },
+  { path: 'qa-close', loadComponent: () => import('./pages/qa-close/qa-close.component') },
+  { path: 'login', loadComponent: () => import('./pages/login/login.component') },
+  { path: 'assessors-chat', loadComponent: () => import('./pages/assessors-chat/assessors-chat.component') },
+
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // otherwise redirect to home
+  { path: '**', loadComponent: () => import('./pages/not-found/not-found.component') }
 ];
