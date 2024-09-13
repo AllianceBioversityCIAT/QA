@@ -1,0 +1,59 @@
+{
+   "name": "CGIAR-QA-back",
+   "version": "0.0.1",
+   "description": "CGIAR QA backend app",
+   "devDependencies": {
+      "@types/exceljs": "^1.3.0",
+      "@types/node": "^13.13.5",
+      "ts-loader": "^6.2.1",
+      "ts-node": "^8.6.2",
+      "typescript": "^3.8.3"
+   },
+   "dependencies": {
+      "@types/bcryptjs": "^2.4.2",
+      "@types/body-parser": "^1.19.0",
+      "@types/cors": "^2.8.6",
+      "@types/helmet": "^0.0.46",
+      "@types/jsonwebtoken": "^8.3.9",
+      "@types/node": "^13.13.5",
+      "activedirectory": "^0.7.2",
+      "bcryptjs": "^2.4.3",
+      "body-parser": "^1.18.1",
+      "class-validator": "^0.11.0",
+      "cors": "^2.8.5",
+      "exceljs": "^3.9.0",
+      "express": "^4.17.21",
+      "helmet": "^3.21.2",
+      "html-to-text": "^7.1.1",
+      "jsonwebtoken": "^8.5.1",
+      "module-alias": "^2.2.2",
+      "moment": "^2.29.1",
+      "morgan": "^1.10.0",
+      "mysql": "^2.18.1",
+      "reflect-metadata": "^0.1.10",
+      "retext-keywords": "^6.0.0",
+      "ts-node-dev": "^1.0.0-pre.44",
+      "typeorm": "0.2.22"
+   },
+   "scripts": {
+      "build": "tsc",
+      "start": "set debug=* && npx tsnd --respawn --transpileOnly --max-old-space-size=4096 ./src/index.ts  ",
+      "start-dev": "set debug=* && npx tsnd --respawn --transpileOnly ./src/index.ts --host=172.22.33.55 --disable-host-check",
+      "prod": "tsc && node --max-old-space-size=4096 ./dist/index.js ",
+      "migration:run": "ts-node ./node_modules/typeorm/cli.js migration:run",
+      "migration:generate": "npx ts-node ./node_modules/typeorm/cli.js migration:generate -n",
+      "migration:create": "npx ts-node ./node_modules/typeorm/cli.js migration:create -n",
+      "synch": "ts-node ./node_modules/typeorm/cli.js schema:sync",
+      "docker:build": "docker build -t qacgiarback .",
+      "docker:run": "docker run -dti --name qacgiarapi -p 3000:3300 qacgiarback"
+   },
+   "_moduleAliases": {
+      "@root": ".",
+      "@controllers": "./src/controllers",
+      "@entity": "./src/entity",
+      "@middleware": "./src/middlewares",
+      "@routes": "./src/routes",
+      "@config": "./src/config",
+      "@helpers": "./src/_helpers"
+   }
+}

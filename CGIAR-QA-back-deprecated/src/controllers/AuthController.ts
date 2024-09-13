@@ -37,7 +37,7 @@ class AuthController {
       let queryRunner = getConnection().createQueryBuilder();
 
       const [query, parameters] =
-        await queryRunner.connection.driver.escapeQueryWithParameters(
+        queryRunner.connection.driver.escapeQueryWithParameters(
           `SELECT
                     *, (SELECT id FROM qa_crp WHERE crp_id = '${crp_id}') AS qa_crp_id
                 FROM
