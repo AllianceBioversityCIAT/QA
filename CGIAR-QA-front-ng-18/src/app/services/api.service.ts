@@ -31,8 +31,8 @@ export class ApiService {
     }
   }
 
-  login = (): Promise<MainResponse<LoginRes>> => {
+  login = (body: { password: string; username: string }): Promise<MainResponse<LoginRes>> => {
     const url = () => `auth/login`;
-    return this.TP.post(url(), { password: 'admin-prod', username: 'qa-admin' });
+    return this.TP.post(url(), body);
   };
 }
