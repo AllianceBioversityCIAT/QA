@@ -12,10 +12,11 @@ import { CycleRepository } from '../../shared/repositories/cycle.repository';
 import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
 import { TokenAuthRepository } from './repositories/token-auth.repository';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
-import { RoleRepository } from './repositories/role.repository';
+import { RoleRepository } from '../roles/repositories/role.repository';
 import { JwtMiddleware } from '../../shared/middlewares/jwt.middleware';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import constConfig from '../../config/const.config';
+import { PermissionRepository } from './repositories/permission.repository';
 
 @Module({
   controllers: [AuthController],
@@ -28,9 +29,10 @@ import constConfig from '../../config/const.config';
     CrpRepository,
     BcryptPasswordEncoder,
     RoleRepository,
+    PermissionRepository,
     JwtService,
   ],
-  exports: [AuthService],
+  exports: [AuthService, RoleRepository, PermissionRepository],
   imports: [
     JwtModule.register({
       secret: constConfig.jwtSecret,

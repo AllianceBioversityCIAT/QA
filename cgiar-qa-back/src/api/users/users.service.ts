@@ -10,7 +10,7 @@ import { ResponseUtils } from '../../utils/response.utils';
 import { UserRepository } from './users.repository';
 import { User } from './entities/user.entity';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
-import { RoleRepository } from '../auth/repositories/role.repository';
+import { RoleRepository } from '../roles/repositories/role.repository';
 import { In } from 'typeorm';
 import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
 import { UserRole } from './entities/user-role.entity';

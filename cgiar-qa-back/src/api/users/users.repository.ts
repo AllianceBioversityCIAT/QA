@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { User } from './entities/user.entity';
-import { RoleRepository } from '../auth/repositories/role.repository';
+import { RoleRepository } from '../roles/repositories/role.repository';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
 import { GeneralConfigurationRepository } from '../../shared/repositories/general-config.repository';
 import { CycleRepository } from '../../shared/repositories/cycle.repository';

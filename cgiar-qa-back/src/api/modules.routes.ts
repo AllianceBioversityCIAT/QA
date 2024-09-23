@@ -4,6 +4,7 @@ import { AuthModule } from './auth/auth.module';
 import { CommentsModule } from './comments/comments.module';
 import { EvaluationsModule } from './evaluations/evaluations.module';
 import { IndicatorsModule } from './indicators/indicators.module';
+import { RolesModule } from './roles/roles.module';
 
 export const ModulesRoutes: Routes = [
   {
@@ -26,4 +27,8 @@ export const ModulesRoutes: Routes = [
     path: 'evaluations',
     module: EvaluationsModule,
   },
+  {
+    path: 'roles',
+    module: RolesModule,
+  }
 ];

@@ -7,7 +7,7 @@ import {
 import { UsersService } from './users.service';
 import { UsersController } from './users.controller';
 import { UserRepository } from './users.repository';
-import { RoleRepository } from '../auth/repositories/role.repository';
+import { RoleRepository } from '../roles/repositories/role.repository';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
 import { CycleRepository } from '../../shared/repositories/cycle.repository';
 import { GeneralConfigurationRepository } from '../../shared/repositories/general-config.repository';
@@ -28,7 +28,7 @@ import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
     JwtService,
     BcryptPasswordEncoder
   ],
-  exports: [UsersService],
+  exports: [UsersService, UserRepository],
   imports: [AuthModule],
 })
 export class UsersModule implements NestModule {

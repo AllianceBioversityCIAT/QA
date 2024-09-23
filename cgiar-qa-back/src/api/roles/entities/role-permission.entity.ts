@@ -1,4 +1,4 @@
-import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
+import { Entity, PrimaryColumn } from 'typeorm';
 
 @Entity('qa_roles_permissions')
 export class RolePermission {

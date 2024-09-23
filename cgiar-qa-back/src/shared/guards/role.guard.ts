@@ -33,11 +33,8 @@ export class RolesGuard implements CanActivate {
       throw new UnauthorizedException('No token found');
     }
 
-    const payload = this.jwtService.decode(token) as {
-      userId: number;
-      username: string;
-    };
-    if (!payload || !payload.userId || !payload.username) {
+    const payload = this.jwtService.decode(token);
+    if (!payload?.userId || !payload?.username) {
       throw new UnauthorizedException('Invalid token');
     }
 

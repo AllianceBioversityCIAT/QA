@@ -5,9 +5,12 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   OneToMany,
+  JoinTable,
+  ManyToMany,
 } from 'typeorm';
 import { GeneralConfiguration } from '../../../shared/entities/general-config.entity';
 import { UserRole } from '../../users/entities/user-role.entity';
+import { Permission } from '../../auth/entities/permission.entity';
 
 @Entity('qa_roles')
 export class Role {
@@ -49,4 +52,20 @@ export class Role {
     (generalConfiguration) => generalConfiguration.role,
   )
   generalConfigurations: GeneralConfiguration[];
+
+  @ManyToMany(() => Permission, (permission) => permission.roles, {
+    eager: true,
+  })
+  @JoinTable({
+    name: 'qa_roles_permissions',
+    joinColumn: {
+      name: 'qa_role',
+      referencedColumnName: 'id',
+    },
+    inverseJoinColumn: {
+      name: 'qa_permission',
+      referencedColumnName: 'id',
+    },
+  })
+  permissions: Permission[];
 }
