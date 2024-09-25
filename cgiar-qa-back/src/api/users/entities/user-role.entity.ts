@@ -1,6 +1,6 @@
 import { Entity, PrimaryColumn, ManyToOne, JoinColumn } from 'typeorm';
 import { Role } from '../../roles/entities/role.entity';
-import { User } from './user.entity';
+import { Users } from './user.entity';
 
 @Entity('qa_user_roles')
 export class UserRole {
@@ -14,7 +14,7 @@ export class UserRole {
   @JoinColumn({ name: 'qa_role' })
   role: Role;
 
-  @ManyToOne(() => User, (user) => user.roles)
+  @ManyToOne(() => Users, (user) => user.roles)
   @JoinColumn({ name: 'qa_user' })
-  user: User;
+  user: Users;
 }

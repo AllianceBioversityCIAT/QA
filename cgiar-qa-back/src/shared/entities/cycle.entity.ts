@@ -4,7 +4,9 @@ import {
   Column,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
+import { Comments } from '../../api/comments/entities/comments.entity';
 
 @Entity('qa_cycle')
 export class Cycle {
@@ -39,4 +41,7 @@ export class Cycle {
 
   @Column({ type: 'decimal', precision: 10, scale: 0 })
   phase_year: number;
+
+  @OneToMany(() => Comments, (comment) => comment.cycle)
+  comments: Comments[];
 }

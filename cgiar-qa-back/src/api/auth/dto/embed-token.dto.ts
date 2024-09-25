@@ -9,7 +9,7 @@ export class EmbedTokenDto {
 
   @ApiProperty({
     type: String,
-    description: 'User id',
+    description: 'Users id',
   })
   crp_id: string;
 

@@ -5,9 +5,10 @@ import {
   ManyToOne,
   CreateDateColumn,
   UpdateDateColumn,
+  OneToMany,
 } from 'typeorm';
 import { Indicators } from './indicators.entity';
-// import { Comments } from './comments.entity';
+import { Comments } from '../../comments/entities/comments.entity';
 
 @Entity('qa_indicators_meta')
 export class IndicatorsMeta {
@@ -46,8 +47,8 @@ export class IndicatorsMeta {
   })
   description: string;
 
-//   @OneToMany(() => Comments, (comment) => comment.meta)
-//   comments: Comments[];
+  @OneToMany(() => Comments, (comment) => comment.meta)
+  comments: Comments[];
 
   @CreateDateColumn()
   createdAt: Date;

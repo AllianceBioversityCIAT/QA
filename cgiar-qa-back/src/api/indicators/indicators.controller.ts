@@ -25,7 +25,7 @@ import { RolesGuard } from '../../shared/guards/role.guard';
   name: 'authentication',
   description: 'Bearer token',
 })
-@Controller('indicators')
+@Controller()
 export class IndicatorsController {
   constructor(private readonly indicatorsService: IndicatorsService) {}
 
@@ -102,7 +102,7 @@ export class IndicatorsController {
   @ApiOperation({ summary: 'Get indicators by user' })
   @ApiResponse({
     status: 200,
-    description: 'User indicators retrieved successfully.',
+    description: 'Users indicators retrieved successfully.',
   })
   @ApiResponse({
     status: 500,

@@ -10,7 +10,7 @@ import { IndicatorsRepository } from './repositories/indicators.repository';
 import { UserRepository } from '../users/users.repository';
 import { IndicatorUsersRepository } from './repositories/indicators-users.repository';
 import { EvaluationRepository } from '../evaluations/repositories/evaluation.repository';
-import { User } from '../users/entities/user.entity';
+import { Users } from '../users/entities/user.entity';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
 
 @Injectable()
@@ -63,7 +63,7 @@ export class IndicatorsService {
   async assignIndicatorToUser(assignIndicatorDto: AssignIndicatorDto) {
     const { user_id, indicator_id, crpId } = assignIndicatorDto;
 
-    let selectedUser: User;
+    let selectedUser: Users;
     let selectedIndicator: Indicators;
     let hasAssignedIndicators = null;
 
@@ -102,7 +102,7 @@ export class IndicatorsService {
         this._logger.error(error);
         return ResponseUtils.format({
           data: {},
-          description: 'User not found',
+          description: 'Users not found',
           status: HttpStatus.NOT_FOUND,
         });
       }
@@ -133,7 +133,7 @@ export class IndicatorsService {
         this._logger.error(error);
         return ResponseUtils.format({
           data: {},
-          description: 'User or indicator not found',
+          description: 'Users or indicator not found',
           status: HttpStatus.NOT_FOUND,
         });
       }
@@ -265,7 +265,7 @@ export class IndicatorsService {
   async getIndicatorsByUser(userId: number, crpId?: string) {
     let response = [];
     try {
-      const user: User = await this._usersRepository.findOneOrFail({
+      const user: Users = await this._usersRepository.findOneOrFail({
         where: { id: userId },
       });
       const isAdmin = user.roles.some(
@@ -289,7 +289,7 @@ export class IndicatorsService {
 
       return ResponseUtils.format({
         data: response,
-        description: 'User indicators retrieved successfully',
+        description: 'Users indicators retrieved successfully',
         status: HttpStatus.OK,
       });
     } catch (error) {

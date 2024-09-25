@@ -8,7 +8,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { ResponseUtils } from '../../utils/response.utils';
 import { UserRepository } from './users.repository';
-import { User } from './entities/user.entity';
+import { Users } from './entities/user.entity';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { In } from 'typeorm';
@@ -37,7 +37,7 @@ export class UsersService {
 
       return ResponseUtils.format({
         data: users,
-        description: 'Users successfully retrieved.',
+        description: 'User successfully retrieved.',
         status: 200,
       });
     } catch (error) {}
@@ -67,7 +67,7 @@ export class UsersService {
     const { username, password, roles, name, email, crpId, is_marlo } =
       createUserDto;
 
-    const user = new User();
+    const user = new Users();
     user.username = username;
     user.password = password;
     user.name = name;

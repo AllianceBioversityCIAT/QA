@@ -12,7 +12,7 @@ import { GeneralConfigurationRepository } from '../../shared/repositories/genera
 import { CycleRepository } from '../../shared/repositories/cycle.repository';
 import ActiveDirectory from 'activedirectory';
 import config from '../../config/const.config';
-import { User } from '../users/entities/user.entity';
+import { Users } from '../users/entities/user.entity';
 import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
 import { RolesHandler } from '../../shared/enum/roles-handler.enum';
 import { In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
@@ -49,7 +49,7 @@ export class AuthService {
     }
 
     try {
-      let user: User;
+      let user: Users;
       let marloUser = await this._userRepository.findOne({
         where: [
           { email: username.trim().toLowerCase(), is_marlo: true },

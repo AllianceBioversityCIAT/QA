@@ -6,7 +6,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { User } from '../../users/entities/user.entity';
+import { Users } from '../../users/entities/user.entity';
 import { Indicators } from './indicators.entity';
 
 @Entity('qa_indicator_user')
@@ -14,8 +14,8 @@ export class IndicatorUser {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => User, (user) => user.indicators, { nullable: false })
-  user: User;
+  @ManyToOne(() => Users, (user) => user.indicators, { nullable: false })
+  user: Users;
 
   @ManyToOne(() => Indicators, (indicator) => indicator.user_indicator, {
     eager: true,

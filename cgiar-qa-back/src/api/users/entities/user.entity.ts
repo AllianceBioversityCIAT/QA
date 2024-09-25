@@ -2,7 +2,6 @@ import {
   Entity,
   PrimaryGeneratedColumn,
   Column,
-  Unique,
   CreateDateColumn,
   UpdateDateColumn,
   ManyToMany,
@@ -10,17 +9,15 @@ import {
   OneToMany,
   ManyToOne,
 } from 'typeorm';
-import { Role } from '../../roles/entities/role.entity';
 import { Crp } from '../../../shared/entities/crp.entity';
 import { UserRole } from './user-role.entity';
 import { IndicatorUser } from '../../indicators/entities/indicators-user.entity';
-// import { QAComments } from './qacomments.entity';
-// import { QACommentsReplies } from './qacommentsreplies.entity';
-// import { QATags } from './qatags.entity';
-// import { QAIndicatorUser } from './qaindicatoruser.entity';
+import { Comments } from '../../comments/entities/comments.entity';
+import { CommentsReplies } from '../../comments/entities/comments-reply.entity';
+import { Tags } from '../../comments/entities/tags.entity';
 
 @Entity('qa_users')
-export class User {
+export class Users {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -45,14 +42,14 @@ export class User {
   @CreateDateColumn()
   createdAt: Date;
 
-  // @OneToMany(() => QAComments, (comment) => comment.user)
-  // comments: QAComments[];
+  @OneToMany(() => Comments, (comment) => comment.user)
+  comments: Comments[];
 
-  // @OneToMany(() => QACommentsReplies, (reply) => reply.user)
-  // replies: QACommentsReplies[];
+  @OneToMany(() => CommentsReplies, (reply) => reply.user)
+  replies: CommentsReplies[];
 
-  // @OneToMany(() => QATags, (tag) => tag.tagType)
-  // tags: QATags[];
+  @OneToMany(() => Tags, (tag) => tag.tagType)
+  tags: Tags[];
 
   @UpdateDateColumn()
   updatedAt: Date;

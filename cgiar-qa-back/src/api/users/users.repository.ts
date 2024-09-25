@@ -4,7 +4,7 @@ import {
   NotFoundException,
 } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
-import { User } from './entities/user.entity';
+import { Users } from './entities/user.entity';
 import { RoleRepository } from '../roles/repositories/role.repository';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
 import { GeneralConfigurationRepository } from '../../shared/repositories/general-config.repository';
@@ -13,7 +13,7 @@ import * as jwt from 'jsonwebtoken';
 import config from '../../config/const.config';
 
 @Injectable()
-export class UserRepository extends Repository<User> {
+export class UserRepository extends Repository<Users> {
   private readonly _logger = new Logger(UserRepository.name);
 
   constructor(
@@ -23,10 +23,10 @@ export class UserRepository extends Repository<User> {
     private _generalConfigRepository: GeneralConfigurationRepository,
     private _cycleRepository: CycleRepository,
   ) {
-    super(User, datasource.createEntityManager());
+    super(Users, datasource.createEntityManager());
   }
 
-  async createOrReturnUser(authToken: any): Promise<User> {
+  async createOrReturnUser(authToken: any): Promise<Users> {
     let user = await this.findOne({
       where: { email: authToken.email },
       relations: ['crps', 'roles'],
@@ -49,7 +49,7 @@ export class UserRepository extends Repository<User> {
     }
 
     if (!user) {
-      user = new User();
+      user = new Users();
       user.email = authToken.email;
       user.username = authToken.username;
       user.name = authToken.name;

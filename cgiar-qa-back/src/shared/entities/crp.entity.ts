@@ -6,7 +6,7 @@ import {
   UpdateDateColumn,
   OneToMany,
 } from 'typeorm';
-import { User } from '../../api/users/entities/user.entity';
+import { Users } from '../../api/users/entities/user.entity';
 
 @Entity('qa_crp')
 export class Crp {
