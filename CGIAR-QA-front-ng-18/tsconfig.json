@@ -3,6 +3,10 @@
 {
   "compileOnSave": false,
   "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@public/*": ["public/*"]
+    },
     "outDir": "./dist/out-tsc",
     "strict": false,
     "noImplicitOverride": true,
