@@ -1,6 +1,6 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
-import { FormBuilder, FormGroup, FormArray, FormControl, Validators } from '@angular/forms';
+import { FormBuilder, FormGroup, FormArray, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
 
 import { DashboardService } from '../../services/dashboard.service';
@@ -23,11 +23,15 @@ import { NgbDate, NgbCalendar, NgbDateParserFormatter } from '@ng-bootstrap/ng-b
 
 import * as moment from 'moment';
 import { ExportTablesService } from '../../services/export-tables.service';
+import { CommonModule } from '@angular/common';
+import { TimelineComponent } from '../../components/timeline/timeline.component';
+import { sortBy } from 'lodash';
+import { SortByPipe } from '../../pipes/sort-by.pipe';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TimelineComponent, SortByPipe],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -245,7 +249,7 @@ export default class AdminDashboardComponent implements OnInit {
   }
 
   formatDateFeed(date: any) {
-    let formatDate = moment(date).format('dddd, MMMM Do YYYY, HH:mm');
+    let formatDate = moment.default(date).format('dddd, MMMM Do YYYY, HH:mm');
     return formatDate;
   }
 
@@ -652,7 +656,7 @@ export default class AdminDashboardComponent implements OnInit {
     this.showSpinner();
     let crp_id = this.selectedProg['crp_id'];
 
-    let filename = `QA-ALL-${this.selectedProg.hasOwnProperty('acronym') && this.selectedProg['acronym'] !== 'All' ? '(' + this.selectedProg['acronym'] + ')' : ''}${moment().format('YYYYMMDD:HHmm')}`;
+    let filename = `QA-ALL-${this.selectedProg.hasOwnProperty('acronym') && this.selectedProg['acronym'] !== 'All' ? '(' + this.selectedProg['acronym'] + ')' : ''}${moment.default().format('YYYYMMDD:HHmm')}`;
 
     if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
 
@@ -693,8 +697,8 @@ export default class AdminDashboardComponent implements OnInit {
   parseCycleDates(data) {
     for (let index = 0; index < data.length; index++) {
       const element = data[index];
-      let strDt = moment(element.start_date);
-      let endDt = moment(element.end_date);
+      let strDt = moment.default(element.start_date);
+      let endDt = moment.default(element.end_date);
       element.start_date = {
         year: strDt.format('YYYY'),
         month: strDt.format('MM'),
@@ -706,7 +710,7 @@ export default class AdminDashboardComponent implements OnInit {
         day: endDt.format('DD')
       };
 
-      element.is_active = moment().isAfter(strDt, 'day') && moment().isBefore(endDt, 'day');
+      element.is_active = moment.default().isAfter(strDt, 'day') && moment.default().isBefore(endDt, 'day');
       if (element.is_active) {
         this.fromDate = element.start_date;
         this.toDate = element.end_date;
@@ -719,7 +723,7 @@ export default class AdminDashboardComponent implements OnInit {
   formatDate(date: NgbDate) {
     if (date) {
       var ngbObj = JSON.parse(JSON.stringify(date));
-      var newMoment = moment();
+      var newMoment = moment.default();
       if (ngbObj) {
         ngbObj.month--;
         newMoment.month(ngbObj.month);
@@ -795,7 +799,7 @@ export default class AdminDashboardComponent implements OnInit {
 
   validateNewDate() {
     let endDate = this.formatDate(this.toDate);
-    return this.fromDate && moment().isBefore(endDate, 'day');
+    return this.fromDate && moment.default().isBefore(endDate, 'day');
   }
 
   /**
