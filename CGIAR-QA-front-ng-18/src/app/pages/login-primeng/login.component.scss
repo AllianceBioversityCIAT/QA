@@ -1,0 +1,21 @@
+.local-container {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  flex-direction: column;
+  p-card {
+    width: 50vw;
+  }
+
+  p {
+    font-size: 1.4em;
+    width: 55vw;
+  }
+
+  strong {
+    margin-top: 45px;
+  }
+}

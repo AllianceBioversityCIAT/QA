@@ -15,7 +15,7 @@ import { CommentService } from '../../services/comment.service';
 import { IndicatorsService } from '../../services/indicators.service';
 import { UsersService } from '../../services/users.service';
 import { forkJoin, Observable } from 'rxjs';
-import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
+// import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ExportTablesService } from '../../services/export-tables.service';
 import { CommonModule } from '@angular/common';
 import { TimelineComponent } from '../../components/timeline/timeline.component';
@@ -29,7 +29,6 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./assessor-dashboard.component.scss']
 })
 export default class AssessorDashboardComponent implements OnInit {
-  modalRef: BsModalRef;
   currentUser: User;
   dashboardData: any[];
   dashboardCommentsData: any[];
@@ -86,8 +85,9 @@ export default class AssessorDashboardComponent implements OnInit {
     { name: 'Innovation Use', viewname: 'qa_innovation_use' }
   ];
 
-  constructor(private dashService: DashboardService, private authenticationService: AuthenticationService, private modalService: BsModalService, private indicatorService: IndicatorsService, private usersService: UsersService, private spinner: NgxSpinnerService, private commentService: CommentService, private router: Router, private titleService: Title, private alertService: AlertService, private _exportTableSE: ExportTablesService) {
+  constructor(private dashService: DashboardService, private authenticationService: AuthenticationService, private indicatorService: IndicatorsService, private usersService: UsersService, private spinner: NgxSpinnerService, private commentService: CommentService, private router: Router, private titleService: Title, private alertService: AlertService, private _exportTableSE: ExportTablesService) {
     this.authenticationService.currentUser.subscribe(x => {
+      console.log(x);
       this.currentUser = x;
     });
     /** set page title */
@@ -410,6 +410,6 @@ export default class AssessorDashboardComponent implements OnInit {
     window.open(pdf_url, '_blank');
   }
   openChart(template: TemplateRef<any>, e) {
-    this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
+    // this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
   }
 }
