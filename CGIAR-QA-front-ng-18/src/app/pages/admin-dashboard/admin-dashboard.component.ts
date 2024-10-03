@@ -14,7 +14,7 @@ import { GeneralStatus, GeneralIndicatorName, TagMessage } from '../../_models/g
 
 import { Observable, forkJoin } from 'rxjs';
 import { NgxSpinnerService } from 'ngx-spinner';
-import { CommentService } from 'src/app/services/comment.service';
+import { CommentService } from '../../services/comment.service';
 import { Title } from '@angular/platform-browser';
 
 import { saveAs } from 'file-saver';
