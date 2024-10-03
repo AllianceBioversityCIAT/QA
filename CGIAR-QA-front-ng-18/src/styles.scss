@@ -26,3 +26,52 @@ body {
     align-self: self-end;
   }
 }
+
+:root {
+  --background: #f3f1f1;
+  --background-contrast: #f9f9f9;
+  --white: #fff;
+  --white-gray: rgb(245, 245, 245);
+  --black: #121212;
+  --black-gray: #3f4446;
+  --input-gray: #f2f2f2;
+
+  --yellow-primary: #ffc84f;
+  --yellow-secondary: #ffca30;
+  --yellow-tertiary: #ffeeb9;
+  --yellow-quaternary: #c99a0f;
+  --green-primary: #2e7636;
+  --green-secondary: #61b33e;
+  --green-tertiary: #67be71;
+  --green-tertiary: #dcecdf;
+  --green-quaternary: #f2fff5;
+  --gray-primary: #e1dddd;
+  --gray-secondary: #707070;
+  --gray-tertiary: #989898;
+  --red-primary: #da4336;
+  --red-secondary: #b73428;
+  --red-tertiary: #f1b7b7;
+  --blue-primary: #0f8981;
+  --blue-secondary: #17a2b8;
+  --blue-tertiary: #03535f;
+  --blue-quaternary: rgb(168, 209, 255);
+
+  --color-pending: #f3da90;
+  --color-complete: #59ed9c;
+  --color-in-progress: #6db1ff;
+  --color-finalized: #00958e;
+  --color-answered: #00958e;
+  --color-solved-with-change-request: #59ed9c;
+  // --color-complete: #00958e;
+  --color-autochecked: #a64d79ff;
+
+  --color-agree: #59ed9c;
+  --color-agree-wc: #268b50;
+  --color-disagree: #ed8b84;
+  --color-not-sure: rgb(109, 177, 255);
+  --color-clarification: #6db1ff;
+  --color-pending-gray: #cfcfcf;
+
+  --color-dark-text-btn: #073763;
+  --color-blue: #018dff;
+}

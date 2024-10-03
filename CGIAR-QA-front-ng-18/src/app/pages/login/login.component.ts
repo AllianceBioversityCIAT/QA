@@ -75,7 +75,7 @@ export default class LoginComponent implements OnInit {
 
   private handleLoginSuccess(data: any) {
     if (data.config.length && data.config[0].status === GeneralStatus.Open) {
-      this.router.navigate([`dashboard/${data.roles[0].description.toLowerCase()}`]);
+      this.router.navigate([`dashboard`]);
     } else {
       this.router.navigate(['qa-close']);
     }
