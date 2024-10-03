@@ -27,11 +27,12 @@ import { CommonModule } from '@angular/common';
 import { TimelineComponent } from '../../components/timeline/timeline.component';
 import { sortBy } from 'lodash';
 import { SortByPipe } from '../../pipes/sort-by.pipe';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TimelineComponent, SortByPipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TimelineComponent, SortByPipe, TooltipModule.forRoot()],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
