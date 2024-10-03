@@ -1,5 +1,5 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import moment from 'moment';
@@ -19,12 +19,12 @@ import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ExportTablesService } from '../../services/export-tables.service';
 import { CommonModule } from '@angular/common';
 import { TimelineComponent } from '../../components/timeline/timeline.component';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-assessor-dashboard',
   standalone: true,
-  imports: [CommonModule, TimelineComponent, TooltipModule.forRoot(), NgxSpinnerModule],
+  imports: [CommonModule, TimelineComponent, NgbTooltipModule, NgxSpinnerModule, RouterLink, RouterLinkActive],
   templateUrl: './assessor-dashboard.component.html',
   styleUrls: ['./assessor-dashboard.component.scss']
 })

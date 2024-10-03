@@ -36,30 +36,30 @@
         }">
         <div class="chart chart-1">
           <div class="header-chart">
-            <h4 class="chart-title" [tooltip]="popTemplateChartA">
+            <h4 class="chart-title" [ngbTooltip]="popTemplateChartA">
               Status -
               {{ dataSelected.total }}
               {{ getIndicatorName(selectedIndicator) }}
             </h4>
-            <i class="icon-info" [tooltip]="popTemplateChartA"></i>
+            <i class="icon-info" [ngbTooltip]="popTemplateChartA"></i>
             <ng-template #popTemplateChartA>
               <div [innerHtml]="descriptionCharts.generalStatus"></div>
             </ng-template>
           </div>
           <div class="chart-container">
-            <app-donut-chart *ngIf="dataSelected" [data]="dataCharts.generalStatus" [chartName]="indicator_status" [selectedIndicator]="selectedIndicator"> </app-donut-chart>
+            <!-- <app-donut-chart *ngIf="dataSelected" [data]="dataCharts.generalStatus" [chartName]="indicator_status" [selectedIndicator]="selectedIndicator"> </app-donut-chart> -->
           </div>
         </div>
         <div *ngIf="currentUser.cycle.cycle_stage == '1'" class="chart chart-2">
           <div class="header-chart">
             <h4 class="chart-title">Assessors interactions</h4>
-            <i class="icon-info" [tooltip]="popTemplateChartB"></i>
+            <i class="icon-info" [ngbTooltip]="popTemplateChartB"></i>
             <ng-template #popTemplateChartB>
               <div [innerHtml]="descriptionCharts.assessorsInteractions"></div>
             </ng-template>
           </div>
           <div class="chart-container">
-            <app-bar-chart *ngIf="indicatorsTags" [data]="dataCharts.assessorsInteractions" (filterTagEvent)="updateFeedTags($event)"></app-bar-chart>
+            <!-- <app-bar-chart *ngIf="indicatorsTags" [data]="dataCharts.assessorsInteractions" (filterTagEvent)="updateFeedTags($event)"></app-bar-chart> -->
           </div>
         </div>
         <div
@@ -71,13 +71,13 @@
           *ngIf="currentUser.cycle.cycle_stage == '1'">
           <div class="header-chart">
             <h4 class="chart-title">Responses to comments</h4>
-            <i class="icon-info" [tooltip]="popTemplateChartC"></i>
+            <i class="icon-info" [ngbTooltip]="popTemplateChartC"></i>
             <ng-template #popTemplateChartC>
               <div [innerHtml]="descriptionCharts.responseToComments"></div>
             </ng-template>
           </div>
           <div *ngIf="dashboardCommentsData[selectedIndicator]" class="chart-container">
-            <app-donut-chart [data]="dataCharts.responseToComments" [chartName]="'comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart>
+            <!-- <app-donut-chart [data]="dataCharts.responseToComments" [chartName]="'comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart> -->
           </div>
         </div>
         <div
@@ -88,13 +88,13 @@
           *ngIf="currentUser.cycle.cycle_stage == '2'">
           <div class="header-chart">
             <h4 class="chart-title">Highlighted Comments</h4>
-            <i class="icon-info" [tooltip]="popTemplateChartC"></i>
+            <i class="icon-info" [ngbTooltip]="popTemplateChartC"></i>
             <ng-template #popTemplateChartC>
               <div [innerHtml]="descriptionCharts.highlightComment"></div>
             </ng-template>
           </div>
           <div *ngIf="dataCharts.highlitedPendingComments" class="chart-container">
-            <app-donut-chart [data]="dataCharts.highlitedPendingComments" [chartName]="'highlight_comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart>
+            <!-- <app-donut-chart [data]="dataCharts.highlitedPendingComments" [chartName]="'highlight_comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart> -->
           </div>
         </div>
         <div
@@ -106,7 +106,7 @@
           }">
           <div class="header-chart">
             <h4 class="chart-title">Assessment by field</h4>
-            <i class="icon-info" [tooltip]="popTemplateChartD"></i>
+            <i class="icon-info" [ngbTooltip]="popTemplateChartD"></i>
             <ng-template #popTemplateChartD>
               <div [innerHtml]="descriptionCharts.assessmentByField"></div>
             </ng-template>
@@ -136,7 +136,7 @@
   </div>
   <div class="modal-content modal-lg">
     <div class="chart-modal-container" *ngIf="dataCharts.assessmentByField">
-      <app-line-chart [indicatorName]="selectedIndicator" [total]="dataSelected.total" [data]="dataCharts.assessmentByField" [isModal]="true"></app-line-chart>
+      <!-- <app-line-chart [indicatorName]="selectedIndicator" [total]="dataSelected.total" [data]="dataCharts.assessmentByField" [isModal]="true"></app-line-chart> -->
     </div>
   </div>
 </ng-template>
