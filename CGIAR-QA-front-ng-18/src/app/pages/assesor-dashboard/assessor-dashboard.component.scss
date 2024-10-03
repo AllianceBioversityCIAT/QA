@@ -1,4 +1,4 @@
-@import "../../../assets/variables.scss";
+@import './../../styles/variables.scss';
 
 .asesor-dashboard {
   .icons-header {
@@ -430,8 +430,8 @@
     text-align: center;
     font-size: 1em;
     margin: 0;
-  }   
-} 
+  }
+}
 
 .css-button-3d--sand {
   min-width: 130px;

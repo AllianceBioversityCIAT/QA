@@ -19,8 +19,8 @@ export default class LoginComponent {
   api = inject(ApiService);
   router = inject(Router);
   loginForm: FormGroup = new FormGroup({
-    username: new FormControl('', [Validators.required]),
-    password: new FormControl('', [Validators.required])
+    username: new FormControl('assessor-j', [Validators.required]),
+    password: new FormControl('LcR2rrRR', [Validators.required])
   });
 
   onLogin = async () => {

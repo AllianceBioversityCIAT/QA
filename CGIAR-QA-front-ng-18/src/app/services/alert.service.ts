@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { Router, NavigationStart } from '@angular/router';
 import { Observable, Subject } from 'rxjs';
 
-
 @Injectable({
   providedIn: 'root'
 })
@@ -32,25 +31,23 @@ export class AlertService {
   success(message: string, keepAfterRouteChange = false) {
     this.keepAfterRouteChange = keepAfterRouteChange;
     this.subject.next({ type: 'success', text: message });
-    this.autoClear()
+    this.autoClear();
   }
 
   error(message: string, keepAfterRouteChange = false) {
     this.keepAfterRouteChange = keepAfterRouteChange;
     this.subject.next({ type: 'error', text: message });
-    this.autoClear()
+    this.autoClear();
   }
 
   clear() {
     // clear by calling subject.next() without parameters
-    this.subject.next();
+    this.subject.next(null);
   }
-
 
   autoClear() {
     setTimeout(() => {
       this.clear();
     }, 5000);
   }
-
 }

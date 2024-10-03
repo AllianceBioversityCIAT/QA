@@ -4,7 +4,7 @@ import { rolesGuard } from './guards/roles.guard';
 export const routes: Routes = [
   {
     path: 'dashboard',
-    loadComponent: () => import('./pages/assesor-dashboard/assesor-dashboard.component'),
+    loadComponent: () => import('./pages/assesor-dashboard/assessor-dashboard.component'),
     canMatch: [rolesGuard],
     data: {
       roles: [2]

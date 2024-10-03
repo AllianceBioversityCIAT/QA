@@ -13,7 +13,7 @@ import { CRP } from '../../_models/crp.model';
 import { GeneralStatus, GeneralIndicatorName, TagMessage } from '../../_models/general-status.model';
 
 import { Observable, forkJoin } from 'rxjs';
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { CommentService } from '../../services/comment.service';
 import { Title } from '@angular/platform-browser';
 
@@ -32,7 +32,7 @@ import { TooltipModule } from 'ngx-bootstrap/tooltip';
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TimelineComponent, SortByPipe, TooltipModule.forRoot()],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, TimelineComponent, SortByPipe, TooltipModule.forRoot(), NgxSpinnerModule],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -738,6 +738,7 @@ export default class AdminDashboardComponent implements OnInit {
         return '';
       }
     }
+    return '';
   }
 
   groupCommentsChart(data) {

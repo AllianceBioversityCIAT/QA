@@ -1,4 +1,4 @@
-@import "../../../assets/variables.scss";
+@import '../../styles/variables.scss';
 * {
   box-sizing: border-box;
   margin: 0;
@@ -16,7 +16,7 @@
   border-radius: 5px 5px 0 0;
   h1,
   h3 {
-    font-family: "Poppins";
+    font-family: 'Poppins';
   }
   h1 {
     letter-spacing: 5px;
@@ -50,7 +50,7 @@
         transform: scale(1.3);
       }
       &.before::before {
-        content: "";
+        content: '';
         display: flex;
         height: 12px;
         width: 12px;
@@ -58,7 +58,7 @@
         background-color: rgb(26, 248, 119);
       }
       &.during::before {
-        content: "";
+        content: '';
         display: flex;
         height: 12px;
         width: 12px;
@@ -85,11 +85,11 @@
           width: 100%;
           padding: 0.5em;
           color: var(--white);
-          font-family: "Poppins";
+          font-family: 'Poppins';
           margin-bottom: 0.7em;
         }
         p {
-          font-family: "Poppins";
+          font-family: 'Poppins';
           font-size: $font-xs; // $font-xs: 12px;
           padding: 0 1em;
         }
@@ -101,7 +101,7 @@
       .event.before {
         // añade una línea de carga
         ::before {
-          content: "";
+          content: '';
           display: block;
           width: 100%;
           height: 2px;
@@ -121,7 +121,7 @@ footer {
     width: auto;
     display: flex;
     p {
-      font-family: "Poppins";
+      font-family: 'Poppins';
       font-size: $font-sm; // $font-sm: 14px;
     }
   }

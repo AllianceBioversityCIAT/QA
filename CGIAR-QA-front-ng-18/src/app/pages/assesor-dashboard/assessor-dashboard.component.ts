@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { Router } from '@angular/router';
 
-import { NgxSpinnerService } from 'ngx-spinner';
+import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import moment from 'moment';
 
 import { DashboardService } from '../../services/dashboard.service';
@@ -11,17 +11,20 @@ import { AlertService } from '../../services/alert.service';
 import { User } from '../../_models/user.model';
 import { GeneralStatus, GeneralIndicatorName, TagMessage } from '../../_models/general-status.model';
 import { Title } from '@angular/platform-browser';
-import { CommentService } from 'src/app/services/comment.service';
-import { IndicatorsService } from 'src/app/services/indicators.service';
-import { UsersService } from 'src/app/services/users.service';
+import { CommentService } from '../../services/comment.service';
+import { IndicatorsService } from '../../services/indicators.service';
+import { UsersService } from '../../services/users.service';
 import { forkJoin, Observable } from 'rxjs';
 import { BsModalRef, BsModalService } from 'ngx-bootstrap/modal';
 import { ExportTablesService } from '../../services/export-tables.service';
+import { CommonModule } from '@angular/common';
+import { TimelineComponent } from '../../components/timeline/timeline.component';
+import { TooltipModule } from 'ngx-bootstrap/tooltip';
 
 @Component({
   selector: 'app-assessor-dashboard',
   standalone: true,
-  imports: [],
+  imports: [CommonModule, TimelineComponent, TooltipModule.forRoot(), NgxSpinnerModule],
   templateUrl: './assessor-dashboard.component.html',
   styleUrls: ['./assessor-dashboard.component.scss']
 })
