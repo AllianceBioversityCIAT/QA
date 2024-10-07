@@ -1,0 +1,37 @@
+<!-- <app-assessors-chat-window *ngIf="currentUser"></app-assessors-chat-window> -->
+<nav class="navbar navbar-expand header-bar" *ngIf=" headerAvailable()">
+    <div (click)="goToView('logo')" class="logo-container">
+        <i class="cgiar-logo"></i>
+        <h3>QA PLATFORM</h3>
+    </div>
+    <div class="row navbar-container">
+        <div class="upper-navbar">
+            <!-- <div *ngIf="currentUser && currentUser.roles[0].id != 3" (click)="goToAssessorsChat()" class="assessors-chat">
+                Assessors chat
+            </div> -->
+            <div *ngIf="currentUser" (click)="getIndicators()" class="panel">
+                <p>{{currentUser.name}}</p>
+                <p>{{currentUser.email}}</p>
+            </div>
+            <div class="log-out-panel" (click)="logout()">
+                <span>
+                    <p>Signout</p>
+                </span>
+                <i class="icon-log-out"></i>
+            </div>
+        </div>
+        <div class="nav navbar-nav " routerLinkActive="active-link" [routerLinkActiveOptions]="{exact: true}">
+            <a class=" nav-item nav-link" [routerLinkActive]="['active']" [ngClass]="{'active':getCurrentRoute()}"
+                routerLink="/dashboard/{{currentRole}}" [routerLinkActiveOptions]="{exact: true}">Home</a>
+            <!-- <a class="nav-item nav-link" [routerLinkActive]="['active']"
+                routerLink="/indicator/{{indicator.viewname.split('qa_')[1]}}/id"
+                *ngFor="let indicator of indicatorsName; index as i">{{indicator.name}}</a> -->
+            <a class="nav-item nav-link" [routerLinkActive]="['active']" [routerLinkActiveOptions]="{exact: true}"
+                routerLink="/indicator/{{indicator.indicator.view_name.split('qa_')[1]}}/{{ indicator.indicator.primary_field}}"
+                [ngClass]="{'active':getCurrentRouteIndicator(indicator.indicator.view_name.split('qa_')[1], indicator.indicator.primary_field)}"
+                *ngFor="let indicator of indicators; index as i">{{indicator.indicator.name}} <i *ngIf="indicator.indicator.is_leader" class="icon-lead-assessor"></i></a>
+        </div>
+    </div>
+
+</nav>
+<app-tawk-to *ngIf="headerAvailable() && currentUser"></app-tawk-to>

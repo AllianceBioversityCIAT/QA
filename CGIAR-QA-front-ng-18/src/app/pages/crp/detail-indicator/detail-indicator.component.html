@@ -1,0 +1,532 @@
+<a
+  class="nav-item nav-link go-back"
+  [routerLinkActive]="['active']"
+  routerLink="../.."
+>
+  <i class="icon-go-back"></i> {{ currentType }} List
+</a>
+<!-- <div class="row criteria-container">
+    <div *ngIf="!criteria_loading">
+        <h2>QUALITY ASSESSMENT CRITERIA</h2>
+        <div style="padding-left: 2em;" [innerHTML]="criteriaData.qa_criteria | markdown"></div>
+    </div>
+    <div style="margin:auto;">
+        <span *ngIf="criteria_loading" class="spinner-border spinner-border-sm mr-1"></span>
+    </div>
+</div> -->
+
+<div
+  *ngIf="detailedData && detailedData[0]"
+  class="row detail-header-container"
+>
+  <p class="indicator-item-name">
+    {{ detailedData[0].crp_acronym }} / {{ currentType }} / QA-{{
+      params.type.charAt(0)
+    }}{{ params.type.charAt(1).toUpperCase() }}-{{
+      detailedData[0].result_code
+    }}
+  </p>
+  <div class="col status" *ngIf="currentUser.hasOwnProperty('cycle')">
+    <!-- <div class="assessment-status">
+      <p>Assessment Status:</p>
+      <div class="status">
+        <i
+          [ngClass]="{
+            'icon-in-progress': gnralInfo.status === statusHandler.Complete,
+            'icon-pending': gnralInfo.status === statusHandler.Pending,
+            'icon-quality-assessed':
+              gnralInfo.status === statusHandler.Finalized
+          }"
+        >
+        </i>
+        {{ statusNames[gnralInfo.status] }}
+      </div>
+    </div> -->
+    <div class="response-status">
+      <p>Response Status:</p>
+      <div class="status">
+        <i
+          [ngClass]="{
+            'icon-pending': gnralInfo.response_status === statusHandler.Pending,
+            'icon-quality-assessed':
+              gnralInfo.response_status === statusHandler.Complete
+          }"
+        >
+        </i>
+        {{ statusNamesCRP[gnralInfo.response_status] }}
+      </div>
+    </div>
+  </div>
+  <div
+    class="col"
+    *ngIf="!currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended"
+  >
+    <p
+      class="indicator-item-name text-danger"
+      style="text-transform: initial; text-align: center"
+    >
+      The quality assessment process has ended.
+    </p>
+  </div>
+  <div *ngIf="detailedData[0]" class="buttons">
+    <a
+      tooltip="{{ tooltips.redirectTo }}"
+      [href]="getCurrentTypeUrl()"
+      target="_blank"
+      rel="noopener noreferrer"
+    >
+      <span class="material-icons goTo"> launch </span>
+    </a>
+    <div
+      style="margin-right: 1em"
+      tooltip="{{ tooltips.download_excel }}"
+      container="body"
+      placement="top"
+      *ngIf="detailedData"
+      (click)="getCommentsExcel(detailedData[0])"
+      class="btn btn-primary file-button"
+    >
+      <i class="icon-download-excel"></i>
+    </div>
+    <!-- <button (click)="getEvaluationStatus()">testing</button> -->
+  </div>
+</div>
+
+<div #containerElement class="row">
+  <div
+    [ngClass]="{
+      'col-sm-12': !activeCommentArr[fieldIndex],
+      'col-sm-8': activeCommentArr[fieldIndex]
+    }"
+  >
+    <div *ngIf="currentUser.hasOwnProperty('cycle')">
+      <div class="col data-container">
+        <div class="data-row" *ngFor="let field of detailedData; let i = index">
+          <div class="col">
+            <div class="row" style="padding: 0">
+              <a
+                [href]="
+                  prUrl +
+                  '/result/result-detail/' +
+                  detailedData[i].result_code +
+                  '/general-information?phase=' +
+                  phase
+                "
+                target="”_blank”"
+                rel="noopener noreferrer"
+              >
+                <span
+                  tooltip="{{ tooltips.edit }}"
+                  *ngIf="
+                    detailedData[i].original_field === detailedData[i].value &&
+                    +detailedData[i].replies_count > 0
+                  "
+                  class="material-icons-round edit"
+                >
+                  mode_edit
+                </span>
+              </a>
+              <h2 [innerHTML]="detailedData[i].display_name | markdown"></h2>
+              <div>
+                <i
+                  *ngIf="field.meta_description"
+                  [tooltip]="popTemplate"
+                  container="body"
+                  placement="top"
+                  class="icon-pdf"
+                  style="height: 1.5em"
+                ></i>
+                <ng-template #popTemplate>
+                  <div [innerHtml]="field.meta_description"></div>
+                </ng-template>
+
+                <div
+                  [ngClass]="{
+                    'approved-no-comment':
+                      field.approved_no_comment == 1 && field.enable_comments
+                  }"
+                  style="display: none"
+                >
+                  Approved without comments
+                </div>
+              </div>
+              <div class="core-field" *ngIf="detailedData[i].is_core">
+                <img src="../../../assets/icons/icon-core.svg" alt="" />
+              </div>
+            </div>
+
+            <!-- data value -->
+            <!-- <div *ngIf="detailedData[i].value && (detailedData[i].col_name !== 'evidence_link' && detailedData[i].col_name !== 'outcome_description' && detailedData[i].col_name !== 'OICR'  )"
+                            [innerHTML]="detailedData[i].value | markdown">
+                        </div>
+                        <div *ngIf="detailedData[i].value && (detailedData[i].col_name === 'outcome_description' )"
+                            [innerHTML]="detailedData[i].value">
+                        </div>
+                        <div *ngIf="detailedData[i].value && (detailedData[i].col_name === 'OICR' )"
+                            [innerHTML]="detailedData[i].value">
+                        </div>
+                        <p *ngIf="detailedData[i].value &&  detailedData[i].col_name === 'evidence_link' ">
+                            {{detailedData[i].value}}</p> -->
+            <span
+              *ngIf="
+                detailedData[i].hide_original_field &&
+                detailedData[i].original_field != null
+              "
+              class="original-field"
+              (click)="
+                detailedData[i].hide_original_field =
+                  !detailedData[i].hide_original_field;
+                $event.stopPropagation()
+              "
+              >Show original value
+              <i
+                tooltip="{{ tooltips.changes_not_implemented }}"
+                *ngIf="
+                  detailedData[i].original_field === detailedData[i].value &&
+                  detailedData[i].count_disagree_comments != 1 &&
+                  detailedData[i].is_core &&
+                  detailedData[i].comments_replies_count > 0
+                "
+                class="material-icons-round"
+                >warning</i
+              >
+            </span>
+            <span
+              *ngIf="
+                !detailedData[i].hide_original_field &&
+                detailedData[i].original_field != null
+              "
+              class="original-field"
+              (click)="
+                detailedData[i].hide_original_field =
+                  !detailedData[i].hide_original_field;
+                $event.stopPropagation()
+              "
+              >Hide original value
+              <i
+                tooltip="{{ tooltips.changes_not_implemented }}"
+                *ngIf="
+                  detailedData[i].original_field === detailedData[i].value &&
+                  detailedData[i].count_disagree_comments != 1 &&
+                  detailedData[i].is_core &&
+                  detailedData[i].comments_replies_count > 0
+                "
+                class="material-icons-round"
+                >warning</i
+              >
+            </span>
+
+            <div
+              class="field-container original-field-container"
+              *ngIf="!detailedData[i].hide_original_field"
+              [@inOutAnimation]
+              [innerHTML]="detailedData[i].original_field"
+            ></div>
+
+            <!-- data value -->
+            <div
+              *ngIf="
+                detailedData[i].value &&
+                detailedData[i].col_name !== 'evidence_link' &&
+                detailedData[i].col_name !== 'outcome_description' &&
+                detailedData[i].col_name !== 'OICR'
+              "
+              [innerHTML]="detailedData[i].value | markdown"
+            ></div>
+            <div
+              *ngIf="
+                detailedData[i].value &&
+                (detailedData[i].col_name === 'outcome_description' ||
+                  detailedData[i].col_name === 'OICR' ||
+                  detailedData[i].col_name === 'evidence_link')
+              "
+              [innerHTML]="detailedData[i].value"
+            ></div>
+            <!-- no data -->
+            <p
+              *ngIf="
+                detailedData[i].value === null || detailedData[i].value == ''
+              "
+              class="empty-value"
+            >
+              Data not provided.
+            </p>
+          </div>
+
+          <!-- comments -->
+          <div
+            #commElement
+            style="cursor: pointer"
+            *ngIf="
+              validateCommentAvility(field, true) &&
+              field.approved_no_comment == null &&
+              field.replies_count != '0'
+            "
+            (click)="
+              showComments(i, field, commElement, $event);
+              comment.updateData(field, params)
+            "
+            class="activate-messages-container {{
+              field.replies_count == '0' ? '' : 'active'
+            }}"
+          >
+            <i *ngIf="!field.loading" class="icon-message"></i>
+            <span
+              *ngIf="field.loading"
+              class="spinner-border spinner-border-sm mr-1"
+            ></span>
+            <div
+              *ngIf="detailedData[i].require_changes > 0"
+              class="requires-icon"
+            >
+              <img src="../../../assets/icons/require-changes.svg" alt="" />
+            </div>
+            <div
+              container="body"
+              placement="top"
+              *ngIf="field.replies_count != '0'"
+              class="replies-count {{
+                field.replies_count ==
+                +field.comments_replies_count + +field.tpb_count
+                  ? 'accepted'
+                  : 'rejected'
+              }}"
+            >
+              <p class="comments-counter">
+                {{ +field.comments_replies_count + +field.tpb_count }}/{{
+                  field.replies_count
+                }}
+              </p>
+            </div>
+            <ng-template #commentsTooltip>
+              <div>
+                <p>
+                  Accepted comments: <strong>{{ field.crp_accepted }}</strong>
+                </p>
+                <p>
+                  Rejected comments: <strong>{{ field.crp_rejected }}</strong>
+                </p>
+                <p>
+                  Total: <strong>{{ field.replies_count }}</strong>
+                </p>
+              </div>
+            </ng-template>
+          </div>
+
+          <div
+            *ngIf="
+              !validateCommentAvility(field, null) || field.approved_no_comment
+            "
+            class="activate-messages-container"
+          >
+            <i *ngIf="!field.loading" class="icon-message-inactive"></i>
+            <span
+              *ngIf="field.loading"
+              class="spinner-border spinner-border-sm mr-1"
+            ></span>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="data-row gnral-commnts">
+                <h2>General comments:</h2>
+                <div *ngIf="detailedData && detailedData[0].general_comment" class="col data-container">
+                    <p> {{detailedData[0].general_comment}} </p>
+                    <p *ngIf="gnralInfo.general_comment"> <strong>Comment by:</strong>
+                        {{gnralInfo.general_comment_user}} <strong>at:</strong>
+                        {{gnralInfo.general_comment_updatedAt | date: 'long'}}</p>
+
+                    <div class="general-reply-container text-area" *ngFor="let reply of general_comment_reply;">
+                        <p>{{reply.detail}}</p>
+                        <p><strong>Replied by</strong>: {{reply.user.username}} </p>
+                    </div>
+                    <div *ngIf="general_comment_reply && general_comment_reply.length == 0">
+                        <form [formGroup]="generalCommentGroup" style="display: flex; margin-bottom: 2em;">
+                            <textarea class="text-area " maxlength="{{totalChar}}"
+                                formControlName="general_comment"></textarea>
+                        </form>
+                        <span class="wordCount">{{ getWordCount(formData.general_comment.value) }} / 1000 words</span>
+                        <div class="bton-container">
+                            <button type="button"
+                                class="btn btn-{{formData.general_comment.value ? 'green':'red'}}-secondary"
+                                [disabled]="!generalCommentGroup.valid || gnralInfo.response_status === statusHandler.Complete"
+                                (click)="addGeneralComment( gnralInfo)">REPLY</button>
+                        </div>
+                    </div>
+                </div>
+                <div *ngIf="detailedData && ( !detailedData[0].general_comment || detailedData[0].general_comment == '')"
+                    class="col data-container" style="    min-height: auto;">
+                    No comments were provided.
+                </div>
+            </div> -->
+    </div>
+
+    <div
+      *ngIf="!currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended"
+    >
+      <div class="col data-container">
+        <div class="data-row" *ngFor="let field of detailedData; let i = index">
+          <div class="col">
+            <div class="row" style="padding: 0">
+              <h2 [innerHTML]="detailedData[i].display_name | markdown"></h2>
+              <div>
+                <i
+                  *ngIf="field.meta_description"
+                  [tooltip]="popTemplate"
+                  container="body"
+                  placement="top"
+                  class="icon-pdf"
+                  style="height: 1.5em"
+                ></i>
+                <ng-template #popTemplate>
+                  <div [innerHtml]="field.meta_description"></div>
+                </ng-template>
+
+                <div
+                  [ngClass]="{
+                    'approved-no-comment': field.approved_no_comment == 1
+                  }"
+                  style="display: none"
+                >
+                  Approved without comments
+                </div>
+              </div>
+            </div>
+
+            <span
+              *ngIf="
+                detailedData[i].hide_original_field &&
+                detailedData[i].original_field != null
+              "
+              class="original-field"
+              (click)="
+                detailedData[i].hide_original_field =
+                  !detailedData[i].hide_original_field
+              "
+              >Show original value</span
+            >
+            <span
+              *ngIf="
+                !detailedData[i].hide_original_field &&
+                detailedData[i].original_field != null
+              "
+              class="original-field"
+              (click)="
+                detailedData[i].hide_original_field =
+                  !detailedData[i].hide_original_field
+              "
+              >Hide original value</span
+            >
+            <div
+              class="field-container original-field-container"
+              *ngIf="!detailedData[i].hide_original_field"
+              [@inOutAnimation]
+            >
+              {{ detailedData[i].original_field }}
+            </div>
+            <!-- data value -->
+            <div
+              *ngIf="
+                detailedData[i].value &&
+                detailedData[i].col_name !== 'number_of_variety'
+              "
+              [innerHTML]="detailedData[i].value | markdown"
+            ></div>
+            <div
+              *ngIf="
+                detailedData[i].value &&
+                detailedData[i].col_name !== 'number_of_variety'
+              "
+              [innerHTML]="detailedData[i].value"
+            ></div>
+            <!-- no data -->
+            <p
+              *ngIf="
+                detailedData[i].value === null || detailedData[i].value == ''
+              "
+              class="empty-value"
+            >
+              Data not provided.
+            </p>
+          </div>
+
+          <!-- comments -->
+          <div
+            #commElement
+            style="cursor: pointer"
+            *ngIf="field.replies_count != '0'"
+            (click)="
+              showComments(i, field, commElement, $event);
+              comment.updateData(field, params)
+            "
+            class="activate-messages-container {{
+              field.replies_count == '0' ? '' : 'active'
+            }}"
+          >
+            <i *ngIf="!field.loading" class="icon-message"></i>
+            <span
+              *ngIf="field.loading"
+              class="spinner-border spinner-border-sm mr-1"
+            ></span>
+            <!-- *ngIf="validateCommentAvility(field,true) && field.approved_no_comment == null " -->
+
+            <div
+              [tooltip]="commentsTooltip"
+              container="body"
+              placement="top"
+              *ngIf="field.replies_count != '0'"
+              class="replies-count {{
+                field.replies_count == field.comments_replies_count
+                  ? 'accepted'
+                  : 'rejected'
+              }}"
+            >
+              <p style="padding: 0.2em; margin: 0.2em; font-size: 14px">
+                {{ field.comments_replies_count }}/{{ field.replies_count }}
+              </p>
+            </div>
+            <ng-template #commentsTooltip>
+              <div>
+                <p>
+                  Accepted comments: <strong>{{ field.crp_accepted }}</strong>
+                </p>
+                <p>
+                  Rejected comments: <strong>{{ field.crp_rejected }}</strong>
+                </p>
+                <p>
+                  Total: <strong>{{ field.replies_count }}</strong>
+                </p>
+              </div>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <ngx-spinner
+      [fullScreen]="false"
+      [name]="spinner1"
+      bdColor="rgba(51,51,51,0.3)"
+      type="ball-clip-rotate"
+      size="medium"
+    ></ngx-spinner>
+  </div>
+  <div
+    [ngClass]="{ hide: !activeCommentArr[fieldIndex] }"
+    [style.top.px]="currentY"
+    class="col-sm-4 comments-container"
+  >
+    <div
+      [ngClass]="{ hide: !renderComments }"
+      class="comments-component-container"
+    >
+      <app-comment
+        #comment
+        [isCRP]="isCRP"
+        (parentFun)="hideComments(fieldIndex, detailedData[fieldIndex], null)"
+        (updateNumCommnts)="updateNumCommnts($event, detailedData[fieldIndex])"
+        (evalu_stat)="getEvaluationStatus()"
+        [eval_stat]="eval_stat"
+      ></app-comment>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,20 @@
+<div class="blank_space" [ngClass]="this.currentRoute?.mode">
+    <div class="footer" *ngIf="showIfRouteIsInList()"
+        [style.margin-top.px]="this.currentRoute?.mode == 'floating' ? 50 :this.currentRoute?.marginTop">
+        <div class="content">
+            <div class="logo">
+                <img class="cgiar_logo" src="/assets/img/cgiar_logo.png" alt="" srcset="" />
+            </div>
+            <div class="texts">
+                <div class="buttons">
+                    <div class="f-button" (click)="this.footerSE.displayContactUs = true">Contact Us</div>
+                    <div class="point"></div>
+                    <a target="_blank" [href]="this.termsAndCondition" class="f-button">Terms and Conditions</a>
+                    <div class="point"></div>
+                    <a target="_blank" [href]="this.license" class="f-button">License</a>
+                </div>
+                <div class="rights">© 2023 CGIAR System Organization. All rights reserved.</div>
+            </div>
+        </div>
+    </div>
+</div>
