@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { CrpComponent } from './crp.component';
+import { DetailIndicatorComponent } from './detail-indicator.component';
 
-describe('CrpComponent', () => {
-  let component: CrpComponent;
-  let fixture: ComponentFixture<CrpComponent>;
+describe('DetailIndicatorComponent', () => {
+  let component: DetailIndicatorComponent;
+  let fixture: ComponentFixture<DetailIndicatorComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CrpComponent ]
+      declarations: [ DetailIndicatorComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CrpComponent);
+    fixture = TestBed.createComponent(DetailIndicatorComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

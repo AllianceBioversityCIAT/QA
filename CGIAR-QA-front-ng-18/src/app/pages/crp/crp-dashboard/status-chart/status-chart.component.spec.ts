@@ -1,20 +1,20 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { CrpComponent } from './crp.component';
+import { StatusChartComponent } from './status-chart.component';
 
-describe('CrpComponent', () => {
-  let component: CrpComponent;
-  let fixture: ComponentFixture<CrpComponent>;
+describe('StatusChartComponent', () => {
+  let component: StatusChartComponent;
+  let fixture: ComponentFixture<StatusChartComponent>;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CrpComponent ]
+      declarations: [ StatusChartComponent ]
     })
     .compileComponents();
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(CrpComponent);
+    fixture = TestBed.createComponent(StatusChartComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

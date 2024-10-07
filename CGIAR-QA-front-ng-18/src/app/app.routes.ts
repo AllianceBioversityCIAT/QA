@@ -22,13 +22,13 @@ export const routes: Routes = [
     path: 'crp',
     loadComponent: () => import('./pages/crp/crp.component')
     // children: [
-    //   {
-    //     path: 'dashboard',
-    //     loadComponent: () => import('./pages/crp-dashboard/crp-dashboard.component')
-    //     // canActivate: [AuthGuard],
-    //     // data: { roles: [Role.crp, Role.admin] },
-    //     // component: CrpDashboardComponent,
-    //   },
+    // {
+    // path: 'dashboard',
+    // loadComponent: () => import('./pages/crp-dashboard/crp-dashboard.component')
+    // canActivate: [AuthGuard],
+    // data: { roles: [Role.crp, Role.admin] },
+    // component: CrpDashboardComponent,
+    // }
     //   {
     //     path: 'indicator/:type/:primary_column',
     //     loadComponent: () => import('./pages/detail-indicator/detail-indicator.component'),
