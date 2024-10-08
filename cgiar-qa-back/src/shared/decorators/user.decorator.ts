@@ -1,4 +1,9 @@
-import { createParamDecorator, ExecutionContext, HttpException, HttpStatus } from '@nestjs/common';
+import {
+  createParamDecorator,
+  ExecutionContext,
+  HttpException,
+  HttpStatus,
+} from '@nestjs/common';
 import { TokenDto } from '../global-dto/token.dto';
 
 export const UserToken = createParamDecorator(

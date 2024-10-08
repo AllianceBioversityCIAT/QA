@@ -16,7 +16,7 @@ export class CommentsRepository extends Repository<Comments> {
     let rawData: any[];
 
     try {
-      let sql =
+      const sql =
         crpId !== undefined && crpId !== 'undefined'
           ? `SELECT
               SUM(
@@ -306,7 +306,7 @@ export class CommentsRepository extends Repository<Comments> {
   }
 
   async getRawCommentsData(crp_id?: string): Promise<any[]> {
-    let query = `
+    const query = `
       SELECT
         (SELECT acronym FROM qa_crp WHERE crp_id = evaluations.crp_id) AS crp_acronym,
         evaluations.indicator_view_id AS indicator_view_id,

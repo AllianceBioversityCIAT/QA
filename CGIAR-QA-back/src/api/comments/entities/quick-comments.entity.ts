@@ -1,12 +1,12 @@
 import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 
-@Entity('qa_quick_comments')  
+@Entity('qa_quick_comments')
 export class QuickComments {
   @PrimaryGeneratedColumn()
   id: number;
 
   @Column({
-    type: 'text',  
+    type: 'text',
     nullable: false,
   })
   comment: string;

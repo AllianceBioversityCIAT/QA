@@ -16,7 +16,6 @@ class EvaluationsController {
    *
    */
 
-  // get evaluations dashboard by user
   static getEvaluationsDash = async (req: Request, res: Response) => {
     const userId = req.params.id;
     const queryRunner = getConnection().createQueryBuilder();
@@ -94,7 +93,6 @@ class EvaluationsController {
     }
   };
 
-  // get all evaluations dashboard - ADMIN DASHBOARD
   static getAllEvaluationsDash = async (req: Request, res: Response) => {
     let { crp_id } = req.query;
     const userId = res.locals.jwtPayload.userId;
@@ -109,7 +107,6 @@ class EvaluationsController {
         let sqlQuery = "";
 
         if (user.roles[0].description === RolesHandler.admin) {
-          // CRP DEFINED && ADMIN
           sqlQuery = `
                 SELECT
                         evaluations.crp_id AS crp_id,
@@ -153,7 +150,6 @@ class EvaluationsController {
 
         rawData = await queryRunner.connection.query(query, parameters);
       } else {
-        // CRP UNDEFINED
         const [query, parameters] =
           await queryRunner.connection.driver.escapeQueryWithParameters(
             `SELECT
@@ -211,7 +207,7 @@ class EvaluationsController {
         });
       }
       let result = Util.groupBy(response, "indicator_view_name");
-      // res.status(200).json({ data: rawData, message: "All evaluations" });
+
       res.status(200).json({ data: result, message: "All evaluations" });
     } catch (error) {
       res
@@ -219,7 +215,7 @@ class EvaluationsController {
         .json({ message: "All evaluations could not access to evaluations." });
     }
   };
-  // get all evaluations dashboard - ADMIN DASHBOARD
+
   static getAllEvaluationsDashByCRP = async (req: Request, res: Response) => {
     let { crp_id } = req.query;
     const userId = res.locals.jwtPayload.userId;
@@ -232,7 +228,7 @@ class EvaluationsController {
       let rawData;
       if (crp_id !== undefined && crp_id !== "undefined") {
         let sqlQuery = "";
-        // In this query evaluation.status depends on count comments vs count replies
+
         sqlQuery = `SELECT
                      evaluations.crp_id AS crp_id,
                      evaluations.indicator_view_name AS indicator_view_name,
@@ -304,7 +300,6 @@ class EvaluationsController {
 
         rawData = await queryRunner.connection.query(query, parameters);
       } else {
-        // CRP UNDEFINED
         const [query, parameters] =
           await queryRunner.connection.driver.escapeQueryWithParameters(
             `SELECT
@@ -359,7 +354,7 @@ class EvaluationsController {
         });
       }
       let result = Util.groupBy(response, "indicator_view_name");
-      // res.status(200).json({ data: rawData, message: "All evaluations" });
+
       res.status(200).json({ data: result, message: "All evaluations by crp" });
     } catch (error) {
       res.status(404).json({
@@ -435,12 +430,12 @@ class EvaluationsController {
     }
   };
 
-  // get evaluations LIST by user - List of indicators
   static getListEvaluationsDash = async (req: Request, res: Response) => {
-    //Get the ID from the url
     const id = req.params.id;
+    console.log("🚀 ~ EvaluationsController ~ getListEvaluationsDash= ~ id:", id)
     const { crp_id } = req.query;
-    // const view_name = `qa_${req.body.view_name}`;
+    console.log("🚀 ~ EvaluationsController ~ getListEvaluationsDash= ~ crp_id:", crp_id)
+
     const view_name = req.body.view_name;
     const view_primary_field = req.body.view_primary_field;
     const levelQuery = EvaluationsController.getLevelQuery(view_name);
@@ -984,36 +979,36 @@ class EvaluationsController {
       case "qa_indicato":
         response.view_sql =
           "(SELECT stage FROM qa_indicato innovations WHERE innovations.id = evaluations.indicator_view_id) AS stage,";
-        // response.innovations_stage = "qa_innovations.stage,"
+
         break;
       case "qa_policies":
         response.view_sql =
           "(SELECT maturity_level FROM qa_policies policies WHERE policies.id = evaluations.indicator_view_id) AS stage,";
-        // response.innovations_stage = "qa_policies.maturity_level,"
+
         break;
       case "qa_oicr":
         response.view_sql =
           "(SELECT maturity_level FROM qa_oicr oicr WHERE oicr.id = evaluations.indicator_view_id) AS stage,";
-        // response.innovations_stage = "qa_oicr.maturity_level,"
+
         break;
       case "qa_melia":
         response.view_sql =
           "(SELECT study_type FROM qa_melia melia WHERE melia.id = evaluations.indicator_view_id) AS stage,";
-        // response.innovations_stage = "qa_melia.study_type,"
+
         break;
       case "qa_publications":
         response.view_sql =
           "(SELECT is_ISI FROM qa_publications publications WHERE publications.id = evaluations.indicator_view_id) AS stage,";
-        // response.innovations_stage = "qa_melia.study_type,"
+
         break;
       case "qa_milestones":
         response.view_sql =
           "(SELECT status FROM qa_milestones milestones WHERE milestones.id = evaluations.indicator_view_id) AS stage, (SELECT fp FROM qa_milestones milestones WHERE milestones.id = evaluations.indicator_view_id) AS fp,";
-      // response.innovations_stage = "qa_melia.study_type,"
+
       case "qa_slo":
         response.view_sql =
           "(SELECT clean_html_tags(brief_summary) FROM qa_slo slo WHERE slo.id = evaluations.indicator_view_id) AS brief,";
-        // response.innovations_stage = "qa_melia.study_type,"
+
         break;
 
       default:
@@ -1022,16 +1017,13 @@ class EvaluationsController {
     return response;
   }
 
-  // get detailed evaluation by user -- TODO - GET data by field
   static getDetailedEvaluationDash = async (req: Request, res: Response) => {
-    //Get the ID from the url
     const id = req.params.id;
     const view_name = `qa_${req.body.type}`;
     const view_name_psdo = `${req.body.type}`;
     const indicatorId = req.body.indicatorId;
     let queryRunner = getConnection().createQueryBuilder();
 
-    //Get indicator item data from view
     try {
       const userRepository = getRepository(QAUsers);
       let user = await userRepository.findOneOrFail({ where: { id } });
@@ -1233,14 +1225,10 @@ class EvaluationsController {
     }
   };
 
-  // FIX TODO
   static updateDetailedEvaluation = async (req: Request, res: Response) => {
     const id = req.params.id;
     const userId = res.locals.jwtPayload.userId;
     const { general_comments, status } = req.body;
-
-    // const userRepository = getRepository(QAUsers);
-    // let user = await userRepository.findOneOrFail({ where: { id: userId } });
 
     const evaluationsRepository = getRepository(QAEvaluations);
     let queryRunner = getConnection().createQueryBuilder().connection;
@@ -1249,7 +1237,6 @@ class EvaluationsController {
         where: { id: id },
       });
 
-      // evaluation.general_comments = general_comments;
       evaluation.status = status;
       if (status === StatusHandler.Finalized) {
         let sql = `
@@ -1261,10 +1248,8 @@ class EvaluationsController {
             { view_name: evaluation.indicator_view_name },
             {}
           );
-        // evaluation.assessed_by_second_round.push(user);
 
         let metaId = await queryRunner.query(query, parameters);
-        // let comment = await Util.createComment(null, true, userId, metaId[0].id, evaluation.id, require_changes);
       }
 
       let updatedEva = await evaluationsRepository.save(evaluation);
@@ -1278,7 +1263,6 @@ class EvaluationsController {
     }
   };
 
-  // get all CRPS
   static getCRPS = async (req: Request, res: Response) => {
     const crpRepository = await getRepository(QACrp);
 
@@ -1290,9 +1274,7 @@ class EvaluationsController {
     }
   };
 
-  //get active indicators (admin dashboard)
   static getIndicatorsByCrp = async (req: Request, res: Response) => {
-    //const indiUserRepository = getRepository(QAIndicatorUser);
     let queryRunner = getConnection().createQueryBuilder();
     try {
       const [query, parameters] =
@@ -1328,7 +1310,6 @@ class EvaluationsController {
     }
   };
 
-  //get evaluation criteria by indicator
   static getCriteriaByIndicator = async (req: Request, res: Response) => {
     const { indicatorName } = req.params;
     let queryRunner = getConnection().createQueryBuilder();

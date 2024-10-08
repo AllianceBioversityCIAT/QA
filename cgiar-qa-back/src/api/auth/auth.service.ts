@@ -43,14 +43,16 @@ export class AuthService {
   async loginService(loginDto: LoginDto): Promise<any> {
     const { username, password } = loginDto;
     if (!(username && password)) {
-      throw new BadRequestException(
-        'Missing required username or password fields.',
-      );
+      return ResponseUtils.format({
+        data: {},
+        description: 'Username and password are required.',
+        status: HttpStatus.BAD_REQUEST,
+      });
     }
 
     try {
       let user: Users;
-      let marloUser = await this._userRepository.findOne({
+      const marloUser = await this._userRepository.findOne({
         where: [
           { email: username.trim().toLowerCase(), is_marlo: true },
           { username: username.trim().toLowerCase(), is_marlo: true },

@@ -26,7 +26,7 @@ import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
     UserRepository,
     RoleRepository,
     JwtService,
-    BcryptPasswordEncoder
+    BcryptPasswordEncoder,
   ],
   exports: [UsersService, UserRepository],
   imports: [AuthModule],

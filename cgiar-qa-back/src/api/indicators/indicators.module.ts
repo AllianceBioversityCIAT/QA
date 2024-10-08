@@ -38,7 +38,7 @@ import { TokenAuthRepository } from '../auth/repositories/token-auth.repository'
     JwtService,
     AuthService,
     BcryptPasswordEncoder,
-    TokenAuthRepository
+    TokenAuthRepository,
   ],
   imports: [AuthModule],
   exports: [IndicatorsService, IndicatorsRepository],

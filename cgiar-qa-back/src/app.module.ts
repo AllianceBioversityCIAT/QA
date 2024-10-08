@@ -29,7 +29,7 @@ import { RolesModule } from './api/roles/roles.module';
       keepConnectionAlive: true,
       autoLoadEntities: true,
     }),
-    RolesModule
+    RolesModule,
   ],
   controllers: [AppController],
   providers: [

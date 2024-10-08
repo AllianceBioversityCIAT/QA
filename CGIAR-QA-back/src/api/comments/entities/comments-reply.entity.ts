@@ -9,7 +9,7 @@ import {
 import { Comments } from './comments.entity';
 import { Users } from '../../users/entities/user.entity';
 
-@Entity('qa_comments_replies') 
+@Entity('qa_comments_replies')
 export class CommentsReplies {
   @PrimaryGeneratedColumn()
   id: number;

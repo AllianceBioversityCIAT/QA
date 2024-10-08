@@ -1,26 +1,33 @@
-import { Injectable } from '@nestjs/common';
-import { CreateEvaluationDto } from './dto/create-evaluation.dto';
-import { UpdateEvaluationDto } from './dto/update-evaluation.dto';
+import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { EvaluationRepository } from './repositories/evaluation.repository';
+import { UserRepository } from '../users/users.repository';
+import { RolesHandler } from '../../shared/enum/roles-handler.enum';
+import { StatusHandler } from './enum/status-handler.enum';
+import { ResponseUtils } from '../../utils/response.utils';
+import { DisplayTypeHandler } from './enum/display-handler.enum';
 
 @Injectable()
 export class EvaluationsService {
-  create(createEvaluationDto: CreateEvaluationDto) {
-    return 'This action adds a new evaluation';
-  }
+  private readonly _logger = new Logger(EvaluationsService.name);
 
-  findAll() {
-    return `This action returns all evaluations`;
-  }
+  constructor(
+    private readonly _evaluationsRepository: EvaluationRepository,
+    private readonly _userRepository: UserRepository,
+  ) {}
 
-  findOne(id: number) {
-    return `This action returns a #${id} evaluation`;
-  }
-
-  update(id: number, updateEvaluationDto: UpdateEvaluationDto) {
-    return `This action updates a #${id} evaluation`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} evaluation`;
+  async getAllEvaluationsDash(crpId: string, userId: number) {
+    try {
+      if (crpId) {
+        return await this._evaluationsRepository.getEvaluationsForCrp(
+          crpId,
+          userId,
+        );
+      } else {
+        return await this._evaluationsRepository.getEvaluations();
+      }
+    } catch (error) {
+      this._logger.error(`Error fetching evaluations: ${error.message}`);
+      throw new Error('Could not access evaluations data.');
+    }
   }
 }

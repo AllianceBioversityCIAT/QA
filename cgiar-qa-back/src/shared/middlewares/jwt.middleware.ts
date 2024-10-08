@@ -60,7 +60,7 @@ export class JwtMiddleware implements NestMiddleware {
         ignoreExpiration: true,
       });
 
-      res.locals.jwtPayload = jwtPayload
+      res.locals.jwtPayload = jwtPayload;
 
       const newToken: string = await this._jwtService.signAsync(
         { jwtPayload },

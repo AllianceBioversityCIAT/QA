@@ -130,7 +130,7 @@ export class UsersService {
   async editUser(id: number, updateUserDto: UpdateUserDto): Promise<any> {
     const { username, roles, name, email } = updateUserDto;
 
-    let user = await this._userRepository.findOne({ where: { id } });
+    const user = await this._userRepository.findOne({ where: { id } });
     if (!user) {
       return ResponseUtils.format({
         data: null,
@@ -179,7 +179,7 @@ export class UsersService {
   }
 
   async deleteUser(id: number): Promise<any> {
-    let userExist = await this._userRepository.findOne({ where: { id } });
+    const userExist = await this._userRepository.findOne({ where: { id } });
     if (!userExist) {
       return ResponseUtils.format({
         data: null,

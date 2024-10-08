@@ -1,7 +1,15 @@
-import { Entity, PrimaryGeneratedColumn, Column, CreateDateColumn, UpdateDateColumn, OneToOne, JoinColumn } from 'typeorm';
-import { Indicators } from '../../indicators/entities/indicators.entity'; 
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  CreateDateColumn,
+  UpdateDateColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
+import { Indicators } from '../../indicators/entities/indicators.entity';
 
-@Entity('qa_comments_meta') 
+@Entity('qa_comments_meta')
 export class CommentsMeta {
   @PrimaryGeneratedColumn()
   id: number;
@@ -13,7 +21,7 @@ export class CommentsMeta {
   enable_assessor: boolean;
 
   @OneToOne(() => Indicators)
-  @JoinColumn() 
+  @JoinColumn()
   indicator: Indicators;
 
   @CreateDateColumn()

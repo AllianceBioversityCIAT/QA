@@ -63,7 +63,7 @@ export class Role {
       referencedColumnName: 'id',
     },
     inverseJoinColumn: {
-      name: 'qa_permission',
+      name: 'qa_permissions',
       referencedColumnName: 'id',
     },
   })

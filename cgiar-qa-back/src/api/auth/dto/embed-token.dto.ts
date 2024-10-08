@@ -18,7 +18,7 @@ export class EmbedTokenDto {
 
   @ApiProperty({ type: String, description: 'Email' })
   email: string;
-  
+
   @ApiProperty({ type: String, description: 'Name' })
   name: string;
 

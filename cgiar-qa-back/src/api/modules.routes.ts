@@ -30,5 +30,5 @@ export const ModulesRoutes: Routes = [
   {
     path: 'roles',
     module: RolesModule,
-  }
+  },
 ];
