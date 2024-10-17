@@ -65,7 +65,7 @@ class EvaluationsController {
           {}
         );
 
-      const rawData = await queryRunner.connection.query(query, parameters);
+      let rawData = await queryRunner.connection.query(query, parameters);
 
       if (rawData.length === 0) {
         return res
@@ -73,22 +73,23 @@ class EvaluationsController {
           .json({ data: [], message: "No evaluations found for the user." });
       }
 
-      const response = rawData.map((element) => ({
-        indicator_view_name: element["indicator_view_name"],
-        status: element["status"],
-        indicator_status: element["enable_assessor"],
-        type: Util.getType(element["status"]),
-        value: element["count"],
-        label: `${element["count"]}`,
-        primary_field: element["primary_field"],
-        order: element["indicator_order"],
-      }));
+      let response = [];
+      for (let index = 0; index < rawData.length; index++) {
+        const element = rawData[index];
+        response.push({
+          indicator_view_name: element["indicator_view_name"],
+          status: element["status"],
+          indicator_status: element["enable_assessor"],
+          type: Util.getType(element["status"]),
+          value: element["count"],
+          label: `${element["count"]}`,
+          primary_field: element["primary_field"],
+          order: element["indicator_order"],
+        });
+      }
 
-      const groupedResponse = Util.groupBy(response, "indicator_view_name");
-
-      res
-        .status(200)
-        .json({ data: groupedResponse, message: "User evaluations" });
+      let result = Util.groupBy(response, "indicator_view_name");
+      res.status(200).json({ data: result, message: "User evaluations" });
     } catch (error) {
       res.status(500).json({ message: "Could not access evaluations." });
     }
@@ -1463,19 +1464,29 @@ class EvaluationsController {
           {}
         );
 
-      const highlights = await queryRunner.connection.query(query, parameters);
+      let highlights = await queryRunner.connection.query(query, parameters);
 
-      const data = highlights.map((highlight: any) => ({
-        pending_highlight_comments:
-          highlight.pending_highlight_comments - highlight.total_tpb_comments,
-        solved_with_require_request: highlight.solved_with_require_request,
-        solved_without_require_request:
-          highlight.solved_without_require_request,
-        pending_tpb_decisions: highlight.pending_tpb_decisions,
-        indicator_view_name: highlight.indicator_view_name,
-      }));
+      let data = [];
+      for (let i = 0; i < highlights.length; i++) {
+        const convert = highlights[i];
+        let pending_highlight_comments =
+          convert.pending_highlight_comments - convert.total_tpb_comments;
+        let solved_with_require_request = convert.solved_with_require_request;
+        let solved_without_require_request =
+          convert.solved_without_require_request;
+        let pending_tpb_decisions = convert.pending_tpb_decisions;
+        let indicator_view_name = convert.indicator_view_name;
 
-      res.status(200).json({ data, message: "All highlights status" });
+        data.push({
+          pending_highlight_comments,
+          solved_with_require_request,
+          solved_without_require_request,
+          pending_tpb_decisions,
+          indicator_view_name,
+        });
+      }
+
+      res.status(200).json({ data: data, message: "All highlights status" });
     } catch (error) {
       res.status(500).json({
         message: "Could not retrieve the highlighted status",
