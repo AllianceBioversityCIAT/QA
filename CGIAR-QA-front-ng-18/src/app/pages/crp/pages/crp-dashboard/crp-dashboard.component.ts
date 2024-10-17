@@ -6,7 +6,7 @@ import { AuthenticationService } from '@services/authentication.service';
 import { DashboardService } from '@services/dashboard.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from '@services/alert.service';
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+// import { BsModalService, BsModalRef, ModalModule } from 'ngx-bootstrap/modal';
 
 import { User } from '@models/user.model';
 import { GeneralIndicatorName } from '@models/general-status.model';
@@ -29,6 +29,7 @@ import { Color, NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
   selector: 'app-crp-dashboard',
   standalone: true,
   imports: [CommonModule, RouterModule, NgxSpinnerModule, SortByPipe, StatusChartComponent, CommentsChartComponent, NgxChartsModule],
+  // providers: [BsModalService],
   templateUrl: './crp-dashboard.component.html',
   styleUrls: ['./crp-dashboard.component.scss']
 })
@@ -76,7 +77,7 @@ export default class CrpDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
 
   dashboardModalData: any[];
-  modalRef: BsModalRef;
+  // modalRef: BsModalRef;
 
   public barChartOptions: any = {
     responsive: true,
@@ -121,7 +122,8 @@ export default class CrpDashboardComponent implements OnInit {
     group: ScaleType.Ordinal // Add group property
   };
 
-  constructor(private activeRoute: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private modalService: BsModalService, private commentService: CommentService, private dashService: DashboardService, private alertService: AlertService, private titleService: Title, private spinner: NgxSpinnerService, private indicatorService: IndicatorsService, private _exportTableSE: ExportTablesService) {
+  constructor(private activeRoute: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private commentService: CommentService, private dashService: DashboardService, private alertService: AlertService, private titleService: Title, private spinner: NgxSpinnerService, private indicatorService: IndicatorsService, private _exportTableSE: ExportTablesService) {
+    console.log('crp-dashboard');
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
         this.currentUser = x;
@@ -158,6 +160,8 @@ export default class CrpDashboardComponent implements OnInit {
   }
 
   getEvaluationsStats() {
+    console.log('getEvaluationsStats');
+
     this.showSpinner(this.spinner2);
     this.dashService.getAllDashboardEvaluationsByCRP(this.currentUser.crp.crp_id).subscribe(
       res => {
@@ -279,7 +283,7 @@ export default class CrpDashboardComponent implements OnInit {
     this.dashboardModalData = [];
     this.getCommentStats();
     this.getRawComments(this.currentUser.crp.crp_id);
-    this.modalRef = this.modalService.show(template);
+    // this.modalRef = this.modalService.show(template);
   }
 
   formatStatusCharts() {
