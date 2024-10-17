@@ -4,11 +4,12 @@ import { RouterLink, RouterLinkActive } from '@angular/router';
 import { Chart } from 'chart.js';
 import { ChartColors } from 'src/app/utils/chart-colors'; // Asegúrate de importar ChartColors
 import { ReplacePipe } from '../../../../../pipes/replace.pipe';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-status-chart',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ReplacePipe],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ReplacePipe, NgxChartsModule],
   templateUrl: './status-chart.component.html',
   styleUrls: ['./status-chart.component.scss']
 })
