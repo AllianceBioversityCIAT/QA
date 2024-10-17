@@ -16,7 +16,7 @@ import { WordCounterPipe } from '../pipes/word-counter.pipe';
 import { mergeMap } from 'rxjs/operators';
 // import { HttpClient } from '@angular/common/http';
 
-import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
+// import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 // import { EvaluationsService } from '../services/evaluations.service';
 // import { HighDensityScatterSeries } from 'igniteui-angular-charts';
 // import { convertToObject } from 'typescript';
@@ -36,10 +36,12 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { OrderModule } from 'ngx-order-pipe';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
+
+// ProgressbarModule.forRoot(), ButtonsModule.forRoot(), CollapseModule.forRoot(), PaginationModule.forRoot(), TooltipModule.forRoot(), CarouselModule.forRoot(), BsDropdownModule.forRoot()
 @Component({
   selector: 'app-comment',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, TagsBarComponent, ProgressbarModule.forRoot(), ButtonsModule.forRoot(), CollapseModule.forRoot(), PaginationModule.forRoot(), TooltipModule.forRoot(), CarouselModule.forRoot(), BsDropdownModule.forRoot(), NgxSpinnerModule, OrderModule, FormsModule, Ng2SearchPipeModule, TagsBarComponent],
+  imports: [CommonModule, ReactiveFormsModule, FormsModule, TagsBarComponent, NgxSpinnerModule, FormsModule, TagsBarComponent],
   templateUrl: './comment.component.html',
   styleUrls: ['./comment.component.scss'],
   providers: [WordCounterPipe]
@@ -73,7 +75,7 @@ export class CommentComponent implements OnInit {
   spinner_replies = 'spinner_Comment_Rply';
   spinner_comment = 'spinner_Comment';
 
-  modalRef: BsModalRef;
+  // modalRef: BsModalRef;
   message: string;
 
   quickComments;
@@ -97,7 +99,7 @@ export class CommentComponent implements OnInit {
   @ViewChild('commentContainer') private commentContainer: ElementRef;
   allRoles = Role;
 
-  constructor(private alertService: AlertService, private formBuilder: FormBuilder, private authenticationService: AuthenticationService, private commentService: CommentService, private wordCount: WordCounterPipe, private spinner: NgxSpinnerService, private modalService: BsModalService) {
+  constructor(private alertService: AlertService, private formBuilder: FormBuilder, private authenticationService: AuthenticationService, private commentService: CommentService, private wordCount: WordCounterPipe, private spinner: NgxSpinnerService) {
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
       // console.log(this.currentUser.cycle_ended);
@@ -519,9 +521,9 @@ export class CommentComponent implements OnInit {
     this.currentY = e.clientY;
 
     // template.elementRef.nativeElement.style.top = `${this.currentY}px`;
-    this.modalRef = this.modalService.show(template, {
-      class: 'pos-modal modal-sm'
-    });
+    // this.modalRef = this.modalService.show(template, {
+    //   class: 'pos-modal modal-sm'
+    // });
     document.querySelector('body').style.cssText = `--position-top: ${this.currentY - 300}px`;
     // const modal = this.elem.nativeElement.querySelector('.modal-content');
     // console.log(modal);
@@ -543,12 +545,12 @@ export class CommentComponent implements OnInit {
     let newReplyTypeId = this.formData['comment'].value ? this.replyTypes.accepted_with_comment : this.replyTypes.accepted;
     this.answerComment(true, newReplyTypeId, comment);
     this.replyComment(comment);
-    this.modalRef.hide();
+    // this.modalRef.hide();
   }
 
-  cancel(): void {
-    this.modalRef.hide();
-  }
+  // cancel(): void {
+  //   this.modalRef.hide();
+  // }
 
   replyComment(currentComment) {
     // console.log(currentComment.replyTypeId);

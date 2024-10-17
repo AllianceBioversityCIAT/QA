@@ -1,12 +1,12 @@
 import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { EventEmitter } from '@angular/core';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-tags-bar',
   standalone: true,
-  imports: [CommonModule, TooltipModule.forRoot()],
+  imports: [CommonModule, TooltipModule],
   templateUrl: './tags-bar.component.html',
   styleUrls: ['./tags-bar.component.scss']
 })

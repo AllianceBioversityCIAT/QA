@@ -1,59 +1,27 @@
 <div class="comments-container">
   <!-- <app-on-boarding *ngIf="currentUser.roles[0].id != 3"></app-on-boarding> -->
   <i class="icon-close" (click)="closeComments()" style="cursor: pointer"></i>
-  <div
-    *ngIf="
-      commentsByCol.length &&
-      !availableComment &&
-      currentUser.hasOwnProperty('cycle')
-    "
-  >
+  <div *ngIf="commentsByCol.length && !availableComment && currentUser.hasOwnProperty('cycle')">
     <h2 class="title-section">COMMENTS ON {{ dataFromItem.display_name }}</h2>
     <div>
       <!-- <a>Comment highlighted by {{ dataFromItem }}</a> -->
     </div>
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
-        <div
-          class="highlight-view-section"
-          *ngIf="comment.highlight_comment && !comment.is_deleted"
-        >
-          <img
-            class="fa-shake"
-            src="assets/icons/highlight.svg"
-            alt=""
-            srcset=""
-          />
-          <p class="highligt-header">
-            Comment highlighted by {{ comment.replies.highlight_by }}
-          </p>
+        <div class="highlight-view-section" *ngIf="comment.highlight_comment && !comment.is_deleted">
+          <img class="fa-shake" src="assets/icons/highlight.svg" alt="" srcset="" />
+          <p class="highligt-header">Comment highlighted by {{ comment.replies.highlight_by }}</p>
         </div>
-        <div
-          class="comment-body {{
-            comment.replyType?.id === 1 || comment.replyType?.id === 4
-              ? 'approved'
-              : ''
-          }} {{ comment.replyType?.id === 2 ? 'declined' : '' }} {{
-            comment.replyType?.id === 3 ? 'clarification' : ''
-          }}{{ comment.tpb === 1 ? 'tpb' : '' }}"
-          *ngIf="!comment.is_deleted && comment.is_visible"
-        >
+        <div class="comment-body {{ comment.replyType?.id === 1 || comment.replyType?.id === 4 ? 'approved' : '' }} {{ comment.replyType?.id === 2 ? 'declined' : '' }} {{ comment.replyType?.id === 3 ? 'clarification' : '' }}{{ comment.tpb === 1 ? 'tpb' : '' }}" *ngIf="!comment.is_deleted && comment.is_visible">
           <div>
             <div class="comment-title">
               <div>
                 <span>ADDED BY {{ comment.user.username }} </span>
                 <div>
-                  <p>On {{ comment.createdAt | date : "long" }}</p>
+                  <p>On {{ comment.createdAt | date : 'long' }}</p>
                 </div>
                 <!-- <br *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0"> -->
-                <div
-                  style="padding: 8px 0px"
-                  *ngIf="
-                    comment.cycle.cycle_stage == 2 &&
-                    comment.replies.replies_count == 0 &&
-                    comment.tpb != 1
-                  "
-                >
+                <div style="padding: 8px 0px" *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0 && comment.tpb != 1">
                   <p>
                     Comment made in
                     <span style="font-weight: bold">2nd round</span>
@@ -61,77 +29,29 @@
                 </div>
               </div>
               <div>
-                <i
-                  *ngIf="
-                    (comment.user.id === currentUser.id ||
-                      currentUser.roles[0].description === allRoles.admin ||
-                      userIsLeader) &&
-                    comment.replies.replies_count == '0' &&
-                    !crpComment
-                  "
-                  (click)="
-                    updateComment(
-                      'is_deleted',
-                      comment,
-                      dataFromItem.general_comment_id
-                    )
-                  "
-                  class="icon-remove"
-                ></i>
+                <i *ngIf="(comment.user.id === currentUser.id || currentUser.roles[0].description === allRoles.admin || userIsLeader) && comment.replies.replies_count == '0' && !crpComment" (click)="updateComment('is_deleted', comment, dataFromItem.general_comment_id)" class="icon-remove"></i>
               </div>
             </div>
             <hr style="margin: 0" />
             <p class="comment">
               {{ comment.detail }}
             </p>
-            <app-tags-bar
-              *ngIf="
-                currentUser.roles[0].id != 3 && !tpbUser?.isTPB && !comment.tpb
-              "
-              [comment]="comment"
-              [currentUser]="currentUser"
-              (tagEvent)="toggleTag($event)"
-            ></app-tags-bar>
+            <app-tags-bar *ngIf="currentUser.roles[0].id != 3 && !tpbUser?.isTPB && !comment.tpb" [comment]="comment" [currentUser]="currentUser" (tagEvent)="toggleTag($event)"></app-tags-bar>
 
             <!-- currentUser.indicators.isTPB != 1 -->
-            <a
-              *ngIf="comment.replies.replies_count != '0'"
-              style="cursor: pointer"
-              (click)="comment.isCollapsed = !comment.isCollapsed"
-            >
-              {{ comment.replies.replies_count }} replies:
-            </a>
-            <div
-              [attr.aria-expanded]="!comment.isCollapsed"
-              id="collapseBasic-{{ comment.id }}"
-            >
-              <div [collapse]="!comment.isCollapsed" [isAnimated]="true">
+            <a *ngIf="comment.replies.replies_count != '0'" style="cursor: pointer" (click)="comment.isCollapsed = !comment.isCollapsed"> {{ comment.replies.replies_count }} replies: </a>
+            <div [attr.aria-expanded]="!comment.isCollapsed" id="collapseBasic-{{ comment.id }}">
+              <div>
                 <div class="well well-lg card card-block card-header">
-                  <ng-container
-                    *ngFor="let reply of comment.loaded_replies"
-                    class="replies-container"
-                  >
+                  <ng-container *ngFor="let reply of comment.loaded_replies" class="replies-container">
                     <div class="comment-title">
                       <div style="flex-direction: column">
-                        <p
-                          class="reply accept-msg"
-                          *ngIf="comment.replyType?.id == replyTypes.accepted"
-                        >
-                          ACCEPTED BY {{ reply.user.username }}
-                        </p>
-                        <span
-                          *ngIf="comment.replyType?.id != replyTypes.accepted"
-                          >ADDED BY {{ reply.user.username }}
-                        </span>
-                        <p>On {{ reply.updatedAt | date : "long" }}</p>
+                        <p class="reply accept-msg" *ngIf="comment.replyType?.id == replyTypes.accepted">ACCEPTED BY {{ reply.user.username }}</p>
+                        <span *ngIf="comment.replyType?.id != replyTypes.accepted">ADDED BY {{ reply.user.username }} </span>
+                        <p>On {{ reply.updatedAt | date : 'long' }}</p>
                       </div>
 
-                      <i
-                        style="height: 1.7em"
-                        *ngIf="reply.user.id === currentUser.id"
-                        (click)="updateCommentReply('is_deleted', reply)"
-                        class="icon-remove"
-                      ></i>
+                      <i style="height: 1.7em" *ngIf="reply.user.id === currentUser.id" (click)="updateCommentReply('is_deleted', reply)" class="icon-remove"></i>
                     </div>
                     <hr style="margin: 0" />
                     <p class="reply">
@@ -141,87 +61,32 @@
                 </div>
               </div>
 
-              <ngx-spinner [name]="spinner_replies" [fullScreen]="false">
-              </ngx-spinner>
+              <ngx-spinner [name]="spinner_replies" [fullScreen]="false"> </ngx-spinner>
             </div>
           </div>
 
-          <div
-            *ngIf="
-              currentUser.roles[0].description === allRoles.admin ||
-              !tpbUser?.isTPB ||
-              (userIsLeader && dataFromItem.is_core)
-            "
-            class="highlight-section"
-          >
+          <div *ngIf="currentUser.roles[0].description === allRoles.admin || !tpbUser?.isTPB || (userIsLeader && dataFromItem.is_core)" class="highlight-section">
             <!-- (comment.highlight_comment == false &&
             currentUser.cycle.cycle_stage == 2 &&
             comment.replies.replies_count > 0 &&
             !isCRP) || -->
             <!-- comment.tpb != 1 && -->
-            <button
-              *ngIf="
-                userIsLeader &&
-                comment.replies.replies_count &&
-                comment.highlight_comment == false &&
-                currentUser.cycle.cycle_stage == 2 &&
-                !isCRP &&
-                dataFromItem.is_core == 1 &&
-                comment.tpb == 0
-              "
-              (click)="
-                UpdateHighlightComment(
-                  comment.id,
-                  comment.highlight_comment,
-                  comment
-                )
-              "
-              class="highlight-icon"
-            >
+            <button *ngIf="userIsLeader && comment.replies.replies_count && comment.highlight_comment == false && currentUser.cycle.cycle_stage == 2 && !isCRP && dataFromItem.is_core == 1 && comment.tpb == 0" (click)="UpdateHighlightComment(comment.id, comment.highlight_comment, comment)" class="highlight-icon">
               <img src="assets/icons/bombillo.png" alt="" srcset="" />
               Mark as highlight
             </button>
           </div>
 
           <div *ngIf="!crpComment" class="btn-danger-section">
-            <button
-              *ngIf="
-                userIsLeader &&
-                comment.highlight_comment == true &&
-                currentUser.cycle.cycle_stage == 2
-              "
-              (click)="
-                UpdateHighlightComment(
-                  comment.id,
-                  comment.highlight_comment,
-                  comment
-                )
-              "
-              class="btn btn-danger btn-block"
-            >
+            <button *ngIf="userIsLeader && comment.highlight_comment == true && currentUser.cycle.cycle_stage == 2" (click)="UpdateHighlightComment(comment.id, comment.highlight_comment, comment)" class="btn btn-danger btn-block">
               <img src="assets/icons/apagado.png" />
               Remove highlight
             </button>
           </div>
 
           <!-- crpComment && comment.crp_approved === null && comment.tpb == 0 -->
-          <div
-            *ngIf="
-              crpComment &&
-              comment.crp_approved === null &&
-              comment.tpb == 0 &&
-              currentUser.cycle.cycle_stage == 1
-            "
-            style="flex-direction: row"
-            class="add-comment-container"
-          >
-            <button
-              type="button"
-              class="btn accept"
-              (click)="openModal(confirmModal, $event)"
-            >
-              ACCEPT
-            </button>
+          <div *ngIf="crpComment && comment.crp_approved === null && comment.tpb == 0 && currentUser.cycle.cycle_stage == 1" style="flex-direction: row" class="add-comment-container">
+            <button type="button" class="btn accept" (click)="openModal(confirmModal, $event)">ACCEPT</button>
             <!-- <button type="button" class="btn btn-primary"  (click)="answerComment(true,replyTypes.accepted, comment)" >Open modal</button> -->
             <!-- <br><br>
                         <pre class="card card-block card-header">{{message}}</pre> -->
@@ -229,36 +94,15 @@
               <div class="modal-body text-center">
                 <!-- Cchange -->
                 <h5>Do you want to ACCEPT this comment?</h5>
-                <p>
-                  Before you accept this comment, please make sure you have
-                  updated the information in PRMS reporting
-                </p>
+                <p>Before you accept this comment, please make sure you have updated the information in PRMS reporting</p>
                 <form [formGroup]="commentGroup">
-                  <textarea
-                    maxlength="{{ totalChar }}"
-                    formControlName="comment"
-                    placeholder="Leaving a comment when accepting is optional..."
-                  ></textarea>
+                  <textarea maxlength="{{ totalChar }}" formControlName="comment" placeholder="Leaving a comment when accepting is optional..."></textarea>
                 </form>
-                <button
-                  type="button"
-                  class="btn accept"
-                  (click)="confirm(true, replyTypes.accepted, comment)"
-                >
-                  Accept
-                </button>
-                <button type="button" class="btn btn-white" (click)="cancel()">
-                  Cancel
-                </button>
+                <button type="button" class="btn accept" (click)="confirm(true, replyTypes.accepted, comment)">Accept</button>
+                <!-- <button type="button" class="btn btn-white" (click)="cancel()">Cancel</button> -->
               </div>
             </ng-template>
-            <button
-              type="button"
-              class="btn disagree"
-              (click)="answerComment(false, replyTypes.disagree, comment)"
-            >
-              DISAGREE
-            </button>
+            <button type="button" class="btn disagree" (click)="answerComment(false, replyTypes.disagree, comment)">DISAGREE</button>
 
             <!-- <button  type="button"
                             class="btn request-clarification"
@@ -266,23 +110,8 @@
                             NEEDED</button> -->
           </div>
           <!-- *ngIf="crpComment" -->
-          <div
-            class="done-button"
-            *ngIf="
-              comment.tpb == 1 &&
-              crpComment &&
-              comment.ppu == 0 &&
-              currentUser.cycle.cycle_stage == 2 &&
-              adminUser
-            "
-          >
-            <button
-              class="done-button"
-              (click)="
-                implementedChange(commentsByColSelected?.id, comment.ppu)
-              "
-              primary
-            >
+          <div class="done-button" *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 0 && currentUser.cycle.cycle_stage == 2 && adminUser">
+            <button class="done-button" (click)="implementedChange(commentsByColSelected?.id, comment.ppu)" primary>
               <!-- <span class="tooltiptext"
                 >make sure you have made the changes!
               </span> -->
@@ -291,86 +120,36 @@
             </button>
           </div>
 
-          <div
-            *ngIf="
-              comment.tpb == 1 &&
-              crpComment &&
-              comment.ppu == 1 &&
-              adminUser &&
-              currentUser.cycle.cycle_stage == 2
-            "
-            class="remove-implemented-changes"
-          >
-            <button
-              class="btn remove-implemented-changes btn-block"
-              (click)="
-                implementedChange(commentsByColSelected?.id, comment.ppu)
-              "
-            >
-              <span class="tooltiptext"
-                >Changes have not yet been implemented?</span
-              >
+          <div *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 1 && adminUser && currentUser.cycle.cycle_stage == 2" class="remove-implemented-changes">
+            <button class="btn remove-implemented-changes btn-block" (click)="implementedChange(commentsByColSelected?.id, comment.ppu)">
+              <span class="tooltiptext">Changes have not yet been implemented?</span>
               <img src="assets/icons/marked-done.svg" />
               changes Implemented
             </button>
           </div>
 
           <div
-            *ngIf="
-              crpComment &&
-              comment.replies.replies_count == '0' &&
-              comment.replyTypeId != 1 &&
-              comment.replyTypeId != 4
-            "
+            *ngIf="crpComment && comment.replies.replies_count == '0' && comment.replyTypeId != 1 && comment.replyTypeId != 4"
             class="add-comment-container reply-comment"
             [ngClass]="{
               approved: comment.replyTypeId == 1,
               declined: comment.replyTypeId == 2,
               clarification: comment.replyTypeId == 3,
               tpb_comment: comment.tpb == 1
-            }"
-          >
-            <h2
-              *ngIf="
-                comment.replyTypeId != undefined &&
-                comment.replyTypeId == replyTypes.clarification
-              "
-            >
-              REQUEST {{ replyTypes[comment.replyTypeId] }} ABOUT COMMENT
-            </h2>
+            }">
+            <h2 *ngIf="comment.replyTypeId != undefined && comment.replyTypeId == replyTypes.clarification">REQUEST {{ replyTypes[comment.replyTypeId] }} ABOUT COMMENT</h2>
 
-            <h2
-              *ngIf="
-                comment.replyTypeId != undefined &&
-                comment.replyTypeId == replyTypes.disagree
-              "
-            >
-              {{ replyTypes[comment.replyTypeId] }} COMMENT
-            </h2>
-            <p class="update-reminder" *ngIf="comment.replyTypeId === 3">
-              Be clear with any doubts you may have regarding the comment so
-              that an assessor can help you
-            </p>
+            <h2 *ngIf="comment.replyTypeId != undefined && comment.replyTypeId == replyTypes.disagree">{{ replyTypes[comment.replyTypeId] }} COMMENT</h2>
+            <p class="update-reminder" *ngIf="comment.replyTypeId === 3">Be clear with any doubts you may have regarding the comment so that an assessor can help you</p>
             <!-- * Before you accept this comment, please
                             make sure you have updated the information in MARLO/MEL. -->
             <div *ngIf="comment.hasOwnProperty('crp_response')">
               <form [formGroup]="commentGroup">
-                <textarea
-                  maxlength="{{ totalChar }}"
-                  formControlName="comment"
-                ></textarea>
+                <textarea maxlength="{{ totalChar }}" formControlName="comment"></textarea>
               </form>
               <div class="options-comments">
-                <span class="wordCount"
-                  >{{ getWordCount(formData.comment.value) }} / 1000 words</span
-                >
-                <button
-                  type="button"
-                  class="btn btn-primary"
-                  (click)="replyComment(comment)"
-                >
-                  ADD
-                </button>
+                <span class="wordCount">{{ getWordCount(formData['comment'].value) }} / 1000 words</span>
+                <button type="button" class="btn btn-primary" (click)="replyComment(comment)">ADD</button>
               </div>
             </div>
           </div>
@@ -379,29 +158,17 @@
     </div>
   </div>
   <!-- VIEW ONLY -->
-  <div
-    *ngIf="
-      commentsByCol.length &&
-      !availableComment &&
-      !currentUser.hasOwnProperty('cycle') &&
-      currentUser.cycle_ended
-    "
-  >
+  <div *ngIf="commentsByCol.length && !availableComment && !currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended">
     <h2>COMMENTS ON {{ dataFromItem.display_name }}</h2>
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
-        <div
-          class="comment-body {{
-            comment.crp_approved == '1' ? 'approved' : ''
-          }} {{ comment.crp_approved == '0' ? 'declined' : '' }}"
-          *ngIf="!comment.is_deleted && comment.is_visible"
-        >
+        <div class="comment-body {{ comment.crp_approved == '1' ? 'approved' : '' }} {{ comment.crp_approved == '0' ? 'declined' : '' }}" *ngIf="!comment.is_deleted && comment.is_visible">
           <div>
             <div class="comment-title">
               <div>
                 <span>ADDED BY {{ comment.user.username }} </span>
                 <div>
-                  <p>On {{ comment.updatedAt | date : "long" }}</p>
+                  <p>On {{ comment.updatedAt | date : 'long' }}</p>
                   <p *ngIf="comment.cycle">
                     {{ comment.cycle.cycle_name }}:
                     <strong>{{ comment.cycle.cycle_stage }} </strong>
@@ -415,56 +182,27 @@
               {{ comment.detail }}
             </p>
             <!-- <app-tags-bar [comment] = "comment" [currentUser] = "currentUser" (tagEvent)="toggleTag($event)"></app-tags-bar> -->
-            <a
-              *ngIf="comment.replies.replies_count != '0'"
-              style="cursor: pointer"
-              (click)="comment.isCollapsed = !comment.isCollapsed"
-            >
-              {{ comment.replies.replies_count }} replies:
-            </a>
-            <div
-              [attr.aria-expanded]="!comment.isCollapsed"
-              id="collapseBasic-{{ comment.id }}"
-            >
-              <div [collapse]="!comment.isCollapsed" [isAnimated]="true">
+            <a *ngIf="comment.replies.replies_count != '0'" style="cursor: pointer" (click)="comment.isCollapsed = !comment.isCollapsed"> {{ comment.replies.replies_count }} replies: </a>
+            <div [attr.aria-expanded]="!comment.isCollapsed" id="collapseBasic-{{ comment.id }}">
+              <div>
                 <div class="well well-lg card card-block card-header">
-                  <ng-container
-                    *ngFor="let reply of comment.loaded_replies"
-                    class="replies-container"
-                  >
+                  <ng-container *ngFor="let reply of comment.loaded_replies" class="replies-container">
                     <div class="comment-title">
                       <div style="flex-direction: column">
-                        <p
-                          class="reply accept-msg"
-                          *ngIf="comment.replyType?.id == replyTypes.accepted"
-                        >
-                          ACCEPTED BY {{ reply.user.username }}
-                        </p>
-                        <span
-                          *ngIf="comment.replyType?.id == replyTypes.accepted"
-                          >ADDED BY {{ reply.user.username }}
-                        </span>
-                        <p>On {{ reply.updatedAt | date : "long" }}</p>
+                        <p class="reply accept-msg" *ngIf="comment.replyType?.id == replyTypes.accepted">ACCEPTED BY {{ reply.user.username }}</p>
+                        <span *ngIf="comment.replyType?.id == replyTypes.accepted">ADDED BY {{ reply.user.username }} </span>
+                        <p>On {{ reply.updatedAt | date : 'long' }}</p>
                       </div>
-                      <i
-                        style="height: 2em"
-                        *ngIf="reply.user.id === currentUser.id"
-                        (click)="updateCommentReply('is_deleted', reply)"
-                        class="icon-remove"
-                      ></i>
+                      <i style="height: 2em" *ngIf="reply.user.id === currentUser.id" (click)="updateCommentReply('is_deleted', reply)" class="icon-remove"></i>
                     </div>
                     <hr style="margin: 0" />
-                    <p
-                      class="reply"
-                      *ngIf="comment.replyType?.id != replyTypes.accepted"
-                    >
+                    <p class="reply" *ngIf="comment.replyType?.id != replyTypes.accepted">
                       {{ reply.detail }}
                     </p>
                   </ng-container>
                 </div>
               </div>
-              <ngx-spinner [name]="spinner_replies" [fullScreen]="false">
-              </ngx-spinner>
+              <ngx-spinner [name]="spinner_replies" [fullScreen]="false"> </ngx-spinner>
             </div>
           </div>
         </div>
@@ -478,98 +216,35 @@
   </div>
   <!-- ADD COMMENT -->
 
-  <div
-    class="main-required"
-    *ngIf="
-      currentUser.roles[0].description === allRoles.admin || tpbUser?.isTPB
-    "
-  >
-    <input
-      *ngIf="
-        dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.require_changes != 1 &&
-        commentsByColSelected?.tpb != 1 &&
-        currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0 &&
-        dataFromItem.is_core == 1
-      "
-      class="checkbox-style"
-      type="checkbox"
-      id="require_changes"
-    />
-    <label
-      *ngIf="
-        dataFromItem.require_changes != 1 &&
-        commentsByColSelected?.require_changes != 1 &&
-        commentsByColSelected?.tpb != 1 &&
-        currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0 &&
-        dataFromItem.is_core == 1
-      "
-      class="checkbox-label"
-      for="changes"
-      for="require_changes"
-    >
+  <div class="main-required" *ngIf="currentUser.roles[0].description === allRoles.admin || tpbUser?.isTPB">
+    <input *ngIf="dataFromItem.require_changes != 1 && commentsByColSelected?.require_changes != 1 && commentsByColSelected?.tpb != 1 && currentUser.cycle.cycle_stage == 2 && commentsByCol.length > 0 && dataFromItem.is_core == 1" class="checkbox-style" type="checkbox" id="require_changes" />
+    <label *ngIf="dataFromItem.require_changes != 1 && commentsByColSelected?.require_changes != 1 && commentsByColSelected?.tpb != 1 && currentUser.cycle.cycle_stage == 2 && commentsByCol.length > 0 && dataFromItem.is_core == 1" class="checkbox-label" for="changes" for="require_changes">
       <!-- dataFromItem.require_changes != 1 && dataFromItem.replies_count > 0 -->
-      Click here to indicate if your comment requires changes in the result
-      reported in the PRMS Reporting tool
+      Click here to indicate if your comment requires changes in the result reported in the PRMS Reporting tool
     </label>
   </div>
   <!-- <div>
     {{commentsByColSelected?.tpb}}
   </div> -->
-  <div
-    *ngIf="
-      isCommentAvailable() ||
-      currentUser.roles[0].description === allRoles.admin ||
-      (tpbUser?.isTPB &&
-        commentsByColSelected?.tpb != 1 &&
-        dataFromItem.is_core)
-    "
-    class="add-comment-container"
-  >
+  <div *ngIf="isCommentAvailable() || currentUser.roles[0].description === allRoles.admin || (tpbUser?.isTPB && commentsByColSelected?.tpb != 1 && dataFromItem.is_core)" class="add-comment-container">
     <!-- commentsByCol?.replies.replies_count > 0 -->
     <!-- && dataFromItem.require_changes != 1 -->
     <!-- && limitCommentsByTpb != 1 -->
     <form [formGroup]="commentGroup">
       <!-- <p><span class="textarea" role="textbox" contenteditable maxlength="{{totalChar}}" formControlName="comment"></span></p> -->
-      <textarea
-        maxlength="{{ totalChar }}"
-        formControlName="comment"
-      ></textarea>
+      <textarea maxlength="{{ totalChar }}" formControlName="comment"></textarea>
     </form>
     <div *ngIf="!this.isCRP" class="btn-group w-100" dropdown>
-      <button
-        id="button-animated"
-        dropdownToggle
-        type="button"
-        class="btn btn-primary dropdown-toggle w-100"
-        aria-controls="dropdown-animated"
-      >
-        Quick comment <span class="caret"></span>
-      </button>
-      <ul
-        id="dropdown-animated"
-        *dropdownMenu
-        class="dropdown-menu w-100"
-        role="menu"
-        aria-labelledby="button-animated"
-      >
+      <button id="button-animated" dropdownToggle type="button" class="btn btn-primary dropdown-toggle w-100" aria-controls="dropdown-animated">Quick comment <span class="caret"></span></button>
+      <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
         <li role="menuitem" *ngFor="let quickComment of quickComments">
-          <a
-            class="dropdown-item"
-            (click)="setCommentValue($event, quickComment.comment)"
-            href="#"
-            >{{ quickComment.comment }}</a
-          >
+          <a class="dropdown-item" (click)="setCommentValue($event, quickComment.comment)" href="#">{{ quickComment.comment }}</a>
           <div class="dropdown-divider"></div>
         </li>
       </ul>
     </div>
     <footer>
-      <span class="wordCount"
-        >{{ getWordCount(formData.comment.value) }} / 1000 words</span
-      >
+      <span class="wordCount">{{ getWordCount(formData['comment'].value) }} / 1000 words</span>
       <button type="button" class="btn btn-agree" (click)="addComment()">
         ADD
         <!-- (click)="UpdateRequireChanges(commentsByColSelected?.id, commentByTpb, true)" -->
@@ -577,15 +252,8 @@
     </footer>
   </div>
   <!-- <div class="require-changes-set" *ngIf="dataFromItem.require_changes == 1"> -->
-  <div
-    class="require-changes-set"
-    *ngIf="commentsByColSelected?.require_changes && commentsByCol.length > 0"
-  >
-    <img
-      class="require-changes-img"
-      src="assets/icons/require_changes.svg"
-      alt="require changes"
-    />
+  <div class="require-changes-set" *ngIf="commentsByColSelected?.require_changes && commentsByCol.length > 0">
+    <img class="require-changes-img" src="assets/icons/require_changes.svg" alt="require changes" />
     requires changes
   </div>
   <ngx-spinner [name]="spinner_comment" [fullScreen]="false"> </ngx-spinner>

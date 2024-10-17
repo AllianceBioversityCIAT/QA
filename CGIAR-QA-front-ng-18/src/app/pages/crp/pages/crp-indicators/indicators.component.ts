@@ -27,24 +27,10 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { FilterBooleanPipe } from '../../../../pipes/filter-boolean.pipe';
 import { CustomFilterPipe } from '../../../../pipes/custom-filter.pipe';
-import { Ng2SearchPipeModule } from 'ng2-search-filter';
 @Component({
   selector: 'app-indicators',
   standalone: true,
-  imports: [
-    CommonModule,
-    FormsModule,
-    ReactiveFormsModule,
-    SafeUrlPipe,
-    RouterLink,
-    RouterLinkActive,
-    NgbTooltipModule,
-    NgxSpinnerModule,
-    NgbPaginationModule,
-    FilterBooleanPipe,
-    CustomFilterPipe,
-    Ng2SearchPipeModule
-  ],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SafeUrlPipe, RouterLink, RouterLinkActive, NgbTooltipModule, NgxSpinnerModule, NgbPaginationModule, FilterBooleanPipe, CustomFilterPipe],
   templateUrl: './indicators.component.html',
   styleUrls: ['./indicators.component.scss'],
   providers: [SortByPipe, SafeUrlPipe]
@@ -141,35 +127,26 @@ export default class CRPIndicatorsComponent implements OnInit {
   }
 
   getEvaluationsList(params) {
+    console.log('getEvaluationsList');
     this.showSpinner(this.spinner_name);
-    this.dashService
-      .geListDashboardEvaluations(
-        this.currentUser.id,
-        `qa_${params.type}`,
-        params.primary_column,
-        this.currentUser.crp.crp_id
-      )
-      .subscribe(
-        res => {
-          console.log(res);
-          this.evaluationList = this.orderPipe.transform(
-            res.data,
-            this.reverse ? 'asc' : 'desc',
-            this.order
-          );
-          this.collectionSize = this.evaluationList.length;
-          this.returnedArray = this.evaluationList.slice(0, 10);
-          this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
-          console.log(this.evaluationList);
+    console.log(this.currentUser);
+    this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column, this.currentUser.crp?.crp_id).subscribe(
+      res => {
+        console.log(res);
+        this.evaluationList = this.orderPipe.transform(res.data, this.reverse ? 'asc' : 'desc', this.order);
+        this.collectionSize = this.evaluationList.length;
+        this.returnedArray = this.evaluationList.slice(0, 10);
+        this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
+        console.log(this.evaluationList);
 
-          this.hideSpinner(this.spinner_name);
-        },
-        error => {
-          this.hideSpinner(this.spinner_name);
-          this.returnedArray = [];
-          this.alertService.error(error);
-        }
-      );
+        this.hideSpinner(this.spinner_name);
+      },
+      error => {
+        this.hideSpinner(this.spinner_name);
+        this.returnedArray = [];
+        this.alertService.error(error);
+      }
+    );
   }
 
   pageChanged(event: PageChangedEvent): void {
@@ -180,11 +157,7 @@ export default class CRPIndicatorsComponent implements OnInit {
       startItem,
       endItem
     };
-    this.evaluationList = this.orderPipe.transform(
-      this.evaluationList,
-      this.reverse ? 'asc' : 'desc',
-      this.order
-    );
+    this.evaluationList = this.orderPipe.transform(this.evaluationList, this.reverse ? 'asc' : 'desc', this.order);
     this.returnedArray = this.evaluationList.slice(startItem, endItem);
   }
 
@@ -198,11 +171,7 @@ export default class CRPIndicatorsComponent implements OnInit {
       this.order = value;
     }
     // console.log(this.evaluationList, this.order, this.reverse)
-    this.evaluationList = this.orderPipe.transform(
-      this.evaluationList,
-      this.reverse ? 'asc' : 'desc',
-      this.order
-    );
+    this.evaluationList = this.orderPipe.transform(this.evaluationList, this.reverse ? 'asc' : 'desc', this.order);
     // this.returnedArray = this.evaluationList.slice(this.currentPage.startItem, this.currentPage.endItem);
   }
 
@@ -225,9 +194,7 @@ export default class CRPIndicatorsComponent implements OnInit {
 
   exportComments(item, all?) {
     this.showSpinner(this.spinner_name);
-    let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType
-      .charAt(1)
-      .toUpperCase()}${item ? '-' + item.id : ''}_${moment().format('YYYYMMDD_HHmm')}`;
+    let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}${item ? '-' + item.id : ''}_${moment().format('YYYYMMDD_HHmm')}`;
     console.log('filename', filename);
     if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
 
@@ -316,8 +283,7 @@ export default class CRPIndicatorsComponent implements OnInit {
             checked: false,
             is_active: null
           };
-          batch.is_active =
-            moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
+          batch.is_active = moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
           batch.checked = batch.is_active;
           this.submission_dates.push(batch);
         }

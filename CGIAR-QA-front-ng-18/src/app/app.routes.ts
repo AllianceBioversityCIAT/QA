@@ -44,51 +44,26 @@ export const routes: Routes = [
           },
           {
             path: 'detail/:indicatorId',
-            loadComponent: () =>
-              import('@pages/crp/pages/detail-indicator/detail-indicator.component')
+            loadComponent: () => import('@pages/crp/pages/detail-indicator/detail-indicator.component')
           }
         ]
       }
     ]
   },
+
   {
     path: 'indicator/:type/:primary_column',
     loadComponent: () => import('@pages/crp/pages/crp-indicators/indicators.component'),
     canActivate: [AuthGuard, AvailableGuard],
     data: { roles: [Role.asesor, Role.admin] }
   },
-  // {
-  //   path: 'indicator/:type/:primary_column/detail/:indicatorId',
-  //   loadComponent: () => import('@pages/crp/pages/crp-indicators/indicators.component'),
-  //   canActivate: [AuthGuard],
-  //   data: { roles: [Role.asesor, Role.admin] }
-  // },
-  // {
-  //   path: 'indicator/:type/:primary_column',
-  //   loadComponent: () => import('./pages/indicator/indicator.component'),
-  //   children: [
-  //     {
-  //       // path: '',
-  //       loadComponent: () => import('@pages/crp/pages/crp-indicators/indicators.component'),
-  //       canActivate: [AuthGuard, AvailableGuard],
-  //       data: { roles: [Role.asesor, Role.admin] },
-  //       pathMatch: 'full'
-  //     }
-  //     // {
-  //     //     path: 'detail/:indicatorId',
-  //     //     loadChildren: () => import('./general-detailed-indicator/general-detailed-indicator.module').then(mod => mod.GeneralDetailedIndicatorModule),
-  //     //     children: [
-  //     //       {
-  //     //         path: '',
-  //     //         component: GeneralDetailedIndicatorComponent,
-  //     //         canActivate: [AuthGuard],
-  //     //         data: { roles: [Role.asesor, Role.admin] },
 
-  //     //     },
-  //     //     ]
-  //     // }
-  //   ]
-  // },
+  {
+    path: 'indicator/:type/:primary_column/detail/:indicatorId',
+    loadComponent: () => import('@pages/crp/pages/general-detailed-indicator/general-detailed-indicator.component'),
+    canActivate: [AuthGuard],
+    data: { roles: [Role.asesor, Role.admin] }
+  },
   { path: 'qa-close', loadComponent: () => import('./pages/qa-close/qa-close.component') },
   { path: 'login', loadComponent: () => import('./pages/login/login.component') },
   {
