@@ -1,0 +1,559 @@
+<!-- <div [ngClass]="{'hide': !assessorsChat.isOpen}" class="chat-container">
+    <iframe *ngIf="indicatorType == 'policies'" [src]="chatRooms.policies"></iframe>
+    <iframe *ngIf="indicatorType == 'innovations'" [src]="chatRooms.innovations"></iframe>
+</div>
+<div (click)="toggleAssessorsChat()" class="btn-assessors-chat">Assessors chat</div> -->
+<div class="row link-header">
+  <a class="nav-item nav-link go-back" [routerLinkActive]="['active']"
+    routerLink="/indicator/{{ params.type }}/{{ params.primary_column }}">
+    <i class="icon-go-back"></i> {{ currentType }} List
+  </a>
+  <span *ngIf="isLeadAssessor" class="badge badge-blue">Lead assessor</span>
+</div>
+<!-- <div class="row criteria-container">
+    <div *ngIf="!criteria_loading">
+        <h2>QUALITY ASSESSMENT CRITERIA</h2>
+        <div style="padding-left: 2em;" [innerHTML]="criteriaData.qa_criteria | markdown"></div>
+    </div>
+    <div style="margin:auto;">
+        <span *ngIf="criteria_loading" class="spinner-border spinner-border-sm mr-1"></span>
+    </div>
+</div> -->
+
+<div *ngIf="detailedData && detailedData[0]" class="row detail-header-container">
+  <div style="display: flex; align-items: center">
+    <p class="indicator-item-name">
+      {{ detailedData[0].crp_acronym }} / {{ currentType }} / QA-{{
+      params.type.charAt(0)
+      }}{{ params.type.charAt(1).toUpperCase() }}-{{ detailedData[0].result_code }}
+    </p>
+    <div *ngIf="
+        gnralInfo.evaluation_status && gnralInfo.evaluation_status !== 'New'
+      " class="evaluation-status {{
+        gnralInfo.evaluation_status
+          ? gnralInfo.evaluation_status.toLowerCase()
+          : ''
+      }}">
+      {{ gnralInfo.evaluation_status }}
+    </div>
+  </div>
+
+  <div class="btn-group h-100" dropdown>
+    <button id="button-animated" dropdownToggle type="button" class="btn btn-white dropdown-toggle w-100"
+      aria-controls="dropdown-animated">
+      <div class="status-title">Status:</div>
+      <div class="status">
+        <i [ngClass]="{
+            'icon-in-progress': gnralInfo.status === statusHandler.Complete,
+            'icon-pending': gnralInfo.status === statusHandler.Pending,
+            'icon-quality-assessed':
+              gnralInfo.status === statusHandler.Finalized
+          }">
+        </i>
+        {{ statusNames[gnralInfo.status] }}
+      </div>
+      <span class="caret"></span>
+    </button>
+    <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
+      <li *ngFor="let status of statusNames | keyvalue | slice : 2 : 4" role="menuitem">
+        <a class="dropdown-item" (click)="updateEvaluation(status.key, detailedData)">
+          <i [ngClass]="{
+              'icon-in-progress': status.key === statusHandler.Complete,
+              'icon-pending': status.key === statusHandler.Pending,
+              'icon-quality-assessed': status.key === statusHandler.Finalized
+            }">
+          </i>
+          <span>
+            {{ status.value }}
+          </span>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+  <p *ngIf="!currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended" class="text-danger"
+    style="text-transform: initial; text-align: center">
+    The quality assessment process has ended.
+  </p>
+
+  <div class="buttons" *ngIf="detailedData[0]">
+    <a *ngIf="detailedData[0].public_link" [href]="detailedData[0].public_link" target="_blank">
+      <div tooltip="{{ tooltips.public_link }}" container="body" placement="top" class="btn btn-primary file-button">
+        <i class="icon-public-link"></i>
+      </div>
+    </a>
+
+    <a tooltip="{{ tooltips.redirectTo }}" [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer">
+      <i class="cgiar-logo"></i>
+    </a>    
+
+    <div tooltip="{{ tooltips.download_excel }}" container="body" placement="top" *ngIf="detailedData"
+      (click)="getCommentsExcel(detailedData[0])" class="btn btn-primary file-button">
+      <i class="icon-download-excel"></i>
+    </div>
+  </div>
+</div>
+
+<form #containerElement [formGroup]="tickGroup">
+  <div class="row detail-container">
+    <!--  class="col-sm" -->
+    <div [ngClass]="{
+        'col-sm-12': !activeCommentArr[fieldIndex],
+        'col-sm-8': activeCommentArr[fieldIndex]
+      }">
+      <div *ngIf="currentUser.hasOwnProperty('cycle')">
+        <div class="col data-container">
+          <!-- <div class="row assessment-info-r2" *ngIf="currentUser.cycle.cycle_stage != '1'"
+                        style="margin:0; margin-bottom: 2em;">
+                        <div *ngIf="gnralInfo.status !== statusHandler.Finalized" class="bton-container">
+                            <button type="button" class="btn btn-finalized"
+                                [disabled]="gnralInfo.status === statusHandler.Finalized"
+                                (click)="updateEvaluation('finalized',detailedData)">ASSESSED 2ND ROUND</button>
+                        </div>
+                        <div *ngIf="gnralInfo.status === statusHandler.Finalized" class="bton-container">
+                            <button type="button" class="btn btn-outline-info"
+                                (click)="updateEvaluation('complete',detailedData)">OPEN ASSESSMENT</button>
+                        </div>
+                        <div class="right-side">
+                            <p *ngIf="assessed_by_r1"> <div>Assessed (Round 1) by: </strong> {{assessed_by_r1}}</p>
+                            <p *ngIf="assessed_by_r2"> <strong>Assessed (Round 2) by: </strong> {{assessed_by_r2}}</p>
+                        </div>
+                    </div> -->
+          <div class="assessment-info select-all" *ngIf="
+              gnralInfo.status != statusHandler.Autochecked &&
+              detailedData.length > 0 &&
+              (currentUser.cycle.cycle_stage == '1' ||
+                currentUser.cycle.cycle_stage == '2' ||
+                gnralInfo.evaluation_status === 'Added')
+            ">
+            <div class="left-side">
+              <div>
+                <strong>Assessed by: </strong>
+                <p *ngIf="assessed_by_r1">{{ assessed_by_r1 }}</p>
+              </div>
+              <!-- <div role="menuitem"><a (click)="onChangeSelectAll(true)">Agree with
+                                    previous assessment</a>
+                            </div> -->
+              <!-- <p *ngIf="assessed_by_r2"> <strong>Assessed (Round 2) by: </strong> {{assessed_by_r2}}</p> -->
+              <!-- <button type="button" *ngIf="gnralInfo.status != 'complete'"
+                                (click)="updateEvaluation('complete',detailedData)" class="btn btn-progress">Set
+                                assessment in progress</button>
+                            <button type="button" (click)="onChangeSelectAll(approveAllitems)"
+                                class="btn btn-{{ approveAllitems ? 'agree' : 'danger'}}">Validate / Invalidate
+                                assessment</button> -->
+              <button *ngIf="
+                  approveAllitems && !currentUserHasAssessed && assessed_by_r1
+                " type="button" (click)="onChangeSelectAll(true)" class="btn btn-agree-previous">
+                ✔ Agree with previous assessment
+              </button>
+            </div>
+            <!-- <div class="requires-assessment">
+              <label class="switch" for="second_assesment">
+                <input
+                  type="checkbox"
+                  id="second_assesment"
+                  [disabled]="!gnralInfo.requires_second_assessment"
+                  [checked]="gnralInfo.requires_second_assessment"
+                  (change)="markForSecondAssessment()"
+                />
+                <span class="slider"></span>
+              </label>
+              <div
+                class="checkbox-description"
+                [ngClass]="{
+                  'requires-second-assessment':
+                    gnralInfo.requires_second_assessment
+                }"
+              >
+                Further assessment
+                <i class="icon-second-assessment"></i>
+              </div>
+            </div> -->
+            <button type="button" (click)="onChangeSelectAll(!approveAllitems)"
+              class="btn btn-{{ approveAllitems ? 'uncheck' : 'check' }}">
+              {{ approveAllitems ? "Uncheck all" : "Check all" }}
+            </button>
+          </div>
+
+          <ng-container formArrayName="tick" *ngFor="let summon of formTickData.controls; let i = index">
+            <ng-container *ngIf="detailedData" [formGroupName]="i">
+              <div class="data-row">
+                <div class="col data-value">
+                  <!-- checkbox -->
+                  <div class="row field">
+                    <!-- catch icon -->
+
+                    <div class="field-title">
+                      <h2 *ngIf="
+                          (validateCommentAvility(detailedData[i]) &&
+                            detailedData[i].replies_count == '0') ||
+                          (summon.value.isChecked &&
+                            detailedData[i].enable_comments &&
+                            gnralInfo.status !== statusHandler.Complete)
+                        " [innerHTML]="detailedData[i].display_name | markdown"></h2>
+
+                      <h2 *ngIf="
+                          !validateCommentAvility(detailedData[i]) ||
+                          (detailedData[i].replies_count != '0' &&
+                            !summon.value.isChecked)
+                        " [innerHTML]="detailedData[i].display_name | markdown"></h2>
+                      <!-- Core icon where is_core = 1 -->
+                      <div class="core-field" *ngIf="detailedData[i].is_core">
+                        <img src="../../../assets/icons/icon-core.svg" alt="" />
+                      </div>
+
+                      <!-- <h2 *ngIf="!validateCommentAvility(detailedData[i]) || detailedData[i].replies_count != '0' && !summon.value.isChecked ">
+                                                {{detailedData[i].display_name}}</h2> -->
+
+                      <div *ngIf="detailedData[i].meta_description && false">
+                        <i [tooltip]="popTemplate" container="body" placement="top" class="icon-pdf"
+                          style="height: 2em"></i>
+                        <ng-template #popTemplate>
+                          <div [innerHtml]="detailedData[i].meta_description"></div>
+                        </ng-template>
+                        <!-- TODO - MOVE TO ROUND 2 -->
+                      </div>
+
+                      <div [ngClass]="{
+                          'comment-accepted reply-tag':
+                            detailedData[i].count_accepted_comments > 0
+                        }" style="display: none">
+                        Accepted
+                      </div>
+                      <div [ngClass]="{
+                          'comment-accepted-with-comment reply-tag':
+                            detailedData[i].count_accepted_with_comments > 0
+                        }" style="display: none">
+                        Accepted with comment
+                      </div>
+                      <div [ngClass]="{
+                          'comment-clarification reply-tag':
+                            detailedData[i].count_clarification_comments > 0
+                        }" style="display: none">
+                        Clarification needed
+                      </div>
+                      <div [ngClass]="{
+                          'comment-disagree reply-tag':
+                            detailedData[i].count_disagree_comments > 0
+                        }" style="display: none">
+                        Disagree
+                      </div>
+                    </div>
+                  </div>
+
+                  <span *ngIf="
+                      detailedData[i].hide_original_field &&
+                      detailedData[i].original_field != null
+                    " class="original-field" (click)="
+                      detailedData[i].hide_original_field =
+                        !detailedData[i].hide_original_field
+                    ">Show original value
+                    <i tooltip="{{ tooltips.changes_not_implemented }}" *ngIf="
+                        detailedData[i].original_field ===
+                          detailedData[i].value &&
+                        currentUser.cycle.cycle_stage == 2 &&
+                  detailedData[i].count_disagree_comments != 1 && detailedData[i].is_core && 
+                  detailedData[i].comments_replies_count > 0 && (detailedData[i].count_accepted_comments > 0 ||detailedData[i].count_accepted_with_comments)
+                      " class="material-icons-round">warning</i>
+                  </span>
+
+                  <span *ngIf="
+                      !detailedData[i].hide_original_field &&
+                      detailedData[i].original_field != null
+                    " class="original-field" (click)="
+                      detailedData[i].hide_original_field =
+                        !detailedData[i].hide_original_field
+                    ">Hide original value
+                    <i tooltip="{{ tooltips.changes_not_implemented }}" *ngIf="
+                        detailedData[i].original_field ===
+                          detailedData[i].value &&
+                        currentUser.cycle.cycle_stage == 2 &&
+                  detailedData[i].count_disagree_comments != 1 && detailedData[i].is_core && 
+                  detailedData[i].comments_replies_count > 0 && (detailedData[i].count_accepted_comments > 0 ||detailedData[i].count_accepted_with_comments )
+                      " class="material-icons-round">warning</i>
+                  </span>
+                  <div class="field-container original-field-container" *ngIf="!detailedData[i].hide_original_field"
+                    [@inOutAnimation] [innerHTML]="detailedData[i].original_field"></div>
+                  <!-- <p>testing</p> -->
+                  <!-- data value -->
+
+                  <div class="field-container" *ngIf="
+                      detailedData[i].value &&
+                      detailedData[i].col_name !== 'outcome_description' &&
+                      detailedData[i].col_name !== 'OICR'
+                    " [innerHTML]="detailedData[i].value | markdown"></div>
+                  <div class="field-container" *ngIf="
+                      detailedData[i].value &&
+                      (detailedData[i].col_name === 'outcome_description' ||
+                        detailedData[i].col_name === 'OICR' ||
+                        detailedData[i].col_name === 'evidence_link') &&
+                      detailedData[i].col_name !== 'evidence_link'
+                    " [innerHTML]="detailedData[i].value | markdown"></div>
+
+                  <!-- <div *ngIf="detailedData[i].value && (detailedData[i].col_name === 'OICR' )"
+                                        [innerHTML]="detailedData[i].value">
+                                    </div> -->
+                  <!-- <p *ngIf="detailedData[i].value &&  detailedData[i].col_name === 'evidence_link' ">
+                                        {{detailedData[i].value}}</p> -->
+                  <!-- no data -->
+                  <p *ngIf="
+                      detailedData[i].value === null ||
+                      detailedData[i].value == ''
+                    " class="empty-value">
+                    Data not provided.
+                  </p>
+                  <!-- <p *ngIf="!detailedData[i].value" class="empty-value">Data not provided.</p> -->
+                </div>
+
+                <div *ngIf="
+                    gnralInfo.status != statusHandler.Autochecked &&
+                    !user?.isTPB
+                  " class="check-container">
+                  <div class="check-area">
+                    <input *ngIf="
+                        (validateCommentAvility(detailedData[i]) &&
+                          detailedData[i].replies_count == '0') ||
+                        (summon.value.isChecked &&
+                          detailedData[i].enable_comments &&
+                          !user?.isTPB)
+                      " (change)="onTickChange($event, detailedData[i])" [value]="detailedData[i].field_id"
+                      formControlName="isChecked" type="checkbox" class="custom-control-input"
+                      id="field-{{ detailedData[i].field_id }}" />
+                    <!-- [disabled]="gnralInfo.status === statusHandler.Finalized" -->
+                    <label *ngIf="
+                        (validateCommentAvility(detailedData[i]) &&
+                          detailedData[i].replies_count == '0') ||
+                        (summon.value.isChecked &&
+                          detailedData[i].enable_comments &&
+                          gnralInfo.status !== statusHandler.Complete)
+                      " class="custom-control-label" for="field-{{ detailedData[i].field_id }}">
+                    </label>
+                  </div>
+                </div>
+
+                <!-- comments -->
+
+                <div #commElement style="cursor: pointer" *ngIf="
+                    validateCommentAvility(detailedData[i], true) &&
+                    !summon.value.isChecked &&
+                    gnralInfo.status != statusHandler.Autochecked
+                  " (click)="
+                    showComments(i, detailedData[i], commElement, $event);
+                    comment.updateData(detailedData[i], params)
+                  " class="activate-messages-container {{
+                    detailedData[i].replies_count == '0' ? '' : 'active'
+                  }}">
+                  <i #elRef *ngIf="!detailedData[i].loading" class="icon-message"></i>
+                  <span *ngIf="detailedData[i].loading" class="spinner-border spinner-border-sm mr-1"></span>
+                  <!-- *ngIf="detailedData[i].is_highlight" -->
+                  <div *ngIf="
+                      (detailedData[i].highlight_comment) ||
+                      detailedData[i].is_highlight ||
+                      detailedData[i].highligth_by
+                    " class="highlighted-icon">
+                    <img src="../../../assets/icons/bombillo.png" alt="" />
+                  </div>
+                  <div *ngIf="detailedData[i].replies_count != '0'" class="replies-count">
+                    {{ detailedData[i].replies_count }}
+                  </div>
+                </div>
+
+                <div *ngIf="
+                    !validateCommentAvility(detailedData[i]) ||
+                    summon.value.isChecked
+                  " class="activate-messages-container">
+                  <i *ngIf="!detailedData[i].loading" class="icon-message-inactive"></i>
+                  <span *ngIf="detailedData[i].loading" class="spinner-border spinner-border-sm mr-1"></span>
+
+                  <div *ngIf="detailedData[i].replies_count != '0'" class="replies-count">
+                    {{ detailedData[i].replies_count }}
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+        <!-- <div *ngIf="detailedData" class="col data-container">
+                    <div class="data-row  gnral-commnts">
+                        <h2>General comment:</h2>
+                        <p class="informative-text">
+                            Please take into consideration that this is going to be shown to the CRP.
+                        </p>
+                        <hr style="margin: 0;" class="ng-star-inserted">
+                        <form [formGroup]="generalCommentGroup">
+                            <textarea *ngIf="!general_comment_reply && gnralInfo.status !== statusHandler.Finalized"
+                                [readonly]="gnralInfo.status === statusHandler.Complete" maxlength="{{totalChar}}"
+                                formControlName="general_comment"></textarea>
+                            <p *ngIf="general_comment_reply">{{formData.general_comment.value}}</p>
+                        </form>
+                        <p *ngIf="gnralInfo.general_comment"> <strong>Comment by:</strong>
+                            {{gnralInfo.general_comment_user}} <strong>at:</strong>
+                            {{gnralInfo.general_comment_updatedAt | date: 'long'}}</p>
+                        <span *ngIf="!general_comment_reply && gnralInfo.status !== statusHandler.Finalized"
+                            class="wordCount">{{ getWordCount(formData.general_comment.value) }} / 1000 words</span>
+                        <div class="general-reply-container text-area" *ngFor="let reply of general_comment_reply;">
+                            <p>{{reply.detail}}</p>
+                            <p>Replied by: {{reply.user.username}} </p>
+                        </div>
+                        <div *ngIf="!general_comment_reply && gnralInfo.status !== statusHandler.Finalized"
+                            class="bton-container">
+                            <button type="button"
+                                class="btn btn-{{formData.general_comment.value ? 'green':'red'}}-secondary"
+                                [disabled]="!generalCommentGroup.valid || gnralInfo.status === statusHandler.Complete"
+                                (click)="addGeneralComment('',detailedData)">SAVE</button>
+                        </div>
+
+                    </div>
+                </div> -->
+        <!-- ROUND 2 -->
+
+        <!-- <div class="row" *ngIf="currentUser.cycle.cycle_stage != '1'" style="margin: 1em;">
+                    <div *ngIf="gnralInfo.status !== statusHandler.Finalized && gnralInfo.evaluation_status !== 'Added'"
+                        class="bton-container">
+                        <button type="button" class="btn btn-green-secondary"
+                            [disabled]="gnralInfo.status === statusHandler.Complete"
+                            (click)="updateEvaluation('complete_eval',detailedData)">COMPLETE ASSESSMENT</button>
+                    </div>
+                    <div *ngIf="gnralInfo.status !== statusHandler.Finalized" class="bton-container"
+                        style="margin-left: 1em;">
+                        <button type="button" class="btn btn-green-secondary"
+                            [disabled]="gnralInfo.status === statusHandler.Finalized"
+                            (click)="updateEvaluation('finalized',detailedData)">ASSESSED 2ND ROUND</button>
+                    </div>
+                    <div *ngIf="gnralInfo.status === statusHandler.Finalized" class="bton-container"
+                        style="margin-left: 1em;">
+                        <button type="button" class="btn btn-outline-info"
+                            (click)="updateEvaluation('pending_eval',detailedData)">OPEN ASSESSMENT</button>
+                    </div>
+
+                </div> -->
+      </div>
+      <div *ngIf="!currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended">
+        <div class="col data-container">
+          <ng-container formArrayName="tick" *ngFor="let summon of formTickData.controls; let i = index">
+            <ng-container *ngIf="detailedData" [formGroupName]="i">
+              <div class="data-row">
+                <div class="col">
+                  <div class="row" style="padding: 0">
+                    <h2 [innerHTML]="detailedData[i].display_name | markdown"></h2>
+                    <div>
+                      <i *ngIf="detailedData[i].meta_description" [tooltip]="popTemplate" container="body"
+                        placement="top" class="icon-pdf" style="height: 1.5em"></i>
+                      <ng-template #popTemplate>
+                        <div [innerHtml]="detailedData[i].meta_description"></div>
+                      </ng-template>
+                      <div [ngClass]="{
+                          'approved-no-comment':
+                            detailedData[i].approved_no_comment == 1
+                        }" style="display: none">
+                        Approved without comments
+                      </div>
+                      <div [ngClass]="{
+                          'comment-accepted reply-tag':
+                            detailedData[i].count_accepted_comments > 0
+                        }" style="display: none">
+                        Accepted
+                      </div>
+                      <div [ngClass]="{
+                          'comment-accepted-with-comment reply-tag':
+                            detailedData[i].count_accepted_with_comments > 0
+                        }" style="display: none">
+                        Accepted with comment
+                      </div>
+                      <div [ngClass]="{
+                          'comment-clarification reply-tag':
+                            detailedData[i].count_clarification_comments > 0
+                        }" style="display: none">
+                        Clarification needed
+                      </div>
+                      <div [ngClass]="{
+                          'comment-disagree reply-tag':
+                            detailedData[i].count_disagree_comments > 0
+                        }" style="display: none">
+                        Disagree
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- data value -->
+                  <div *ngIf="
+                      detailedData[i].value &&
+                      detailedData[i].col_name !== 'evidence_link' &&
+                      detailedData[i].col_name !== 'outcome_description' &&
+                      detailedData[i].col_name !== 'OICR' &&
+                      detailedData[i].col_name !== 'number_of_variety'
+                    " [innerHTML]="detailedData[i].value.replace | markdown"></div>
+                  <div *ngIf="
+                      detailedData[i].value &&
+                      (detailedData[i].col_name === 'outcome_description' ||
+                        detailedData[i].col_name === 'OICR' ||
+                        detailedData[i].col_name === 'evidence_link' ||
+                        detailedData[i].col_name !== 'number_of_variety')
+                    " [innerHTML]="detailedData[i].value"></div>
+                  <!-- no data -->
+                  <p *ngIf="
+                      detailedData[i].value === null ||
+                      detailedData[i].value == ''
+                    " class="empty-value">
+                    Data not provided.
+                  </p>
+                </div>
+
+                <!-- comments -->
+                <div #commentsElem style="cursor: pointer" *ngIf="detailedData[i].replies_count != '0'" (click)="
+                    showComments(i, detailedData[i], commentsElem, $event);
+                    comment.updateData(detailedData[i], params)
+                  " class="activate-messages-container {{
+                    detailedData[i].replies_count == '0' ? '' : 'active'
+                  }}">
+                  <i #elRef *ngIf="!detailedData[i].loading" class="icon-message"></i>
+                  <span *ngIf="detailedData[i].loading" class="spinner-border spinner-border-sm mr-1"></span>
+                  <div *ngIf="detailedData[i].is_highlight" class="highlighted-icon">
+                    <img src="../../../assets/icons/bombillo.png" alt="" />
+                  </div>
+
+                  <div *ngIf="detailedData[i].replies_count != '0'" class="replies-count">
+                    {{ detailedData[i].replies_count }}
+                  </div>
+                </div>
+              </div>
+            </ng-container>
+          </ng-container>
+        </div>
+
+        <!-- <div *ngIf="detailedData && gnralInfo.general_comment" class="col data-container">
+                    <div class="data-row  gnral-commnts">
+                        <h2>General comment:</h2>
+                        <p class="informative-text">
+                            Please take into consideration that this is going to be shown to the CRP.
+                        </p>
+                        <hr style="margin: 0;" class="ng-star-inserted">
+                        <p *ngIf="gnralInfo.general_comment"> <strong>Comment by:</strong>
+                            {{gnralInfo.general_comment_user}} <strong>at:</strong>
+                            {{gnralInfo.general_comment_updatedAt | date: 'long'}}</p>
+                        <div class="general-reply-container text-area" *ngFor="let reply of general_comment_reply;">
+                            <p>{{reply.detail}}</p>
+                            <p>Replied by: {{reply.user.username}} </p>
+                        </div>
+
+                    </div>
+                </div> -->
+      </div>
+
+      <ngx-spinner bdColor="rgba(51,51,51,0.3)" [name]="spinner1" color="#fff" size="default" type="square-jelly-box"
+        [fullScreen]="false"></ngx-spinner>
+    </div>
+
+    <div [ngClass]="{ hide: !activeCommentArr[fieldIndex] }" [style.top.px]="currentY"
+      class="col-sm-4 comments-container">
+      <div [ngClass]="{ hide: !renderComments }" class="comments-component-container">
+        <app-comment [detailedData]="detailedData" [isCRP]="false" [userIsLeader]="isLeadAssessor"
+          [original_field]="detailedData[fieldIndex]?.value || null" #comment
+          (parentFun)="hideComments(fieldIndex, detailedData[fieldIndex])" (updateNumCommnts)="
+            updateNumCommnts($event, detailedData[fieldIndex])
+          " (is_highlight)="updateHighlight($event)">
+          ></app-comment>
+      </div>
+    </div>
+  </div>
+</form>

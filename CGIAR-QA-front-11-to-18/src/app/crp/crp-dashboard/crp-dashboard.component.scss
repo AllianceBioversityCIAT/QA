@@ -1,0 +1,149 @@
+@import '@public/variables.scss';
+
+.dashboard-container {
+  .col-progress {
+    .no-results {
+      margin: 1em;
+      text-align: center;
+      font-size: 20px;
+      font-weight: 700;
+      color: black;
+    }
+    .dashboard-grid {
+      display: grid;
+      grid-template-columns: 100%;
+      grid-auto-rows: 320px;
+      padding: 1.5em;
+      background-color: var(--background);
+      border-radius: 8px;
+      .indicator {
+        border-radius: 8px;
+        background-color: white;
+        display: grid;
+        grid-template-columns: 40% 40% 10% 10%;
+        grid-template-rows: 100%;
+        padding: 0.5em;
+        .status-chart {
+          app-status-chart {
+            max-width: 100%;
+            max-height: 60%;
+          }
+        }
+        .pending-responses {
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          .total-pending {
+            text-align: center;
+            font-size: 7vw;
+            font-family: $primary_font;
+            font-weight: bold;
+            color: var(--color-pending);
+          }
+          .btn-response-pending {
+            width: 90%;
+            height: auto;
+            font-size: $font-xs;
+            font-weight: $semibold;
+            color: var(--color-dark-text-btn);
+            white-space: normal;
+          }
+          .btn-response-pending.disabled {
+            color: var(--white);
+          }
+        }
+      }
+    }
+  }
+  .col-programs {
+    ul {
+      background: var(--gray-primary);
+      border-radius: 1em;
+    }
+    .list-group {
+      .list-group-item {
+        cursor: pointer;
+        border: transparent;
+        background-color: transparent;
+      }
+      .list-group-item.active {
+        background-color: transparent;
+        color: var(--green-primary);
+        font-weight: $bold;
+      }
+    }
+    .programs-form {
+      margin: 0 $size-lg;
+      .custom-control-input:checked ~ .custom-control-label::before {
+        color: var(--white);
+        border-color: var(--yellow-primary);
+        background-color: var(--yellow-primary);
+        border-radius: 50%;
+      }
+    }
+  }
+
+  .card {
+    .card-body {
+      .no-data {
+        text-align: center;
+        margin-bottom: 2em;
+        // font-weight: bold;
+        .circle {
+          margin-bottom: 0;
+          opacity: 0.5;
+        }
+      }
+      .no-available {
+        opacity: 0.5;
+      }
+      .example-container {
+        margin-bottom: 2em;
+        justify-content: center;
+        p {
+          margin: 0 15px;
+          line-height: $size-lg;
+          align-self: center;
+        }
+        .circle {
+          height: $size-lg;
+          width: $size-lg;
+          margin: 0;
+          border-radius: 50%;
+        }
+        .complete {
+          background-color: var(--green-primary);
+        }
+        .pending {
+          background-color: var(--red-primary);
+        }
+        .finalized {
+          background-color: var(--blue-secondary);
+        }
+        .unanswered {
+          background-color: var(--gray-secondary);
+        }
+      }
+      .progress-container {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 1.5em;
+        p {
+          margin: 10px 0px;
+          text-transform: capitalize;
+        }
+        a {
+          margin-left: auto;
+          text-align: right;
+          margin-top: 1em;
+          text-decoration: underline;
+          cursor: pointer;
+        }
+        .progress {
+          height: $size-lg;
+        }
+      }
+    }
+  }
+}
