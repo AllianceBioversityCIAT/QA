@@ -791,6 +791,7 @@ class Util {
         version: element["version"],
         comment_by: element["comment_by"],
         assessed_r2: element["assessed_r2"],
+        submission_date: moment(element["submission_date"]).format("ll"),
         stage: element.hasOwnProperty("stage") ? element["stage"] : undefined,
         fp: element.hasOwnProperty("fp") ? element["fp"] : undefined,
         is_highlight: element["is_highlight"],
