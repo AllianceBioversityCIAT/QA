@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { rolesGuard } from './guards/roles.guard';
+import { AuthGuard } from '@helpers/auth.guard';
+import { Role } from '@models/roles.model';
+import CrpDashboardComponent from '@pages/crp/pages/crp-dashboard/crp-dashboard.component';
 
 export const routes: Routes = [
   {
@@ -20,32 +23,31 @@ export const routes: Routes = [
   },
   {
     path: 'crp',
-    loadComponent: () => import('./pages/crp/crp.component')
-    // children: [
-    // {
-    // path: 'dashboard',
-    // loadComponent: () => import('./pages/crp-dashboard/crp-dashboard.component')
-    // canActivate: [AuthGuard],
-    // data: { roles: [Role.crp, Role.admin] },
-    // component: CrpDashboardComponent,
-    // }
-    //   {
-    //     path: 'indicator/:type/:primary_column',
-    //     loadComponent: () => import('./pages/detail-indicator/detail-indicator.component'),
-    // children:[
-    //   {
-    //     path: '',
-    //     canActivate: [AuthGuard],
-    //     data: { roles: [Role.crp, Role.admin] },
-    //     component: CRPIndicatorsComponent,
-    // },
-    // {
-    //     path: 'detail/:indicatorId',
-    //     component: DetailIndicatorComponent
-    // },
-    // ]
-    //   }
-    // ]
+    loadComponent: () => import('./pages/crp/crp.component'),
+    children: [
+      {
+        path: 'dashboard',
+        loadComponent: () => import('@pages/crp/pages/crp-dashboard/crp-dashboard.component'),
+        canActivate: [AuthGuard],
+        data: { roles: [Role.crp, Role.admin] }
+      },
+      {
+        path: 'indicator/:type/:primary_column',
+        loadComponent: () => import('@pages/crp/pages/detail-indicator/detail-indicator.component'),
+        children: [
+          {
+            path: '',
+            canActivate: [AuthGuard],
+            data: { roles: [Role.crp, Role.admin] },
+            loadComponent: () => import('@pages/crp/pages/crp-indicators/indicators.component')
+          },
+          {
+            path: 'detail/:indicatorId',
+            loadComponent: () => import('@pages/crp/pages/detail-indicator/detail-indicator.component')
+          }
+        ]
+      }
+    ]
   },
   {
     path: 'indicator/:type/:primary_column',

@@ -9,13 +9,15 @@
       "@shared/*": ["src/app/_shared/*"],
       "@models/*": ["src/app/_models/*"],
       "@services/*": ["src/app/services/*"],
-      "@pipes/*": ["src/app/_pipes/*"],
+      "@pipes/*": ["src/app/pipes/*"],
       "@directives/*": ["src/app/_directives/*"],
       "@guards/*": ["src/app/_guards/*"],
       "@resolvers/*": ["src/app/_resolvers/*"],
-      "@utils/*": ["src/app/_utils/*"],
+      "@utils/*": ["src/app/utils/*"],
       "@interfaces/*": ["src/app/_interfaces/*"],
-      "@enums/*": ["src/app/_enums/*"]
+      "@enums/*": ["src/app/_enums/*"],
+      "@helpers/*": ["src/app/_helpers/*"],
+      "@pages/*": ["src/app/pages/*"]
     },
     "outDir": "./dist/out-tsc",
     "strict": false,

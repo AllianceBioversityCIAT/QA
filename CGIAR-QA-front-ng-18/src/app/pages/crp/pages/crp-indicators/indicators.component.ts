@@ -2,34 +2,37 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { NgxSpinnerService } from 'ngx-spinner';
-import { PageChangedEvent } from 'ngx-bootstrap/pagination';
+import { PageChangedEvent, PaginationModule } from 'ngx-bootstrap/pagination';
 import { OrderPipe } from 'ngx-order-pipe';
 
-import { DashboardService } from "../../services/dashboard.service";
-import { AuthenticationService } from "../../services/authentication.service";
-import { AlertService } from '../../services/alert.service';
+import { DashboardService } from '@services/dashboard.service';
+import { AuthenticationService } from '@services/authentication.service';
+import { AlertService } from '@services/alert.service';
 import { CommentService } from 'src/app/services/comment.service';
 
-import { User } from '../../_models/user.model';
-import { GeneralIndicatorName, StatusIconCRP } from 'src/app/_models/general-status.model';
+import { User } from '@models/user.model';
+import { GeneralIndicatorName, StatusIconCRP } from '@models/general-status.model';
 
-import { saveAs } from "file-saver";
+import { saveAs } from 'file-saver';
 import { Title } from '@angular/platform-browser';
 import { SortByPipe } from 'src/app/pipes/sort-by.pipe';
 import { SafeUrlPipe } from 'src/app/pipes/safe-url.pipe';
 
-import * as moment from 'moment';
-import { FormBuilder } from '@angular/forms';
+import moment from 'moment';
+import { FormBuilder, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { IndicatorsService } from 'src/app/services/indicators.service';
 import { ExportTablesService } from 'src/app/services/export-tables.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-indicators',
+  standalone: true,
+  imports: [CommonModule, PaginationModule.forRoot(), FormsModule, ReactiveFormsModule, SafeUrlPipe],
   templateUrl: './indicators.component.html',
   styleUrls: ['./indicators.component.scss'],
   providers: [SortByPipe, SafeUrlPipe]
 })
-export class CRPIndicatorsComponent implements OnInit {
+export default class CRPIndicatorsComponent implements OnInit {
   indicatorType: string;
   indicatorTypeName: string;
   evaluationList: any[];
@@ -39,15 +42,15 @@ export class CRPIndicatorsComponent implements OnInit {
   currentPage = {
     startItem: 0,
     endItem: 10
-  }
+  };
   stageHeaderText = {
     policies: 'Level',
     oicr: 'Maturity Stage',
     innovations: 'Stage',
     melia: 'Type',
     publications: 'ISI',
-    milestones: 'Milestone Status',
-  }
+    milestones: 'Milestone Status'
+  };
   statusIconCRP = StatusIconCRP;
   maxSize = 5;
   pageSize = 4;
@@ -57,7 +60,7 @@ export class CRPIndicatorsComponent implements OnInit {
 
   hasTemplate = false;
 
-  notProviedText = '<No provided>'
+  notProviedText = '<No provided>';
 
   order: string = 'status';
   configTemplate: string;
@@ -69,13 +72,13 @@ export class CRPIndicatorsComponent implements OnInit {
   rsaFilter: boolean = false;
 
   showAcceptedComments = false;
-  showDisagreedComments = false
+  showDisagreedComments = false;
   showHighlightedComments = false;
   showTpbComments = false;
   showImplementedDecisions = false;
 
-
-  constructor(private activeRoute: ActivatedRoute,
+  constructor(
+    private activeRoute: ActivatedRoute,
     private router: Router,
     private dashService: DashboardService,
     private formBuilder: FormBuilder,
@@ -87,7 +90,8 @@ export class CRPIndicatorsComponent implements OnInit {
     // private orderPipe: OrderPipe,
     private titleService: Title,
     private alertService: AlertService,
-    private _exportTableSE: ExportTablesService) {
+    private _exportTableSE: ExportTablesService
+  ) {
     this.getBatchDates();
 
     this.activeRoute.params.subscribe(routeParams => {
@@ -97,35 +101,34 @@ export class CRPIndicatorsComponent implements OnInit {
       this.btonFilterForm = this.formBuilder.group({
         radio: 'A'
       });
-      this.indicatorType = routeParams.type;
-      this.configTemplate = this.currentUser.config[`${this.indicatorType}_guideline`]
+      this.indicatorType = routeParams['type'];
+      this.configTemplate = this.currentUser.config[`${this.indicatorType}_guideline`];
       this.indicatorTypeName = GeneralIndicatorName[`qa_${this.indicatorType}`];
       // this.indicatorTypeName = this.indicatorType.charAt(0).toUpperCase() + this.indicatorType.slice(1);
       this.getEvaluationsList(routeParams);
       /** set page title */
       this.titleService.setTitle(`List of ${this.indicatorTypeName}`);
-    })
+    });
   }
 
   ngOnInit() {
-    this.showColumsByDefault()
+    this.showColumsByDefault();
   }
 
   showColumsByDefault() {
     if (this.currentUser.cycle.cycle_stage == 2) {
-      this.showHighlightedComments = true
-      this.showTpbComments = true
-      this.showImplementedDecisions = true
+      this.showHighlightedComments = true;
+      this.showTpbComments = true;
+      this.showImplementedDecisions = true;
     }
   }
-
 
   getEvaluationsList(params) {
     this.showSpinner(this.spinner_name);
     this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column, this.currentUser.crp.crp_id).subscribe(
       res => {
-        console.log(res)
-        this.evaluationList = this.orderPipe.transform(res.data, (this.reverse) ? 'asc' : 'desc', this.order);
+        console.log(res);
+        this.evaluationList = this.orderPipe.transform(res.data, this.reverse ? 'asc' : 'desc', this.order);
         this.collectionSize = this.evaluationList.length;
         this.returnedArray = this.evaluationList.slice(0, 10);
         this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
@@ -135,10 +138,10 @@ export class CRPIndicatorsComponent implements OnInit {
       },
       error => {
         this.hideSpinner(this.spinner_name);
-        this.returnedArray = []
+        this.returnedArray = [];
         this.alertService.error(error);
       }
-    )
+    );
   }
 
   pageChanged(event: PageChangedEvent): void {
@@ -148,11 +151,10 @@ export class CRPIndicatorsComponent implements OnInit {
     this.currentPage = {
       startItem,
       endItem
-    }
-    this.evaluationList = this.orderPipe.transform(this.evaluationList, (this.reverse) ? 'asc' : 'desc', this.order);
+    };
+    this.evaluationList = this.orderPipe.transform(this.evaluationList, this.reverse ? 'asc' : 'desc', this.order);
     this.returnedArray = this.evaluationList.slice(startItem, endItem);
   }
-
 
   setOrder(value: string) {
     if (value == null) {
@@ -164,7 +166,7 @@ export class CRPIndicatorsComponent implements OnInit {
       this.order = value;
     }
     // console.log(this.evaluationList, this.order, this.reverse)
-    this.evaluationList = this.orderPipe.transform(this.evaluationList, (this.reverse) ? 'asc' : 'desc', this.order);
+    this.evaluationList = this.orderPipe.transform(this.evaluationList, this.reverse ? 'asc' : 'desc', this.order);
     // this.returnedArray = this.evaluationList.slice(this.currentPage.startItem, this.currentPage.endItem);
   }
 
@@ -176,27 +178,26 @@ export class CRPIndicatorsComponent implements OnInit {
     let pdf_url;
     switch (type) {
       case 'AR':
-        pdf_url = this.currentUser.config[0]["anual_report_guideline"];
+        pdf_url = this.currentUser.config[0]['anual_report_guideline'];
         break;
       default:
         pdf_url = this.currentUser.config[0][`${type}_guideline`];
         break;
     }
-    window.open(pdf_url, "_blank");
+    window.open(pdf_url, '_blank');
   }
 
   exportComments(item, all?) {
     this.showSpinner(this.spinner_name);
-    let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}${(item) ? '-' + item.id : ''}_${moment().format('YYYYMMDD_HHmm')}`
+    let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}${item ? '-' + item.id : ''}_${moment().format('YYYYMMDD_HHmm')}`;
     console.log('filename', filename);
-    if (this.authenticationService.getBrowser() === 'Safari')
-      filename += `.xlsx`
+    if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
 
-    this.commentService.getCommentsExcel({ evaluationId: (item) ? item.evaluation_id : undefined, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.indicatorType}`, crp_id: all ? this.currentUser.crp.crp_id : undefined }).subscribe(
+    this.commentService.getCommentsExcel({ evaluationId: item ? item.evaluation_id : undefined, id: this.currentUser.id, name: filename, indicatorName: `qa_${this.indicatorType}`, crp_id: all ? this.currentUser.crp.crp_id : undefined }).subscribe(
       res => {
-        console.log(res)
+        console.log(res);
         // let blob = new Blob([res], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet; charset=utf-8" });
-        this._exportTableSE.exportExcel(res, filename)
+        this._exportTableSE.exportExcel(res, filename);
         this.hideSpinner(this.spinner_name);
       },
       error => {
@@ -204,7 +205,7 @@ export class CRPIndicatorsComponent implements OnInit {
         this.hideSpinner(this.spinner_name);
         this.alertService.error(error);
       }
-    )
+    );
   }
 
   returnListName(indicator: string, type: string) {
@@ -212,24 +213,24 @@ export class CRPIndicatorsComponent implements OnInit {
     if (type === 'header') {
       switch (indicator) {
         case 'slo':
-          r = 'Evidence on Progress towards SRF targets'
+          r = 'Evidence on Progress towards SRF targets';
           break;
 
         default:
-          r = `List of ${this.indicatorTypeName}`
+          r = `List of ${this.indicatorTypeName}`;
           break;
       }
     } else if (type === 'list') {
       switch (indicator) {
         case 'slo':
-          r = 'SLO target'
+          r = 'SLO target';
           break;
         case 'milestones':
-          r = 'Milestone statement'
+          r = 'Milestone statement';
           break;
 
         default:
-          r = `Title`
+          r = `Title`;
           break;
       }
     }
@@ -239,18 +240,18 @@ export class CRPIndicatorsComponent implements OnInit {
 
   verifyIfOrderByStatus() {
     if (this.indicatorService.getOrderByStatus() != null) {
-      this.setOrder('status')
+      this.setOrder('status');
     }
   }
   formatBrief(brief: string) {
     if (brief) {
-      return brief.split("<p>")[1] ? brief.split("<p>")[1].split("</p>")[0] : brief;
+      return brief.split('<p>')[1] ? brief.split('<p>')[1].split('</p>')[0] : brief;
     }
-    return;
+    return '';
   }
 
   fixAccent(value) {
-    return value ? value.replace("´", "'") : value;
+    return value ? value.replace('´', "'") : value;
   }
 
   savePageList() {
@@ -259,20 +260,21 @@ export class CRPIndicatorsComponent implements OnInit {
   }
 
   getBatchDates() {
-    this.commentService.getBatches().subscribe(res => {
-
-      const batches = res.data;
-      for (let index = 0; index < batches.length; index++) {
-        let batch = { date: moment(batches[index].submission_date).format('ll'), batch_name: +batches[index].batch_name, checked: false, is_active: null };
-        batch.is_active = moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
-        batch.checked = batch.is_active;
-        this.submission_dates.push(batch);
+    this.commentService.getBatches().subscribe(
+      res => {
+        const batches = res.data;
+        for (let index = 0; index < batches.length; index++) {
+          let batch = { date: moment(batches[index].submission_date).format('ll'), batch_name: +batches[index].batch_name, checked: false, is_active: null };
+          batch.is_active = moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
+          batch.checked = batch.is_active;
+          this.submission_dates.push(batch);
+        }
+      },
+      error => {
+        console.log(error);
+        this.alertService.error(error);
       }
-    }, error => {
-      console.log(error)
-      this.alertService.error(error);
-    }
-    )
+    );
   }
 
   onDateChange(e, subDate) {
@@ -285,9 +287,9 @@ export class CRPIndicatorsComponent implements OnInit {
   }
 
   /***
-   * 
-   *  Spinner 
-   * 
+   *
+   *  Spinner
+   *
    ***/
   showSpinner(name: string) {
     this.spinner.show(name);
@@ -296,6 +298,4 @@ export class CRPIndicatorsComponent implements OnInit {
   hideSpinner(name: string) {
     this.spinner.hide(name);
   }
-
-
 }

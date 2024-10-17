@@ -7,11 +7,10 @@ import { DashboardService } from 'src/app/services/dashboard.service';
   styleUrls: ['./timeline.component.scss']
 })
 export class TimelineComponent implements OnInit {
-
   batches = null;
   timelineState = null;
 
-  constructor(private dashboardService: DashboardService) { }
+  constructor(private dashboardService: DashboardService) {}
 
   ngOnInit(): void {
     this.getBatches();
@@ -22,13 +21,13 @@ export class TimelineComponent implements OnInit {
     this.dashboardService.getAllBatches().subscribe(res => {
       console.log({ res });
       this.batches = res.data;
-    })
+    });
   }
 
   getState() {
     this.dashboardService.getAllBatches().subscribe(res => {
-      let datetime = res.data
-      const currentDate = moment();
+      let datetime = res.data;
+      const currentDate = moment.default();
       if (currentDate.isBefore(datetime[2].assessors_start_date)) {
         this.timelineState = 'before';
       } else if (currentDate.isBetween(datetime[2].assessors_start_date, datetime[2].assessors_end_date)) {
@@ -36,6 +35,6 @@ export class TimelineComponent implements OnInit {
       } else {
         this.timelineState = 'after';
       }
-    })
+    });
   }
 }
