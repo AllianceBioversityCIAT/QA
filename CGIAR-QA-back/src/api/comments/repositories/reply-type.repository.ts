@@ -7,4 +7,8 @@ export class ReplyTypeRepository extends Repository<ReplyType> {
   constructor(private dataSource: DataSource) {
     super(ReplyType, dataSource.createEntityManager());
   }
+
+  async findOneById(id: number): Promise<ReplyType | null> {
+    return await this.findOne({ where: { id } });
+  }
 }

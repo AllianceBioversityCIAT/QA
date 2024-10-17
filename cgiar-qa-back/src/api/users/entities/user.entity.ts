@@ -42,13 +42,13 @@ export class Users {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Comments, (comment) => comment.user)
+  @OneToMany(() => Comments, (comment) => comment.obj_user)
   comments: Comments[];
 
-  @OneToMany(() => CommentsReplies, (reply) => reply.user)
+  @OneToMany(() => CommentsReplies, (reply) => reply.obj_user)
   replies: CommentsReplies[];
 
-  @OneToMany(() => Tags, (tag) => tag.tagType)
+  @OneToMany(() => Tags, (tag) => tag.obj_user)
   tags: Tags[];
 
   @UpdateDateColumn()
@@ -84,4 +84,7 @@ export class Users {
     name: 'is_active',
   })
   is_active: boolean;
+
+  @OneToMany(() => Comments, (c) => c.obj_highlight_by)
+  obj_highlight_by: Comments[];
 }

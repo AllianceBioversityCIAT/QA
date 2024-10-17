@@ -6,6 +6,7 @@ import {
   UpdateDateColumn,
   ManyToOne,
   OneToMany,
+  JoinColumn,
 } from 'typeorm';
 import { Evaluations } from '../../evaluations/entities/evaluation.entity';
 import { IndicatorsMeta } from '../../indicators/entities/indicators-meta.entity';
@@ -26,8 +27,12 @@ export class Comments {
   @ManyToOne(() => IndicatorsMeta, (meta) => meta.comments, { nullable: true })
   meta: IndicatorsMeta;
 
+  @Column({ name: 'user' })
+  user: number;
+
   @ManyToOne(() => Users, (user) => user.comments)
-  user: Users;
+  @JoinColumn({ name: 'user' })
+  obj_user: Users;
 
   @ManyToOne(() => Cycle, (cycle) => cycle.comments)
   cycle: Cycle;
@@ -38,7 +43,7 @@ export class Comments {
   @OneToMany(() => CommentsReplies, (comment) => comment.user)
   replies: CommentsReplies[];
 
-  @OneToMany(() => Tags, (tag) => tag.comment)
+  @OneToMany(() => Tags, (tag) => tag.obj_comment)
   tags: Tags[];
 
   @Column({ nullable: true })
@@ -71,14 +76,18 @@ export class Comments {
   @Column({ nullable: true, type: 'tinyint', default: 0 })
   highlight_comment: number;
 
-  @ManyToOne(() => Users, (user) => user.comments, { nullable: true })
-  highlight_by: Users;
+  @Column({ nullable: true, type: 'int', name: 'highlight_by' })
+  highlight_by: number;
+
+  @ManyToOne(() => Users, (user) => user.id)
+  @JoinColumn({ name: 'highlight_by' })
+  obj_highlight_by: Users;
 
   @Column({ nullable: true, type: 'tinyint', default: 0 })
-  require_changes: number;
+  require_changes: boolean;
 
   @Column({ nullable: true, type: 'tinyint', default: 0 })
-  tpb: number;
+  tpb: boolean;
 
   @Column({ nullable: true, type: 'tinyint', default: 0 })
   ppu: number;

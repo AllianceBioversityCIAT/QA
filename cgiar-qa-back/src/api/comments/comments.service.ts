@@ -199,7 +199,7 @@ export class CommentsService {
           comment.is_deleted = !noComment;
           comment.approved_no_comment = noComment;
           comment.detail = null;
-          comment.user = user;
+          comment.user = user.id;
         } else {
           comment = this._commentsRepository.createComment(
             user,

@@ -2,7 +2,7 @@ SELECT
     DISTINCT r.id AS id,
     (
         SELECT
-            ci.official_code
+            DISTINCT ci.official_code
         FROM
             prdb.clarisa_initiatives ci
         WHERE
@@ -20,6 +20,7 @@ SELECT
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status_id AS submitted,
+    r.version_id AS version,
     r.is_replicated AS is_replicated,
     r.in_qa AS in_qa,
     r.result_code AS result_code,
@@ -68,7 +69,7 @@ SELECT
                             AND e1.is_active = 1
                             AND e1.gender_related = 1
                     ),
-                    ''
+                    '<Not applicable>'
                 )
             )
         FROM
@@ -98,7 +99,7 @@ SELECT
                             AND e1.is_active = 1
                             AND e1.youth_related = 1
                     ),
-                    ''
+                    '<Not applicable>'
                 )
             )
         FROM
@@ -128,7 +129,7 @@ SELECT
                             AND e1.is_active = 1
                             AND e1.nutrition_related = 1
                     ),
-                    ''
+                    '<Not applicable>'
                 )
             )
         FROM
@@ -158,7 +159,7 @@ SELECT
                             AND e1.is_active = 1
                             AND e1.environmental_biodiversity_related = 1
                     ),
-                    ''
+                    '<Not applicable>'
                 )
             )
         FROM
@@ -188,7 +189,7 @@ SELECT
                             AND e1.is_active = 1
                             AND e1.poverty_related = 1
                     ),
-                    ''
+                    '<Not applicable>'
                 )
             )
         FROM
@@ -712,143 +713,500 @@ SELECT
         ),
         '<Not applicable>'
     ) AS evidence,
+    (
+        SELECT
+            GROUP_CONCAT(
+                '<li>',
+                rkpm1.source,
+                ': ',
+                rkpm1.online_year,
+                '</li>' SEPARATOR ' '
+            )
+        FROM
+            prdb.results_kp_metadata rkpm1
+        WHERE
+            rkpm1.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm1.is_active = 1
+    ) AS online_date,
+    IF((rkp.is_melia = 1), 'Yes', 'No') AS is_melia,
+    IF(
+        (rkp.is_melia = 1),
+        IF(
+            (rkp.melia_previous_submitted = 1),
+            'Yes',
+            'No'
+        ),
+        '<Not applicable>'
+    ) AS melia_previous_submitted,
+    IFNULL(
+        CONCAT(
+            'https://cgspace.cgiar.org/handle/',
+            rkp.handle
+        ),
+        '<Not applicable>'
+    ) AS handle,
     IFNULL(
         (
             SELECT
                 GROUP_CONCAT(
                     '<li>',
-                    '<b>',
-                    at.name,
-                    '</b>',
-                    IF(
-                        ra.actor_type_id = 5,
-                        CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            ra.other_actor_type
-                        ),
-                        ''
-                    ),
-                    IF(
-                        (ra.sex_and_age_disaggregation != 1),
-                        CONCAT(
-                            '<br>',
-                            'Women: ',
-                            ra.women,
-                            ' - ',
-                            'Women youth: ',
-                            ra.women_youth,
-                            '<br>',
-                            'Men: ',
-                            ra.men,
-                            ' - ',
-                            'Men youth: ',
-                            ra.men_youth,
-                            '<br>',
-                            'How many: ',
-                            ra.how_many
-                        ),
-                        CONCAT(
-                            '<br>',
-                            'Sex and age disaggregation does not apply',
-                            '<br>',
-                            'How many: ',
-                            ra.how_many
-                        )
-                    ),
-                    '</li>' SEPARATOR '<br>'
+                    rkpm2.source,
+                    ': ',
+                    rkpm2.year,
+                    '</li>' SEPARATOR ' '
                 )
             FROM
-                prdb.result_actors ra
-                LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
+                prdb.results_kp_metadata rkpm2
             WHERE
-                ra.result_id = r.id
-                AND ra.is_active = 1
+                rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpm2.is_active = 1
         ),
         '<Not applicable>'
-    ) AS actors,
+    ) AS issue_date,
+    (
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    rka.author_name,
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_kp_authors rka
+            WHERE
+                rka.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rka.is_active = 1
+        )
+    ) AS authors,
+    IFNULL(rkp.knowledge_product_type, '<Not applicable>') AS knowledge_product_type,
     IFNULL(
         (
             SELECT
                 GROUP_CONCAT(
                     '<li>',
-                    '<b>',
-                    cit.name,
-                    '</b>',
+                    rkpm2.source,
+                    ': ',
                     IF(
-                        rbit.institution_types_id = 78,
-                        CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            rbit.other_institution
-                        ),
-                        ''
+                        rkpm2.is_peer_reviewed = 1,
+                        'Yes',
+                        'No'
                     ),
-                    '<br>',
-                    'How many: ',
-                    rbit.how_many,
-                    IF(
-                        (
-                            rbit.graduate_students IS NOT NULL
-                        ),
-                        (
-                            CONCAT(
-                                '<br>',
-                                'Graduate students: ',
-                                rbit.graduate_students
-                            )
-                        ),
-                        ''
-                    ),
-                    '</li>' SEPARATOR '<br>'
+                    '</li>' SEPARATOR ' '
                 )
             FROM
-                prdb.results_by_institution_type rbit
-                LEFT JOIN prdb.clarisa_institution_types cit ON rbit.institution_types_id = cit.code
+                prdb.results_kp_metadata rkpm2
             WHERE
-                rbit.results_id = r.id
-                AND rbit.is_active = 1
-                AND rbit.institution_roles_id = 5
+                rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpm2.is_active = 1
+                AND rkpm2.is_peer_reviewed = 1
         ),
-        '<Not applicable>'
-    ) AS organizations,
+        'No'
+    ) AS peer_reviewed,
     IFNULL(
         (
             SELECT
                 GROUP_CONCAT(
                     '<li>',
-                    'Unit of measures: ',
-                    rim.unit_of_measure,
-                    '<br>',
-                    'Quantity: ',
-                    rim.quantity,
-                    '</li>' SEPARATOR '<br>'
+                    rkpm2.source,
+                    ': ',
+                    IF(
+                        rkpm2.is_isi = 1,
+                        'Yes',
+                        'No'
+                    ),
+                    '</li>' SEPARATOR ' '
                 )
             FROM
-                prdb.result_ip_measure rim
+                prdb.results_kp_metadata rkpm2
             WHERE
-                rim.result_id = r.id
-                AND rim.is_active = 1
+                rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpm2.is_active = 1
+                AND rkpm2.is_isi = 1
+        ),
+        'No'
+    ) AS wos_isi,
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    rkpm2.source,
+                    ': ',
+                    IF(
+                        rkpm2.accesibility = 'yes'
+                        or rkpm2.accesibility = 'Yes',
+                        'Open Access',
+                        'Limited Access'
+                    ),
+                    '</li>' SEPARATOR ' '
+                )
+            FROM
+                prdb.results_kp_metadata rkpm2
+            WHERE
+                rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpm2.is_active = 1
+        ),
+        'No'
+    ) AS accesibility,
+    TRIM(rkp.licence) AS license,
+    (
+        SELECT
+            GROUP_CONCAT(
+                rkpk.keyword SEPARATOR '; '
+            )
+        FROM
+            prdb.results_kp_keywords rkpk
+        WHERE
+            rkpk.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpk.is_active = 1
+    ) AS keywords,
+    IFNULL(
+        (
+            SELECT
+                rkpal.score
+            FROM
+                prdb.results_kp_altmetrics rkpal
+            WHERE
+                rkpal.result_knowledge_product_id = rkp.result_knowledge_product_id
+                AND rkpal.is_active = 1
         ),
         '<Not applicable>'
-    ) AS other_quantitative
+    ) AS altmetrics,
+    CONVERT(
+        CONCAT(
+            CAST((rkp.findable * 100) as decimal(10, 0)),
+            '%'
+        ) USING utf8mb4
+    ) AS findable,
+    CONVERT(
+        CONCAT(
+            CAST((rkp.accesible * 100) as decimal(10, 0)),
+            '%'
+        ) USING utf8mb4
+    ) AS accesible,
+    CONVERT(
+        CONCAT(
+            CAST(
+                (rkp.interoperable * 100) as decimal(10, 0)
+            ),
+            '%'
+        ) USING utf8mb4
+    ) AS interoperable,
+    CONVERT(
+        CONCAT(
+            CAST((rkp.reusable * 100) as decimal(10, 0)),
+            '%'
+        ) USING utf8mb4
+    ) AS reusable,
+    IF((rkp.doi IS NOT NULL), 1, 0) AS doi,
+    (
+        SELECT
+            GROUP_CONCAT(
+                '<li>',
+                IF (
+                    rkpm2.source IS NULL,
+                    NULL,
+                    rkpm2.source
+                ),
+                '</li>' SEPARATOR ' '
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+    ) AS source_null,
+    (
+        SELECT
+            IF(
+                rkpm2.is_isi = 1,
+                rkpm2.is_isi,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.is_isi = 1
+            AND rkpm2.source = 'CGSpace'
+    ) AS is_isi_cgspace,
+    (
+        SELECT
+            IF(
+                rkpm2.is_peer_reviewed = 1,
+                rkpm2.is_peer_reviewed,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.is_peer_reviewed = 1
+            AND rkpm2.source = 'CGSpace'
+    ) AS is_peer_cgspace,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'CGSpace',
+                rkpm2.accesibility,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'CGSpace'
+    ) AS accesibility_cgspace,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'CGSpace',
+                rkpm2.source,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'CGSpace'
+    ) AS cgspace,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'CGSpace',
+                rkpm2.year,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'CGSpace'
+    ) AS cgspace_year,
+    (
+        SELECT
+            IF(
+                rkpm2.is_isi = 1
+                AND rkpm2.source = 'WOS',
+                rkpm2.is_isi,
+                0
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.is_isi = 1
+            AND rkpm2.source = 'WOS'
+    ) AS is_isi_wos,
+    (
+        SELECT
+            IF(
+                rkpm2.is_peer_reviewed = 1
+                AND rkpm2.source = 'WOS',
+                rkpm2.is_peer_reviewed,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.is_peer_reviewed = 1
+            AND rkpm2.source = 'WOS'
+    ) AS is_peer_wos,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'WOS',
+                rkpm2.accesibility,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'WOS'
+    ) AS accesibility_wos,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'WOS',
+                rkpm2.source,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'WOS'
+    ) AS wos,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'WOS',
+                rkpm2.year,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'WOS'
+    ) AS wos_year,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Scopus'
+                AND rkpm2.is_isi = 1,
+                rkpm2.is_isi,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Scopus'
+            AND rkpm2.is_isi = 1
+    ) AS is_isi_scopus,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Scopus'
+                AND rkpm2.is_peer_reviewed = 1,
+                rkpm2.is_peer_reviewed,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Scopus'
+            AND rkpm2.is_peer_reviewed = 1
+    ) AS is_peer_scopus,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Scopus',
+                rkpm2.source,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Scopus'
+    ) AS scopus,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Scopus',
+                rkpm2.year,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Scopus'
+    ) AS scopus_year,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Unpaywall'
+                AND rkpm2.is_isi = 1,
+                rkpm2.is_isi,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Unpaywall'
+            AND rkpm2.is_isi = 1
+    ) AS is_isi_unpaywall,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Unpaywall'
+                AND rkpm2.is_peer_reviewed = 1,
+                rkpm2.is_peer_reviewed,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Unpaywall'
+            AND rkpm2.is_peer_reviewed = 1
+    ) AS is_peer_unpaywall,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Unpaywall',
+                rkpm2.source,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Unpaywall'
+    ) AS unpaywall,
+    (
+        SELECT
+            IF(
+                rkpm2.source = 'Unpaywall',
+                rkpm2.year,
+                NULL
+            )
+        FROM
+            prdb.results_kp_metadata rkpm2
+        WHERE
+            rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
+            AND rkpm2.is_active = 1
+            AND rkpm2.source = 'Unpaywall'
+    ) AS unpaywall_year
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
-    LEFT JOIN prdb.results_innovations_use riu ON riu.results_id = r.id
-    AND riu.is_active = 1
+    LEFT JOIN prdb.results_knowledge_product rkp ON rkp.results_id = r.id
+    AND rkp.is_active = 1
 WHERE
-    r.result_type_id = 2
+    r.result_type_id = 6
     AND r.version_id IN (
         SELECT
             id
         FROM
             prdb.version v1
         WHERE
-            v1.phase_year = 2023
+            v1.phase_year = 2024
             AND v1.phase_name LIKE '%Reporting%'
             AND v1.is_active = 1
     )
-ORDER BY
-    r.result_code DESC;
+    AND (
+        rkp.is_melia = 1
+        OR (
+            rkp.knowledge_product_type = 'Journal Article'
+        )
+    )
+GROUP BY
+    r.id,
+    rbi.inititiative_id,
+    rkp.result_knowledge_product_id;

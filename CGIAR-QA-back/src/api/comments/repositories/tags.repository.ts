@@ -1,6 +1,9 @@
 import { Injectable } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Tags } from '../entities/tags.entity';
+import { Users } from '../../users/entities/user.entity';
+import { Comments } from '../entities/comments.entity';
+import { TagType } from '../entities/tags-type.entity';
 
 @Injectable()
 export class TagsRepository extends Repository<Tags> {
@@ -82,5 +85,75 @@ export class TagsRepository extends Repository<Tags> {
       ORDER BY tag.createdAt DESC;`;
 
     return await this.query(query);
+  }
+
+  async findTagId(
+    commentId: number,
+    tagTypeId: number,
+    userId: number,
+  ): Promise<any> {
+    const sqlQuery = `
+      SELECT tag.id as tagId
+      FROM qa_tags tag 
+      JOIN qa_tag_type tt ON tt.id = tag.tagTypeId
+      JOIN qa_users us ON us.id = tag.userId
+      WHERE tag.commentId = :commentId
+        AND tag.tagTypeId = :tagTypeId
+        AND tag.userId = :userId;
+    `;
+    const queryRunner = this.dataSource.createQueryRunner();
+    const [query, parameters] =
+      queryRunner.connection.driver.escapeQueryWithParameters(
+        sqlQuery,
+        { commentId, tagTypeId, userId },
+        {},
+      );
+    const result = await queryRunner.connection.query(query, parameters);
+    return result.length > 0 ? result[0].tagId : null;
+  }
+
+  async findTagByCommentAndUser(
+    commentId: number,
+    userId: number,
+  ): Promise<Tags | null> {
+    return await this.findOne({
+      where: { commentId, userId },
+    });
+  }
+
+  async createTag(
+    userId: number,
+    tagTypeId: number,
+    commentId: number,
+  ): Promise<Tags | null> {
+    try {
+      const userRepository = this.dataSource.getRepository(Users);
+      const commentsRepository = this.dataSource.getRepository(Comments);
+      const tagTypeRepository = this.dataSource.getRepository(TagType);
+
+      const user = await userRepository.findOneOrFail({
+        where: { id: userId },
+      });
+      const tagType = await tagTypeRepository.findOneOrFail({
+        where: { id: tagTypeId },
+      });
+      const comment = await commentsRepository.findOneOrFail({
+        where: { id: commentId },
+      });
+
+      const newTag = this.create({
+        userId,
+        tagTypeId,
+        commentId,
+      });
+
+      return await this.save(newTag);
+    } catch (error) {
+      return null;
+    }
+  }
+
+  async findOneById(id: number): Promise<Tags | null> {
+    return await this.findOne({ where: { id } });
   }
 }

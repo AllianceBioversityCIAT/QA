@@ -11,6 +11,6 @@ export class TagType {
   })
   name: string;
 
-  @OneToMany(() => Tags, (tag) => tag.tagType)
+  @OneToMany(() => Tags, (tag) => tag.obj_tag_type)
   tags: Tags[];
 }

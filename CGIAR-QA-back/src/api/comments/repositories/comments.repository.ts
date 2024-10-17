@@ -189,7 +189,7 @@ export class CommentsRepository extends Repository<Comments> {
     comment.meta = { id: metaId } as any;
     comment.detail = null;
     comment.approved_no_comment = noComment;
-    comment.user = user;
+    comment.user = user.id;
     comment.cycle = cycle;
     return comment;
   }
@@ -348,11 +348,77 @@ export class CommentsRepository extends Repository<Comments> {
     return await this.query(query, params);
   }
 
+  async findOneById(id: number): Promise<Comments | null> {
+    return await this.findOne({ where: { id } });
+  }
+
   async findCommentById(commentReplyId: number) {
     return await this.findOneOrFail({ where: { id: commentReplyId } });
   }
 
   async saveComment(comment: Comments) {
     return await this.save(comment);
+  }
+
+  async findOneWithTags(id: number): Promise<Comments | null> {
+    return await this.findOne({
+      where: { id },
+      relations: {
+        tags: true,
+      },
+    });
+  }
+
+  async findCommentsWithReplies(
+    evaluationId: number,
+    metaId: number,
+  ): Promise<any[]> {
+    const sqlQuery = `
+      SELECT
+        id,
+        (
+          SELECT COUNT(DISTINCT id)
+          FROM qa_comments_replies
+          WHERE commentId = qa_comments.id AND is_deleted = 0
+        ) AS replies_count,
+        (
+          SELECT qu.username
+          FROM qa_users qu
+          WHERE qa_comments.highlightById = qu.id
+        ) AS highlight_by,
+        highlight_comment,
+        highlightById
+      FROM qa_comments
+      WHERE metaId = :metaId AND evaluationId = :evaluationId
+        AND approved_no_comment IS NULL;
+    `;
+    const queryRunner = this.dataSource.createQueryRunner();
+    const [query, parameters] =
+      queryRunner.connection.driver.escapeQueryWithParameters(
+        sqlQuery,
+        { metaId, evaluationId },
+        {},
+      );
+    return await queryRunner.connection.query(query, parameters);
+  }
+
+  async findTagsByCommentId(commentId: number): Promise<any[]> {
+    const sqlQuery = `
+      SELECT 
+        tag.id AS tag_id, tt.id AS tag_type, tt.name AS tag_name,
+        us.name AS user_name, us.id AS userId
+      FROM qa_tags tag
+      JOIN qa_tag_type tt ON tt.id = tag.tagTypeId
+      JOIN qa_users us ON us.id = tag.userId
+      WHERE tag.commentId = :commentId;
+    `;
+    const queryRunner = this.dataSource.createQueryRunner();
+    const [query, parameters] =
+      queryRunner.connection.driver.escapeQueryWithParameters(
+        sqlQuery,
+        { commentId },
+        {},
+      );
+    return await queryRunner.connection.query(query, parameters);
   }
 }

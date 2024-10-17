@@ -5,6 +5,7 @@ import {
   CreateDateColumn,
   UpdateDateColumn,
   ManyToOne,
+  JoinColumn,
 } from 'typeorm';
 import { Comments } from './comments.entity';
 import { Users } from '../../users/entities/user.entity';
@@ -17,8 +18,15 @@ export class CommentsReplies {
   @ManyToOne(() => Comments, (comment) => comment.replies)
   comment: Comments;
 
+  @Column({
+    name: 'user',
+    type: 'int',
+  })
+  user: number;
+
   @ManyToOne(() => Users, (user) => user.replies)
-  user: Users;
+  @JoinColumn({ name: 'user' })
+  obj_user: Users;
 
   @Column({
     default: false,

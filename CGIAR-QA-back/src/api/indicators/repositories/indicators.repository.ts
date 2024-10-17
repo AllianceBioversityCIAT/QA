@@ -580,4 +580,20 @@ export class IndicatorsRepository extends Repository<Indicators> {
 
     return status;
   }
+
+  async findCriteriaByIndicatorName(indicatorName: string): Promise<any> {
+    const sqlQuery = `
+      SELECT qa_criteria
+      FROM qa_indicators
+      WHERE view_name = :indicatorName;
+    `;
+    const queryRunner = this.dataSource.createQueryRunner();
+    const [query, parameters] =
+      queryRunner.connection.driver.escapeQueryWithParameters(
+        sqlQuery,
+        { indicatorName },
+        {},
+      );
+    return await queryRunner.connection.query(query, parameters);
+  }
 }

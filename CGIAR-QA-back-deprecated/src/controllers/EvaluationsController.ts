@@ -432,9 +432,7 @@ class EvaluationsController {
 
   static getListEvaluationsDash = async (req: Request, res: Response) => {
     const id = req.params.id;
-    console.log("🚀 ~ EvaluationsController ~ getListEvaluationsDash= ~ id:", id)
     const { crp_id } = req.query;
-    console.log("🚀 ~ EvaluationsController ~ getListEvaluationsDash= ~ crp_id:", crp_id)
 
     const view_name = req.body.view_name;
     const view_primary_field = req.body.view_primary_field;

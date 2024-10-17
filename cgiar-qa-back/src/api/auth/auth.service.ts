@@ -121,7 +121,7 @@ export class AuthService {
       ]);
 
       const token = jwt.sign(
-        { userId: user.id, username: user.username },
+        { userId: user.id, username: user.username, role: user.roles },
         config.jwtSecret,
         { expiresIn: config.jwtTime },
       );

@@ -33,14 +33,35 @@ export class UsersService {
 
   async findAll() {
     try {
-      const users = await this._userRepository.find();
+      const users: Users[] = await this._userRepository.find({
+        select: {
+          id: true,
+          username: true,
+          name: true,
+          email: true,
+          is_active: true,
+          is_marlo: true,
+          createdAt: true,
+          updatedAt: true,
+          roles: true,
+        },
+        relations: {
+          roles: true,
+        },
+      });
 
       return ResponseUtils.format({
         data: users,
         description: 'User successfully retrieved.',
         status: 200,
       });
-    } catch (error) {}
+    } catch (error) {
+      return ResponseUtils.format({
+        data: null,
+        description: 'Error retrieving users.',
+        status: 404,
+      });
+    }
   }
 
   async findOneById(id: number): Promise<any> {

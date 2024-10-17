@@ -9,7 +9,7 @@ SELECT
             rbi.inititiative_id = ci.id
     ) AS crp_id,
     'AR' AS phase_name,
-         (
+    (
         SELECT
             v1.phase_year
         FROM
@@ -20,6 +20,7 @@ SELECT
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status_id AS submitted,
+    r.version_id AS version,
     r.is_replicated AS is_replicated,
     r.in_qa AS in_qa,
     r.result_code AS result_code,
@@ -712,141 +713,80 @@ SELECT
         ),
         '<Not applicable>'
     ) AS evidence,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    '<b>',
-                    at.name,
-                    '</b>',
-                    IF(
-                        ra.actor_type_id = 5,
-                        CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            ra.other_actor_type
-                        ),
-                        ''
-                    ),
-                    IF(
-                        (ra.sex_and_age_disaggregation != 1),
-                        CONCAT(
-                            '<br>',
-                            'Women: ',
-                            ra.women,
-                            ' - ',
-                            'Women youth: ',
-                            ra.women_youth,
-                            '<br>',
-                            'Men: ',
-                            ra.men,
-                            ' - ',
-                            'Men youth: ',
-                            ra.men_youth,
-                            '<br>',
-                            'How many: ',
-                            ra.how_many
-                        ),
-                        CONCAT(
-                            '<br>',
-                            'Sex and age disaggregation does not apply',
-                            '<br>',
-                            'How many: ',
-                            ra.how_many
-                        )
-                    ),
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_actors ra
-                LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
-            WHERE
-                ra.result_id = r.id
-                AND ra.is_active = 1
-        ),
-        '<Not applicable>'
-    ) AS actors,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    '<b>',
-                    cit.name,
-                    '</b>',
-                    IF(
-                        rbit.institution_types_id = 78,
-                        CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            rbit.other_institution
-                        ),
-                        ''
-                    ),
-                    '<br>',
-                    'How many: ',
-                    rbit.how_many,
-                    IF(
-                        (
-                            rbit.graduate_students IS NOT NULL
-                        ),
-                        (
-                            CONCAT(
-                                '<br>',
-                                'Graduate students: ',
-                                rbit.graduate_students
-                            )
-                        ),
-                        ''
-                    ),
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.results_by_institution_type rbit
-                LEFT JOIN prdb.clarisa_institution_types cit ON rbit.institution_types_id = cit.code
-            WHERE
-                rbit.results_id = r.id
-                AND rbit.is_active = 1
-                AND rbit.institution_roles_id = 5
-        ),
-        '<Not applicable>'
-    ) AS organizations,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    'Unit of measures: ',
-                    rim.unit_of_measure,
-                    '<br>',
-                    'Quantity: ',
-                    rim.quantity,
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_ip_measure rim
-            WHERE
-                rim.result_id = r.id
-                AND rim.is_active = 1
-        ),
-        '<Not applicable>'
-    ) AS other_quantitative
+    CONCAT (
+        'Female: ',
+        rcd.female_using,
+        '<br>',
+        'Male: ',
+        rcd.male_using,
+        '<br>',
+        'Non-binary: ',
+        rcd.non_binary_using,
+        '<br>',
+        'Unknown: ',
+        rcd.has_unkown_using
+    ) AS number_of_people_trained,
+    (
+        SELECT
+            ct.name
+        FROM
+            prdb.capdevs_term ct
+        WHERE
+            ct.capdev_term_id = rcd.capdev_term_id
+    ) AS long_term_short_term,
+    (
+        SELECT
+            cdm.name
+        FROM
+            prdb.capdevs_delivery_methods cdm
+        WHERE
+            cdm.capdev_delivery_method_id = rcd.capdev_delivery_method_id
+    ) AS capdev_delivery_method,
+    IF (
+        (rcd.is_attending_for_organization = 0),
+        'No',
+        CONCAT (
+            'Yes',
+            '<br>',
+            '<br>',
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        '<b>',
+                        cii.acronym,
+                        '</b>',
+                        ' - ',
+                        cii.name,
+                        '</li>' SEPARATOR ' '
+                    )
+                FROM
+                    prdb.results_by_institution rbi3
+                    LEFT JOIN prdb.clarisa_institutions cii ON rbi3.institutions_id = cii.id
+                WHERE
+                    rbi3.result_id = r.id
+                    AND rbi3.is_active = 1
+                    AND rbi3.institution_roles_id = 3
+            )
+        )
+    ) AS trainees_attending_on_behalf_of_an_organization
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
-    LEFT JOIN prdb.results_innovations_use riu ON riu.results_id = r.id
-    AND riu.is_active = 1
+    LEFT JOIN prdb.evidence e ON e.result_id = r.id
+    AND e.is_active = 1
+    LEFT JOIN prdb.results_capacity_developments rcd ON rcd.result_id = r.id
+    AND rcd.is_active = 1
 WHERE
-    r.result_type_id = 2
+    r.result_type_id = 5
     AND r.version_id IN (
         SELECT
             id
         FROM
             prdb.version v1
         WHERE
-            v1.phase_year = 2023
+            v1.phase_year = 2024
             AND v1.phase_name LIKE '%Reporting%'
             AND v1.is_active = 1
     )

@@ -1,6 +1,13 @@
 SELECT
     'AR' AS phase_name,
-    r.reported_year_id AS phase_year,
+         (
+        SELECT
+            v1.phase_year
+        FROM
+            prdb.version v1
+        WHERE
+            r.version_id = v1.id
+    ) AS phase_year,
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status AS submitted,

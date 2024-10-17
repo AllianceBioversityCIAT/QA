@@ -20,6 +20,7 @@ SELECT
     'yes' AS included_AR,
     r.is_active AS is_active,
     r.status_id AS submitted,
+    r.version_id AS version,
     r.is_replicated AS is_replicated,
     r.in_qa AS in_qa,
     r.result_code AS result_code,
@@ -681,10 +682,12 @@ SELECT
                             '<b>Is this a public file?: </b>',
                             (
                                 SELECT
-                                    IF(
-                                        es.is_public_file = 1,
-                                        'Yes',
-                                        'No'
+                                    GROUP_CONCAT(
+                                        IF(
+                                            es.is_public_file = 1,
+                                            'Yes',
+                                            'No'
+                                        )
                                     )
                                 FROM
                                     prdb.evidence_sharepoint es
@@ -709,144 +712,432 @@ SELECT
             WHERE
                 e.result_id = r.id
                 AND e.is_active = 1
+                AND (
+                    e.evidence_type_id != 3
+                    AND e.evidence_type_id != 4
+                )
         ),
         '<Not applicable>'
     ) AS evidence,
+    rind.short_title AS short_title,
+    (
+        SELECT
+            CONCAT(
+                '<b>',
+                cic.name,
+                '</b>',
+                '<br>',
+                cic.definition
+            )
+        FROM
+            prdb.clarisa_innovation_characteristic cic
+        WHERE
+            cic.id = rind.innovation_characterization_id
+    ) AS innovation_characterization,
+    (
+        SELECT
+            CONCAT(
+                '<b>',
+                cit.name,
+                '</b>',
+                '<br>',
+                cit.definition
+            )
+        FROM
+            prdb.clarisa_innovation_type cit
+        WHERE
+            cit.code = rind.innovation_nature_id
+    ) AS typology,
+    IFNULL(
+        (
+            SELECT
+                IF(
+                    cit2.code = 12,
+                    IF(
+                        rind.is_new_variety = 0
+                        OR rind.is_new_variety IS NULL,
+                        'No',
+                        'Yes'
+                    ),
+                    '<Not applicable>'
+                )
+            FROM
+                prdb.clarisa_innovation_type cit2
+            WHERE
+                cit2.code = rind.innovation_nature_id
+        ),
+        '<Not applicable>'
+    ) AS is_new_varieties,
+    IFNULL(
+        IF(
+            rind.is_new_variety = 0
+            OR rind.is_new_variety IS NULL,
+            '<Not applicable>',
+            rind.number_of_varieties
+        ),
+        '<Not applicable>'
+    ) AS number_of_variety,
+    IF(
+        rind.innovation_user_to_be_determined = 0,
+        'This is yet to be determinated',
+        (
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        '<b>',
+                        grouped_questions.main_question,
+                        '</b>',
+                        IFNULL(grouped_questions.sub_answers, ''),
+                        '</li>' SEPARATOR '<br>'
+                    )
+                FROM
+                    (
+                        SELECT
+                            rq2.question_text as main_question,
+                            GROUP_CONCAT(
+                                CONCAT(
+                                    '<li>',
+                                    rq.question_text,
+                                    '  ',
+                                    IFNULL(ra2.answer_text, ''),
+                                    '</li>'
+                                ) SEPARATOR ''
+                            ) as sub_answers
+                        FROM
+                            prdb.result_answers ra2
+                            LEFT JOIN prdb.result_questions rq ON rq.result_question_id = ra2.result_question_id
+                            LEFT JOIN prdb.result_questions rq2 ON rq2.result_question_id = rq.parent_question_id
+                        WHERE
+                            ra2.result_id = r.id
+                            AND ra2.is_active = TRUE
+                            AND ra2.answer_boolean = TRUE
+                        GROUP BY
+                            rq2.question_text,
+                            rq.parent_question_id
+                    ) AS grouped_questions
+            )
+        )
+    ) AS questions,
+    rind.innovation_developers AS innovation_developers,
+    rind.innovation_collaborators AS innovation_collaborators,
+    (
+        SELECT
+            CONCAT(
+                '<b>',
+                cir.level,
+                ' - ',
+                cir.name,
+                '</b>',
+                '<br>',
+                cir.definition
+            )
+        FROM
+            prdb.clarisa_innovation_readiness_level cir
+        WHERE
+            cir.id = rind.innovation_readiness_level_id
+    ) AS innovation_readiness_level,
+    rind.evidences_justification AS innovation_readiness_level_justification,
     IFNULL(
         (
             SELECT
                 GROUP_CONCAT(
                     '<li>',
                     '<b>',
-                    at.name,
+                    ci9.official_code,
                     '</b>',
+                    ' - ',
+                    ci9.name,
+                    '<br>',
                     IF(
-                        ra.actor_type_id = 5,
+                        rib.is_determined = 1,
+                        'This yet to be determinated',
                         CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            ra.other_actor_type
-                        ),
-                        ''
-                    ),
-                    IF(
-                        (ra.sex_and_age_disaggregation != 1),
-                        CONCAT(
-                            '<br>',
-                            'Women: ',
-                            ra.women,
-                            ' - ',
-                            'Women youth: ',
-                            ra.women_youth,
-                            '<br>',
-                            'Men: ',
-                            ra.men,
-                            ' - ',
-                            'Men youth: ',
-                            ra.men_youth,
-                            '<br>',
-                            'How many: ',
-                            ra.how_many
-                        ),
-                        CONCAT(
-                            '<br>',
-                            'Sex and age disaggregation does not apply',
-                            '<br>',
-                            'How many: ',
-                            ra.how_many
+                            '<b>',
+                            'Total USD Value (in-cash + in-kind): ',
+                            '</b>',
+                            rib.kind_cash
                         )
                     ),
                     '</li>' SEPARATOR '<br>'
                 )
             FROM
-                prdb.result_actors ra
-                LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
+                prdb.result_initiative_budget rib
+                LEFT JOIN prdb.results_by_inititiative rbi9 ON rbi9.id = rib.result_initiative_id
+                LEFT JOIN prdb.clarisa_initiatives ci9 ON rbi9.inititiative_id = ci9.id
             WHERE
-                ra.result_id = r.id
-                AND ra.is_active = 1
+                rib.is_active = 1
+                AND rbi9.result_id = r.id
+                AND rbi9.is_active = 1
         ),
         '<Not applicable>'
-    ) AS actors,
+    ) AS initiatives_investment,
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
+                    npp.grant_title,
+                    '<br>',
+                    IF(
+                        nppb.is_determined = 1,
+                        'This yet to be determinated',
+                        CONCAT(
+                            '<b>Total USD Value (in-cash + in-kind)</b> ',
+                            nppb.kind_cash
+                        )
+                    ),
+                    '</li>' SEPARATOR '<br>'
+                )
+            FROM
+                prdb.non_pooled_projetct_budget nppb
+                LEFT JOIN prdb.non_pooled_project npp ON npp.id = nppb.non_pooled_projetct_id
+            WHERE
+                nppb.is_active = 1
+                AND npp.is_active = 1
+                AND npp.results_id = r.id
+        ),
+        '<Not applicable>'
+    ) AS npp_investment,
     IFNULL(
         (
             SELECT
                 GROUP_CONCAT(
                     '<li>',
                     '<b>',
-                    cit.name,
+                    ci8.name,
                     '</b>',
+                    '<br>',
                     IF(
-                        rbit.institution_types_id = 78,
+                        rib8.is_determined = 1,
+                        'This yet to be determinated',
                         CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            rbit.other_institution
-                        ),
-                        ''
-                    ),
-                    '<br>',
-                    'How many: ',
-                    rbit.how_many,
-                    IF(
-                        (
-                            rbit.graduate_students IS NOT NULL
-                        ),
-                        (
-                            CONCAT(
-                                '<br>',
-                                'Graduate students: ',
-                                rbit.graduate_students
-                            )
-                        ),
-                        ''
+                            '<b>Total USD Value (in-cash + in-kind):</b> ',
+                            rib8.kind_cash
+                        )
                     ),
                     '</li>' SEPARATOR '<br>'
                 )
             FROM
-                prdb.results_by_institution_type rbit
-                LEFT JOIN prdb.clarisa_institution_types cit ON rbit.institution_types_id = cit.code
+                prdb.result_institutions_budget rib8
+                LEFT JOIN prdb.results_by_institution rbi8 ON rbi8.id = rib8.result_institution_id
+                LEFT JOIN prdb.clarisa_institutions ci8 ON rbi8.institutions_id = ci8.id
             WHERE
-                rbit.results_id = r.id
-                AND rbit.is_active = 1
-                AND rbit.institution_roles_id = 5
+                rib8.is_active = 1
+                AND rbi8.result_id = r.id
+                AND rbi8.is_active = 1
         ),
         '<Not applicable>'
-    ) AS organizations,
+    ) AS partner_investment,
     IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    'Unit of measures: ',
-                    rim.unit_of_measure,
-                    '<br>',
-                    'Quantity: ',
-                    rim.quantity,
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_ip_measure rim
-            WHERE
-                rim.result_id = r.id
-                AND rim.is_active = 1
+        IF(
+            rind.innovation_pdf = 0,
+            'No, not necessary at this stage',
+            rind.innovation_acknowledgement
         ),
         '<Not applicable>'
-    ) AS other_quantitative
+    ) AS innovation_acknowledgement,
+    IFNULL(
+        IF(
+            rind.innovation_pdf = 1,
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        e9.link,
+                        '</li>' SEPARATOR '<br>'
+                    )
+                FROM
+                    prdb.evidence e9
+                WHERE
+                    e9.result_id = r.id
+                    AND e9.is_active = 1
+                    AND e9.evidence_type_id = 3
+            ),
+            '<Not applicable>'
+        ),
+        'Data not provided.'
+    ) AS pictures,
+    IFNULL(
+        IF(
+            rind.innovation_pdf = 1,
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        e8.link,
+                        '</li>' SEPARATOR '<br>'
+                    )
+                FROM
+                    prdb.evidence e8
+                WHERE
+                    e8.result_id = r.id
+                    AND e8.is_active = 1
+                    AND e8.evidence_type_id = 4
+            ),
+            '<Not applicable>'
+        ),
+        'Data not provided.'
+    ) AS materials,
+    IF(
+        rind.innovation_user_to_be_determined = 0
+        OR rind.innovation_user_to_be_determined IS NULL,
+        CONCAT(
+            IFNULL(
+                (
+                    SELECT
+                        CONCAT(
+                            '<b>Actors: </b>',
+                            GROUP_CONCAT(
+                                '<li>',
+                                '<b>',
+                                at.name,
+                                '</b>',
+                                IF(
+                                    ra.actor_type_id = 5,
+                                    CONCAT(
+                                        ' - ',
+                                        'Other actor type: ',
+                                        ra.other_actor_type
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    (ra.sex_and_age_disaggregation != 1),
+                                    CONCAT(
+                                        '<br>',
+                                        '<b>Women</b>',
+                                        '<br>',
+                                        'Youth: ',
+                                        IF(ra.has_women_youth = 1, 'Yes', 'No'),
+                                        ' - ',
+                                        'Non-youth: ',
+                                        IF(ra.has_women = 1, 'Yes', 'No'),
+                                        '<br>',
+                                        '<b>Men</b>',
+                                        '<br>',
+                                        'Youth: ',
+                                        IF(ra.has_men_youth = 1, 'Yes', 'No'),
+                                        ' - ',
+                                        'Non-youth: ',
+                                        IF(ra.has_men = 1, 'Yes', 'No'),
+                                        '<br>'
+                                    ),
+                                    CONCAT(
+                                        '<br>',
+                                        'Sex and age disaggregation does not apply',
+                                        '<br>'
+                                    )
+                                ),
+                                '</li>' SEPARATOR '<br>'
+                            )
+                        )
+                    FROM
+                        prdb.result_actors ra
+                        LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
+                    WHERE
+                        ra.result_id = r.id
+                        AND ra.is_active = 1
+                ),
+                CONCAT(
+                    '<b>Actors: </b>',
+                    '<br>',
+                    'Data not provided.'
+                )
+            ),
+            '<br><br>',
+            IFNULL(
+                (
+                    SELECT
+                        CONCAT(
+                            '<b>Organizations: </b>',
+                            GROUP_CONCAT(
+                                '<li>',
+                                '<b>',
+                                cit.name,
+                                '</b>',
+                                IF(
+                                    rbit.institution_types_id = 78,
+                                    CONCAT(
+                                        ' - ',
+                                        'Other actor type: ',
+                                        rbit.other_institution
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    (
+                                        rbit.graduate_students IS NOT NULL
+                                    ),
+                                    (
+                                        CONCAT(
+                                            '<br>',
+                                            'Graduate students: ',
+                                            rbit.graduate_students
+                                        )
+                                    ),
+                                    ''
+                                ),
+                                '</li>' SEPARATOR '<br>'
+                            )
+                        )
+                    FROM
+                        prdb.results_by_institution_type rbit
+                        LEFT JOIN prdb.clarisa_institution_types cit ON rbit.institution_types_id = cit.code
+                    WHERE
+                        rbit.results_id = r.id
+                        AND rbit.is_active = 1
+                        AND rbit.institution_roles_id = 5
+                ),
+                CONCAT(
+                    '<b>Organizations: </b>',
+                    '<br>',
+                    'Data not provided.'
+                )
+            ),
+            '<br><br>',
+            IFNULL(
+                (
+                    SELECT
+                        CONCAT(
+                            '<b>Other quantitative measures of innovation use: <b>',
+                            GROUP_CONCAT(
+                                '<li>',
+                                'Unit of measures: ',
+                                rim.unit_of_measure,
+                                '<br>' '</li>' SEPARATOR '<br>'
+                            )
+                        )
+                    FROM
+                        prdb.result_ip_measure rim
+                    WHERE
+                        rim.result_id = r.id
+                        AND rim.is_active = 1
+                ),
+                CONCAT(
+                    '<b>Other quantitative measures of innovation use: </b>',
+                    '<br>',
+                    'Data not provided.'
+                )
+            )
+        ),
+        'This is yet to be determinated'
+    ) AS anticipated
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
-    LEFT JOIN prdb.results_innovations_use riu ON riu.results_id = r.id
-    AND riu.is_active = 1
+    LEFT JOIN prdb.results_innovations_dev rind ON rind.results_id = r.id
+    AND rind.is_active = 1
 WHERE
-    r.result_type_id = 2
+    r.result_type_id = 7
     AND r.version_id IN (
         SELECT
             id
         FROM
             prdb.version v1
         WHERE
-            v1.phase_year = 2023
+            v1.phase_year = 2024
             AND v1.phase_name LIKE '%Reporting%'
             AND v1.is_active = 1
     )
