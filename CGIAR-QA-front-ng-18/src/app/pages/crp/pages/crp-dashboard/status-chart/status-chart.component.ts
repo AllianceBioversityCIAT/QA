@@ -5,11 +5,13 @@ import { Chart } from 'chart.js';
 import { ChartColors } from 'src/app/utils/chart-colors'; // Asegúrate de importar ChartColors
 import { ReplacePipe } from '../../../../../pipes/replace.pipe';
 import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { ChartModule } from 'primeng/chart';
+
 
 @Component({
   selector: 'app-status-chart',
   standalone: true,
-  imports: [CommonModule, RouterLink, RouterLinkActive, ReplacePipe, NgxChartsModule],
+  imports: [CommonModule, RouterLink, RouterLinkActive, ReplacePipe, NgxChartsModule, ChartModule],
   templateUrl: './status-chart.component.html',
   styleUrls: ['./status-chart.component.scss']
 })
@@ -18,7 +20,6 @@ export class StatusChartComponent implements OnInit {
   @Input() indicators;
   @Input() total;
   @ViewChild('barCanvas') barCanvas: ElementRef;
-
   chart: any;
   legendLabels = [
     { name: 'Answered / No action needed', class: 'answered', value: 0 },
@@ -74,8 +75,9 @@ export class StatusChartComponent implements OnInit {
       }
     });
 
+
     this.chart = new Chart(ctx, {
-      type: 'doughnut',
+      type: 'doughnut'  ,
       data: {
         labels: labels,
         datasets: [
