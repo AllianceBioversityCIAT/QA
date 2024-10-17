@@ -157,9 +157,9 @@
                     <!-- catch icon -->
 
                     <div class="field-title">
-                      <h2 *ngIf="(validateCommentAvility(detailedData[i]) && detailedData[i].replies_count == '0') || (summon.value.isChecked && detailedData[i].enable_comments && gnralInfo.status !== statusHandler.Complete)" [innerHTML]="detailedData[i].display_name | markdown"></h2>
+                      <h2 *ngIf="(validateCommentAvility(detailedData[i]) && detailedData[i].replies_count == '0') || (summon.value.isChecked && detailedData[i].enable_comments && gnralInfo.status !== statusHandler.Complete)" [innerHTML]="detailedData[i].display_name"></h2>
 
-                      <h2 *ngIf="!validateCommentAvility(detailedData[i]) || (detailedData[i].replies_count != '0' && !summon.value.isChecked)" [innerHTML]="detailedData[i].display_name | markdown"></h2>
+                      <h2 *ngIf="!validateCommentAvility(detailedData[i]) || (detailedData[i].replies_count != '0' && !summon.value.isChecked)" [innerHTML]="detailedData[i].display_name"></h2>
                       <!-- Core icon where is_core = 1 -->
                       <div class="core-field" *ngIf="detailedData[i].is_core">
                         <img src="../../../assets/icons/icon-core.svg" alt="" />
@@ -220,8 +220,8 @@
                   <!-- <p>testing</p> -->
                   <!-- data value -->
 
-                  <div class="field-container" *ngIf="detailedData[i].value && detailedData[i].col_name !== 'outcome_description' && detailedData[i].col_name !== 'OICR'" [innerHTML]="detailedData[i].value | markdown"></div>
-                  <div class="field-container" *ngIf="detailedData[i].value && (detailedData[i].col_name === 'outcome_description' || detailedData[i].col_name === 'OICR' || detailedData[i].col_name === 'evidence_link') && detailedData[i].col_name !== 'evidence_link'" [innerHTML]="detailedData[i].value | markdown"></div>
+                  <div class="field-container" *ngIf="detailedData[i].value && detailedData[i].col_name !== 'outcome_description' && detailedData[i].col_name !== 'OICR'" [innerHTML]="detailedData[i].value"></div>
+                  <div class="field-container" *ngIf="detailedData[i].value && (detailedData[i].col_name === 'outcome_description' || detailedData[i].col_name === 'OICR' || detailedData[i].col_name === 'evidence_link') && detailedData[i].col_name !== 'evidence_link'" [innerHTML]="detailedData[i].value"></div>
 
                   <!-- <div *ngIf="detailedData[i].value && (detailedData[i].col_name === 'OICR' )"
                                         [innerHTML]="detailedData[i].value">
@@ -329,7 +329,7 @@
               <div class="data-row">
                 <div class="col">
                   <div class="row" style="padding: 0">
-                    <h2 [innerHTML]="detailedData[i].display_name | markdown"></h2>
+                    <h2 [innerHTML]="detailedData[i].display_name"></h2>
                     <div>
                       <i *ngIf="detailedData[i].meta_description" [pTooltip]="popTemplate" container="body" placement="top" class="icon-pdf" style="height: 1.5em"></i>
                       <ng-template #popTemplate>
@@ -374,7 +374,7 @@
                   </div>
 
                   <!-- data value -->
-                  <div *ngIf="detailedData[i].value && detailedData[i].col_name !== 'evidence_link' && detailedData[i].col_name !== 'outcome_description' && detailedData[i].col_name !== 'OICR' && detailedData[i].col_name !== 'number_of_variety'" [innerHTML]="detailedData[i].value.replace | markdown"></div>
+                  <div *ngIf="detailedData[i].value && detailedData[i].col_name !== 'evidence_link' && detailedData[i].col_name !== 'outcome_description' && detailedData[i].col_name !== 'OICR' && detailedData[i].col_name !== 'number_of_variety'" [innerHTML]="detailedData[i].value.replace"></div>
                   <div *ngIf="detailedData[i].value && (detailedData[i].col_name === 'outcome_description' || detailedData[i].col_name === 'OICR' || detailedData[i].col_name === 'evidence_link' || detailedData[i].col_name !== 'number_of_variety')" [innerHTML]="detailedData[i].value"></div>
                   <!-- no data -->
                   <p *ngIf="detailedData[i].value === null || detailedData[i].value == ''" class="empty-value">Data not provided.</p>

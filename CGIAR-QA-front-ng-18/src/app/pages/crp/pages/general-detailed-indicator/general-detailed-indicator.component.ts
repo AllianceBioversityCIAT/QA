@@ -26,7 +26,7 @@ import { Subscription } from 'rxjs';
 import { environment } from 'src/environments/environment';
 import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
-import { MarkdownModule } from 'ngx-markdown';
+// import { MarkdownModule } from 'ngx-markdown';
 import { CommentComponent } from '../../../../comment/comment.component';
 
 @Component({
@@ -35,7 +35,7 @@ import { CommentComponent } from '../../../../comment/comment.component';
   templateUrl: './general-detailed-indicator.component.html',
   styleUrls: ['./general-detailed-indicator.component.scss'],
   providers: [UrlTransformPipe, WordCounterPipe],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule, TooltipModule, MarkdownModule, CommentComponent],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule, TooltipModule, CommentComponent],
   animations: [
     trigger('inOutAnimation', [
       transition(':enter', [
