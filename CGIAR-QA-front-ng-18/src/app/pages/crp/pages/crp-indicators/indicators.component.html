@@ -7,7 +7,7 @@
       <h4 style="text-align: center" *ngIf="currentUser.hasOwnProperty('cycle') && !currentUser.hasOwnProperty('cycle_ended')">
         {{ currentUser.cycle.cycle_stage > 1 ? 'QA Round' + ': ' + currentUser.cycle.cycle_stage : '' }}
       </h4>
-      <app-results-table [resulList]="this.evaluationList"></app-results-table>
+      <app-results-table [resulList]="this.evaluationList" [returnedArray]="this.returnedArray"></app-results-table>
     </div>
   </div>
 </div>

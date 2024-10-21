@@ -10,10 +10,16 @@ import { TableModule } from 'primeng/table';
 })
 export class ResultsTableComponent {
   @Input() resulList: any[] = [];
+  @Input() returnedArray: any[] = [];
   columnNames = [
     {
       name: 'Result code',
       attr: 'result_code'
+    },
+    {
+      name: 'Brief contribution',
+      attr: 'result_title',
+      showIf: () => this.returnedArray && this.returnedArray[0].brief
     },
     {
       name: 'Title',
