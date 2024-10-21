@@ -6,12 +6,13 @@ SET
 
 -- POLICY CHANGE
 INSERT INTO
-    qadb.qa_policy_change_data (
+    qa_policy_change_data (
         crp_id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -52,6 +53,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -99,12 +101,13 @@ WHERE
 
 -- INOOVATION USE
 INSERT INTO
-    qadb.qa_innovation_use_data (
+    qa_innovation_use_data (
         crp_id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -142,6 +145,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -173,7 +177,7 @@ SELECT
     cc.organizations,
     cc.other_quantitative
 FROM
-    qadb.qa_innovation_use_view cc
+    qa_innovation_use_view cc
 WHERE
     NOT EXISTS (
         SELECT
@@ -186,12 +190,13 @@ WHERE
 
 -- OTHER OUTCOME
 INSERT INTO
-    qadb.qa_other_outcome_data (
+    qa_other_outcome_data (
         crp_id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -226,6 +231,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -273,6 +279,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_code,
         result_level,
@@ -311,6 +318,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_code,
     cc.result_level,
@@ -356,12 +364,13 @@ WHERE
 
 -- INNO DEV
 INSERT INTO
-    qadb.qa_innovation_development_data (
+    qa_innovation_development_data (
         crp_id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -413,6 +422,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -471,12 +481,13 @@ WHERE
 
 -- OTHER OUTPUT
 INSERT INTO
-    qadb.qa_other_output_data (
+    qa_other_output_data (
         crp_id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -511,6 +522,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -552,12 +564,13 @@ WHERE
 
 -- IMPACT CONTRIBUTION
 INSERT INTO
-    qadb.qa_impact_contribution_data (
+    qa_impact_contribution_data (
         crp_id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -592,6 +605,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -633,12 +647,13 @@ WHERE
 
 -- KNOWLEDGE PRODUCT
 INSERT INTO
-    qadb.qa_knowledge_product_data (
+    qa_knowledge_product_data (
         crp_id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -690,6 +705,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,

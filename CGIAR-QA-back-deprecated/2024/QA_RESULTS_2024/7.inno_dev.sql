@@ -9,7 +9,7 @@ SELECT
             rbi.inititiative_id = ci.id
     ) AS crp_id,
     'AR' AS phase_name,
-         (
+    (
         SELECT
             v1.phase_year
         FROM
@@ -315,56 +315,67 @@ SELECT
         '<Not applicable>',
         (
             SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    ci9.official_code,
-                    ' - ',
-                    ci9.name,
-                    '<br>',
-                    '<b><a href="https://toc.mel.cgiar.org/toc/',
-                    ci9.toc_id,
-                    '" target="_blank">',
-                    'See ToC',
-                    '</a></b>',
-                    '<br>',
-                    IFNULL(
+                CONCAT(
+                    IF(
                         (
                             SELECT
-                                CONCAT(
-                                    '<b>',
-                                    wp.acronym,
-                                    '</b>',
-                                    ' - ',
-                                    wp.name
-                                )
+                                COUNT(1)
                             FROM
-                                Integration_information.work_packages wp
+                                `Integration_information`.toc_results tr
+                                LEFT JOIN prdb.results_toc_result rtr ON rtr.toc_result_id = tr.id
                             WHERE
-                                wp.id = tr.work_packages_id
+                                rtr.results_id = r.id
+                                AND rtr.is_active = 1
+                                AND tr.result_type = 3
+                        ) > 0,
+                        CONCAT(
+                            '<div style="background-color: #3AABA0; color: #ffffff; ',
+                            'border: 1px solid #c8e6c9; padding: 10px; margin-bottom: 15px; ',
+                            'border-radius: 5px; font-family: Arial, sans-serif; font-size: 16px; ',
+                            'font-weight: bold; display: inline-block;">',
+                            'EOI Outcome map</div><br>'
                         ),
                         ''
                     ),
-                    '<br>',
-                    '<b>Title: </b>',
-                    tr.result_title,
-                    '<br>',
-                    IF(
-                        (
-                            tr.result_description IS NULL
-                            OR tr.result_description = ''
+                    GROUP_CONCAT(
+                        '<li>',
+                        ci9.official_code,
+                        ' - ',
+                        ci9.name,
+                        '<br>',
+                        '<b><a href="https://toc.mel.cgiar.org/toc/',
+                        ci9.toc_id,
+                        '" target="_blank" style="text-decoration: none; color: #1976d2;">See ToC</a></b><br>',
+                        IFNULL(
+                            (
+                                SELECT
+                                    CONCAT('<b>', wp.acronym, '</b> - ', wp.name)
+                                FROM
+                                    Integration_information.work_packages wp
+                                WHERE
+                                    wp.id = tr.work_packages_id
+                            ),
+                            ''
                         ),
-                        '',
-                        CONCAT('<b>Description: </b>', tr.result_description)
-                    ),
-                    '</li>' SEPARATOR '<br>'
+                        '<br><b>Title: </b>',
+                        tr.result_title,
+                        '<br>',
+                        IF(
+                            tr.result_description IS NULL
+                            OR tr.result_description = '',
+                            '',
+                            CONCAT('<b>Description: </b>', tr.result_description)
+                        ),
+                        '</li>' SEPARATOR '<br>'
+                    )
                 )
             FROM
                 `Integration_information`.toc_results tr
-                LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
+                LEFT JOIN prdb.results_toc_result rtr ON rtr.toc_result_id = tr.id
                 AND rtr.is_active = 1
                 LEFT JOIN prdb.clarisa_initiatives ci9 ON ci9.id = rtr.initiative_id
             WHERE
-                tr.id = rtr.toc_result_id
+                rtr.results_id = r.id
         )
     ) AS toc_planned,
     IFNULL(

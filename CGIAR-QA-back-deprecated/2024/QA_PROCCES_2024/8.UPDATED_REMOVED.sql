@@ -7,7 +7,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_other_output'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -21,7 +21,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 2
@@ -33,7 +33,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_other_outcome'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -47,7 +47,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 3
@@ -59,7 +59,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_capdev'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -73,7 +73,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 4
@@ -85,7 +85,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_innovation_development'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -99,7 +99,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 5
@@ -111,7 +111,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_innovation_use'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -125,7 +125,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 6
@@ -137,7 +137,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_impact_contribution'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -151,7 +151,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 7
@@ -163,7 +163,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_knowledge_product'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -177,7 +177,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 8
@@ -189,7 +189,7 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_policy_change'
 	AND e.evaluation_status != 'Removed'
-	AND e.phase_year = 2023
+	AND e.phase_year = 2024
 	AND e.batchDate >= actual_batch_date()
 	AND NOT EXISTS (
 		SELECT
@@ -203,7 +203,7 @@ WHERE
 			AND o.submitted = 3
 			AND o.in_qa = 1
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);
 
 -- 9 IPSR
@@ -227,5 +227,5 @@ WHERE
 			AND o.is_active = 1
 			AND o.submitted = 3
 			AND e.indicator_view_id = o.id
-			AND o.phase_year = 2023
+			AND o.phase_year = 2024
 	);

@@ -100,7 +100,7 @@ FROM
 DELETE FROM
     qa_policy_change_data qa
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -222,7 +222,7 @@ FROM
 DELETE FROM
     qa_innovation_use_data qa
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -346,7 +346,7 @@ FROM
 DELETE FROM
     qa_capdev_data
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -496,7 +496,7 @@ FROM
 DELETE FROM
     qa_innovation_development_data qa
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -612,7 +612,7 @@ FROM
 DELETE FROM
     qa_other_output_data qa
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -728,7 +728,7 @@ FROM
 DELETE FROM
     qa_other_outcome_data qa
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -844,7 +844,7 @@ FROM
 DELETE FROM
     qa_impact_contribution_data qa
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -994,7 +994,7 @@ FROM
 DELETE FROM
     qa_knowledge_product_data qa
 WHERE
-    qa.phase_year = 2023
+    qa.phase_year = 2024
     AND qa.id IN (
         SELECT
             qe.indicator_view_id
@@ -1130,7 +1130,7 @@ FROM
 DELETE FROM
     qa_innovation_use_ipsr_data
 WHERE
-    phase_year = 2023
+    phase_year = 2024
     AND id IN (
         SELECT
             qe.indicator_view_id

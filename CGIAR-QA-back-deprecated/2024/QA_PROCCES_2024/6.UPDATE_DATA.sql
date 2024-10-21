@@ -2,13 +2,13 @@ SET
     SQL_SAFE_UPDATES = 0;
 
 SET
-    group_concat_max_len = 25000;
+    SESSION group_concat_max_len = 2000000;
 
 -- POLICY CHANGE
 DELETE FROM
     qa_policy_change_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2024;
 
 INSERT INTO
     qa_policy_change_data (
@@ -17,6 +17,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -33,7 +34,6 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
         policy_type,
@@ -58,6 +58,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -74,7 +75,6 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
     cc.policy_type,
@@ -108,7 +108,7 @@ WHERE
 DELETE FROM
     qa_innovation_use_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2024;
 
 INSERT INTO
     qa_innovation_use_data (
@@ -117,6 +117,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -133,7 +134,6 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
         result_code,
@@ -155,6 +155,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -171,7 +172,6 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
     cc.result_code,
@@ -202,7 +202,7 @@ WHERE
 DELETE FROM
     qa_capdev_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2024;
 
 INSERT INTO
     qa_capdev_data (
@@ -211,6 +211,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_code,
         result_level,
@@ -228,7 +229,6 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
         nutrition_tag_level,
@@ -250,6 +250,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_code,
     cc.result_level,
@@ -267,7 +268,6 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
     cc.nutrition_tag_level,
@@ -298,7 +298,7 @@ WHERE
 DELETE FROM
     qa_innovation_development_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2024;
 
 INSERT INTO
     qa_innovation_development_data (
@@ -307,6 +307,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -323,12 +324,10 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
         short_title,
         typology,
-        is_new_varieties,
         number_of_variety,
         innovation_developers,
         innovation_collaborators,
@@ -351,7 +350,8 @@ INSERT INTO
         npp_investment,
         partner_investment,
         pictures,
-        materials
+        materials,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -359,6 +359,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -375,12 +376,10 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
     cc.short_title,
     cc.typology,
-    cc.is_new_varieties,
     cc.number_of_variety,
     cc.innovation_developers,
     cc.innovation_collaborators,
@@ -403,7 +402,8 @@ SELECT
     cc.npp_investment,
     cc.partner_investment,
     cc.pictures,
-    cc.materials
+    cc.materials,
+    cc.evidence
 FROM
     qa_innovation_development_view cc
 WHERE
@@ -420,7 +420,7 @@ WHERE
 DELETE FROM
     qa_other_output_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2024;
 
 INSERT INTO
     qa_other_output_data (
@@ -429,6 +429,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -445,7 +446,6 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
         result_code,
@@ -464,6 +464,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -480,7 +481,6 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
     cc.result_code,
@@ -508,7 +508,7 @@ WHERE
 DELETE FROM
     qa_other_outcome_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2024;
 
 INSERT INTO
     qa_other_outcome_data (
@@ -517,6 +517,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -533,7 +534,6 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
         result_code,
@@ -552,6 +552,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -568,7 +569,6 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
     cc.result_code,
@@ -596,7 +596,7 @@ WHERE
 DELETE FROM
     qa_impact_contribution_data
 WHERE
-    phase_year = 2023;
+    phase_year = 2024;
 
 INSERT INTO
     qa_impact_contribution_data (
@@ -605,6 +605,7 @@ INSERT INTO
         phase_year,
         included_AR,
         is_active,
+        version,
         id,
         result_level,
         result_type,
@@ -621,7 +622,6 @@ INSERT INTO
         new_or_updated_result,
         linked_results,
         previous_portfolio,
-        evidence,
         gender_tag_level,
         climate_change_level,
         result_code,
@@ -640,6 +640,7 @@ SELECT
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
+    cc.version,
     cc.id,
     cc.result_level,
     cc.result_type,
@@ -656,7 +657,6 @@ SELECT
     cc.new_or_updated_result,
     cc.linked_results,
     cc.previous_portfolio,
-    cc.evidence,
     cc.gender_tag_level,
     cc.climate_change_level,
     cc.result_code,

@@ -30,12 +30,12 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-03-01 12:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_policy_change_view cc
 WHERE
     cc.phase_name = 'AR'
-    AND cc.phase_year = 2023
+    AND cc.phase_year = 2024
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
@@ -48,7 +48,7 @@ WHERE
             qa_evaluations qa
         WHERE
             qa.indicator_view_id = cc.id
-            AND qa.phase_year = 2023
+            AND qa.phase_year = 2024
             AND qa.indicator_view_name = 'qa_policy_change'
     );
 
@@ -78,12 +78,12 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-03-01 12:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_innovation_use_view cc
 WHERE
     cc.phase_name = 'AR'
-    AND cc.phase_year = 2023
+    AND cc.phase_year = 2024
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
@@ -96,7 +96,7 @@ WHERE
             qa_evaluations qa
         WHERE
             qa.indicator_view_id = cc.id
-            AND qa.phase_year = 2023
+            AND qa.phase_year = 2024
             AND qa.indicator_view_name = 'qa_innovation_use'
     );
 
@@ -126,12 +126,12 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-03-01 12:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_other_outcome_view cc
 WHERE
     cc.phase_name = 'AR'
-    AND cc.phase_year = 2023
+    AND cc.phase_year = 2024
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
@@ -144,7 +144,7 @@ WHERE
             qa_evaluations qa
         WHERE
             qa.indicator_view_id = cc.id
-            AND qa.phase_year = 2023
+            AND qa.phase_year = 2024
             AND qa.indicator_view_name = 'qa_other_outcome'
     );
 
@@ -174,12 +174,12 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-03-01 12:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_capdev_view cc
 WHERE
     cc.phase_name = 'AR'
-    AND cc.phase_year = 2023
+    AND cc.phase_year = 2024
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
@@ -192,7 +192,7 @@ WHERE
             qa_evaluations qa
         WHERE
             qa.indicator_view_id = cc.id
-            AND qa.phase_year = 2023
+            AND qa.phase_year = 2024
             AND qa.indicator_view_name = 'qa_capdev'
     );
 
@@ -222,7 +222,7 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-10-07 07:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_innovation_development_view cc
 WHERE
@@ -270,12 +270,12 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-03-01 12:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_other_output_view cc
 WHERE
     cc.phase_name = 'AR'
-    AND cc.phase_year = 2023
+    AND cc.phase_year = 2024
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
@@ -288,7 +288,7 @@ WHERE
             qa_evaluations qa
         WHERE
             qa.indicator_view_id = cc.id
-            AND qa.phase_year = 2023
+            AND qa.phase_year = 2024
             AND qa.indicator_view_name = 'qa_other_output'
     );
 
@@ -318,12 +318,12 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-03-01 12:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_impact_contribution_view cc
 WHERE
     cc.phase_name = 'AR'
-    AND cc.phase_year = 2023
+    AND cc.phase_year = 2024
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
     AND cc.id IS NOT NULL
@@ -336,7 +336,7 @@ WHERE
             qa_evaluations qa
         WHERE
             qa.indicator_view_id = cc.id
-            AND qa.phase_year = 2023
+            AND qa.phase_year = 2024
             AND qa.indicator_view_name = 'qa_impact_contribution'
     );
 
@@ -395,12 +395,12 @@ SELECT
         'New'
     ),
     cc.phase_year,
-    '2024-03-01 12:00:00'
+    '2024-10-07 12:00:00'
 FROM
     qa_knowledge_product_view cc
 WHERE
     cc.phase_name = 'AR'
-    AND cc.phase_year = 2023
+    AND cc.phase_year = 2024
     AND cc.included_AR = 'yes'
     AND cc.is_active = 1
     AND cc.in_qa = 1
@@ -411,6 +411,6 @@ WHERE
             qa_evaluations qa
         where
             qa.indicator_view_id = cc.id
-            AND qa.phase_year = 2023
+            AND qa.phase_year = 2024
             AND qa.indicator_view_name = 'qa_knowledge_product'
     );
