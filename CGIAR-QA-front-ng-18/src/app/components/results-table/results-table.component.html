@@ -1,0 +1,18 @@
+<p-table [value]="this.resulList">
+  <ng-template pTemplate="header">
+    <tr>
+      @for (colItem of this.columnNames; track $index) {
+      <th pSortableColumn="name">{{ colItem.name }} <p-sortIcon field="name" /></th>
+      }
+    </tr>
+  </ng-template>
+  <ng-template pTemplate="body" let-result>
+    @for (resultItem of this.resulList; track $index) {
+    <tr>
+      @for (colItem of this.columnNames; track $index) {
+      <td>{{ resultItem[colItem.attr] }}</td>
+      }
+    </tr>
+    }
+  </ng-template>
+</p-table>

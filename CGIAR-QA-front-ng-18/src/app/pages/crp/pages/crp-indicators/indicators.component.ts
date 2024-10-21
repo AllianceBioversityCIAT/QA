@@ -27,10 +27,11 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
 import { FilterBooleanPipe } from '../../../../pipes/filter-boolean.pipe';
 import { CustomFilterPipe } from '../../../../pipes/custom-filter.pipe';
+import { ResultsTableComponent } from '../../../../components/results-table/results-table.component';
 @Component({
   selector: 'app-indicators',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, SafeUrlPipe, RouterLink, RouterLinkActive, NgbTooltipModule, NgxSpinnerModule, NgbPaginationModule, FilterBooleanPipe, CustomFilterPipe],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, SafeUrlPipe, RouterLink, RouterLinkActive, NgbTooltipModule, NgxSpinnerModule, NgbPaginationModule, FilterBooleanPipe, CustomFilterPipe, ResultsTableComponent],
   templateUrl: './indicators.component.html',
   styleUrls: ['./indicators.component.scss'],
   providers: [SortByPipe, SafeUrlPipe]
@@ -137,6 +138,10 @@ export default class CRPIndicatorsComponent implements OnInit {
         this.collectionSize = this.evaluationList.length;
         this.returnedArray = this.evaluationList.slice(0, 10);
         this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
+        this.evaluationList.map(evaluation => {
+          evaluation.full_title = evaluation.initiative + ' - ' + evaluation.short_name;
+        });
+
         console.log(this.evaluationList);
 
         this.hideSpinner(this.spinner_name);
