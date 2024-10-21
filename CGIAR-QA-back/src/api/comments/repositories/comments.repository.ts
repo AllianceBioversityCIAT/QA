@@ -360,6 +360,180 @@ export class CommentsRepository extends Repository<Comments> {
     return await this.save(comment);
   }
 
+  async getExcelComments(crp_id: string) {
+    try {
+      const query = `
+        SELECT
+          evaluations.crp_id AS 'Initiative ID',
+        CASE
+              comments.replyTypeId
+              WHEN 1 THEN 'Accepted'
+              WHEN 2 THEN 'Disagree'
+              WHEN 3 THEN 'Clarification'
+              WHEN 4 THEN 'Accepted with comment'
+              WHEN 5 THEN 'Discarded'
+              ELSE 'Pending'
+          END AS 'Status',
+        CASE
+              evaluations.indicator_view_name
+              WHEN 'qa_other_output' THEN qood2.result_code
+              WHEN 'qa_innovation_development' THEN qidd.result_code
+              WHEN 'qa_knowledge_product' THEN qkp.result_code
+              WHEN 'qa_capdev' THEN qcd.result_code
+              WHEN 'qa_impact_contribution' THEN qicd.result_code
+              WHEN 'qa_other_outcome' THEN qood.result_code
+              WHEN 'qa_innovation_use' THEN qiud.result_code
+              WHEN 'qa_policy_change' THEN qpcd.result_code
+              WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
+              ELSE NULL
+          END AS 'Result Code',
+          comments.id AS 'Comment ID',
+          (
+              SELECT
+                  name
+              FROM
+                  qa_indicators
+              WHERE
+                  view_name = evaluations.indicator_view_name
+          ) AS 'Indicator type',
+          (
+              SELECT
+                  display_name
+              FROM
+                  qa_indicators_meta
+              WHERE
+                  id = comments.metaId
+          ) AS 'Field',
+          clean_html_tags(comments.original_field) AS 'Original field',
+          CASE
+              evaluations.indicator_view_name
+              WHEN 'qa_other_output' THEN qood2.result_code
+              WHEN 'qa_innovation_development' THEN qidd.result_code
+              WHEN 'qa_knowledge_product' THEN qkp.result_code
+              WHEN 'qa_capdev' THEN qcd.result_code
+              WHEN 'qa_impact_contribution' THEN qicd.result_code
+              WHEN 'qa_other_outcome' THEN qood.result_code
+              WHEN 'qa_innovation_use' THEN qiud.result_code
+              WHEN 'qa_policy_change' THEN qpcd.result_code
+              WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
+              ELSE NULL
+          END AS 'Result Code',
+          IF(qim.is_core = 1, 'Yes', 'No') AS 'Is core',
+          comments.detail AS 'Assessor comment',
+          comments.createdAt AS 'Comment created at',
+          comments.id AS 'Comment ID',
+          (
+              SELECT
+                  username
+              FROM
+                  qa_users
+              WHERE
+                  id = comments.userId
+          ) as 'Assessor',
+          (
+              SELECT
+                  cycle_stage
+              from
+                  qa_cycle
+              WHERE
+                  id = comments.cycleId
+          ) as 'Round',
+          IFNULL(
+              (
+                  SELECT
+                      GROUP_CONCAT(detail SEPARATOR '\n')
+                  FROM
+                      qa_comments_replies
+                  WHERE
+                      commentId = comments.id
+                      and qa_comments_replies.is_deleted = 0
+              ),
+              '<not replied>'
+          ) as 'Reply',
+          IFNULL(
+              (
+                  SELECT
+                      GROUP_CONCAT(
+                          (
+                              SELECT
+                                  username
+                              from
+                                  qa_users
+                              WHERE
+                                  id = userId
+                          ) SEPARATOR '\n'
+                      )
+                  FROM
+                      qa_comments_replies
+                  WHERE
+                      commentId = comments.id
+                      and qa_comments_replies.is_deleted = 0
+              ),
+              '<not replied>'
+          ) AS 'User reply',
+          (
+              CASE
+                  WHEN qrt.id = 1 THEN 'Accepted'
+                  WHEN qrt.id = 2 THEN 'Disagreed'
+                  WHEN qrt.id = 4 THEN 'Accepted with comments'
+                  ELSE 'Pending'
+              END
+          ) AS 'Reply status',
+          IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highligth comment',
+          IF(comments.require_changes = 1, 'Yes', 'No') AS 'Require changes comment',
+          IF(comments.tpb = 1, 'Yes', 'No') AS 'TPB Instruction',
+          IF(comments.ppu = 1, 'Yes', 'No') AS 'Implemented changes',
+          IFNULL(
+              (
+                  SELECT
+                      GROUP_CONCAT(createdAt SEPARATOR '\n')
+                  FROM
+                      qa_comments_replies
+                  WHERE
+                      commentId = comments.id
+                      and qa_comments_replies.is_deleted = 0
+              ),
+              '<not replied>'
+          ) AS 'Reply date'
+      FROM
+          qa_comments comments
+          LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+          AND evaluations.status <> 'Deleted'
+          LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+          AND replies.is_deleted = 0
+          LEFT JOIN qa_cycle qc ON qc.id = comments.cycleId
+          LEFT JOIN qa_indicators_meta qim ON qim.id = comments.metaId
+          LEFT JOIN qa_reply_type qrt ON qrt.id = comments.replyTypeId
+          LEFT JOIN qa_innovation_use_data qiud ON qiud.id = evaluations.indicator_view_id
+          LEFT JOIN qa_innovation_development_data qidd ON qidd.id = evaluations.indicator_view_id
+          LEFT JOIN qa_knowledge_product qkp ON qkp.id = evaluations.indicator_view_id
+          LEFT JOIN qa_capdev_data qcd ON qcd.id = evaluations.indicator_view_id
+          LEFT JOIN qa_impact_contribution_data qicd ON qicd.id = evaluations.indicator_view_id
+          LEFT JOIN qa_other_outcome_data qood ON qood.id = evaluations.indicator_view_id
+          LEFT JOIN qa_other_output_data qood2 ON qood2.id = evaluations.indicator_view_id
+          LEFT JOIN qa_policy_change_data qpcd ON qpcd.id = evaluations.indicator_view_id
+          LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
+      WHERE
+          comments.is_deleted = 0
+          AND comments.detail IS NOT NULL
+          AND evaluations.phase_year = actual_phase_year()
+          AND evaluations.batchDate >= actual_batch_date()
+          AND evaluations.crp_id = ?
+      GROUP BY
+          evaluations.crp_id,
+          'display_name',
+          'cycle_stage',
+          comments.id
+      ORDER BY
+          evaluations.crp_id,
+          indicator_view_id;      
+      `;
+      return await this.query(query, [crp_id]);
+    } catch (error) {
+      throw new Error('Error retrieving comments');
+    }
+  }
+
   async findOneWithTags(id: number): Promise<Comments | null> {
     return await this.findOne({
       where: { id },

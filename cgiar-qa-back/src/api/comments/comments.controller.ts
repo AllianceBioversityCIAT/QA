@@ -28,7 +28,7 @@ import { PatchPpuDto, UpdateCycleDto } from './dto/comment.dto';
 
 @ApiTags('Comments')
 @ApiHeader({
-  name: 'authorization',
+  name: 'authentication',
   description: 'Auth token',
 })
 @Controller()
@@ -316,5 +316,32 @@ export class CommentsController {
   })
   async getQuickComments() {
     return this.commentsService.getQuickComments();
+  }
+
+  @Get('excel/initiative/:crp_id')
+  @Roles([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])
+  @ApiOperation({
+    summary: 'Retrieve all comments for an initiative in Excel format',
+    description:
+      'Allows users with the roles admin, assessor, and CRP to retrieve all comments for an initiative in Excel format.',
+  })
+  @ApiResponse({
+    status: 200,
+    description: 'Excel comments retrieved successfully',
+  })
+  @ApiResponse({
+    status: 404,
+    description: 'Could not retrieve excel comments',
+  })
+  async getExcelComments(
+    @Param('crp_id') crp_id: string,
+    @Res() res: Response,
+  ) {
+    try {
+      const data = await this.commentsService.getExcelComments(crp_id);
+      res.status(200).send(data);
+    } catch (error) {
+      res.status(404).send(error);
+    }
   }
 }

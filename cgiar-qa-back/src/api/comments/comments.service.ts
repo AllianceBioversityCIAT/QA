@@ -358,4 +358,22 @@ export class CommentsService {
       });
     }
   }
+
+  async getExcelComments(crp_id: string) {
+    try {
+      const data = await this._commentsRepository.getExcelComments(crp_id);
+      return ResponseUtils.format({
+        data,
+        description: 'Excel comments retrieved successfully',
+        status: HttpStatus.OK,
+      });
+    } catch (error) {
+      this._logger.error('Error fetching excel comments:', error);
+      return ResponseUtils.format({
+        data: {},
+        description: 'Could not retrieve excel comments',
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
+  }
 }
