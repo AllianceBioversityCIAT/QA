@@ -910,8 +910,6 @@ export class EvaluationRepository extends Repository<Evaluations> {
     viewNamePsdo: string,
     indicatorId: number,
   ): Promise<any[]> {
-    console.log('🚀 ~ EvaluationRepository ~ viewNamePsdo:', viewNamePsdo);
-    console.log('🚀 ~ EvaluationRepository ~ viewName:', viewName);
     const sqlQuery = `
     SELECT
         ${viewNamePsdo}.*,

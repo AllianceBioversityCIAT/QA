@@ -330,10 +330,10 @@ SELECT
                         ) > 0,
                         CONCAT(
                             '<div style="background-color: #3AABA0; color: #ffffff; ',
-                            'border: 1px solid #c8e6c9; padding: 8px; ',
-                            'border-radius: 6px; margin-bottom: 10px; ',
-                            'font-family: Arial, sans-serif; font-size: 14px;">',
-                            '<b>EOI Outcome map</b></div><br>'
+                            'border: 1px solid #c8e6c9; padding: 10px; margin-bottom: 15px; ',
+                            'border-radius: 5px; font-family: Arial, sans-serif; font-size: 16px; ',
+                            'font-weight: bold; display: inline-block;">',
+                            'EOI Outcome map</div><br>'
                         ),
                         ''
                     ),
