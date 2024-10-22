@@ -276,8 +276,15 @@ export class EvaluationsService {
         viewNamePsdo,
       );
 
+      const changedData = await this._evaluationsRepository.changedFields(
+        viewName,
+        indicatorId,
+      );
+
+      const mappedData = this.mapFieldsWithChanges(parsedData, changedData);
+
       return ResponseUtils.format({
-        data: parsedData,
+        data: mappedData,
         status: HttpStatus.OK,
         description: 'User evaluation detail retrieved successfully.',
       });
@@ -290,6 +297,22 @@ export class EvaluationsService {
         description: 'Error retrieving user evaluation detail.',
       });
     }
+  }
+
+  /**
+   * Map the parsedData fields to changedFields and add a boolean.
+   */
+  mapFieldsWithChanges(parsedData: any[], changedData: any[]): any[] {
+    return parsedData.map((parsed) => {
+      const match = changedData.find(
+        (changed) => changed.field === parsed.col_name && parsed.is_core === 1,
+      );
+
+      return {
+        ...parsed,
+        hasChanged: !!match,
+      };
+    });
   }
 
   async updateDetailedEvaluation(

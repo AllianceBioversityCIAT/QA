@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Evaluations } from '../entities/evaluation.entity';
 import { StatusHandler } from '../enum/status-handler.enum';
@@ -11,6 +11,7 @@ import { Cycle } from '../../../shared/entities/cycle.entity';
 
 @Injectable()
 export class EvaluationRepository extends Repository<Evaluations> {
+  private readonly _logger = new Logger(EvaluationRepository.name);
   constructor(private readonly dataSource: DataSource) {
     super(Evaluations, dataSource.createEntityManager());
   }
@@ -913,7 +914,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
     console.log('🚀 ~ EvaluationRepository ~ viewName:', viewName);
     const sqlQuery = `
     SELECT
-        ${viewNamePsdo}.*, 
+        ${viewNamePsdo}.*,
         meta.enable_comments AS meta_enable_comments,
         meta.col_name AS meta_col_name,
         meta.display_name AS meta_display_name,
@@ -928,38 +929,249 @@ export class EvaluationRepository extends Repository<Evaluations> {
         evaluations.evaluation_status AS evaluation_status,
         crp.name AS crp_name,
         crp.crp_id AS crp_acronym,
-        (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field,
+        (
+            SELECT
+                qc.original_field
+            FROM
+                qa_comments qc
+            WHERE
+                qc.evaluationId = evaluations.id
+                and qc.metaId = meta.id
+                AND is_deleted = 0
+                AND qc.approved_no_comment IS NULL
+            LIMIT
+                1
+        ) as original_field,
         evaluations.status AS evaluations_status,
         evaluations.require_second_assessment,
-    ( SELECT enable_assessor FROM qa_comments_meta WHERE indicatorId = indicator_user.indicatorId ) AS enable_assessor,
-    ( SELECT id FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_deleted = 0 LIMIT 1 ) AS general_comment_id,
-    ( SELECT detail FROM qa_comments WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment,
-    ( SELECT highlight_comment FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS is_highlight,
-    ( SELECT COUNT(id) FROM qa_comments WHERE require_changes = 1 AND evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 ) AS require_changes,
-    ( SELECT user_.name FROM qa_users user_ LEFT JOIN qa_comments comments ON comments.highlightById = user_.id WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1 ) AS highligth_by,
-    ( SELECT user_.username FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_user,
-    ( SELECT user_.updatedAt FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_updatedAt,
-    ( SELECT approved_no_comment FROM qa_comments WHERE metaId = meta.id AND evaluationId = evaluations.id 	AND is_deleted = 0 AND approved_no_comment IS NOT NULL LIMIT 1) AS approved_no_comment,
-    ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND qa_comments.metaId = meta.id AND approved_no_comment IS NULL	AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) ) AS comments_replies_count,
-    ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL ) AS replies_count,
-    ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL AND tpb = 1 AND ppu = 1) AS tpb_count,
-    ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 1) AS accepted_comments,
-    ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 2) AS disagree_comments,
-    ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 3) AS clarification_comments,
-    ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 4) AS accepted_with_comments
-
+        (
+            SELECT
+                enable_assessor
+            FROM
+                qa_comments_meta
+            WHERE
+                indicatorId = indicator_user.indicatorId
+        ) AS enable_assessor,
+        (
+            SELECT
+                id
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_deleted = 0
+            LIMIT
+                1
+        ) AS general_comment_id,
+        (
+            SELECT
+                detail
+            FROM
+                qa_comments
+            WHERE
+                metaId IS NULL
+                AND evaluationId = evaluations.id
+                AND is_deleted = 0
+                AND approved_no_comment IS NULL
+            LIMIT
+                1
+        ) AS general_comment,
+        (
+            SELECT
+                highlight_comment
+            FROM
+                qa_comments
+            WHERE
+                evaluationId = evaluations.id
+                AND metaId = meta.id
+                AND is_deleted = 0
+            LIMIT
+                1
+        ) AS is_highlight,
+        (
+            SELECT
+                COUNT(id)
+            FROM
+                qa_comments
+            WHERE
+                require_changes = 1
+                AND evaluationId = evaluations.id
+                AND metaId = meta.id
+                AND is_deleted = 0
+        ) AS require_changes,
+        (
+            SELECT
+                user_.name
+            FROM
+                qa_users user_
+                LEFT JOIN qa_comments comments ON comments.highlightById = user_.id
+            WHERE
+                evaluationId = evaluations.id
+                AND metaId = meta.id
+                AND is_deleted = 0
+            LIMIT
+                1
+        ) AS highligth_by,
+        (
+            SELECT
+                user_.username
+            FROM
+                qa_comments comments
+                LEFT JOIN qa_users user_ ON user_.id = comments.userId
+            WHERE
+                metaId IS NULL
+                AND evaluationId = evaluations.id
+                AND is_deleted = 0
+                AND approved_no_comment IS NULL
+            LIMIT
+                1
+        ) AS general_comment_user,
+        (
+            SELECT
+                user_.updatedAt
+            FROM
+                qa_comments comments
+                LEFT JOIN qa_users user_ ON user_.id = comments.userId
+            WHERE
+                metaId IS NULL
+                AND evaluationId = evaluations.id
+                AND is_deleted = 0
+                AND approved_no_comment IS NULL
+            LIMIT
+                1
+        ) AS general_comment_updatedAt,
+        (
+            SELECT
+                approved_no_comment
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_deleted = 0
+                AND approved_no_comment IS NOT NULL
+            LIMIT
+                1
+        ) AS approved_no_comment,
+        (
+            SELECT
+                COUNT(id)
+            FROM
+                qa_comments_replies
+            WHERE
+                is_deleted = 0
+                AND commentId IN (
+                    SELECT
+                        id
+                    FROM
+                        qa_comments
+                    WHERE
+                        qa_comments.evaluationId = evaluations.id
+                        AND qa_comments.metaId = meta.id
+                        AND approved_no_comment IS NULL
+                        AND metaId IS NOT NULL
+                        AND is_deleted = 0
+                        AND is_visible = 1
+                )
+        ) AS comments_replies_count,
+        (
+            SELECT
+                COUNT(DISTINCT id)
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_visible = 1
+                AND is_deleted = 0
+                AND evaluationId = evaluations.id
+                AND approved_no_comment IS NULL
+        ) AS replies_count,
+        (
+            SELECT
+                COUNT(DISTINCT id)
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_visible = 1
+                AND is_deleted = 0
+                AND approved_no_comment IS NULL
+                AND tpb = 1
+                AND ppu = 1
+        ) AS tpb_count,
+        (
+            SELECT
+                COUNT(DISTINCT id)
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_visible = 1
+                AND is_deleted = 0
+                AND evaluationId = evaluations.id
+                AND approved_no_comment IS NULL
+                AND replyTypeId = 1
+        ) AS accepted_comments,
+        (
+            SELECT
+                COUNT(DISTINCT id)
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_visible = 1
+                AND is_deleted = 0
+                AND evaluationId = evaluations.id
+                AND approved_no_comment IS NULL
+                AND replyTypeId = 2
+        ) AS disagree_comments,
+        (
+            SELECT
+                COUNT(DISTINCT id)
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_visible = 1
+                AND is_deleted = 0
+                AND evaluationId = evaluations.id
+                AND approved_no_comment IS NULL
+                AND replyTypeId = 3
+        ) AS clarification_comments,
+        (
+            SELECT
+                COUNT(DISTINCT id)
+            FROM
+                qa_comments
+            WHERE
+                metaId = meta.id
+                AND evaluationId = evaluations.id
+                AND is_visible = 1
+                AND is_deleted = 0
+                AND evaluationId = evaluations.id
+                AND approved_no_comment IS NULL
+                AND replyTypeId = 4
+        ) AS accepted_with_comments
     FROM
         ${viewName} ${viewNamePsdo}
-    LEFT JOIN qa_evaluations evaluations ON evaluations.indicator_view_id = ${viewNamePsdo}.id
-    LEFT JOIN qa_indicators indicators ON indicators.view_name = '${viewName}'
-    LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
-    LEFT JOIN qa_indicators_meta meta ON meta.indicatorId = indicators.id
-    LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
-    WHERE indicator_user.userId = :user_Id
-    AND ${viewNamePsdo}.id = :indicatorId
-    AND evaluations.indicator_view_name = '${viewName}'
-    AND evaluations.phase_year = actual_phase_year()
-    ORDER BY meta.order ASC
+        LEFT JOIN qa_evaluations evaluations ON evaluations.indicator_view_id = ${viewNamePsdo}.id
+        LEFT JOIN qa_indicators indicators ON indicators.view_name = '${viewName}'
+        LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
+        LEFT JOIN qa_indicators_meta meta ON meta.indicatorId = indicators.id
+        LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
+    WHERE
+        indicator_user.userId = :user_Id
+        AND ${viewNamePsdo}.id = :indicatorId
+        AND evaluations.indicator_view_name = '${viewName}'
+        AND evaluations.phase_year = actual_phase_year()
+    ORDER BY
+        meta.order ASC
     `;
     const queryRunner = this.dataSource.createQueryRunner();
     const [query, parameters] =
@@ -1178,13 +1390,73 @@ export class EvaluationRepository extends Repository<Evaluations> {
     `;
 
     const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] = queryRunner.connection.driver.escapeQueryWithParameters(
-      sqlQuery,
-      { resultId },
-      {},
-    );
+    const [query, parameters] =
+      queryRunner.connection.driver.escapeQueryWithParameters(
+        sqlQuery,
+        { resultId },
+        {},
+      );
 
     return await queryRunner.connection.query(query, parameters);
+  }
+
+  async changedFields(viewName: string, indicatorId: number) {
+    try {
+      const sqlData = `
+        SELECT * FROM ${viewName}_data WHERE id = :indicatorId;
+      `;
+
+      const sqlDataInitial = `
+        SELECT * FROM ${viewName}_data_initial WHERE id = :indicatorId;
+      `;
+
+      const queryRunner = this.dataSource.createQueryRunner();
+
+      const [query, parameters] =
+        queryRunner.connection.driver.escapeQueryWithParameters(
+          sqlData,
+          { indicatorId },
+          {},
+        );
+      const data = await queryRunner.connection.query(query, parameters);
+
+      const [queryInitial, parametersInitial] =
+        queryRunner.connection.driver.escapeQueryWithParameters(
+          sqlDataInitial,
+          { indicatorId },
+          {},
+        );
+      const dataInitial = await queryRunner.connection.query(
+        queryInitial,
+        parametersInitial,
+      );
+
+      const changedFields = this.compareData(data[0], dataInitial[0]);
+
+      return changedFields;
+    } catch (error) {
+      this._logger.error(error);
+      throw new Error('Error comparing fields');
+    }
+  }
+
+  /**
+   * Function to compare two objects and return the fields that changed.
+   */
+  compareData(data: any, dataInitial: any): any[] {
+    const changedFields = [];
+
+    for (const key in data) {
+      if (data.hasOwnProperty(key) && data[key] !== dataInitial[key]) {
+        changedFields.push({
+          field: key,
+          oldValue: dataInitial[key],
+          newValue: data[key],
+        });
+      }
+    }
+
+    return changedFields;
   }
 
   groupBy(array: any[], key: string) {
