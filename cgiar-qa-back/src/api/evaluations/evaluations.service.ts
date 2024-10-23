@@ -331,7 +331,7 @@ export class EvaluationsService {
       return {
         ...parsed,
         hasChanged: !!matchInitial,
-        hasChangePrevious: !!matchPhase,
+        hasChangedPrevious: !!matchPhase,
         changedOldValue: matchPhase ? matchPhase.oldValue : null,
         changedNewValue: matchPhase ? matchPhase.newValue : null,
       };

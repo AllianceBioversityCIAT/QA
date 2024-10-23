@@ -1,3 +1,23 @@
+WITH phase_versions AS (
+    SELECT
+        v1.id AS current_phase_id,
+        v1.previous_phase
+    FROM
+        prdb.version v1
+    WHERE
+        v1.phase_year = 2024
+        AND v1.phase_name LIKE '%Reporting%'
+        AND v1.is_active = 1
+),
+valid_results AS (
+    SELECT
+        r.id
+    FROM
+        prdb.result r
+        INNER JOIN phase_versions pv ON r.version_id IN (pv.current_phase_id, pv.previous_phase)
+    WHERE
+        r.result_type_id = 1
+)
 SELECT
     DISTINCT r.id AS id,
     (
@@ -799,22 +819,11 @@ SELECT
         '<Not applicable>'
     ) AS implementing_organizations
 FROM
-    prdb.result r
+    valid_results vr
+    LEFT JOIN prdb.result r ON r.id = vr.id
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_policy_changes rpc ON rpc.result_id = r.id
     AND rpc.is_active = 1
-WHERE
-    r.result_type_id = 1
-    AND r.version_id IN (
-        SELECT
-            id
-        FROM
-            prdb.version v1
-        WHERE
-            v1.phase_year = 2024
-            AND v1.phase_name LIKE '%Reporting%'
-            AND v1.is_active = 1
-    )
 ORDER BY
     r.result_code DESC;
