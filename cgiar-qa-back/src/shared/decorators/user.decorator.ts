@@ -19,7 +19,6 @@ export const UserToken = createParamDecorator(
     }
 
     const user = processUserToken(headerValue);
-    console.log('🚀 ~ user:', user);
     return user;
   },
 );

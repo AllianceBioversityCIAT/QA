@@ -778,6 +778,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
         meta.include_detail AS meta_include_detail,
         meta.is_primay AS meta_is_primay,
         meta.is_core AS is_core,
+        meta.changes_updated AS changes_updated,
         meta.indicator_slug AS indicator_slug,
         evaluations.id AS evaluation_id,
         evaluations.evaluation_status AS evaluation_status, 
@@ -843,6 +844,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
         meta.id AS meta_id,
         meta.order AS order_,
         meta.is_core AS is_core,
+        meta.changes_updated AS changes_updated,
         meta.indicator_slug AS indicator_slug,
         meta.description AS meta_description,
         meta.include_detail AS meta_include_detail,
@@ -922,6 +924,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
         meta.include_detail AS meta_include_detail,
         meta.is_primay AS meta_is_primay,
         meta.is_core AS is_core,
+        meta.changes_updated AS changes_updated,
         meta.indicator_slug AS indicator_slug,
         evaluations.id AS evaluation_id,
         evaluations.evaluation_status AS evaluation_status,
@@ -1398,7 +1401,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
     return await queryRunner.connection.query(query, parameters);
   }
 
-  async changedFields(viewName: string, indicatorId: number) {
+  async changedFieldsInitial(viewName: string, indicatorId: number) {
     try {
       const sqlData = `
         SELECT * FROM ${viewName}_data WHERE id = :indicatorId;
@@ -1430,6 +1433,43 @@ export class EvaluationRepository extends Repository<Evaluations> {
       );
 
       const changedFields = this.compareData(data[0], dataInitial[0]);
+
+      return changedFields;
+    } catch (error) {
+      this._logger.error(error);
+      throw new Error('Error comparing fields');
+    }
+  }
+
+  async changedFieldsPhase(viewName: string, indicatorId: number) {
+    try {
+      const sqlData = `
+        SELECT * FROM ${viewName}_data WHERE id = :indicatorId;
+      `;
+      const queryRunner = this.dataSource.createQueryRunner();
+      const [query, parameters] =
+        queryRunner.connection.driver.escapeQueryWithParameters(
+          sqlData,
+          { indicatorId },
+          {},
+        );
+      const data = await queryRunner.connection.query(query, parameters);
+
+      const sqlDataPreviousPhase = `
+        SELECT * FROM ${viewName}_data_initial WHERE result_code = :result_code AND id != :indicatorId;
+      `;
+
+      const [queryPreviousPhase, parametersPreviousPhase] =
+        queryRunner.connection.driver.escapeQueryWithParameters(
+          sqlDataPreviousPhase,
+          { result_code: data[0].result_code, indicatorId },
+          {},
+        );
+      const dataPreviousPhase = await queryRunner.connection.query(
+        queryPreviousPhase,
+        parametersPreviousPhase,
+      );
+      const changedFields = this.compareData(data[0], dataPreviousPhase[0]);
 
       return changedFields;
     } catch (error) {
@@ -1519,6 +1559,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
       comments_count: element['comments_count'],
       evaluation_id: element['evaluation_id'],
       is_core: element['is_core'],
+      changes_updated: element['changes_updated'],
       indicator_slug: element['indicator_slug'],
       status: element['evaluations_status'],
       response_status: element['response_status'],

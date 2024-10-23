@@ -276,12 +276,23 @@ export class EvaluationsService {
         viewNamePsdo,
       );
 
-      const changedData = await this._evaluationsRepository.changedFields(
-        viewName,
-        indicatorId,
-      );
+      const changedDataInitial =
+        await this._evaluationsRepository.changedFieldsInitial(
+          viewName,
+          indicatorId,
+        );
 
-      const mappedData = this.mapFieldsWithChanges(parsedData, changedData);
+      const changedDataPhase =
+        await this._evaluationsRepository.changedFieldsPhase(
+          viewName,
+          indicatorId,
+        );
+
+      const mappedData = this.mapFieldsWithChanges(
+        parsedData,
+        changedDataInitial,
+        changedDataPhase,
+      );
 
       return ResponseUtils.format({
         data: mappedData,
@@ -302,15 +313,27 @@ export class EvaluationsService {
   /**
    * Map the parsedData fields to changedFields and add a boolean.
    */
-  mapFieldsWithChanges(parsedData: any[], changedData: any[]): any[] {
+  mapFieldsWithChanges(
+    parsedData: any[],
+    changedDataInitial: any[],
+    changedDataPhase: any[],
+  ): any[] {
     return parsedData.map((parsed) => {
-      const match = changedData.find(
+      const matchInitial = changedDataInitial.find(
         (changed) => changed.field === parsed.col_name && parsed.is_core === 1,
+      );
+
+      const matchPhase = changedDataPhase.find(
+        (changed) =>
+          changed.field === parsed.col_name && parsed.changes_updated === 1,
       );
 
       return {
         ...parsed,
-        hasChanged: !!match,
+        hasChanged: !!matchInitial,
+        hasChangePrevious: !!matchPhase,
+        changedOldValue: matchPhase ? matchPhase.oldValue : null,
+        changedNewValue: matchPhase ? matchPhase.newValue : null,
       };
     });
   }

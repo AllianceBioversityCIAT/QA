@@ -68,4 +68,11 @@ export class IndicatorsMeta {
     type: 'text',
   })
   indicator_slug: string;
+
+  @Column({
+    name: 'changes_updated',
+    nullable: true,
+    type: 'boolean',
+  })
+  changes_updated: boolean;
 }
