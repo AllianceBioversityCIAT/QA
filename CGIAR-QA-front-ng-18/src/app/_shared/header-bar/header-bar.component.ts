@@ -49,7 +49,13 @@ export class HeaderBarComponent implements OnInit {
     { name: 'Innovation Use (IPSR)', viewname: 'qa_innovation_use_ipsr' }
   ];
 
-  constructor(private activeRoute: ActivatedRoute, private authenticationService: AuthenticationService, public router: Router, private indicatorService: IndicatorsService, private alertService: AlertService) {
+  constructor(
+    private activeRoute: ActivatedRoute,
+    private authenticationService: AuthenticationService,
+    public router: Router,
+    private indicatorService: IndicatorsService,
+    private alertService: AlertService
+  ) {
     // console.log('Refresh navbar 1');
 
     this.router.events.pipe(filter(e => e instanceof NavigationStart)).subscribe((e: NavigationStart) => {
@@ -86,7 +92,7 @@ export class HeaderBarComponent implements OnInit {
 
   ngOnInit() {
     // this.indicators = [];
-    if (this.currentUserID != this.currentUser.id) {
+    if (this.currentUserID != this.currentUser?.id) {
       this.currentUserID = this.currentUser.id;
       // this.indicators = [];
       this.getHeaderLinks();

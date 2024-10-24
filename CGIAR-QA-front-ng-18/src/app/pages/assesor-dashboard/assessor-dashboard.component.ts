@@ -85,7 +85,18 @@ export default class AssessorDashboardComponent implements OnInit {
     { name: 'Innovation Use', viewname: 'qa_innovation_use' }
   ];
 
-  constructor(private dashService: DashboardService, private authenticationService: AuthenticationService, private indicatorService: IndicatorsService, private usersService: UsersService, private spinner: NgxSpinnerService, private commentService: CommentService, private router: Router, private titleService: Title, private alertService: AlertService, private _exportTableSE: ExportTablesService) {
+  constructor(
+    private dashService: DashboardService,
+    private authenticationService: AuthenticationService,
+    private indicatorService: IndicatorsService,
+    private usersService: UsersService,
+    private spinner: NgxSpinnerService,
+    private commentService: CommentService,
+    private router: Router,
+    private titleService: Title,
+    private alertService: AlertService,
+    private _exportTableSE: ExportTablesService
+  ) {
     this.authenticationService.currentUser.subscribe(x => {
       console.log(x);
       this.currentUser = x;
@@ -95,7 +106,7 @@ export default class AssessorDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.usersService.getUserById(this.currentUser.id).subscribe(res => {
+    this.usersService.getUserById(this.currentUser?.id).subscribe(res => {
       this.authenticationService.parseUpdateIndicators(res.data.indicators);
     });
     this.showSpinner();

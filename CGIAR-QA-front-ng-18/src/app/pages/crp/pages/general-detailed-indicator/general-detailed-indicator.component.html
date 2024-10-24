@@ -41,7 +41,7 @@
       <span class="caret"></span>
     </button>
     <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
-      <li *ngFor="let status of statusNames | keyvalue | slice : 2 : 4" role="menuitem">
+      <li *ngFor="let status of statusNames | keyvalue | slice: 2 : 4" role="menuitem">
         <a class="dropdown-item" (click)="updateEvaluation(status.key, detailedData)">
           <i
             [ngClass]="{
@@ -164,6 +164,18 @@
                       <div class="core-field" *ngIf="detailedData[i].is_core">
                         <img src="../../../assets/icons/icon-core.svg" alt="" />
                       </div>
+
+                      @if (detailedData[i].is_core && currentUser.cycle.cycle_stage == 2 && detailedData[i].hasChanged) {
+                        <div class="changed-field">
+                          <div class="changed-tag">Changed initial data</div>
+                        </div>
+                      }
+
+                      @if (detailedData[i].changes_updated && detailedData[i].hasChangedPrevious) {
+                        <div class="changed-previous-field">
+                          <div class="changed-previous-tag">Changed data from previous phase</div>
+                        </div>
+                      }
 
                       <!-- <h2 *ngIf="!validateCommentAvility(detailedData[i]) || detailedData[i].replies_count != '0' && !summon.value.isChecked ">
                                                 {{detailedData[i].display_name}}</h2> -->

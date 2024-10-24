@@ -26,7 +26,14 @@ export default class LoginComponent implements OnInit {
   returnUrl: string;
   env = environment;
 
-  constructor(private formBuilder: FormBuilder, private route: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private titleService: Title, private alertService: AlertService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private route: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private titleService: Title,
+    private alertService: AlertService
+  ) {
     /** set page title */
     this.titleService.setTitle(`Login`);
     // redirect to home if already logged in
@@ -68,13 +75,14 @@ export default class LoginComponent implements OnInit {
           this.handleLoginSuccess(data);
         },
         error => {
+          console.log(error);
           this.handleLoginError(error);
         }
       );
   }
 
   private handleLoginSuccess(data: any) {
-    if (data.config.length && data.config[0].status === GeneralStatus.Open) {
+    if (data?.config?.length && data.config[0].status === GeneralStatus.Open) {
       this.router.navigate([`dashboard`]);
     } else {
       this.router.navigate(['qa-close']);
