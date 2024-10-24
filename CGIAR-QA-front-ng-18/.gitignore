@@ -43,3 +43,6 @@ Thumbs.db
 
 # environment files
 src/environments/*
+
+# others
+scripts/*

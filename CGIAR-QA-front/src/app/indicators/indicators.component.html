@@ -31,7 +31,7 @@
     <i class="icon-pending"></i>
     <p>Pending</p>
 
-    <i class="icon-quality-assessed"></i>
+    <i class="icon-quality-assessed"></i> 
     <p>Quality Assessed</p>
   </div>
 </div>
@@ -188,6 +188,7 @@
 <table class="table table-bordered" *ngIf="collectionSize != 0">
   <thead class="table-header">
     <tr>
+
       <th scope="col" [class.active]="order === 'id'" (click)="setOrder('id')">
         <div class="header-row">
           Result code
@@ -197,9 +198,13 @@
           </div>
         </div>
       </th>
+
+
       <th scope="col" *ngIf="returnedArray && returnedArray[0].brief">
         <div class="header-row">Brief contribution</div>
       </th>
+
+      
       <th
         scope="col"
         [class.active]="order === 'title'"
@@ -480,6 +485,8 @@
       <th scope="row">
         {{ item.result_code }}
       </th>
+
+
       <td *ngIf="item.hasOwnProperty('brief') && item.brief">
         <div
           *ngIf="item.evaluation_status && item.evaluation_status !== 'New'"
@@ -499,6 +506,8 @@
           [innerHtml]="formatBrief(item.brief)"
         ></a>
       </td>
+
+
       <td>
         <div
           *ngIf="item.evaluation_status && item.evaluation_status !== 'New'"

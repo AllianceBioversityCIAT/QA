@@ -1,0 +1,22 @@
+<a class="nav-item nav-link go-back" [routerLinkActive]="['active']" routerLink="/dashboard/"> <i class="icon-go-back"></i> Dashboard </a>
+
+<h2>{{ returnListName(indicatorType, 'header') }}</h2>
+
+<div class="row col indicator-header">
+  <div class="text-left">
+    <div *ngIf="!criteria_loading" [innerHTML]="criteriaData.qa_criteria"></div>
+  </div>
+  <div class="text-right">
+    <div *ngIf="indicatorType == 'publications'" class="circle autochecked" style="margin-left: 50px"></div>
+    <i *ngIf="indicatorType == 'knowledge_product'" class="icon-autochecked"></i>
+    <p *ngIf="indicatorType == 'knowledge_product'">Automatically validated</p>
+
+    <i class="icon-pending"></i>
+    <p>Pending</p>
+
+    <i class="icon-quality-assessed"></i>
+    <p>Quality Assessed</p>
+  </div>
+</div>
+
+<app-results-table [statusIcon]="this.statusIcon" [resulList]="evaluationList" [returnedArray]="returnedArray" [showActionArea]="showActionArea" [indicatorType]="indicatorType" [showAcceptedComments]="showAcceptedComments" [showDisagreedComments]="showDisagreedComments" [showHighlightedComments]="showHighlightedComments" [showTpbComments]="showTpbComments" [showImplementedDecisions]="showImplementedDecisions" [currentUser]="currentUser"></app-results-table>

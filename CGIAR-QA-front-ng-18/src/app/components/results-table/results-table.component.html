@@ -1,18 +1,105 @@
-<p-table [value]="this.resulList">
+<!-- <div class="row filters-container">
+  <div class="date-filter">
+    <span>Filter by submission date</span>
+    <div *ngFor="let sub of submission_dates" class="form-check form-check-inline">
+      <input class="form-check-input" type="checkbox" [id]="sub.id" [value]="sub.date" [checked]="sub.checked" (change)="onDateChange($event, sub.batch_name)" [disabled]="!sub.is_active" />
+      <label class="form-check-label" for="inlineCheckbox{{ sub.id }}">{{ sub.date }}</label>
+    </div>
+  </div>
+  <div class="filters">
+    <div class="filter-by-column1">
+      <div class="form-check">
+        <input type="checkbox" class="checkbox" id="crp_action_area" [(ngModel)]="showActionArea" [value]="!showActionArea" />
+        <label for="gi"> Action area </label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="checkbox" id="acepted" [(ngModel)]="showAcceptedComments" [value]="!showAcceptedComments" />
+        <label for="acepted"> Accepted comments </label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="checkbox" id="disagree" [(ngModel)]="showDisagreedComments" [value]="!showDisagreedComments" />
+        <label for="disagree"> Disagreed comments </label>
+      </div>
+    </div>
+    <div class="filter-by-column">
+      <div class="form-check">
+        <input type="checkbox" class="checkbox" id="highlighted" [(ngModel)]="showHighlightedComments" [value]="!showHighlightedComments" />
+        <label for="highlighted"> Highlighted comments </label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="checkbox" id="tpb" [(ngModel)]="showTpbComments" [value]="!showTpbComments" />
+        <label for="tpb"> Third party broker instructions </label>
+      </div>
+      <div class="form-check">
+        <input type="checkbox" class="checkbox" id="implemented" [(ngModel)]="showImplementedDecisions" [value]="!showImplementedDecisions" />
+        <label for="implemented"> Implemented Decisions </label>
+      </div>
+    </div>
+  </div>
+  <div class="added-results">
+    <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+      <label class="btn btn-outline-warning" [class.active]="evalStatusFilter === 'Added'" btnRadio="Added" uncheckable tabindex="0" role="button">Added items</label>
+    </div>
+  </div>
+  <div class="removed-filter">
+    <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+      <label class="btn btn-outline-danger" [class.active]="evalStatusFilter === 'Removed'" btnRadio="Removed" uncheckable tabindex="0" role="button">Removed items</label>
+    </div>
+  </div>
+  <div class="updated-results">
+    <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+      <label class="btn btn-outline-primary" [class.active]="evalStatusFilter === 'Updated'" btnRadio="Updated" uncheckable tabindex="0" role="button">Updated items</label>
+    </div>
+  </div>
+  <div class="changed-results">
+    <div class="btn-group" btnRadioGroup [(ngModel)]="evalStatusFilter">
+      <label class="btn btn-outline-secondary" [class.active]="evalStatusFilter === 'Changed'" btnRadio="Changed" uncheckable tabindex="0" role="button">Type Changed</label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <input type="text" class="form-control" placeholder="Search Here" [(ngModel)]="searchText" />
+  </div>
+</div> -->
+
+<p-table [value]="this.resulList" [paginator]="true" [rows]="5" [styleClass]="'p-datatable-sm custom-td'">
   <ng-template pTemplate="header">
     <tr>
       @for (colItem of this.columnNames; track $index) {
-      <th pSortableColumn="name">{{ colItem.name }} <p-sortIcon field="name" /></th>
+        @if (colItem.showIf()) {
+          <th [pSortableColumn]="colItem.attr">{{ colItem.name }} <p-sortIcon [field]="colItem.attr" /></th>
+        }
       }
     </tr>
   </ng-template>
   <ng-template pTemplate="body" let-result>
     @for (resultItem of this.resulList; track $index) {
-    <tr>
-      @for (colItem of this.columnNames; track $index) {
-      <td>{{ resultItem[colItem.attr] }}</td>
-      }
-    </tr>
+      <tr>
+        @for (colItem of this.columnNames; track $index) {
+          @if (colItem.showIf()) {
+            <td>
+              @switch (colItem.attr) {
+                @case ('status') {
+                  <i style="width: 30px" class="icon-{{ statusIcon[resultItem.status] }} status-icon"></i>
+                  @if (resultItem?.require_second_assessment) {
+                    <div class="require-second-assessment">Further assessment</div>
+                  }
+                }
+                @case ('export_comments') {
+                  <a target="_blank">
+                    <div tooltip="Comment in excel format" container="body" placement="top" class="btn btn-primary file-button">
+                      <i class="icon-download-excel"></i>
+                    </div>
+                  </a>
+                }
+                @default {
+                  {{ resultItem[colItem.attr] }}
+                }
+              }
+            </td>
+          }
+        }
+      </tr>
     }
   </ng-template>
 </p-table>

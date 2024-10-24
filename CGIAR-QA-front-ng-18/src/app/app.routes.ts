@@ -53,7 +53,7 @@ export const routes: Routes = [
 
   {
     path: 'indicator/:type/:primary_column',
-    loadComponent: () => import('@pages/crp/pages/crp-indicators/indicators.component'),
+    loadComponent: () => import('@pages/crp/pages/indicators/indicators.component'),
     canActivate: [AuthGuard, AvailableGuard],
     data: { roles: [Role.asesor, Role.admin] }
   },
