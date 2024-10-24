@@ -15,7 +15,7 @@ import config from '../../config/const.config';
 import { Users } from '../users/entities/user.entity';
 import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
 import { RolesHandler } from '../../shared/enum/roles-handler.enum';
-import { In, LessThanOrEqual, MoreThanOrEqual } from 'typeorm';
+import { In, LessThanOrEqual, MoreThan, MoreThanOrEqual } from 'typeorm';
 import * as jwt from 'jsonwebtoken';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { EmbedTokenDto } from './dto/embed-token.dto';
@@ -57,7 +57,13 @@ export class AuthService {
           { email: username.trim().toLowerCase(), is_marlo: true },
           { username: username.trim().toLowerCase(), is_marlo: true },
         ],
-        relations: ['roles', 'roles.role'],
+        relations: {
+          roles: {
+            role: true,
+          },
+          crp: true,
+          crps: true,
+        },
       });
 
       if (marloUser) {
@@ -77,7 +83,13 @@ export class AuthService {
             { username: username.trim().toLowerCase() },
             { email: username.trim().toLowerCase() },
           ],
-          relations: ['roles', 'roles.role'],
+          relations: {
+            roles: {
+              role: true,
+            },
+            crp: true,
+            crps: true,
+          },
         });
         if (
           !user ||
@@ -108,14 +120,14 @@ export class AuthService {
           where: {
             roleId: In(user.roles.map((userRole) => userRole.role.id)),
             start_date: LessThanOrEqual(new Date()),
-            end_date: MoreThanOrEqual(new Date()),
+            end_date: MoreThan(new Date()),
           },
         }),
 
         this._cycleRepository.find({
           where: {
             start_date: LessThanOrEqual(new Date()),
-            end_date: MoreThanOrEqual(new Date()),
+            end_date: MoreThan(new Date()),
           },
         }),
       ]);
@@ -131,9 +143,12 @@ export class AuthService {
       user['cycle'] = currentCycle;
 
       delete user.password;
-      // delete user.replies;
 
-      return user;
+      return ResponseUtils.format({
+        data: user,
+        description: 'User logged.',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error(error.message);
       return ResponseUtils.format({

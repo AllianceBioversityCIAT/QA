@@ -42,7 +42,7 @@ export class JwtMiddleware implements NestMiddleware {
         const dataAuth = await this._authService.loginService(userLogin);
         token_ = dataAuth.data.token;
       } else {
-        token_ = req.headers['authentication'] as string;
+        token_ = req.headers['authorization'] as string;
       }
 
       if (!token_) {
@@ -67,7 +67,7 @@ export class JwtMiddleware implements NestMiddleware {
         { secret: constConfig.jwtSecret, expiresIn: constConfig.jwtTime },
       );
 
-      res.setHeader('authentication', newToken);
+      res.setHeader('authorization', newToken);
 
       next();
     } catch (error) {
