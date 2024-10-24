@@ -1,0 +1,30 @@
+.filters {
+  display: flex;
+  gap: 2rem;
+  padding: 1rem 1.5rem;
+  background-color: #f2f2f2;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+
+  .filters_date {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    .filters_date_title {
+      font-size: 12px;
+      font-weight: 600;
+      margin: 0;
+    }
+
+    .filters_date_checkbox {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+}
+
+::ng-deep .p-checkbox-label {
+  margin-bottom: 0 !important;
+  font-size: 14px;
+}

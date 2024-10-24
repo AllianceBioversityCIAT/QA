@@ -11,7 +11,7 @@ import { CommentService } from '@services/comment.service';
 import { AlertService } from '@services/alert.service';
 
 import { User } from '@models/user.model';
-import { DetailedStatus, GeneralIndicatorName, StatusIcon } from '@models/general-status.model';
+import { DetailedStatus, GeneralIndicatorName } from '@models/general-status.model';
 import { ExportTablesService } from '@services/export-tables.service';
 import { Title } from '@angular/platform-browser';
 import { SortByPipe } from '@pipes/sort-by.pipe';
@@ -87,17 +87,10 @@ export default class IndicatorsComponent implements OnInit {
   };
 
   detailedStatus = DetailedStatus;
-  statusIcon = StatusIcon;
   criteriaData;
   criteria_loading = false;
 
   submission_dates: any[] = [];
-  showAcceptedComments = false;
-  showDisagreedComments = false;
-  showHighlightedComments = false;
-  showTpbComments = false;
-  showImplementedDecisions = false;
-  showActionArea = true;
 
   constructor(
     private activeRoute: ActivatedRoute,
@@ -189,15 +182,15 @@ export default class IndicatorsComponent implements OnInit {
     this.chatRooms = {
       general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/am16H1Vlj?username=${this.currentUser.name}`)
     };
-    this.showhighlightColum();
+    // this.showhighlightColum();
   }
 
-  showhighlightColum() {
-    if (this.currentUser.cycle.cycle_stage == 2) {
-      this.showHighlightedComments = true;
-      this.showTpbComments = true;
-    }
-  }
+  // showhighlightColum() {
+  //   if (this.currentUser.cycle.cycle_stage == 2) {
+  //     this.showHighlightedComments = true;
+  //     this.showTpbComments = true;
+  //   }
+  // }
 
   getEvaluationsList(params) {
     this.showSpinner();

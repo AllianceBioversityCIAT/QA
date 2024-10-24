@@ -62,16 +62,42 @@
   </div>
 </div> -->
 
+<div class="filters">
+  <div class="filters_date">
+    <p class="filters_date_title">Filter by submission date</p>
+
+    <div class="filters_date_checkbox">
+      @for (item of submission_dates; track $index) {
+        <p-checkbox [label]="item.date" [value]="item.date" />
+      }
+    </div>
+  </div>
+
+  <div class="filters_multi">
+    <p-multiSelect [options]="columnsFiltersOptions" optionLabel="label" placeholder="Select Cities" />
+
+    <!-- <ng-template let-country pTemplate="footer">
+        <div class="py-2 px-3">
+          <b>
+            {{ selectedCountries ? selectedCountries.length : 0 }}
+          </b>
+          item{{ (selectedCountries ? selectedCountries.length : 0) > 1 ? 's' : '' }} selected.
+        </div>
+      </ng-template> -->
+  </div>
+</div>
+
 <p-table [value]="this.resulList" [paginator]="true" [rows]="5" [styleClass]="'p-datatable-sm custom-td'">
   <ng-template pTemplate="header">
     <tr>
       @for (colItem of this.columnNames; track $index) {
         @if (colItem.showIf()) {
-          <th [pSortableColumn]="colItem.attr">{{ colItem.name }} <p-sortIcon [field]="colItem.attr" /></th>
+          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr">{{ colItem.name }} <p-sortIcon [field]="colItem.attr" /></th>
         }
       }
     </tr>
   </ng-template>
+
   <ng-template pTemplate="body" let-result>
     @for (resultItem of this.resulList; track $index) {
       <tr>
