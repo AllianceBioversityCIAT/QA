@@ -22,7 +22,7 @@ import { RolesGuard } from '../../shared/guards/role.guard';
 
 @ApiTags('Indicators')
 @ApiHeader({
-  name: 'authentication',
+  name: 'authorization',
   description: 'Bearer token',
 })
 @Controller()
@@ -125,7 +125,7 @@ export class IndicatorsController {
   })
   @ApiResponse({ status: 500, description: 'Error retrieving item status.' })
   getItemStatusByIndicator(
-    @Param('indicator') indicator: string,
+    @Param('indicator') indicator?: string,
     @Query('crp_id') crpId?: string,
   ) {
     return this.indicatorsService.getItemStatusByIndicator(indicator, crpId);

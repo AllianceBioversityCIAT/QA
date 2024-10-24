@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { HttpStatus, Injectable, Logger, Res } from '@nestjs/common';
 import {
   AssignIndicatorDto,
   CreateIndicatorDto,
@@ -302,27 +302,89 @@ export class IndicatorsService {
     }
   }
 
-  async getItemStatusByIndicator(indicator: string, crpId?: string) {
+  async getItemStatusByIndicator(
+    indicator?: string,
+    crpId?: string,
+  ): Promise<any> {
+    const evaluationsByIndicator = this.initializeEvaluationsStructure();
     try {
-      const totalEvaluationsByIndicator =
-        await this._indicatorsRepository.getItemStatusByIndicator(
+      const metas = await this._indicatorsRepository.getIndicatorMetas(
+        indicator,
+        crpId,
+      );
+
+      for (const meta of metas) {
+        const notApplicableCount =
+          await this._indicatorsRepository.getNotApplicableCount(meta, crpId);
+        this.updateEvaluationData(
+          evaluationsByIndicator,
+          meta,
+          notApplicableCount,
+        );
+      }
+
+      const assessments =
+        await this._indicatorsRepository.getAssessmentsByField(
           indicator,
           crpId,
         );
+      this.updateAssessmentData(evaluationsByIndicator, assessments, indicator);
 
       return ResponseUtils.format({
-        data: totalEvaluationsByIndicator,
-        description: 'Items by indicator retrieved successfully',
+        data: Object.values(evaluationsByIndicator[indicator]),
+        description: 'Items by indicator',
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error(error);
+      this._logger.error('Error retrieving items by indicator:', error.message);
       return ResponseUtils.format({
         data: {},
-        description: 'Item status by indicators cannot be retrieved',
+        description: 'Error retrieving item status',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
+        errors: error,
       });
     }
+  }
+
+  private initializeEvaluationsStructure() {
+    return {
+      qa_impact_contribution: {},
+      qa_other_outcome: {},
+      qa_other_output: {},
+      qa_capdev: {},
+      qa_knowledge_product: {},
+      qa_innovation_development: {},
+      qa_policy_change: {},
+      qa_innovation_use: {},
+      qa_innovation_use_ipsr: {},
+    };
+  }
+
+  private updateEvaluationData(evaluations, meta, notApplicableCount) {
+    const { view_name, display_name, total } = meta;
+    evaluations[view_name][display_name] = {
+      item: display_name,
+      pending: total - notApplicableCount,
+      approved_without_comment: 0,
+      assessment_with_comments: 0,
+      notApplicable: notApplicableCount,
+    };
+  }
+
+  private updateAssessmentData(evaluations, assessments, indicator) {
+    assessments.forEach((assessment) => {
+      const { approved_no_comment, display_name, indicator_view_name } =
+        assessment;
+      const item = evaluations[indicator_view_name][display_name];
+
+      if (approved_no_comment === 1) {
+        item.approved_without_comment += assessment.approved_without_comment;
+        item.pending -= assessment.approved_without_comment;
+      } else if (approved_no_comment === null) {
+        item.assessment_with_comments += assessment.assessment_with_comments;
+        item.pending -= assessment.comments_distribution;
+      }
+    });
   }
 
   async getAllItemStatuses() {

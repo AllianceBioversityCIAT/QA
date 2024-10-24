@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { DataSource, Repository } from 'typeorm';
 import { Indicators } from '../entities/indicators.entity';
 import { IndicatorsMeta } from '../entities/indicators-meta.entity';
@@ -7,6 +7,7 @@ import moment from 'moment';
 
 @Injectable()
 export class IndicatorsRepository extends Repository<Indicators> {
+  private readonly _logger = new Logger(IndicatorsRepository.name);
   constructor(
     private readonly dataSource: DataSource,
     private readonly _batchRepository: BatchesRepository,
@@ -427,6 +428,129 @@ export class IndicatorsRepository extends Repository<Indicators> {
       throw new Error('Error retrieving items for MIS');
     } finally {
       await queryRunner.release();
+    }
+  }
+
+  async getIndicatorMetas(indicator: string, crpId?: string) {
+    const query = crpId
+      ? `
+        SELECT col_name, display_name, indicatorId, qi.view_name,
+        (SELECT COUNT(*) 
+         FROM qa_evaluations qe 
+         WHERE qe.indicator_view_name = qi.view_name 
+           AND qe.phase_year = actual_phase_year() 
+           AND qe.status <> 'autochecked' 
+           AND qe.crp_id = ?) AS total
+        FROM qa_indicators_meta qim
+        LEFT JOIN qa_indicators qi ON qi.id = qim.indicatorId
+        WHERE qim.display_name NOT LIKE 'id'
+          AND qim.enable_comments <> 0
+          AND qim.include_detail = 1
+          AND qi.view_name LIKE ?
+      `
+      : `
+        SELECT col_name, display_name, indicatorId, qi.view_name,
+        (SELECT COUNT(*) 
+         FROM qa_evaluations qe 
+         WHERE qe.indicator_view_name = qi.view_name 
+           AND qe.phase_year = actual_phase_year() 
+           AND qe.status <> 'autochecked') AS total
+        FROM qa_indicators_meta qim
+        LEFT JOIN qa_indicators qi ON qi.id = qim.indicatorId
+        WHERE qim.display_name NOT LIKE 'id'
+          AND qim.enable_comments <> 0
+          AND qim.include_detail = 1
+          AND qi.view_name LIKE ?
+      `;
+
+    const parameters = crpId ? [crpId, `%${indicator}%`] : [`%${indicator}%`];
+
+    try {
+      const result = await this.dataSource.query(query, parameters);
+      return result;
+    } catch (error) {
+      this._logger.error('Error fetching indicator metas:', error);
+      throw new Error('Failed to retrieve indicator metas.');
+    }
+  }
+
+  async getNotApplicableCount(meta: any, crpId?: string) {
+    const query = `
+      SELECT COUNT(*) as count 
+      FROM qa_evaluations qe
+      LEFT JOIN \`${meta.view_name}\` qi 
+        ON qe.indicator_view_id = qi.id 
+        AND qe.indicator_view_name = ?
+      WHERE qi.\`${meta.col_name}\` = '<Not applicable>'
+        AND qe.phase_year = actual_phase_year()
+        AND qe.status <> 'autochecked'
+        ${crpId ? `AND qe.crp_id = ?` : ''}
+    `;
+
+    const parameters = crpId ? [meta.view_name, crpId] : [meta.view_name];
+
+    try {
+      const result = await this.dataSource.query(query, parameters);
+      return result[0]?.count || 0;
+    } catch (error) {
+      this._logger.error('Error fetching not applicable count:', error);
+      throw new Error('Failed to retrieve not applicable count.');
+    }
+  }
+
+  async getAssessmentsByField(indicator: string, crpId?: string) {
+    const query = crpId
+      ? `
+        SELECT display_name, col_name, approved_no_comment, indicator_view_name,
+          SUM(IF(approved_no_comment = 0, 1, 0)) AS pending,
+          SUM(IF(approved_no_comment = 1, 1, 0)) AS approved_without_comment,
+          SUM(IF(approved_no_comment IS NULL, 1, 0)) AS assessment_with_comments,
+          COUNT(DISTINCT qe.id) AS comments_distribution
+        FROM qa_indicators_meta qim
+        LEFT JOIN qa_comments qc ON qc.metaId = qim.id
+        LEFT JOIN qa_evaluations qe ON qe.id = qc.evaluationId
+        WHERE qim.id = qc.metaId
+          AND qim.display_name NOT LIKE 'id'
+          AND qim.enable_comments = 1
+          AND qim.include_detail = 1
+          AND qe.evaluation_status NOT LIKE 'Removed'
+          AND qe.phase_year = actual_phase_year()
+          AND qe.indicator_view_name LIKE ?
+          AND qc.is_deleted = 0
+          AND enable_comments <> 0
+          AND qe.crp_id = ?
+        GROUP BY display_name, col_name, approved_no_comment, indicator_view_name;
+      `
+      : `
+        SELECT display_name, col_name, approved_no_comment, indicator_view_name,
+          SUM(IF(approved_no_comment = 0, 1, 0)) AS pending,
+          SUM(IF(approved_no_comment = 1, 1, 0)) AS approved_without_comment,
+          SUM(IF(approved_no_comment IS NULL, 1, 0)) AS assessment_with_comments,
+          COUNT(DISTINCT qe.id) AS comments_distribution
+        FROM qa_indicators_meta qim
+        LEFT JOIN qa_comments qc ON qc.metaId = qim.id
+        LEFT JOIN qa_evaluations qe ON qe.id = qc.evaluationId
+        WHERE qim.id = qc.metaId
+          AND qim.display_name NOT LIKE 'id'
+          AND qim.enable_comments = 1
+          AND qim.include_detail = 1
+          AND qe.evaluation_status NOT LIKE 'Removed'
+          AND qe.phase_year = actual_phase_year()
+          AND qe.indicator_view_name LIKE ?
+          AND qc.is_deleted = 0
+          AND enable_comments <> 0
+        GROUP BY display_name, col_name, approved_no_comment, indicator_view_name;
+      `;
+
+    const parameters = crpId ? [`%${indicator}%`, crpId] : [`%${indicator}%`];
+
+    try {
+      this._logger.log('Executing getAssessmentsByField query');
+      const result = await this.dataSource.query(query, parameters);
+      return result;
+    } catch (error) {
+      this._logger.error('Error executing getAssessmentsByField query:', error);
+      throw new Error('Failed to retrieve assessments by field.');
     }
   }
 

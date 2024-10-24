@@ -31,7 +31,7 @@ import {
 
 @ApiTags('Evaluations')
 @ApiHeader({
-  name: 'authentication',
+  name: 'authorization',
   description: 'Basic token',
 })
 @Controller()

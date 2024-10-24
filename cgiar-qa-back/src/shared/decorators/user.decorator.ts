@@ -7,7 +7,7 @@ import {
 import { TokenDto } from '../global-dto/token.dto';
 
 export const UserToken = createParamDecorator(
-  (authParameter = 'authentication', ctx: ExecutionContext): TokenDto => {
+  (authParameter = 'authorization', ctx: ExecutionContext): TokenDto => {
     const request = ctx.switchToHttp().getRequest();
     const headerValue = request.headers[authParameter];
 

@@ -12,23 +12,23 @@ export const ModulesRoutes: Routes = [
     module: AuthModule,
   },
   {
-    path: 'users',
+    path: 'user',
     module: UsersModule,
   },
   {
-    path: 'indicators',
+    path: 'indicator',
     module: IndicatorsModule,
   },
   {
-    path: 'comments',
+    path: 'comment',
     module: CommentsModule,
   },
   {
-    path: 'evaluations',
+    path: 'evaluation',
     module: EvaluationsModule,
   },
   {
-    path: 'roles',
+    path: 'role',
     module: RolesModule,
   },
 ];

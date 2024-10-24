@@ -18,7 +18,7 @@ import { RolesGuard } from '../../shared/guards/role.guard';
 
 @ApiTags('Roles')
 @ApiHeader({
-  name: 'authentication',
+  name: 'authorization',
   description: 'Bearer token',
 })
 @Controller()

@@ -737,7 +737,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
         AND crp.qa_active = 'open'
       LEFT JOIN qa_comments_meta meta ON meta.indicatorId = indicator.id
       WHERE
-        qa_indicator_user.userId = :userId
+        qa_indicator_user.userId = ?
         AND evaluations.batchDate >= actual_batch_date()
       GROUP BY
         evaluations.status,
@@ -750,14 +750,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
         indicator_order ASC,
         evaluations.status;
     `;
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(
-        sqlQuery,
-        { userId },
-        {},
-      );
-    return await queryRunner.connection.query(query, parameters);
+    return await this.dataSource.query(sqlQuery, [userId]);
   }
 
   async getDetailedEvaluationForAdmin(

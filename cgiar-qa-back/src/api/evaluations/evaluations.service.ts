@@ -331,7 +331,7 @@ export class EvaluationsService {
       return {
         ...parsed,
         hasChanged: !!matchInitial,
-        hasChangedPrevious: !!matchPhase,
+        hasChangePrevious: !!matchPhase,
         changedOldValue: matchPhase ? matchPhase.oldValue : null,
         changedNewValue: matchPhase ? matchPhase.newValue : null,
       };
@@ -847,10 +847,19 @@ export class EvaluationsService {
         indicator_view_name: highlight.indicator_view_name,
       }));
 
-      return { data, message: 'All highlights status' };
+      return ResponseUtils.format({
+        data,
+        description: 'All highlights status',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error retrieving highlighted status:', error.message);
-      throw new Error('Could not retrieve the highlighted status');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Could not retrieve highlighted status.',
+      });
     }
   }
 

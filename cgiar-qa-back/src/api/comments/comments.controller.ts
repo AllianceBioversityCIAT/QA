@@ -25,10 +25,12 @@ import {
   ApiHeader,
 } from '@nestjs/swagger';
 import { PatchPpuDto, UpdateCycleDto } from './dto/comment.dto';
+import { UserToken } from '../../shared/decorators/user.decorator';
+import { TokenDto } from '../../shared/global-dto/token.dto';
 
 @ApiTags('Comments')
 @ApiHeader({
-  name: 'authentication',
+  name: 'authorization',
   description: 'Auth token',
 })
 @Controller()
@@ -52,9 +54,8 @@ export class CommentsController {
     required: false,
     description: 'Optional CRP ID to filter comments statistics',
   })
-  async getCommentsCount(@Query('crp_id') crpId: string, @Req() req: any) {
-    const userId = req.user.userId;
-    return this.commentsService.commentsCount(crpId, userId);
+  async getCommentsCount(@Query('crp_id') crpId: string) {
+    return this.commentsService.getCommentsCount(crpId);
   }
 
   @UseGuards(RolesGuard)

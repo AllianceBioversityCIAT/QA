@@ -9,6 +9,7 @@ import { CycleRepository } from '../../shared/repositories/cycle.repository';
 import { EvaluationRepository } from '../evaluations/repositories/evaluation.repository';
 import { BatchesRepository } from '../../shared/repositories/batch.repository';
 import { QuickCommentsRepository } from './repositories/quick-comments.repository';
+import { TokenDto } from '../../shared/global-dto/token.dto';
 
 @Injectable()
 export class CommentsService {
@@ -26,20 +27,33 @@ export class CommentsService {
     private readonly _quickCommentsRepository: QuickCommentsRepository,
   ) {}
 
-  async commentsCount(crpId: string, userId: number) {
+  async getCommentsCount(crpId?: string): Promise<any> {
     try {
-      const commentsStatistics =
-        await this._commentsRepository.getCommentsCount(crpId, userId);
+      let rawData;
+      if (crpId) {
+        rawData = await this._commentsRepository.getCommentsByCrpId(crpId);
+      } else {
+        rawData = await this._commentsRepository.getAllComments();
+      }
+
+      const groupedData = this._evaluationsRepository.groupBy(
+        rawData,
+        'indicator_view_name',
+      );
+
       return ResponseUtils.format({
-        data: commentsStatistics,
+        data: groupedData,
         description: 'Comments statistics',
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error(error);
+      this._logger.error(
+        'Error retrieving comments statistics:',
+        error.message,
+      );
       return ResponseUtils.format({
         data: {},
-        description: 'Could not access comments statistics.',
+        description: 'Comments statistics not found.',
         status: HttpStatus.NOT_FOUND,
       });
     }
