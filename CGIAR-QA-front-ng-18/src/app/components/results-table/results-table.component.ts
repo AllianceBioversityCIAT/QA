@@ -5,12 +5,14 @@ import { CheckboxModule } from 'primeng/checkbox';
 import { StatusIcon } from '../../_models/general-status.model';
 import { CommentService } from '../../services/comment.service';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ButtonModule } from 'primeng/button';
 import moment from 'moment';
+import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
   selector: 'app-results-table',
   standalone: true,
-  imports: [TableModule, FormsModule, CheckboxModule, MultiSelectModule],
+  imports: [TableModule, FormsModule, CheckboxModule, MultiSelectModule, ButtonModule, InputTextModule],
   templateUrl: './results-table.component.html',
   styleUrl: './results-table.component.scss'
 })
@@ -19,25 +21,27 @@ export class ResultsTableComponent {
   @Input() returnedArray: any[] = [];
   @Input() indicatorType: string;
   @Input() currentUser: any;
+
   statusIcon = StatusIcon;
   submission_dates = [];
 
-  columnsFilters = {
-    showActionArea: true,
-    showAcceptedComments: false,
-    showDisagreedComments: false,
-    showHighlightedComments: false,
-    showTpbComments: false,
-    showImplementedDecisions: false
-  };
+  evalStatusFilter = null;
+  searchText = '';
+
+  selectedFilters = [
+    {
+      label: 'Action Area',
+      key: 'showActionArea'
+    }
+  ];
 
   columnsFiltersOptions = [
-    { label: 'Action Area', value: true },
-    { label: 'Accepted Comments', value: false },
-    { label: 'Disagreed Comments', value: false },
-    { label: 'Highlighted Comments', value: false },
-    { label: 'T-pb Comments', value: false },
-    { label: 'Implemented Decisions', value: false }
+    { label: 'Action Area', key: 'showActionArea' },
+    { label: 'Accepted Comments', key: 'showAcceptedComments' },
+    { label: 'Disagreed Comments', key: 'showDisagreedComments' },
+    { label: 'Highlighted Comments', key: 'showHighlightedComments' },
+    { label: 'Third party broker instructions', key: 'showTpbComments' },
+    { label: 'Implemented Decisions', key: 'showImplementedDecisions' }
   ];
 
   columnNames = [
@@ -64,8 +68,7 @@ export class ResultsTableComponent {
     {
       name: 'Action Area',
       attr: 'crp_action_area',
-      // showIf: () => this.columnsFilters.showActionArea
-      showIf: () => this.columnsFiltersOptions[0].value
+      showIf: () => this.getColumnsFilters('showActionArea')
     },
     {
       name: 'is Melia',
@@ -95,7 +98,7 @@ export class ResultsTableComponent {
     {
       name: 'Accepted comments',
       attr: 'comments_accepted_count',
-      showIf: () => this.columnsFiltersOptions[1].value
+      showIf: () => this.getColumnsFilters('showAcceptedComments')
     },
     {
       name: 'Accepted w. comment',
@@ -105,22 +108,22 @@ export class ResultsTableComponent {
     {
       name: 'Disagreed comments',
       attr: 'comments_disagreed_count',
-      showIf: () => this.returnedArray?.[0]?.comments_disagreed_count && this.columnsFilters.showDisagreedComments
+      showIf: () => this.returnedArray?.[0]?.comments_disagreed_count && this.getColumnsFilters('showDisagreedComments')
     },
     {
       name: 'Highlighted comments on core fields',
       attr: 'comments_highlight_count',
-      showIf: () => this.columnsFiltersOptions[3].value
+      showIf: () => this.getColumnsFilters('showHighlightedComments')
     },
     {
       name: 'T-pb instructions',
       attr: 'comments_tpb_count',
-      showIf: () => this.columnsFiltersOptions[4].value
+      showIf: () => this.getColumnsFilters('showTpbComments')
     },
     {
       name: 'Implemented Decisions',
       attr: 'comments_ppu_count',
-      showIf: () => this.columnsFiltersOptions[5].value
+      showIf: () => this.getColumnsFilters('showImplementedDecisions')
     },
     {
       name: 'Export comments',
@@ -154,36 +157,44 @@ export class ResultsTableComponent {
   getBatchDates() {
     this.commentService.getBatches().subscribe({
       next: res => {
-        const batches = res.data;
-        for (let index = 0; index < batches.length; index++) {
-          let batch = {
-            date: moment(batches[index].submission_date).format('ll'),
-            batch_name: +batches[index].batch_name,
-            checked: false,
-            is_active: null
-          };
-          batch.is_active = !!(moment(Date.now()).isSameOrAfter(batch.date) || index === 0);
-          // batch.checked = batch.is_active;
-          batch.checked = batch.batch_name == 3;
-          this.submission_dates.push(batch);
-          console.log(this.submission_dates);
-        }
+        const batches = res.data.map((batch, index) => ({
+          date: moment(batch.submission_date).format('ll'),
+          batch_name: +batch.batch_name,
+          checked: batch.batch_name == 3,
+          is_active: !!(moment(Date.now()).isSameOrAfter(moment(batch.submission_date)) || index === 0)
+        }));
+        this.submission_dates = batches;
+        console.log(this.submission_dates);
       },
       error: error => {
-        // this.alertService.error(error);
-        console.log(error);
+        console.error('Error fetching batch dates:', error);
       }
     });
   }
 
-  getColumns() {
-    return Object.keys(this.columnsFilters).filter(key => this.columnsFilters[key]);
+  getColumnsFilters(key: string) {
+    return this.selectedFilters.find(filter => filter.key === key);
   }
 
   showhighlightColumn() {
     if (this.currentUser?.cycle.cycle_stage == 2) {
-      this.columnsFilters.showHighlightedComments = true;
-      this.columnsFilters.showTpbComments = true;
+      this.selectedFilters.push({
+        label: 'Highlighted Comments',
+        key: 'showHighlightedComments'
+      });
+      this.selectedFilters.push({
+        label: 'Third party broker instructions',
+        key: 'showTpbComments'
+      });
     }
+  }
+
+  handleFilterChange(key: string) {
+    if (this.evalStatusFilter === key) {
+      this.evalStatusFilter = null;
+      return;
+    }
+
+    this.evalStatusFilter = key;
   }
 }

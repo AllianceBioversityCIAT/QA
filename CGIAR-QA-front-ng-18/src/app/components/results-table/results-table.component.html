@@ -73,18 +73,34 @@
     </div>
   </div>
 
-  <div class="filters_multi">
-    <p-multiSelect [options]="columnsFiltersOptions" optionLabel="label" placeholder="Select Cities" />
+  <!-- <div class="filters_multi"> -->
+  <p-multiSelect
+    [options]="columnsFiltersOptions"
+    [(ngModel)]="selectedFilters"
+    optionLabel="label"
+    [showHeader]="false"
+    [style]="{ width: '100%' }"
+    placeholder="Select Filters"
+    [selectedItemsLabel]="selectedFilters.length + ' filters selected'">
+    <ng-template let-country pTemplate="footer">
+      <div class="py-2 px-3">
+        <b>
+          {{ selectedFilters ? selectedFilters.length : 0 }}
+        </b>
+        filter{{ (selectedFilters ? selectedFilters.length : 0) > 1 ? 's' : '' }} selected.
+      </div>
+    </ng-template>
+  </p-multiSelect>
+  <!-- </div> -->
 
-    <!-- <ng-template let-country pTemplate="footer">
-        <div class="py-2 px-3">
-          <b>
-            {{ selectedCountries ? selectedCountries.length : 0 }}
-          </b>
-          item{{ (selectedCountries ? selectedCountries.length : 0) > 1 ? 's' : '' }} selected.
-        </div>
-      </ng-template> -->
+  <div class="filters_buttons">
+    <p-button label="Added items" [outlined]="evalStatusFilter !== 'Added'" (click)="handleFilterChange('Added')" severity="warning" />
+    <p-button label="Removed items" [outlined]="evalStatusFilter !== 'Removed'" (click)="handleFilterChange('Removed')" severity="danger" />
+    <p-button label="Updated items" [outlined]="evalStatusFilter !== 'Updated'" (click)="handleFilterChange('Updated')" />
+    <p-button label="Type Changed" [outlined]="evalStatusFilter !== 'Changed'" (click)="handleFilterChange('Changed')" severity="secondary" />
   </div>
+
+  <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search here" style="width: 100%" />
 </div>
 
 <p-table [value]="this.resulList" [paginator]="true" [rows]="5" [styleClass]="'p-datatable-sm custom-td'">
