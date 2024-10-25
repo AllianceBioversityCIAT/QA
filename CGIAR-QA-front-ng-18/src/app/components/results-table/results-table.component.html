@@ -68,7 +68,7 @@
 
     <div class="filters_date_checkbox">
       @for (item of submissionDates; track $index) {
-        <p-checkbox [label]="item.date" [value]="item.date" />
+        <p-checkbox [label]="item.date" [value]="item.date" [(ngModel)]="selectedDates" />
       }
     </div>
   </div>
@@ -78,10 +78,11 @@
     [options]="columnsFiltersOptions"
     [(ngModel)]="selectedFilters"
     optionLabel="label"
-    [showHeader]="false"
     [style]="{ width: '100%' }"
     placeholder="Select Filters"
-    [selectedItemsLabel]="selectedFilters.length + ' filters selected'">
+    [selectedItemsLabel]="selectedFilters.length + ' filters selected'"
+    [showToggleAll]="true"
+    [filter]="false">
     <ng-template let-country pTemplate="footer">
       <div class="py-2 px-3">
         <b>
@@ -103,7 +104,11 @@
   <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search here" style="width: 100%" />
 </div>
 
-<p-table [value]="this.resulList" [paginator]="true" [rows]="5" [styleClass]="'p-datatable-sm custom-td'">
+<p-table
+  [value]="this.resulList | appResultsTablePipe: selectedDates : searchText"
+  [paginator]="true"
+  [rows]="5"
+  [styleClass]="'p-datatable-sm custom-td'">
   <ng-template pTemplate="header">
     <tr>
       @for (colItem of this.columnNames; track $index) {
@@ -115,33 +120,31 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-result>
-    @for (resultItem of this.resulList; track $index) {
-      <tr>
-        @for (colItem of this.columnNames; track $index) {
-          @if (colItem.showIf()) {
-            <td>
-              @switch (colItem.attr) {
-                @case ('status') {
-                  <i style="width: 30px" class="icon-{{ statusIcon[resultItem.status] }} status-icon"></i>
-                  @if (resultItem?.require_second_assessment) {
-                    <div class="require-second-assessment">Further assessment</div>
-                  }
-                }
-                @case ('export_comments') {
-                  <a target="_blank">
-                    <div tooltip="Comment in excel format" container="body" placement="top" class="btn btn-primary file-button">
-                      <i class="icon-download-excel"></i>
-                    </div>
-                  </a>
-                }
-                @default {
-                  {{ resultItem[colItem.attr] }}
+    <tr>
+      @for (colItem of this.columnNames; track $index) {
+        @if (colItem.showIf()) {
+          <td>
+            @switch (colItem.attr) {
+              @case ('status') {
+                <i style="width: 30px" class="icon-{{ statusIcon[result.status] }} status-icon"></i>
+                @if (result?.require_second_assessment) {
+                  <div class="require-second-assessment">Further assessment</div>
                 }
               }
-            </td>
-          }
+              @case ('export_comments') {
+                <a target="_blank">
+                  <div tooltip="Comment in excel format" container="body" placement="top" class="btn btn-primary file-button">
+                    <i class="icon-download-excel"></i>
+                  </div>
+                </a>
+              }
+              @default {
+                {{ result[colItem.attr] }}
+              }
+            }
+          </td>
         }
-      </tr>
-    }
+      }
+    </tr>
   </ng-template>
 </p-table>

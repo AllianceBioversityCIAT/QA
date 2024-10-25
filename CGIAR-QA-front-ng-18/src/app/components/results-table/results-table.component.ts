@@ -7,11 +7,12 @@ import { CommentService } from '../../services/comment.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
+import { ResultsTablePipe } from './pipes/results-table.pipe';
 
 @Component({
   selector: 'app-results-table',
   standalone: true,
-  imports: [TableModule, FormsModule, CheckboxModule, MultiSelectModule, ButtonModule, InputTextModule],
+  imports: [TableModule, FormsModule, CheckboxModule, MultiSelectModule, ButtonModule, InputTextModule, ResultsTablePipe],
   templateUrl: './results-table.component.html',
   styleUrl: './results-table.component.scss'
 })
@@ -26,6 +27,7 @@ export class ResultsTableComponent {
 
   evalStatusFilter = null;
   searchText = '';
+  selectedDates = [];
 
   selectedFilters = [
     {
