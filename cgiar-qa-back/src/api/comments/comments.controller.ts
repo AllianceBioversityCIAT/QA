@@ -54,7 +54,7 @@ export class CommentsController {
     required: false,
     description: 'Optional CRP ID to filter comments statistics',
   })
-  async getCommentsCount(@Query('crp_id') crpId: string) {
+  async getCommentsCount(@Query('crp_id') crpId?: string) {
     return this.commentsService.getCommentsCount(crpId);
   }
 
@@ -110,10 +110,8 @@ export class CommentsController {
   @ApiResponse({ status: 404, description: 'Tags not found' })
   async getAllIndicatorTags(
     @Query('crp_id') crp_id: string,
-    @Res() res: Response,
   ) {
-    const tags = await this.commentsService.getAllIndicatorTags(crp_id);
-    res.status(200).send({ data: tags, message: 'All tags by indicator' });
+    return await this.commentsService.getAllIndicatorTags(crp_id);
   }
 
   @UseGuards(RolesGuard)

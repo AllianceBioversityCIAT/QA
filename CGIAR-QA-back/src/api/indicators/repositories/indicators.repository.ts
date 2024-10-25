@@ -84,7 +84,7 @@ export class IndicatorsRepository extends Repository<Indicators> {
     const [query, parameters] =
       queryRunner.connection.driver.escapeQueryWithParameters(
         `
-      SELECT indicators.name, indicators.description, indicators.primary_field, indicators.order AS indicator_order, indicators.view_name, meta.enable_assessor, qa_indicator_user.isLeader, qa_indicator_user.isTPB, qa_indicator_user.isPPU
+      SELECT indicators.name, indicators.description, indicators.primary_field, indicators.order AS indicator_order, indicators.view_name, meta.enable_assessor, qa_indicator_user.isLeader as is_leader, qa_indicator_user.isTPB as is_tpb, qa_indicator_user.isPPU as is_ppu
       FROM qa_indicator_user qa_indicator_user
       LEFT JOIN qa_indicators indicators ON indicators.id = qa_indicator_user.indicatorId
       LEFT JOIN qa_comments_meta meta ON meta.indicatorId = qa_indicator_user.indicatorId

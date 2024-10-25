@@ -30,10 +30,11 @@ export class CommentsService {
   async getCommentsCount(crpId?: string): Promise<any> {
     try {
       let rawData;
-      if (crpId) {
-        rawData = await this._commentsRepository.getCommentsByCrpId(crpId);
-      } else {
+
+      if (!crpId || crpId === 'undefined' || crpId === 'null') {
         rawData = await this._commentsRepository.getAllComments();
+      } else {
+        rawData = await this._commentsRepository.getCommentsByCrpId(crpId);
       }
 
       const groupedData = this._evaluationsRepository.groupBy(
@@ -51,6 +52,7 @@ export class CommentsService {
         'Error retrieving comments statistics:',
         error.message,
       );
+
       return ResponseUtils.format({
         data: {},
         description: 'Comments statistics not found.',
@@ -138,13 +140,18 @@ export class CommentsService {
       } else {
         tagsByIndicators = await this._tagsRepository.fetchAllTags();
       }
-      return tagsByIndicators;
+      return ResponseUtils.format({
+        data: tagsByIndicators,
+        description: 'Tags by indicators retrieved successfully.',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error retrieving tags:', error);
       throw ResponseUtils.format({
         data: {},
         description: 'Tags by indicators cannot be retrieved.',
         status: HttpStatus.NOT_FOUND,
+        errors: error,
       });
     }
   }

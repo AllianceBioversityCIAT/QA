@@ -92,6 +92,7 @@ export class EvaluationsService {
     crpId: string | undefined,
     user: TokenDto,
   ): Promise<any> {
+    console.log("🚀 ~ EvaluationsService ~ viewName:", viewName)
     try {
       const userEntity = await this._evaluationsRepository.getUser(user.userId);
       const isAdmin = userEntity.roles.some((r) => r.qa_role === 1);
@@ -835,17 +836,18 @@ export class EvaluationsService {
   async pendingHighlights(): Promise<any> {
     try {
       const highlights =
-        await this._evaluationsRepository.getPendingHighlights();
+      await this._evaluationsRepository.getPendingHighlights();
 
       const data = highlights.map((highlight: any) => ({
         pending_highlight_comments:
-          highlight.pending_highlight_comments - highlight.total_tpb_comments,
+        highlight.pending_highlight_comments - highlight.total_tpb_comments,
         solved_with_require_request: highlight.solved_with_require_request,
         solved_without_require_request:
-          highlight.solved_without_require_request,
+        highlight.solved_without_require_request,
         pending_tpb_decisions: highlight.pending_tpb_decisions,
         indicator_view_name: highlight.indicator_view_name,
       }));
+      console.log("🚀 ~ EvaluationsService ~ data ~ data:", data)
 
       return ResponseUtils.format({
         data,

@@ -218,7 +218,7 @@ export class CommentsRepository extends Repository<Comments> {
 
   async getAllComments(): Promise<any[]> {
     const sqlQuery = `
-      SELECT
+    SELECT
         SUM(
             IF(
                 comments.replyTypeId = 1
@@ -240,7 +240,7 @@ export class CommentsRepository extends Repository<Comments> {
         SUM(IF(comments.replyTypeId = 5, 1, 0)) AS comments_discarded,
         SUM(
             IF (
-                comments.replyTypeId IS NULL 
+                comments.replyTypeId IS NULL
                 AND comments.tpb = 0
                 AND comments.cycleId = 1,
                 1,
@@ -331,7 +331,7 @@ export class CommentsRepository extends Repository<Comments> {
         type DESC;
     `;
 
-    return this.dataSource.query(sqlQuery);
+    return this.query(sqlQuery);
   }
 
   groupByIndicatorViewName(data: any[]) {

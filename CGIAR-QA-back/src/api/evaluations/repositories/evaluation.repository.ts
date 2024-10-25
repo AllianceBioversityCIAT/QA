@@ -1338,11 +1338,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
         evaluations.indicator_view_name;
     `;
 
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(sqlQuery, {}, {});
-
-    return await queryRunner.connection.query(query, parameters);
+    return await this.query(sqlQuery, []);
   }
 
   async getEvaluationStatus(resultId: string): Promise<any[]> {
