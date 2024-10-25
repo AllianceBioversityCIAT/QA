@@ -11,7 +11,7 @@ import { CommentService } from '@services/comment.service';
 import { AlertService } from '@services/alert.service';
 
 import { User } from '@models/user.model';
-import { DetailedStatus, GeneralIndicatorName, StatusIcon } from '@models/general-status.model';
+import { DetailedStatus, GeneralIndicatorName } from '@models/general-status.model';
 import { ExportTablesService } from '@services/export-tables.service';
 import { Title } from '@angular/platform-browser';
 import { SortByPipe } from '@pipes/sort-by.pipe';
@@ -87,17 +87,10 @@ export default class IndicatorsComponent implements OnInit {
   };
 
   detailedStatus = DetailedStatus;
-  statusIcon = StatusIcon;
   criteriaData;
   criteria_loading = false;
 
   submission_dates: any[] = [];
-  showAcceptedComments = false;
-  showDisagreedComments = false;
-  showHighlightedComments = false;
-  showTpbComments = false;
-  showImplementedDecisions = false;
-  showActionArea = true;
 
   constructor(
     private activeRoute: ActivatedRoute,
@@ -139,8 +132,8 @@ export default class IndicatorsComponent implements OnInit {
   }
 
   getBatchDates() {
-    this.commentService.getBatches().subscribe(
-      res => {
+    this.commentService.getBatches().subscribe({
+      next: res => {
         const batches = res.data;
         for (let index = 0; index < batches.length; index++) {
           let batch = {
@@ -149,31 +142,30 @@ export default class IndicatorsComponent implements OnInit {
             checked: false,
             is_active: null
           };
-          batch.is_active = moment(Date.now()).isSameOrAfter(batch.date) || index === 0 ? true : false;
-          // batch.checked = batch.is_active;
-          batch.checked = batch.batch_name == 3 ? true : false;
+          batch.is_active = !!(moment(Date.now()).isSameOrAfter(batch.date) || index === 0);
+          batch.checked = batch.batch_name == 3;
           this.submission_dates.push(batch);
         }
       },
-      error => {
+      error: error => {
         this.alertService.error(error);
       }
-    );
+    });
   }
 
   getIndicatorCriteria(id) {
     this.criteria_loading = true;
-    this.evaluationService.getCriteriaByIndicator(id).subscribe(
-      res => {
+    this.evaluationService.getCriteriaByIndicator(id).subscribe({
+      next: res => {
         this.criteriaData = res.data[0];
 
         this.criteria_loading = false;
       },
-      error => {
+      error: error => {
         this.criteria_loading = false;
         this.alertService.error(error);
       }
-    );
+    });
   }
 
   ngOnInit() {
@@ -189,40 +181,37 @@ export default class IndicatorsComponent implements OnInit {
     this.chatRooms = {
       general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/am16H1Vlj?username=${this.currentUser.name}`)
     };
-    this.showhighlightColum();
+    // this.showhighlightColum();
   }
 
-  showhighlightColum() {
-    if (this.currentUser.cycle.cycle_stage == 2) {
-      this.showHighlightedComments = true;
-      this.showTpbComments = true;
-    }
-  }
+  // showhighlightColum() {
+  //   if (this.currentUser.cycle.cycle_stage == 2) {
+  //     this.showHighlightedComments = true;
+  //     this.showTpbComments = true;
+  //   }
+  // }
 
   getEvaluationsList(params) {
     this.showSpinner();
 
-    this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column).subscribe(
-      res => {
-        if (this.indicatorType == 'slo') {
-          this.order = 'status';
-        } else {
-          this.order = 'status';
-        }
+    this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column).subscribe({
+      next: res => {
+        this.order = 'status';
+
         this.evaluationList = this.orderPipe.transform(res.data, this.order);
 
         this.collectionSize = this.evaluationList.length;
         this.returnedArray = this.evaluationList.slice(0, 10);
         this.returnedArrayHasStage = this.returnedArray.find(e => e.stage != null);
 
-        this.hasTemplate = this.currentUser.config[0][`${params.type}_guideline`] ? true : false;
+        this.hasTemplate = !!this.currentUser.config[0][`${params.type}_guideline`];
 
         this.evaluationList = this.orderPipe.transform(
           res.data.filter((shi: any) => this.submission_dates.some(sub => sub.date === moment(shi.submission_date).format('ll') && sub.checked)),
           this.order
         );
 
-        this.evaluationList.map(evaluation => {
+        this.evaluationList.forEach(evaluation => {
           evaluation.full_title = evaluation.initiative + ' - ' + evaluation.short_name;
         });
 
@@ -238,12 +227,12 @@ export default class IndicatorsComponent implements OnInit {
         }, 200);
         // this.currentPage = this.indicatorService.getPagesIndicatorList();
       },
-      error => {
+      error: error => {
         this.hideSpinner();
         this.returnedArray = [];
         this.alertService.error(error);
       }
-    );
+    });
   }
 
   fixAccent(value) {
@@ -301,15 +290,13 @@ export default class IndicatorsComponent implements OnInit {
 
   goToPDF(type: string) {
     let pdf_url;
-    switch (type) {
-      case 'AR':
-        pdf_url = this.currentUser.config[0]['anual_report_guideline'];
-        break;
-      default:
-        pdf_url = this.currentUser.config[0][`${type}_guideline`];
 
-        break;
+    if (type === 'AR') {
+      pdf_url = this.currentUser.config[0]['anual_report_guideline'];
+    } else {
+      pdf_url = this.currentUser.config[0][`${type}_guideline`];
     }
+
     window.open(pdf_url, '_blank');
   }
 
@@ -324,16 +311,16 @@ export default class IndicatorsComponent implements OnInit {
         name: filename,
         indicatorName: `qa_${this.indicatorType}`
       })
-      .subscribe(
-        res => {
+      .subscribe({
+        next: res => {
           this._exportTableSE.exportExcel(res, filename);
           this.hideSpinner();
         },
-        error => {
+        error: error => {
           this.hideSpinner();
           this.alertService.error(error);
         }
-      );
+      });
   }
 
   // * Para darle nombre a la columna primaria
@@ -417,7 +404,6 @@ export default class IndicatorsComponent implements OnInit {
         this.submission_dates = [...this.submission_dates];
 
         this.getEvaluationsList({ type: this.indicatorType });
-      } else {
       }
     }
   }

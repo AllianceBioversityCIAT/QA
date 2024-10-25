@@ -27,7 +27,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('Users')
 @ApiHeader({
-  name: 'authentication',
+  name: 'authorization',
   description: 'Bearer token',
 })
 @Controller()

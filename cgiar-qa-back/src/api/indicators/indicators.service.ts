@@ -1,4 +1,5 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
+import { Response } from 'express';
 import {
   AssignIndicatorDto,
   CreateIndicatorDto,
@@ -265,8 +266,13 @@ export class IndicatorsService {
   async getIndicatorsByUser(userId: number, crpId?: string) {
     let response = [];
     try {
-      const user: Users = await this._usersRepository.findOneOrFail({
+      const user: Users = await this._usersRepository.findOne({
         where: { id: userId },
+        relations: {
+          roles: {
+            role: true,
+          },
+        },
       });
       const isAdmin = user.roles.some(
         (userRole) => userRole.role.description === 'ADMIN',
@@ -302,25 +308,196 @@ export class IndicatorsService {
     }
   }
 
-  async getItemStatusByIndicator(indicator: string, crpId?: string) {
-    try {
-      const totalEvaluationsByIndicator =
-        await this._indicatorsRepository.getItemStatusByIndicator(
-          indicator,
-          crpId,
-        );
+  async getItemStatusByIndicator(
+    res: Response,
+    indicator: string,
+    crp_id?: string,
+  ) {
+    let totalEvaluationsByIndicator = {
+      qa_impact_contribution: {},
+      qa_other_outcome: {},
+      qa_other_output: {},
+      qa_capdev: {},
+      qa_knowledge_product: {},
+      qa_innovation_development: {},
+      qa_policy_change: {},
+      qa_innovation_use: {},
+      qa_innovation_use_ipsr: {},
+    };
 
+    try {
+      let queryMetas = '';
+      if (crp_id != undefined && crp_id != 'undefined') {
+        queryMetas = `SELECT col_name, display_name, indicatorId, qi.view_name,
+                    (SELECT count(*) FROM qa_evaluations qe WHERE qe.indicator_view_name = qi.view_name AND qe.phase_year = actual_phase_year() AND qe.status <> 'autochecked' AND qe.crp_id = '${crp_id}') AS total
+                   FROM qa_indicators_meta qim
+                   LEFT JOIN qa_indicators qi ON qi.id = qim.indicatorId
+                   WHERE qim.display_name  not like 'id'
+                   AND qim.enable_comments <> 0
+                   AND qim.include_detail = 1
+                   AND qi.view_name like ?`;
+      } else {
+        queryMetas = `SELECT col_name, display_name, indicatorId, qi.view_name,
+                    (SELECT count(*) FROM qa_evaluations qe WHERE qe.indicator_view_name = qi.view_name AND qe.phase_year = actual_phase_year() AND qe.status <> 'autochecked') AS total
+                   FROM qa_indicators_meta qim
+                   LEFT JOIN qa_indicators qi ON qi.id = qim.indicatorId
+                   WHERE qim.display_name  not like 'id'
+                   AND qim.enable_comments <> 0
+                   AND qim.include_detail = 1
+                   AND qi.view_name like ?`;
+      }
+
+      let allMetas = await this._indicatorsRepository.query(queryMetas, [
+        indicator,
+      ]);
+
+      for (const meta of allMetas) {
+        let queryNotApplicable = `SELECT count(*) as count FROM qa_evaluations qe
+                    LEFT JOIN ${meta.view_name} qi on qe.indicator_view_id = qi.id AND qe.indicator_view_name = "${meta.view_name}"
+                    WHERE qi.${meta.col_name}  = "<Not applicable>" AND qe.phase_year = actual_phase_year() AND qe.status <> "autochecked" `;
+
+        if (crp_id != undefined && crp_id != 'undefined') {
+          queryNotApplicable += `AND qe.crp_id = '${crp_id}'`;
+        }
+
+        totalEvaluationsByIndicator[meta.view_name][meta.display_name] = {
+          item: meta.display_name,
+          pending: meta.total,
+          approved_without_comment: 0,
+          assessment_with_comments: 0,
+          notApplicable: null,
+          queryNotApplicable: queryNotApplicable,
+        };
+
+        try {
+          let notApplicableCount = await this._indicatorsRepository.query(
+            totalEvaluationsByIndicator[meta.view_name][meta.display_name][
+              'queryNotApplicable'
+            ],
+            [],
+          );
+          totalEvaluationsByIndicator[meta.view_name][meta.display_name][
+            'notApplicable'
+          ] = +notApplicableCount[0].count;
+
+          totalEvaluationsByIndicator[meta.view_name][meta.display_name][
+            'pending'
+          ] -= +notApplicableCount[0].count;
+        } catch (error) {
+          this._logger.error(error);
+          return ResponseUtils.format({
+            data: [],
+            description: 'Error retrieving item status',
+            status: HttpStatus.INTERNAL_SERVER_ERROR,
+            errors: error,
+          });
+        }
+      }
+      return res.status(HttpStatus.OK).json(totalEvaluationsByIndicator);
+    } catch (error) {
+      res.status(HttpStatus.NOT_FOUND).json({
+        message: 'All items status by indicators can not be retrived.',
+        data: error,
+      });
+    }
+
+    try {
+      let queryAssessmentByField = '';
+      if (crp_id != undefined && crp_id != 'undefined') {
+        queryAssessmentByField = `SELECT display_name, col_name, approved_no_comment, indicator_view_name,
+                SUM(
+                   IF (approved_no_comment = 0, 1, 0)
+                   ) AS pending,
+               SUM(
+                   IF (approved_no_comment = 1, 1, 0)
+                   ) AS approved_without_comment,
+               SUM(
+                   IF (approved_no_comment is null, 1, 0)
+                   ) AS assessment_with_comments,
+                   count(distinct qe.id) as comments_distribution
+               FROM qa_indicators_meta qim
+               LEFT JOIN qa_comments qc ON qc.metaId = qim.id
+               LEFT JOIN qa_evaluations qe ON qe.id = qc.evaluationId
+               WHERE qim.id = qc.metaId
+               AND qim.display_name  not like 'id'
+               AND qim.enable_comments = 1
+               AND qim.include_detail = 1
+               AND qe.evaluation_status not like 'Removed'
+               AND qe.phase_year = actual_phase_year()
+               AND qe.indicator_view_name like :indicator
+               AND qc.is_deleted = 0
+               AND enable_comments <> 0
+               AND qe.crp_id = :crp_id
+               GROUP BY display_name, col_name, approved_no_comment, indicator_view_name, approved_no_comment;`;
+      } else {
+        queryAssessmentByField = `SELECT display_name, col_name, approved_no_comment, indicator_view_name,
+                SUM(
+                   IF (approved_no_comment = 0, 1, 0)
+                   ) AS pending,
+               SUM(
+                   IF (approved_no_comment = 1, 1, 0)
+                   ) AS approved_without_comment,
+               SUM(
+                   IF (approved_no_comment is null, 1, 0)
+                   ) AS assessment_with_comments,
+                   count(distinct qe.id) as comments_distribution
+               FROM qa_indicators_meta qim
+               LEFT JOIN qa_comments qc ON qc.metaId = qim.id
+               LEFT JOIN qa_evaluations qe ON qe.id = qc.evaluationId
+               WHERE qim.id = qc.metaId
+               AND qim.display_name  not like 'id'
+               AND qim.enable_comments = 1
+               AND qim.include_detail = 1
+               AND qe.evaluation_status not like 'Removed'
+               AND qe.phase_year = actual_phase_year()
+               AND qe.indicator_view_name like :indicator
+               AND qc.is_deleted = 0
+               AND enable_comments <> 0
+               GROUP BY display_name, col_name, approved_no_comment, indicator_view_name, approved_no_comment;`;
+      }
+      let allItems = await this._indicatorsRepository.query(
+        queryAssessmentByField,
+        [indicator, crp_id],
+      );
+      for (let i = 0; i < allItems.length; i++) {
+        switch (allItems[i].approved_no_comment) {
+          case 1:
+            totalEvaluationsByIndicator[allItems[i].indicator_view_name][
+              allItems[i].display_name
+            ]['approved_without_comment'] =
+              +allItems[i].approved_without_comment;
+            totalEvaluationsByIndicator[allItems[i].indicator_view_name][
+              allItems[i].display_name
+            ]['pending'] -= +allItems[i].approved_without_comment;
+            break;
+          case null:
+            totalEvaluationsByIndicator[allItems[i].indicator_view_name][
+              allItems[i].display_name
+            ]['assessment_with_comments'] =
+              +allItems[i].assessment_with_comments;
+            totalEvaluationsByIndicator[allItems[i].indicator_view_name][
+              allItems[i].display_name
+            ]['pending'] -= +allItems[i].comments_distribution;
+            break;
+          default:
+            break;
+        }
+      }
+      totalEvaluationsByIndicator[indicator] = Object.values(
+        totalEvaluationsByIndicator[indicator],
+      );
       return ResponseUtils.format({
         data: totalEvaluationsByIndicator,
-        description: 'Items by indicator retrieved successfully',
+        description: 'Item status by indicators retrieved successfully',
         status: HttpStatus.OK,
       });
     } catch (error) {
       this._logger.error(error);
       return ResponseUtils.format({
-        data: {},
-        description: 'Item status by indicators cannot be retrieved',
+        data: [],
+        description: 'Error retrieving item status',
         status: HttpStatus.INTERNAL_SERVER_ERROR,
+        errors: error,
       });
     }
   }

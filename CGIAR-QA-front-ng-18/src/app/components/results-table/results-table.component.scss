@@ -1,0 +1,74 @@
+.filters {
+  // display: flex;
+  display: grid;
+  // grid-template-columns: 1fr 2fr 1fr;
+  grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
+  gap: 2rem;
+  align-items: center;
+  padding: 3rem 1.5rem 2rem 1.5rem;
+  background-color: #f2f2f2;
+  border-radius: 6px;
+  margin-bottom: 1rem;
+  position: relative;
+  flex-wrap: wrap;
+
+  @media (max-width: 768px) {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .filters_date {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5em;
+
+    .filters_date_title {
+      font-size: 12px;
+      font-weight: 600;
+      margin: 0;
+      position: absolute;
+      top: 13px;
+      left: 1.5rem;
+    }
+
+    .filters_date_checkbox {
+      display: flex;
+      gap: 1rem;
+    }
+  }
+
+  .filters_multi {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 550px;
+    // max-width: 550px;
+    // width: 100%;
+  }
+
+  .filters_buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: flex-start;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+}
+
+::ng-deep .p-checkbox-label {
+  margin-bottom: 0 !important;
+}
+
+::ng-deep .p-multiselect .p-multiselect-label {
+  padding: 0.5rem 0.75rem;
+}
+
+::ng-deep .p-button {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  box-shadow: none;
+}
+
+::ng-deep .p-inputtext {
+  padding: 0.5rem 0.75rem;
+}

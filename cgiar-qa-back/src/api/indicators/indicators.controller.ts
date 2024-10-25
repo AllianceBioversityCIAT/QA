@@ -8,8 +8,10 @@ import {
   Param,
   UseGuards,
   Query,
+  Res,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
+import { Response } from 'express';
 import { IndicatorsService } from './indicators.service';
 import {
   AssignIndicatorDto,
@@ -22,7 +24,7 @@ import { RolesGuard } from '../../shared/guards/role.guard';
 
 @ApiTags('Indicators')
 @ApiHeader({
-  name: 'authentication',
+  name: 'authorization',
   description: 'Bearer token',
 })
 @Controller()
@@ -109,10 +111,10 @@ export class IndicatorsController {
     description: 'Error retrieving user indicators.',
   })
   getIndicatorsByUser(
-    @Param('id') id: string,
+    @Param('id') id: number,
     @Query('crp_id') crpId?: string,
   ) {
-    return this.indicatorsService.getIndicatorsByUser(+id, crpId);
+    return this.indicatorsService.getIndicatorsByUser(id, crpId);
   }
 
   @UseGuards(RolesGuard)
@@ -125,10 +127,11 @@ export class IndicatorsController {
   })
   @ApiResponse({ status: 500, description: 'Error retrieving item status.' })
   getItemStatusByIndicator(
-    @Param('indicator') indicator: string,
+    @Res() res: Response,
+    @Param('indicator') indicator?: string,
     @Query('crp_id') crpId?: string,
   ) {
-    return this.indicatorsService.getItemStatusByIndicator(indicator, crpId);
+    return this.indicatorsService.getItemStatusByIndicator(res, indicator, crpId);
   }
 
   @UseGuards(RolesGuard)

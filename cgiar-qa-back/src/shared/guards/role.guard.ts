@@ -25,9 +25,7 @@ export class RolesGuard implements CanActivate {
     }
 
     const request = context.switchToHttp().getRequest();
-    const token = this.extractTokenFromHeader(
-      request.headers['authentication'],
-    );
+    const token = this.extractTokenFromHeader(request.headers['authorization']);
 
     if (!token) {
       throw new UnauthorizedException('No token found');
@@ -43,7 +41,11 @@ export class RolesGuard implements CanActivate {
         { id: payload.userId },
         { username: payload.username.trim().toLowerCase() },
       ],
-      relations: ['roles', 'roles.role'],
+      relations: {
+        roles: {
+          role: true,
+        },
+      },
     });
 
     if (!user) {

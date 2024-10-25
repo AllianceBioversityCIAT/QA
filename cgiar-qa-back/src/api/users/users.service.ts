@@ -66,21 +66,30 @@ export class UsersService {
 
   async findOneById(id: number): Promise<any> {
     try {
-      const user = await this._userRepository.findOneOrFail({ where: { id } });
+      const user = await this._userRepository.findOne({
+        where: { id },
+        relations: {
+          roles: {
+            role: true,
+          },
+          crp: true,
+          crps: true,
+        },
+      });
 
+      user.password = undefined;
       return ResponseUtils.format({
         data: user,
         description: 'User found.',
         status: 200,
       });
     } catch (error) {
-      throw new NotFoundException(
-        ResponseUtils.format({
-          data: null,
-          description: 'User not found.',
-          status: 404,
-        }),
-      );
+      this._logger.error(error.message);
+      return ResponseUtils.format({
+        data: null,
+        description: 'User not found.',
+        status: 404,
+      });
     }
   }
 

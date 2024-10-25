@@ -39,7 +39,7 @@ export class AuthController {
   @Post('change-password')
   @ApiOperation({ summary: 'Change user password' })
   @ApiHeader({
-    name: 'authentication',
+    name: 'authorization',
     description: 'Bearer token',
   })
   @ApiResponse({ status: 200, description: 'Password successfully changed.' })
@@ -57,7 +57,7 @@ export class AuthController {
   @Roles([RolesHandler.admin])
   @ApiOperation({ summary: 'Create general configuration' })
   @ApiHeader({
-    name: 'authentication',
+    name: 'authorization',
     description: 'Bearer token',
   })
   @ApiResponse({

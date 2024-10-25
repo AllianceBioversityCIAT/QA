@@ -13,7 +13,7 @@ export class GetDetailedEvaluationDto {
   @ApiProperty({
     type: String,
     description: 'Type of evaluation',
-    example: 'capdev',
+    example: 'qa_capdev',
   })
   type: string;
 

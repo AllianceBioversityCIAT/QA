@@ -1,26 +1,49 @@
-import { Component, Input, input } from '@angular/core';
+import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
+import { CheckboxModule } from 'primeng/checkbox';
+import { StatusIcon } from '../../_models/general-status.model';
+import { CommentService } from '../../services/comment.service';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { ButtonModule } from 'primeng/button';
+import { InputTextModule } from 'primeng/inputtext';
+import { ResultsTablePipe } from './pipes/results-table.pipe';
 
 @Component({
   selector: 'app-results-table',
   standalone: true,
-  imports: [TableModule, FormsModule],
+  imports: [TableModule, FormsModule, CheckboxModule, MultiSelectModule, ButtonModule, InputTextModule, ResultsTablePipe],
   templateUrl: './results-table.component.html',
   styleUrl: './results-table.component.scss'
 })
 export class ResultsTableComponent {
   @Input() resulList: any[] = [];
   @Input() returnedArray: any[] = [];
-  @Input() showActionArea: boolean = true;
+  @Input() submissionDates: any[] = [];
   @Input() indicatorType: string;
-  @Input() showAcceptedComments: boolean = false;
-  @Input() showDisagreedComments: boolean = false;
-  @Input() showHighlightedComments: boolean = false;
-  @Input() showTpbComments: boolean = false;
-  @Input() showImplementedDecisions: boolean = false;
   @Input() currentUser: any;
-  @Input() statusIcon: any;
+
+  statusIcon = StatusIcon;
+
+  evalStatusFilter = null;
+  searchText = '';
+  selectedDates = [];
+
+  selectedFilters = [
+    {
+      label: 'Action Area',
+      key: 'showActionArea'
+    }
+  ];
+
+  columnsFiltersOptions = [
+    { label: 'Action Area', key: 'showActionArea' },
+    { label: 'Accepted Comments', key: 'showAcceptedComments' },
+    { label: 'Disagreed Comments', key: 'showDisagreedComments' },
+    { label: 'Highlighted Comments', key: 'showHighlightedComments' },
+    { label: 'Third party broker instructions', key: 'showTpbComments' },
+    { label: 'Implemented Decisions', key: 'showImplementedDecisions' }
+  ];
 
   columnNames = [
     {
@@ -31,7 +54,7 @@ export class ResultsTableComponent {
     {
       name: 'Brief contribution',
       attr: 'result_title',
-      showIf: () => this.returnedArray && this.returnedArray[0].brief
+      showIf: () => this.returnedArray?.[0]?.brief
     },
     {
       name: 'Title',
@@ -46,7 +69,7 @@ export class ResultsTableComponent {
     {
       name: 'Action Area',
       attr: 'crp_action_area',
-      showIf: () => this.showActionArea
+      showIf: () => this.getColumnsFilters('showActionArea')
     },
     {
       name: 'is Melia',
@@ -61,7 +84,7 @@ export class ResultsTableComponent {
     {
       name: 'Flagship',
       attr: 'fp',
-      showIf: () => this.returnedArray && this.returnedArray[0].fp
+      showIf: () => this.returnedArray?.[0]?.fp
     },
     {
       name: "Assessors' comments",
@@ -76,32 +99,32 @@ export class ResultsTableComponent {
     {
       name: 'Accepted comments',
       attr: 'comments_accepted_count',
-      showIf: () => this.showAcceptedComments
+      showIf: () => this.getColumnsFilters('showAcceptedComments')
     },
     {
       name: 'Accepted w. comment',
       attr: 'comments_accepted_with_comment_count',
-      showIf: () => this.returnedArray && this.returnedArray[0].comments_accepted_with_comment_count && this.currentUser.cycle.cycle_stage == 2
+      showIf: () => this.returnedArray?.[0]?.comments_accepted_with_comment_count && this.currentUser.cycle.cycle_stage == 2
     },
     {
       name: 'Disagreed comments',
       attr: 'comments_disagreed_count',
-      showIf: () => this.returnedArray && this.returnedArray[0].comments_disagreed_count && this.showDisagreedComments
+      showIf: () => this.returnedArray?.[0]?.comments_disagreed_count && this.getColumnsFilters('showDisagreedComments')
     },
     {
       name: 'Highlighted comments on core fields',
       attr: 'comments_highlight_count',
-      showIf: () => this.showHighlightedComments
+      showIf: () => this.getColumnsFilters('showHighlightedComments')
     },
     {
       name: 'T-pb instructions',
       attr: 'comments_tpb_count',
-      showIf: () => this.showTpbComments
+      showIf: () => this.getColumnsFilters('showTpbComments')
     },
     {
       name: 'Implemented Decisions',
       attr: 'comments_ppu_count',
-      showIf: () => this.showImplementedDecisions
+      showIf: () => this.getColumnsFilters('showImplementedDecisions')
     },
     {
       name: 'Export comments',
@@ -124,4 +147,36 @@ export class ResultsTableComponent {
       showIf: () => true
     }
   ];
+
+  private readonly commentService = inject(CommentService);
+
+  ngOnInit() {
+    this.showhighlightColumn();
+  }
+
+  getColumnsFilters(key: string) {
+    return this.selectedFilters.find(filter => filter.key === key);
+  }
+
+  showhighlightColumn() {
+    if (this.currentUser?.cycle.cycle_stage == 2) {
+      this.selectedFilters.push({
+        label: 'Highlighted Comments',
+        key: 'showHighlightedComments'
+      });
+      this.selectedFilters.push({
+        label: 'Third party broker instructions',
+        key: 'showTpbComments'
+      });
+    }
+  }
+
+  handleFilterChange(key: string) {
+    if (this.evalStatusFilter === key) {
+      this.evalStatusFilter = null;
+      return;
+    }
+
+    this.evalStatusFilter = key;
+  }
 }

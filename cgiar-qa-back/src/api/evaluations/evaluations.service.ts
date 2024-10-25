@@ -92,6 +92,7 @@ export class EvaluationsService {
     crpId: string | undefined,
     user: TokenDto,
   ): Promise<any> {
+    console.log("🚀 ~ EvaluationsService ~ viewName:", viewName)
     try {
       const userEntity = await this._evaluationsRepository.getUser(user.userId);
       const isAdmin = userEntity.roles.some((r) => r.qa_role === 1);
@@ -331,7 +332,7 @@ export class EvaluationsService {
       return {
         ...parsed,
         hasChanged: !!matchInitial,
-        hasChangedPrevious: !!matchPhase,
+        hasChangePrevious: !!matchPhase,
         changedOldValue: matchPhase ? matchPhase.oldValue : null,
         changedNewValue: matchPhase ? matchPhase.newValue : null,
       };
@@ -835,22 +836,32 @@ export class EvaluationsService {
   async pendingHighlights(): Promise<any> {
     try {
       const highlights =
-        await this._evaluationsRepository.getPendingHighlights();
+      await this._evaluationsRepository.getPendingHighlights();
 
       const data = highlights.map((highlight: any) => ({
         pending_highlight_comments:
-          highlight.pending_highlight_comments - highlight.total_tpb_comments,
+        highlight.pending_highlight_comments - highlight.total_tpb_comments,
         solved_with_require_request: highlight.solved_with_require_request,
         solved_without_require_request:
-          highlight.solved_without_require_request,
+        highlight.solved_without_require_request,
         pending_tpb_decisions: highlight.pending_tpb_decisions,
         indicator_view_name: highlight.indicator_view_name,
       }));
+      console.log("🚀 ~ EvaluationsService ~ data ~ data:", data)
 
-      return { data, message: 'All highlights status' };
+      return ResponseUtils.format({
+        data,
+        description: 'All highlights status',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error retrieving highlighted status:', error.message);
-      throw new Error('Could not retrieve the highlighted status');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Could not retrieve highlighted status.',
+      });
     }
   }
 
