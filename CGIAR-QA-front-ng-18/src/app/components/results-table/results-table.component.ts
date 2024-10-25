@@ -6,7 +6,6 @@ import { StatusIcon } from '../../_models/general-status.model';
 import { CommentService } from '../../services/comment.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
-import moment from 'moment';
 import { InputTextModule } from 'primeng/inputtext';
 
 @Component({
@@ -19,11 +18,11 @@ import { InputTextModule } from 'primeng/inputtext';
 export class ResultsTableComponent {
   @Input() resulList: any[] = [];
   @Input() returnedArray: any[] = [];
+  @Input() submissionDates: any[] = [];
   @Input() indicatorType: string;
   @Input() currentUser: any;
 
   statusIcon = StatusIcon;
-  submission_dates = [];
 
   evalStatusFilter = null;
   searchText = '';
@@ -151,25 +150,6 @@ export class ResultsTableComponent {
 
   ngOnInit() {
     this.showhighlightColumn();
-    this.getBatchDates();
-  }
-
-  getBatchDates() {
-    this.commentService.getBatches().subscribe({
-      next: res => {
-        const batches = res.data.map((batch, index) => ({
-          date: moment(batch.submission_date).format('ll'),
-          batch_name: +batch.batch_name,
-          checked: batch.batch_name == 3,
-          is_active: !!(moment(Date.now()).isSameOrAfter(moment(batch.submission_date)) || index === 0)
-        }));
-        this.submission_dates = batches;
-        console.log(this.submission_dates);
-      },
-      error: error => {
-        console.error('Error fetching batch dates:', error);
-      }
-    });
   }
 
   getColumnsFilters(key: string) {
