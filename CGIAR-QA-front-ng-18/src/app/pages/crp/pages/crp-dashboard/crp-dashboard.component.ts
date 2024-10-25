@@ -24,11 +24,12 @@ import { SortByPipe } from '../../../../pipes/sort-by.pipe';
 import { StatusChartComponent } from './status-chart/status-chart.component';
 import { CommentsChartComponent } from './comments-chart/comments-chart.component';
 import { Color, NgxChartsModule, ScaleType } from '@swimlane/ngx-charts';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-crp-dashboard',
   standalone: true,
-  imports: [CommonModule, RouterModule, NgxSpinnerModule, SortByPipe, StatusChartComponent, CommentsChartComponent, NgxChartsModule],
+  imports: [CommonModule, RouterModule, NgxSpinnerModule, SortByPipe, StatusChartComponent, CommentsChartComponent, NgxChartsModule, ButtonModule],
   // providers: [BsModalService],
   templateUrl: './crp-dashboard.component.html',
   styleUrls: ['./crp-dashboard.component.scss']

@@ -147,3 +147,14 @@
     }
   }
 }
+
+::ng-deep .p-button {
+  padding: 0.5rem 0.75rem;
+  border-radius: 6px;
+  box-shadow: none;
+  margin-bottom: 1rem;
+}
+
+::ng-deep .p-button-label {
+  font-weight: normal;
+}
