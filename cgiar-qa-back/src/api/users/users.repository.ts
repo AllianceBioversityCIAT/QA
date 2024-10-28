@@ -25,7 +25,11 @@ export class UserRepository extends Repository<Users> {
   async createOrReturnUser(authToken: any): Promise<Users> {
     let user = await this.findOne({
       where: { email: authToken.email },
-      relations: ['crps', 'roles'],
+      relations: {
+        roles: true,
+        crps: true,
+        crp: true,
+      },
     });
 
     const crp = await this._crpRepository.findOne({

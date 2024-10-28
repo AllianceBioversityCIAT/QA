@@ -1,7 +1,6 @@
 export enum StatusHandler {
-  Pending = 'Pending',
-  Approved = 'Approved',
-  Rejected = 'Rejected',
-  Complete = 'Complete',
-  Finalized = 'Finalized',
+  Complete = 'complete',
+  Pending = 'pending',
+  Finalized = 'finalized',
+  Autochecked = 'autochecked',
 }

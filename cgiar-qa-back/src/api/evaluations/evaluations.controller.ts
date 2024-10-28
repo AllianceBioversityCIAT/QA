@@ -75,7 +75,7 @@ export class EvaluationsController {
 
   @UseGuards(RolesGuard)
   @Roles([RolesHandler.admin, RolesHandler.assesor, RolesHandler.crp])
-  @Get('/:id')
+  @Get('/user/:id')
   @ApiOperation({ summary: 'Get evaluations by user ID' })
   @ApiResponse({
     status: 200,

@@ -1,5 +1,8 @@
 export enum EvaluationStatusHandler {
-  Initial = 'Initial',
-  InProgress = 'InProgress',
-  Completed = 'Completed',
+  New = 'New',
+  Added = 'Added',
+  Removed = 'Removed',
+  Deleted = 'Deleted',
+  Updated = 'Updated',
+  TypeChanged = 'Type Changed',
 }

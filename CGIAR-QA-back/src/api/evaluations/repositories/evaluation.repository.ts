@@ -1160,21 +1160,14 @@ export class EvaluationRepository extends Repository<Evaluations> {
         LEFT JOIN qa_indicators_meta meta ON meta.indicatorId = indicators.id
         LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
     WHERE
-        indicator_user.userId = :user_Id
-        AND ${viewNamePsdo}.id = :indicatorId
+        indicator_user.userId = ?
+        AND ${viewNamePsdo}.id = ?
         AND evaluations.indicator_view_name = '${viewName}'
         AND evaluations.phase_year = actual_phase_year()
     ORDER BY
         meta.order ASC
     `;
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(
-        sqlQuery,
-        { user_Id: userId, indicatorId },
-        {},
-      );
-    return await queryRunner.connection.query(query, parameters);
+    return await this.query(sqlQuery, [userId, indicatorId]);
   }
 
   async findOneById(id: number): Promise<Evaluations | null> {
@@ -1393,34 +1386,19 @@ export class EvaluationRepository extends Repository<Evaluations> {
   async changedFieldsInitial(viewName: string, indicatorId: number) {
     try {
       const sqlData = `
-        SELECT * FROM ${viewName}_data WHERE id = :indicatorId;
+        SELECT * FROM ${viewName}_data WHERE id = ?;
       `;
 
       const sqlDataInitial = `
-        SELECT * FROM ${viewName}_data_initial WHERE id = :indicatorId;
+        SELECT * FROM ${viewName}_data_initial WHERE id = ?;
       `;
 
-      const queryRunner = this.dataSource.createQueryRunner();
+      const data = await this.query(sqlData, [indicatorId]);
+      const dataInitial = await this.query(sqlDataInitial, [indicatorId]);
 
-      const [query, parameters] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlData,
-          { indicatorId },
-          {},
-        );
-      const data = await queryRunner.connection.query(query, parameters);
-
-      const [queryInitial, parametersInitial] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlDataInitial,
-          { indicatorId },
-          {},
-        );
-      const dataInitial = await queryRunner.connection.query(
-        queryInitial,
-        parametersInitial,
-      );
-
+      if (!dataInitial.length) {
+        return [];
+      }
       const changedFields = this.compareData(data[0], dataInitial[0]);
 
       return changedFields;
@@ -1433,31 +1411,23 @@ export class EvaluationRepository extends Repository<Evaluations> {
   async changedFieldsPhase(viewName: string, indicatorId: number) {
     try {
       const sqlData = `
-        SELECT * FROM ${viewName}_data WHERE id = :indicatorId;
+        SELECT * FROM ${viewName}_data WHERE id = ?;
       `;
-      const queryRunner = this.dataSource.createQueryRunner();
-      const [query, parameters] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlData,
-          { indicatorId },
-          {},
-        );
-      const data = await queryRunner.connection.query(query, parameters);
+      const data = await this.query(sqlData, [indicatorId]);
 
       const sqlDataPreviousPhase = `
-        SELECT * FROM ${viewName}_data_initial WHERE result_code = :result_code AND id != :indicatorId;
+        SELECT * FROM ${viewName}_data_initial WHERE result_code = ? AND id != ?;
       `;
+      const result_code = data[0].result_code;
 
-      const [queryPreviousPhase, parametersPreviousPhase] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlDataPreviousPhase,
-          { result_code: data[0].result_code, indicatorId },
-          {},
-        );
-      const dataPreviousPhase = await queryRunner.connection.query(
-        queryPreviousPhase,
-        parametersPreviousPhase,
-      );
+      const dataPreviousPhase = await this.query(sqlDataPreviousPhase, [
+        result_code,
+        indicatorId,
+      ]);
+
+      if (!dataPreviousPhase.length) {
+        return [];
+      }
       const changedFields = this.compareData(data[0], dataPreviousPhase[0]);
 
       return changedFields;

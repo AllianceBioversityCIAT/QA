@@ -1,6 +1,16 @@
 import { Component, OnInit, ViewChild, ElementRef, ViewChildren, QueryList } from '@angular/core';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, Validators, FormControl, FormArray, ValidatorFn, AbstractControl, FormsModule, ReactiveFormsModule } from '@angular/forms';
+import {
+  FormBuilder,
+  FormGroup,
+  Validators,
+  FormControl,
+  FormArray,
+  ValidatorFn,
+  AbstractControl,
+  FormsModule,
+  ReactiveFormsModule
+} from '@angular/forms';
 
 import { EvaluationsService } from '@services/evaluations.service';
 import { AuthenticationService } from '@services/authentication.service';
@@ -17,7 +27,7 @@ import { ExportTablesService } from '@services/export-tables.service';
 import { UrlTransformPipe } from '@pipes/url-transform.pipe';
 import { Title } from '@angular/platform-browser';
 import { WordCounterPipe } from 'src/app/pipes/word-counter.pipe';
-import { SafeResourceUrl, DomSanitizer } from '@angular/platform-browser';
+import { SafeResourceUrl, DomSanitizer, SafeHtml } from '@angular/platform-browser';
 
 import moment from 'moment';
 import { animate, style, transition, trigger } from '@angular/animations';
@@ -28,6 +38,8 @@ import { CommonModule } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 // import { MarkdownModule } from 'ngx-markdown';
 import { CommentComponent } from '../../../../comment/comment.component';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 
 @Component({
   selector: 'app-general-detailed-indicator',
@@ -35,7 +47,17 @@ import { CommentComponent } from '../../../../comment/comment.component';
   templateUrl: './general-detailed-indicator.component.html',
   styleUrls: ['./general-detailed-indicator.component.scss'],
   providers: [UrlTransformPipe, WordCounterPipe],
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, NgxSpinnerModule, TooltipModule, CommentComponent],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    NgxSpinnerModule,
+    TooltipModule,
+    CommentComponent,
+    DialogModule,
+    ButtonModule
+  ],
   animations: [
     trigger('inOutAnimation', [
       transition(':enter', [
@@ -130,7 +152,26 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   criteria_loading = false;
   original_field: string = '';
   hideOriginalField = true;
-  constructor(private activeRoute: ActivatedRoute, private router: Router, private urlTransfrom: UrlTransformPipe, private alertService: AlertService, private commentService: CommentService, private spinner: NgxSpinnerService, private formBuilder: FormBuilder, private wordCount: WordCounterPipe, private titleService: Title, private authenticationService: AuthenticationService, private evaluationService: EvaluationsService, private sanitizer: DomSanitizer, private _exportTableSE: ExportTablesService) {
+  visible: boolean = false;
+  currentData: any = {};
+  sanitizedOldValue: SafeHtml = '';
+  sanitizedInitialValue: SafeHtml = '';
+  sanitizedCurrentValue: SafeHtml = '';
+  constructor(
+    private activeRoute: ActivatedRoute,
+    private router: Router,
+    private urlTransfrom: UrlTransformPipe,
+    private alertService: AlertService,
+    private commentService: CommentService,
+    private spinner: NgxSpinnerService,
+    private formBuilder: FormBuilder,
+    private wordCount: WordCounterPipe,
+    private titleService: Title,
+    private authenticationService: AuthenticationService,
+    private evaluationService: EvaluationsService,
+    private sanitizer: DomSanitizer,
+    private _exportTableSE: ExportTablesService
+  ) {
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
         this.currentUser = x;
@@ -155,7 +196,9 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
       this.getIndicatorCriteria(`qa_${this.params.type}`);
 
       /** set page title */
-      this.titleService.setTitle(`${this.currentType} / QA-${this.params.type.charAt(0).toUpperCase()}${this.params.type.charAt(1).toUpperCase()}-${this.params.indicatorId}`);
+      this.titleService.setTitle(
+        `${this.currentType} / QA-${this.params.type.charAt(0).toUpperCase()}${this.params.type.charAt(1).toUpperCase()}-${this.params.indicatorId}`
+      );
 
       this.prUrl = environment.prUrl;
     });
@@ -221,7 +264,11 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     let checked_row = this.detailedData.filter((data, i) => (this.formTickData.controls[i].value.isChecked ? data : undefined)).map(d => d.field_id);
     let commented_row = this.detailedData.filter(data => data.replies_count != '0').map(d => d.field_id);
     let availableData = this.detailedData.filter(data => data.enable_comments);
-    if (this.gnralInfo.status !== this.statusHandler.Pending && this.gnralInfo.status !== this.statusHandler.Finalized && this.currentUser.hasOwnProperty('cycle')) {
+    if (
+      this.gnralInfo.status !== this.statusHandler.Pending &&
+      this.gnralInfo.status !== this.statusHandler.Finalized &&
+      this.currentUser.hasOwnProperty('cycle')
+    ) {
       // if (this.gnralInfo.status !== this.statusHandler.Complete) {
       if (checked_row.length + commented_row.length == availableData.length) {
         this.gnralInfo.status_update = this.statusHandler.Complete;
@@ -266,7 +313,9 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     let selected_meta = [];
     let noComment;
     if (e) {
-      this.formTickData.controls.map((value, i) => (this.detailedData[i].replies_count == '0' ? value.get('isChecked').setValue(true) : value.get('isChecked')));
+      this.formTickData.controls.map((value, i) =>
+        this.detailedData[i].replies_count == '0' ? value.get('isChecked').setValue(true) : value.get('isChecked')
+      );
       selected_meta = this.detailedData.filter((data, i) => (this.formTickData.controls[i].value.isChecked ? data : undefined)).map(d => d.field_id);
       noComment = true;
       this.gnralInfo.status_update = this.statusHandler.Finalized;
@@ -304,7 +353,8 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     this.formTickData.controls.forEach((value, i) => {
       statusByField.push({
         display_name: this.detailedData[i].display_name,
-        value: this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false ? true : false
+        value:
+          this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false ? true : false
       });
     });
     this.approveAllitems = statusByField.find(e => e.value == false) ? false : true;
@@ -318,7 +368,8 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     this.formTickData.controls.forEach((value, i) => {
       statusByField.push({
         display_name: this.detailedData[i].display_name,
-        value: this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false ? true : false
+        value:
+          this.detailedData[i].replies_count != '0' || value.get('isChecked').value || this.detailedData[i].enable_comments == false ? true : false
       });
     });
     let fieldWithoutAssessed = statusByField.find(e => e.value == false);
@@ -726,5 +777,17 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     const url = this.prUrl + baseUrl + outlet + this.detailedData[0].result_code + '/general-information?' + `phase=${this.detailedData[0].version}`;
 
     return url;
+  }
+
+  showDialog(data: any) {
+    this.currentData = data;
+    this.sanitizedOldValue = this.sanitizeHtml(data?.changedOldValue || 'No old data available');
+    this.sanitizedInitialValue = this.sanitizeHtml(data?.changedDataInitial || 'No initial data available');
+    this.sanitizedCurrentValue = this.sanitizeHtml(data?.value || 'No current value available');
+    this.visible = true;
+  }
+
+  sanitizeHtml(html: string): SafeHtml {
+    return this.sanitizer.bypassSecurityTrustHtml(html);
   }
 }
