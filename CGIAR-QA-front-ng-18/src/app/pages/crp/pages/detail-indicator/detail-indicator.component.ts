@@ -22,12 +22,12 @@ import { environment } from 'src/environments/environment';
 import { ExportTablesService } from 'src/app/services/export-tables.service';
 import { CommonModule } from '@angular/common';
 import { CommentComponent } from '../../../../comment/comment.component';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { TooltipModule } from 'primeng/tooltip';
 
 @Component({
   selector: 'app-detail-indicator',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, CommentComponent, NgxSpinnerModule, TooltipModule.forRoot()],
+  imports: [CommonModule, FormsModule, ReactiveFormsModule, RouterModule, CommentComponent, NgxSpinnerModule, TooltipModule],
   templateUrl: './detail-indicator.component.html',
   styleUrls: ['./detail-indicator.component.scss'],
   providers: [UrlTransformPipe, WordCounterPipe],
@@ -118,7 +118,21 @@ export default class DetailIndicatorComponent implements OnInit {
 
   phase = environment.phase;
 
-  constructor(private activeRoute: ActivatedRoute, private router: Router, private alertService: AlertService, private spinner: NgxSpinnerService, private urlTransfrom: UrlTransformPipe, private formBuilder: FormBuilder, private commentService: CommentService, private titleService: Title, private wordCount: WordCounterPipe, private authenticationService: AuthenticationService, private evaluationService: EvaluationsService, private _sanitizer: DomSanitizer, private _exportTableSE: ExportTablesService) {
+  constructor(
+    private activeRoute: ActivatedRoute,
+    private router: Router,
+    private alertService: AlertService,
+    private spinner: NgxSpinnerService,
+    private urlTransfrom: UrlTransformPipe,
+    private formBuilder: FormBuilder,
+    private commentService: CommentService,
+    private titleService: Title,
+    private wordCount: WordCounterPipe,
+    private authenticationService: AuthenticationService,
+    private evaluationService: EvaluationsService,
+    private _sanitizer: DomSanitizer,
+    private _exportTableSE: ExportTablesService
+  ) {
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
         this.currentUser = x;
@@ -136,7 +150,9 @@ export default class DetailIndicatorComponent implements OnInit {
       this.getIndicatorCriteria(`qa_${this.params.type}`);
 
       /** set page title */
-      this.titleService.setTitle(`${this.currentType} / QA-${this.params.type.charAt(0).toUpperCase()}${this.params.type.charAt(1).toUpperCase()}-${this.params.indicatorId}`);
+      this.titleService.setTitle(
+        `${this.currentType} / QA-${this.params.type.charAt(0).toUpperCase()}${this.params.type.charAt(1).toUpperCase()}-${this.params.indicatorId}`
+      );
 
       this.prUrl = environment.prUrl;
     });
@@ -154,8 +170,8 @@ export default class DetailIndicatorComponent implements OnInit {
 
   getEvaluationStatus() {
     this.evaluationService.getEvaluationStatus(this.params.indicatorId).subscribe(resp => {
-      this.gnralInfo.response_status = resp.data[0].status;
-      this.eval_stat = resp.data[0].status;
+      this.gnralInfo.response_status = resp.data[0]?.status;
+      this.eval_stat = resp.data[0]?.status;
     });
   }
 
@@ -185,15 +201,15 @@ export default class DetailIndicatorComponent implements OnInit {
 
         // this.generalCommentGroup.patchValue({ general_comment: this.detailedData[0].general_comment });
         this.gnralInfo = {
-          evaluation_id: this.detailedData[0].evaluation_id,
-          general_comment: this.detailedData[0].general_comment,
-          crp_id: this.detailedData[0].evaluation_id,
-          status: this.detailedData[0].status,
-          response_status: this.detailedData[0].response_status,
-          general_comment_id: this.detailedData[0].general_comment_id,
-          general_comment_updatedAt: this.detailedData[0].general_comment_updatedAt,
-          general_comment_user: this.detailedData[0].general_comment_user,
-          requires_second_assessment: this.detailedData[0].require_second_assessment
+          evaluation_id: this.detailedData[0]?.evaluation_id,
+          general_comment: this.detailedData[0]?.general_comment,
+          crp_id: this.detailedData[0]?.evaluation_id,
+          status: this.detailedData[0]?.status,
+          response_status: this.detailedData[0]?.response_status,
+          general_comment_id: this.detailedData[0]?.general_comment_id,
+          general_comment_updatedAt: this.detailedData[0]?.general_comment_updatedAt,
+          general_comment_user: this.detailedData[0]?.general_comment_user,
+          requires_second_assessment: this.detailedData[0]?.require_second_assessment
         };
         console.log(this.gnralInfo);
 
