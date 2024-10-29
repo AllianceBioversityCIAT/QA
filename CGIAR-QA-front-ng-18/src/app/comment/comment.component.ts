@@ -463,7 +463,7 @@ export class CommentComponent implements OnInit {
         switch (this.currentUser.roles[0].description) {
           case this.allRoles.crp:
             this.commentsByCol = res.data.filter(data => data.approved);
-            console.log(this.commentsByCol + 'Commentsbycol');
+            console.log("🚀 ~ getItemCommentData ~ commentsByCol:", this.commentsByCol)
 
             this.currentComment = this.commentsByCol.find(comment => comment.approved);
             this.crpComment = true;

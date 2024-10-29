@@ -12,7 +12,7 @@ import { GeneralDetailedIndicatorRoutingModule } from './general-detailed-indica
 
 import { NgxSpinnerModule } from "ngx-spinner";
 import { OrderModule } from 'ngx-order-pipe';
-import { GeneralDetailedIndicatorComponent } from './general-detailed-indicator.component';
+import GeneralDetailedIndicatorComponent from './general-detailed-indicator.component';
 import { TooltipModule } from 'ngx-bootstrap/tooltip';
 import { MarkdownModule } from 'ngx-markdown';
 import { CommentComponentModule } from 'src/app/comment/comment.module';
@@ -20,6 +20,8 @@ import { AssessorsChatWindowComponent } from 'src/app/_shared/assessors-chat-win
 import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 
 // import { CommentComponentModule } from '../../comment/comment.component.module';
+import { DialogModule } from 'primeng/dialog';
+import { Button } from 'primeng/button';
 
 
 @NgModule({
@@ -37,6 +39,8 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
         OrderModule,
         ReactiveFormsModule,
         CommentComponentModule,
+        DialogModule,
+        Button,
     ],
     declarations: [GeneralDetailedIndicatorComponent],
 })

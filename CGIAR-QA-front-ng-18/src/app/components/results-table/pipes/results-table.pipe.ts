@@ -6,7 +6,7 @@ import { Pipe, type PipeTransform } from '@angular/core';
 })
 export class ResultsTablePipe implements PipeTransform {
   //  Create a pipe that filters the columns of the results table based on filters (submission_date, search_text, eval_status)
-  transform(value: any[], submissionDates: any[], searchText: string): any[] {
+  transform(value: any[], submissionDates: any[], searchText: string, evalStatusFilter: string): any[] {
     if (!value) {
       return [];
     }
@@ -21,9 +21,9 @@ export class ResultsTablePipe implements PipeTransform {
         result = result && item.title.toLowerCase().includes(searchText.toLowerCase());
       }
 
-      // if (evalStatusFilter) {
-      //   result = result && item.eval_status === evalStatusFilter;
-      // }
+      if (evalStatusFilter) {
+        result = result && item.evaluation_status === evalStatusFilter;
+      }
 
       return result;
     });

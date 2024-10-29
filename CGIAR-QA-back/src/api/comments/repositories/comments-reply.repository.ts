@@ -18,7 +18,7 @@ export class CommentsRepliesRepository extends Repository<CommentsReplies> {
   async findRepliesByCommentId(commentId: number): Promise<CommentsReplies[]> {
     return await this.find({
       where: {
-        comment: { id: commentId },
+        comment: commentId,
         is_deleted: Not(true),
       },
       relations: {

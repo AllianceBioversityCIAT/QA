@@ -46,7 +46,7 @@ export class Users {
   comments: Comments[];
 
   @OneToMany(() => CommentsReplies, (reply) => reply.obj_user)
-  replies: CommentsReplies[];
+  obj_replies: CommentsReplies[];
 
   @OneToMany(() => Tags, (tag) => tag.obj_user)
   tags: Tags[];

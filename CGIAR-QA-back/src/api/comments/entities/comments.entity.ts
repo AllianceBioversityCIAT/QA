@@ -21,27 +21,51 @@ export class Comments {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Evaluations, (evaluation) => evaluation.comments)
-  evaluation: Evaluations;
+  @Column({
+    name: 'evaluationId',
+    nullable: true,
+    type: 'int',
+  })
+  evaluation: number;
 
-  @ManyToOne(() => IndicatorsMeta, (meta) => meta.comments, { nullable: true })
-  meta: IndicatorsMeta;
+  @ManyToOne(() => Evaluations, (evaluation) => evaluation.obj_comments)
+  @JoinColumn({ name: 'evaluationId' })
+  obj_evaluation: Evaluations;
 
-  @Column({ name: 'user' })
-  user: number;
+  @Column({
+    name: 'metaId',
+    nullable: true,
+  })
+  meta: number;
+
+  @ManyToOne(() => IndicatorsMeta, (meta) => meta.obj_comments, {
+    nullable: true,
+  })
+  @JoinColumn({ name: 'metaId' })
+  obj_meta: IndicatorsMeta;
+
+  @Column({ name: 'userId' })
+  userId: number;
 
   @ManyToOne(() => Users, (user) => user.comments)
-  @JoinColumn({ name: 'user' })
+  @JoinColumn({ name: 'userId' })
   obj_user: Users;
 
-  @ManyToOne(() => Cycle, (cycle) => cycle.comments)
-  cycle: Cycle;
+  @Column({
+    name: 'cycleId',
+    nullable: true,
+  })
+  cycle: number;
+
+  @ManyToOne(() => Cycle, (cycle) => cycle.obj_comments)
+  @JoinColumn({ name: 'cycleId' })
+  obj_cycle: Cycle;
 
   @ManyToOne(() => ReplyType, (replyType) => replyType.comments)
   replyType: ReplyType;
 
-  @OneToMany(() => CommentsReplies, (comment) => comment.user)
-  replies: CommentsReplies[];
+  @OneToMany(() => CommentsReplies, (comment) => comment.obj_comment)
+  obj_replies: CommentsReplies[];
 
   @OneToMany(() => Tags, (tag) => tag.obj_comment)
   tags: Tags[];
@@ -76,11 +100,11 @@ export class Comments {
   @Column({ nullable: true, type: 'tinyint', default: 0 })
   highlight_comment: number;
 
-  @Column({ nullable: true, type: 'int', name: 'highlight_by' })
+  @Column({ nullable: true, type: 'int', name: 'highlightById' })
   highlight_by: number;
 
   @ManyToOne(() => Users, (user) => user.id)
-  @JoinColumn({ name: 'highlight_by' })
+  @JoinColumn({ name: 'highlightById' })
   obj_highlight_by: Users;
 
   @Column({ nullable: true, type: 'tinyint', default: 0 })

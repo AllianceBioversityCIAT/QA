@@ -8,11 +8,12 @@ import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
 import { InputTextModule } from 'primeng/inputtext';
 import { ResultsTablePipe } from './pipes/results-table.pipe';
+import { RouterLink } from '@angular/router';
 
 @Component({
   selector: 'app-results-table',
   standalone: true,
-  imports: [TableModule, FormsModule, CheckboxModule, MultiSelectModule, ButtonModule, InputTextModule, ResultsTablePipe],
+  imports: [TableModule, FormsModule, CheckboxModule, MultiSelectModule, ButtonModule, InputTextModule, ResultsTablePipe, RouterLink],
   templateUrl: './results-table.component.html',
   styleUrl: './results-table.component.scss'
 })

@@ -105,7 +105,7 @@
 </div>
 
 <p-table
-  [value]="this.resulList | appResultsTablePipe: selectedDates : searchText"
+  [value]="this.resulList | appResultsTablePipe: selectedDates : searchText : evalStatusFilter"
   [paginator]="true"
   [rows]="5"
   [styleClass]="'p-datatable-sm custom-td'">
@@ -137,6 +137,18 @@
                     <i class="icon-download-excel"></i>
                   </div>
                 </a>
+              }
+              @case ('title') {
+                <div style="display: flex; justify-content: space-between; align-items: flex-start">
+                  <a routerLink="/indicator/{{ indicatorType }}/id/detail/{{ result.id }}">
+                    <p style="font-size: 13px; text-align: center">
+                      {{ result[colItem.attr] }}
+                    </p>
+                  </a>
+                  <p style="font-size: 10px">
+                    {{ result.evaluation_status }}
+                  </p>
+                </div>
               }
               @default {
                 {{ result[colItem.attr] }}

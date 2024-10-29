@@ -42,6 +42,6 @@ export class Cycle {
   @Column({ type: 'decimal', precision: 10, scale: 0 })
   phase_year: number;
 
-  @OneToMany(() => Comments, (comment) => comment.cycle)
-  comments: Comments[];
+  @OneToMany(() => Comments, (comment) => comment.obj_cycle)
+  obj_comments: Comments[];
 }

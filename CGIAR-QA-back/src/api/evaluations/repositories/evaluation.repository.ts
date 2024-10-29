@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { Comments } from '../../comments/entities/comments.entity';
 import { IndicatorsMeta } from '../../indicators/entities/indicators-meta.entity';
 import { Cycle } from '../../../shared/entities/cycle.entity';
+import { CreateCommentDto } from '../dto/evaluation.dto';
 
 @Injectable()
 export class EvaluationRepository extends Repository<Evaluations> {
@@ -1160,21 +1161,14 @@ export class EvaluationRepository extends Repository<Evaluations> {
         LEFT JOIN qa_indicators_meta meta ON meta.indicatorId = indicators.id
         LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
     WHERE
-        indicator_user.userId = :user_Id
-        AND ${viewNamePsdo}.id = :indicatorId
+        indicator_user.userId = ?
+        AND ${viewNamePsdo}.id = ?
         AND evaluations.indicator_view_name = '${viewName}'
         AND evaluations.phase_year = actual_phase_year()
     ORDER BY
         meta.order ASC
     `;
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(
-        sqlQuery,
-        { user_Id: userId, indicatorId },
-        {},
-      );
-    return await queryRunner.connection.query(query, parameters);
+    return await this.query(sqlQuery, [userId, indicatorId]);
   }
 
   async findOneById(id: number): Promise<Evaluations | null> {
@@ -1229,15 +1223,19 @@ export class EvaluationRepository extends Repository<Evaluations> {
   }
 
   async createComment(
-    detail: string,
-    approved: boolean,
-    userId: number,
-    metaId: number | null,
-    evaluationId: number,
-    original_field: string | null,
-    require_changes: boolean,
-    tpb: boolean,
+    createCommentDto: CreateCommentDto,
   ): Promise<Comments | null> {
+    const {
+      userId,
+      evaluationId,
+      metaId,
+      detail,
+      approved,
+      require_changes,
+      tpb,
+      original_field,
+    } = createCommentDto;
+
     try {
       const userRepository = this.dataSource.getRepository(Users);
       const metaRepository = this.dataSource.getRepository(IndicatorsMeta);
@@ -1267,15 +1265,17 @@ export class EvaluationRepository extends Repository<Evaluations> {
       let comment_ = new Comments();
       comment_.detail = detail;
       comment_.approved = approved;
-      comment_.meta = meta;
-      comment_.evaluation = evaluation;
-      comment_.user = user.id;
-      comment_.cycle = currentCycle;
+      comment_.meta = meta.id;
+      comment_.evaluation = evaluation.id;
+      comment_.userId = user.id;
+      comment_.cycle = currentCycle.qa_cycle_id;
       comment_.require_changes = require_changes;
       comment_.tpb = tpb;
       if (original_field) comment_.original_field = original_field;
       let new_comment = await commentRepository.save(comment_);
+      return new_comment;
     } catch (error) {
+      this._logger.error(error);
       return null;
     }
   }
@@ -1393,34 +1393,19 @@ export class EvaluationRepository extends Repository<Evaluations> {
   async changedFieldsInitial(viewName: string, indicatorId: number) {
     try {
       const sqlData = `
-        SELECT * FROM ${viewName}_data WHERE id = :indicatorId;
+        SELECT * FROM ${viewName}_data WHERE id = ?;
       `;
 
       const sqlDataInitial = `
-        SELECT * FROM ${viewName}_data_initial WHERE id = :indicatorId;
+        SELECT * FROM ${viewName}_data_initial WHERE id = ?;
       `;
 
-      const queryRunner = this.dataSource.createQueryRunner();
+      const data = await this.query(sqlData, [indicatorId]);
+      const dataInitial = await this.query(sqlDataInitial, [indicatorId]);
 
-      const [query, parameters] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlData,
-          { indicatorId },
-          {},
-        );
-      const data = await queryRunner.connection.query(query, parameters);
-
-      const [queryInitial, parametersInitial] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlDataInitial,
-          { indicatorId },
-          {},
-        );
-      const dataInitial = await queryRunner.connection.query(
-        queryInitial,
-        parametersInitial,
-      );
-
+      if (!dataInitial.length) {
+        return [];
+      }
       const changedFields = this.compareData(data[0], dataInitial[0]);
 
       return changedFields;
@@ -1433,31 +1418,23 @@ export class EvaluationRepository extends Repository<Evaluations> {
   async changedFieldsPhase(viewName: string, indicatorId: number) {
     try {
       const sqlData = `
-        SELECT * FROM ${viewName}_data WHERE id = :indicatorId;
+        SELECT * FROM ${viewName}_data WHERE id = ?;
       `;
-      const queryRunner = this.dataSource.createQueryRunner();
-      const [query, parameters] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlData,
-          { indicatorId },
-          {},
-        );
-      const data = await queryRunner.connection.query(query, parameters);
+      const data = await this.query(sqlData, [indicatorId]);
 
       const sqlDataPreviousPhase = `
-        SELECT * FROM ${viewName}_data_initial WHERE result_code = :result_code AND id != :indicatorId;
+        SELECT * FROM ${viewName}_data_initial WHERE result_code = ? AND id != ?;
       `;
+      const result_code = data[0].result_code;
 
-      const [queryPreviousPhase, parametersPreviousPhase] =
-        queryRunner.connection.driver.escapeQueryWithParameters(
-          sqlDataPreviousPhase,
-          { result_code: data[0].result_code, indicatorId },
-          {},
-        );
-      const dataPreviousPhase = await queryRunner.connection.query(
-        queryPreviousPhase,
-        parametersPreviousPhase,
-      );
+      const dataPreviousPhase = await this.query(sqlDataPreviousPhase, [
+        result_code,
+        indicatorId,
+      ]);
+
+      if (!dataPreviousPhase.length) {
+        return [];
+      }
       const changedFields = this.compareData(data[0], dataPreviousPhase[0]);
 
       return changedFields;

@@ -13,7 +13,7 @@ export class DashboardService {
 
   // get dash data (evaluations) by user
   getDashboardEvaluations(id) {
-    return this.http.get<any>(`${environment.apiUrl}/evaluation/${id}`);
+    return this.http.get<any>(`${environment.apiUrl}/evaluation/user/${id}`);
   }
 
   // get list dash data (evaluations)

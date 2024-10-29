@@ -47,8 +47,8 @@ export class Evaluations {
   @UpdateDateColumn()
   updatedAt: Date;
 
-  @OneToMany(() => Comments, (comment) => comment.evaluation)
-  comments: Comments[];
+  @OneToMany(() => Comments, (comment) => comment.obj_evaluation)
+  obj_comments: Comments[];
 
   @Column('decimal', { precision: 10, scale: 0 })
   phase_year: number;

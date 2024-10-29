@@ -20,9 +20,9 @@
           <div>
             <div class="comment-title">
               <div>
-                <span>ADDED BY {{ comment.user.username }} </span>
+                <span>ADDED BY {{ comment.obj_user.username }} </span>
                 <div>
-                  <p>On {{ comment.createdAt | date: 'long' }}</p>
+                  <p>On {{ comment.createdAt | date : 'long' }}</p>
                 </div>
                 <!-- <br *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0"> -->
                 <div style="padding: 8px 0px" *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0 && comment.tpb != 1">
@@ -35,7 +35,7 @@
               <div>
                 <i
                   *ngIf="
-                    (comment.user.id === currentUser.id || currentUser.roles[0].description === allRoles.admin || userIsLeader) &&
+                    (comment.obj_user.id === currentUser.id || currentUser.roles[0].description === allRoles.admin || userIsLeader) &&
                     comment.replies.replies_count == '0' &&
                     !crpComment
                   "
@@ -63,14 +63,14 @@
                   <ng-container *ngFor="let reply of comment.loaded_replies" class="replies-container">
                     <div class="comment-title">
                       <div style="flex-direction: column">
-                        <p class="reply accept-msg" *ngIf="comment.replyType?.id == replyTypes.accepted">ACCEPTED BY {{ reply.user.username }}</p>
-                        <span *ngIf="comment.replyType?.id != replyTypes.accepted">ADDED BY {{ reply.user.username }} </span>
-                        <p>On {{ reply.updatedAt | date: 'long' }}</p>
+                        <p class="reply accept-msg" *ngIf="comment.replyType?.id == replyTypes.accepted">ACCEPTED BY {{ reply.obj_user.username }}</p>
+                        <span *ngIf="comment.replyType?.id != replyTypes.accepted">ADDED BY {{ reply.obj_user.username }} </span>
+                        <p>On {{ reply.updatedAt | date : 'long' }}</p>
                       </div>
 
                       <i
                         style="height: 1.7em"
-                        *ngIf="reply.user.id === currentUser.id"
+                        *ngIf="reply.obj_user.id === currentUser.id"
                         (click)="updateCommentReply('is_deleted', reply)"
                         class="icon-remove"></i>
                     </div>
@@ -236,9 +236,9 @@
           <div>
             <div class="comment-title">
               <div>
-                <span>ADDED BY {{ comment.user.username }} </span>
+                <span>ADDED BY {{ comment.obj_user.username }} </span>
                 <div>
-                  <p>On {{ comment.updatedAt | date: 'long' }}</p>
+                  <p>On {{ comment.updatedAt | date : 'long' }}</p>
                   <p *ngIf="comment.cycle">
                     {{ comment.cycle.cycle_name }}:
                     <strong>{{ comment.cycle.cycle_stage }} </strong>
@@ -261,13 +261,13 @@
                   <ng-container *ngFor="let reply of comment.loaded_replies" class="replies-container">
                     <div class="comment-title">
                       <div style="flex-direction: column">
-                        <p class="reply accept-msg" *ngIf="comment.replyType?.id == replyTypes.accepted">ACCEPTED BY {{ reply.user.username }}</p>
-                        <span *ngIf="comment.replyType?.id == replyTypes.accepted">ADDED BY {{ reply.user.username }} </span>
-                        <p>On {{ reply.updatedAt | date: 'long' }}</p>
+                        <p class="reply accept-msg" *ngIf="comment.replyType?.id == replyTypes.accepted">ACCEPTED BY {{ reply.obj_user.username }}</p>
+                        <span *ngIf="comment.replyType?.id == replyTypes.accepted">ADDED BY {{ reply.obj_user.username }} </span>
+                        <p>On {{ reply.updatedAt | date : 'long' }}</p>
                       </div>
                       <i
                         style="height: 2em"
-                        *ngIf="reply.user.id === currentUser.id"
+                        *ngIf="reply.obj_user.id === currentUser.id"
                         (click)="updateCommentReply('is_deleted', reply)"
                         class="icon-remove"></i>
                     </div>

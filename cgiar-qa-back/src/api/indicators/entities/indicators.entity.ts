@@ -10,6 +10,7 @@ import {
 } from 'typeorm';
 import { IndicatorUser } from './indicators-user.entity';
 import { IndicatorsMeta } from './indicators-meta.entity';
+import { CommentsMeta } from '../../comments/entities/comments-meta.entity';
 
 @Entity('qa_indicators')
 @Unique(['name', 'view_name'])
@@ -40,10 +41,10 @@ export class Indicators {
   })
   meta: IndicatorsMeta[];
 
-  // @OneToOne(() => CommentsMeta, (comments_meta) => comments_meta.indicator, {
-  //   eager: true,
-  // })
-  // comment_meta: CommentsMeta;
+  @OneToOne(() => CommentsMeta, (comments_meta) => comments_meta.indicator, {
+    eager: true,
+  })
+  comment_meta: CommentsMeta;
 
   @Column({
     nullable: true,

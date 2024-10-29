@@ -92,7 +92,6 @@ export class EvaluationsService {
     crpId: string | undefined,
     user: TokenDto,
   ): Promise<any> {
-    console.log("🚀 ~ EvaluationsService ~ viewName:", viewName)
     try {
       const userEntity = await this._evaluationsRepository.getUser(user.userId);
       const isAdmin = userEntity.roles.some((r) => r.qa_role === 1);
@@ -186,16 +185,17 @@ export class EvaluationsService {
     }
   }
 
-  async getEvaluationsDash(userId: number): Promise<any> {
+  async getEvaluationsDash(user: any): Promise<any> {
     try {
       const rawData =
-        await this._evaluationsRepository.getEvaluationsDashByUserId(userId);
+        await this._evaluationsRepository.getEvaluationsDashByUserId(user);
 
       if (rawData.length === 0) {
-        return {
+        return ResponseUtils.format({
           data: [],
-          message: 'No evaluations found for the user.',
-        };
+          description: 'No evaluations found for this user.',
+          status: HttpStatus.NOT_FOUND,
+        });
       }
 
       const response = rawData.map((element) => ({
@@ -321,7 +321,7 @@ export class EvaluationsService {
   ): any[] {
     return parsedData.map((parsed) => {
       const matchInitial = changedDataInitial.find(
-        (changed) => changed.field === parsed.col_name && parsed.is_core === 1,
+        (changed) => changed.field === parsed.col_name,
       );
 
       const matchPhase = changedDataPhase.find(
@@ -332,6 +332,7 @@ export class EvaluationsService {
       return {
         ...parsed,
         hasChanged: !!matchInitial,
+        changedDataInitial: matchInitial ? matchInitial.oldValue : null,
         hasChangePrevious: !!matchPhase,
         changedOldValue: matchPhase ? matchPhase.oldValue : null,
         changedNewValue: matchPhase ? matchPhase.newValue : null,
@@ -583,31 +584,12 @@ export class EvaluationsService {
   }
 
   async createComment(createCommentDto: CreateCommentDto): Promise<any> {
-    const {
-      detail,
-      approved,
-      userId,
-      metaId,
-      evaluationId,
-      original_field,
-      require_changes,
-      tpb,
-    } = createCommentDto;
-
     try {
-      const newComment = await this._evaluationsRepository.createComment(
-        detail,
-        approved,
-        userId,
-        metaId,
-        evaluationId,
-        original_field,
-        require_changes,
-        tpb,
-      );
+      const newComment =
+        await this._evaluationsRepository.createComment(createCommentDto);
 
       if (!newComment) {
-        throw new Error('Could not create comment');
+        this._logger.error('Could not create comment');
       }
 
       return { data: newComment, message: 'Comment created successfully.' };
@@ -633,13 +615,13 @@ export class EvaluationsService {
 
       comment.replyType = replyType;
 
-      const reply = this._commentReplyRepository.create({
+      const newReply = await this._commentReplyRepository.save({
         detail,
-        comment,
-        user: user.id,
+        user: userId,
+        comment: commentId,
+        crp_approved,
+        approved,
       });
-
-      const newReply = await this._commentReplyRepository.save(reply);
 
       if (
         user.roles.some((role) => role.role.description === RolesHandler.crp)
@@ -685,7 +667,7 @@ export class EvaluationsService {
       comment.tpb = tpb;
 
       if (detail) comment.detail = detail;
-      if (userId) comment.user = userId;
+      if (userId) comment.userId = userId;
 
       const updatedComment = await this._commentRepository.save(comment);
 
@@ -712,7 +694,7 @@ export class EvaluationsService {
 
       if (is_deleted) {
         const comment = await this._commentRepository.findOneById(
-          reply.comment.id,
+          reply.comment,
         );
         if (comment) {
           comment.crp_approved = null;
@@ -732,12 +714,18 @@ export class EvaluationsService {
 
   async getComments(evaluationId: number, metaId: number): Promise<any> {
     try {
-      const comments = await this._commentRepository.findCommentsWithReplies(
-        evaluationId,
+      const comments = await this._commentRepository.findComments(
         metaId,
+        evaluationId,
       );
 
       for (const comment of comments) {
+        const replies = await this._commentRepository.findCommentsWithReplies(
+          evaluationId,
+          metaId,
+        );
+        comment.replies = replies;
+
         const tags = await this._commentRepository.findTagsByCommentId(
           comment.id,
         );
@@ -835,19 +823,44 @@ export class EvaluationsService {
 
   async pendingHighlights(): Promise<any> {
     try {
-      const highlights =
-      await this._evaluationsRepository.getPendingHighlights();
+      const query = `
+      SELECT
+          SUM(IF(comments.highlight_comment = 1 AND comments.is_deleted = 0, 1, 0)) AS pending_highlight_comments,
+          SUM(IF(comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS total_tpb_comments,
+          SUM(IF(comments.require_changes = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_with_require_request,
+          SUM(IF(comments.require_changes = 0 AND comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_without_require_request,
+          SUM(IF(comments.require_changes = 1 AND comments.ppu = 0 AND comments.is_deleted = 0, 1, 0)) AS pending_tpb_decisions,
+          evaluations.indicator_view_name
+        FROM
+          qa_comments comments
+        LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+        LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
+        WHERE
+          comments.is_deleted = 0
+          AND comments.detail IS NOT NULL
+          AND metaId IS NOT NULL
+          AND evaluation_status <> 'Deleted'
+          AND evaluations.phase_year = actual_phase_year()
+          AND evaluations.batchDate >= actual_batch_date()
+        GROUP BY
+          evaluations.indicator_view_name;
+      `;
+
+      const highlights = await this._evaluationsRepository.query(query);
+
+      if (highlights.length === 0) {
+        throw new Error('No evaluations found for this user.');
+      }
 
       const data = highlights.map((highlight: any) => ({
         pending_highlight_comments:
-        highlight.pending_highlight_comments - highlight.total_tpb_comments,
+          highlight.pending_highlight_comments - highlight.total_tpb_comments,
         solved_with_require_request: highlight.solved_with_require_request,
         solved_without_require_request:
-        highlight.solved_without_require_request,
+          highlight.solved_without_require_request,
         pending_tpb_decisions: highlight.pending_tpb_decisions,
         indicator_view_name: highlight.indicator_view_name,
       }));
-      console.log("🚀 ~ EvaluationsService ~ data ~ data:", data)
 
       return ResponseUtils.format({
         data,

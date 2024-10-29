@@ -63,6 +63,11 @@ export class AuthService {
           },
           crp: true,
           crps: true,
+          indicators: {
+            indicator: {
+              comment_meta: true,
+            },
+          },
         },
       });
 
@@ -89,6 +94,11 @@ export class AuthService {
             },
             crp: true,
             crps: true,
+            indicators: {
+              indicator: {
+                comment_meta: true,
+              },
+            },
           },
         });
         if (
@@ -137,15 +147,26 @@ export class AuthService {
         config.jwtSecret,
         { expiresIn: config.jwtTime },
       );
+      const formattedUser = {
+        ...user,
+        roles: user.roles.map((userRole) => ({
+          id: userRole.role.id,
+          description: userRole.role.description,
+          createdAt: userRole.role.createdAt,
+          updatedAt: userRole.role.updatedAt,
+          acronym: userRole.role.acronym,
+          is_active: userRole.role.is_active,
+          permissions: userRole.role.permissions,
+        })),
+        token,
+        config: generalConfig,
+        cycle: currentCycle,
+      };
 
-      user['token'] = token;
-      user['config'] = generalConfig;
-      user['cycle'] = currentCycle;
-
-      delete user.password;
+      delete formattedUser.password;
 
       return ResponseUtils.format({
-        data: user,
+        data: formattedUser,
         description: 'User logged.',
         status: HttpStatus.OK,
       });

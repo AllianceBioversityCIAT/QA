@@ -10,6 +10,9 @@ import { EvaluationRepository } from '../evaluations/repositories/evaluation.rep
 import { BatchesRepository } from '../../shared/repositories/batch.repository';
 import { QuickCommentsRepository } from './repositories/quick-comments.repository';
 import { TokenDto } from '../../shared/global-dto/token.dto';
+import { ToggleApprovedNoCommentsDto } from './dto/comment.dto';
+import { Comments } from './entities/comments.entity';
+import { IsNull, Not } from 'typeorm';
 
 @Injectable()
 export class CommentsService {
@@ -189,10 +192,116 @@ export class CommentsService {
 
   async toggleApprovedNoComments(
     evaluationId: number,
-    meta_array: number[],
-    userId: number,
-    noComment: boolean,
+    toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto,
   ) {
+    const { meta_array, userId, noComment } = toggleApprovedNoCommentsDto;
+    let comments;
+    try {
+      const query = `
+        SELECT * FROM qa_comments qc
+        LEFT JOIN qa_comments_meta qcm ON qc.metaId = qcm.id
+        WHERE qc.evaluationId = ? 
+          AND qc.metaId IN (?) 
+          AND qc.approved_no_comment IS NOT NULL 
+          AND qc.is_deleted = 0
+          AND qc.is_visible = 1
+      `;
+      comments = await this._commentsRepository.query(query, [
+        evaluationId,
+        meta_array,
+      ]);
+
+      let user = await this._usersRepository.findOneOrFail({
+        where: { id: userId },
+      });
+
+      let evaluation = await this._evaluationsRepository.findOne({
+        where: { id: evaluationId },
+      });
+
+      let current_cycle = await this._cycleRepository
+        .createQueryBuilder('qa_cycle')
+        .select('*')
+        .where('DATE(qa_cycle.start_date) <= CURDATE()')
+        .andWhere('DATE(qa_cycle.end_date) > CURDATE()')
+        .getRawOne();
+
+      const assessedQuery = `
+        SELECT * FROM qa_evaluations_assessed_by_qa_users
+        WHERE qaEvaluationsId = ? AND qaUsersId = ?
+        `;
+      const assessed_by = await this._commentsRepository.query(assessedQuery, [
+        evaluationId,
+        userId,
+      ]);
+
+      if (assessed_by.length <= 0) {
+        const insertAssessedBy = await this._commentsRepository
+          .createQueryBuilder()
+          .insert()
+          .into('qa_evaluations_assessed_by_qa_users')
+          .values({
+            qaEvaluationsId: evaluationId,
+            qaUsersId: userId,
+          })
+          .execute();
+      }
+
+      let response = [];
+      for (const meta of meta_array) {
+        if (comments && comments.find((comment) => comment.metaId == meta)) {
+          await this._commentsRepository.update(
+            {
+              meta: meta,
+              evaluation: evaluation.id,
+              approved_no_comment: Not(IsNull()),
+            },
+            {
+              approved: noComment,
+              approved_no_comment: noComment,
+              is_deleted: !noComment ? true : false,
+              is_visible: !noComment ? false : true,
+              evaluation: evaluation.id,
+              userId: user.id,
+              detail: null,
+              meta: meta,
+            },
+          );
+        } else {
+          await this._commentsRepository.save({
+            approved: noComment,
+            approved_no_comment: noComment,
+            is_deleted: noComment ? false : true,
+            is_visible: noComment ? true : false,
+            evaluation: evaluation.id,
+            userId: user.id,
+            detail: null,
+            meta: meta,
+            cycle: current_cycle.id,
+          });
+        }
+      }
+
+      return ResponseUtils.format({
+        data: {},
+        description: 'Comments toggled successfully.',
+        status: HttpStatus.OK,
+      });
+    } catch (error) {
+      this._logger.error('Error toggling approved comments:', error);
+      throw ResponseUtils.format({
+        data: {},
+        description: 'Comments not set as approved.',
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
+  }
+
+  async toggleApprovedNoComments2(
+    evaluationId: number,
+    toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto,
+  ) {
+    const { meta_array, userId, noComment } = toggleApprovedNoCommentsDto;
     try {
       const user = await this._usersRepository.findOneOrFail({
         where: { id: userId },
@@ -212,7 +321,7 @@ export class CommentsService {
 
       for (const metaId of meta_array) {
         let comment = existingComments.find(
-          (comment) => comment.meta.id === metaId,
+          (comment) => comment.meta === metaId,
         );
 
         if (comment) {
@@ -220,7 +329,7 @@ export class CommentsService {
           comment.is_deleted = !noComment;
           comment.approved_no_comment = noComment;
           comment.detail = null;
-          comment.user = user.id;
+          comment.userId = user.id;
         } else {
           comment = this._commentsRepository.createComment(
             user,
