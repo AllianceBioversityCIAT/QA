@@ -1,0 +1,28 @@
+.charts {
+  grid-template-columns: 1fr 1fr 1fr;
+  display: grid;
+  gap: 18px;
+  padding-top: 10px;
+  [class*='chart-'] {
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    background-color: white;
+    padding: 10px;
+    width: 100%;
+    border-radius: 8px;
+  }
+
+  .chart-1 {
+  }
+
+  .chart-2 {
+  }
+
+  .chart-3 {
+  }
+
+  .chart-4 {
+    grid-column: span 3;
+  }
+}

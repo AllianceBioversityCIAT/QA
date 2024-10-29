@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, Input, OnInit, TemplateRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -28,6 +28,7 @@ import { TimelineComponent } from '../../components/timeline/timeline.component'
 import { sortBy } from 'lodash';
 import { SortByPipe } from '../../pipes/sort-by.pipe';
 import { TooltipModule } from 'primeng/tooltip';
+import { DashboardComponent } from '../../components/dashboard/dashboard.component';
 import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
@@ -43,7 +44,9 @@ import { DropdownModule } from 'primeng/dropdown';
     NgxSpinnerModule,
     DropdownModule,
     FormsModule,
-    RouterModule
+    RouterModule,
+    DashboardComponent,
+    DropdownModule
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
@@ -202,7 +205,6 @@ export default class AdminDashboardComponent implements OnInit {
 
   ngOnInit() {
     this.showSpinner();
-
     this.loadDashData();
   }
 
@@ -211,8 +213,11 @@ export default class AdminDashboardComponent implements OnInit {
   }
 
   actualIndicator(indicator: string) {
+    const { viewname } = indicator as any;
+    indicator = viewname;
     console.log('actual indicator', indicator);
     this.selectedIndicator = indicator;
+    console.log(this.dashboardData);
     this.dataSelected = this.dashboardData[this.selectedIndicator];
     let crp_id = this.selectedProg.crp_id ? this.selectedProg.crp_id : undefined;
     this.showSpinner();
@@ -418,7 +423,7 @@ export default class AdminDashboardComponent implements OnInit {
     this.showSpinner();
     request.subscribe(
       res => {
-        this.loadDashData();
+        // this.loadDashData();
       },
       error => {
         this.hideSpinner();
@@ -447,6 +452,7 @@ export default class AdminDashboardComponent implements OnInit {
   }
 
   onProgramChange({ target }, value) {
+    console.log('onProgramChange');
     if (value) this.selectedProgramName = value.acronym === '' || value.acronym === ' ' ? value.name : value.acronym;
 
     this.selectedProgramName = this.selectedProgramName ? this.selectedProgramName : 'All';
@@ -562,6 +568,8 @@ export default class AdminDashboardComponent implements OnInit {
 
         this.dashboardData = this.dashService.groupData(dashData.data);
         this.dataSelected = this.dashboardData[this.selectedIndicator];
+
+        console.log(this.dashboardData);
 
         this.crps = crps.data;
         this.selectedProgramName = 'All';

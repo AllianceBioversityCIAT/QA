@@ -191,112 +191,20 @@
           <div class="card-body dashboard-container-charts col" [ngClass]="{ 'col-sm-12': isRound2, 'col-sm-9': !isRound2 }">
             <div class="w-100 dashboard-header mb-2">
               <div class="h-100 title">Dashboard {{ getIndicatorName(selectedIndicator) }} here</div>
-
-              <div class="btn-group h-100 selector" dropdown>
-                <button
-                  id="button-animated"
-                  dropdownToggle
-                  type="button"
-                  class="btn btn-white dropdown-toggle w-100"
-                  aria-controls="dropdown-animated">
-                  {{ getIndicatorName(selectedIndicator) }}
-                  <span class="caret"></span>
-                </button>
-                <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
-                  <li *ngFor="let indicator of indicatorsAvailable" role="menuitem">
-                    <a class="dropdown-item" (click)="actualIndicator(indicator.viewname)">{{ indicator.name }}</a>
-                  </li>
-                </ul>
-              </div>
+              <p-dropdown
+                [options]="indicatorsAvailable"
+                [(ngModel)]="selectedIndicator"
+                optionLabel="name"
+                placeholder="Select a City"
+                (ngModelChange)="actualIndicator($event)" />
             </div>
             <div *ngIf="isDataNull" class="no-data-container">
               <div class="no-data-message">No results available at the moment.</div>
             </div>
-            <div *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !isDataNull" class="w-100 grid-container">
-              <div class="chart chart-1">
-                <div class="header-chart">
-                  <h4 class="chart-title" [pTooltip]="popTemplateChartA">
-                    Status -
-                    {{ dataSelected.total }}
-                    {{ getIndicatorName(selectedIndicator) }}
-                  </h4>
-                  <i class="icon-info" [pTooltip]="popTemplateChartA"></i>
-                  <ng-template #popTemplateChartA>
-                    <div [innerHtml]="descriptionCharts.generalStatus"></div>
-                  </ng-template>
-                </div>
-                <div class="chart-container">
-                  <!-- <app-donut-chart
-                    *ngIf="dataSelected"
-                    [data]="dataCharts.generalStatus"
-                    [chartName]="indicator_status"
-                    [selectedIndicator]="selectedIndicator">
-                  </app-donut-chart> -->
-                </div>
-              </div>
-              <div class="chart chart-2">
-                <div class="header-chart">
-                  <h4 class="chart-title">Assessors interactions</h4>
-                  <i class="icon-info" [pTooltip]="popTemplateChartB"></i>
-                  <ng-template #popTemplateChartB>
-                    <div [innerHtml]="descriptionCharts.assessorsInteractions"></div>
-                  </ng-template>
-                </div>
-                <div class="chart-container">
-                  <!-- <app-bar-chart
-                    *ngIf="indicatorsTags"
-                    [data]="dataCharts.assessorsInteractions"
-                    (filterTagEvent)="updateFeedTags($event)"></app-bar-chart> -->
-                </div>
-              </div>
-              <div
-                class="chart"
-                [ngClass]="{
-                  'responses-to-comments-r2': currentUser.cycle.cycle_stage != '1' || activeCompleteDash
-                }">
-                <div class="header-chart">
-                  <h4 class="chart-title">Responses to comments</h4>
-                  <i class="icon-info" [pTooltip]="popTemplateChartC"></i>
-                  <ng-template #popTemplateChartC>
-                    <div [innerHtml]="descriptionCharts.responseToComments"></div>
-                  </ng-template>
-                </div>
-                <div *ngIf="dashboardCommentsData[selectedIndicator]" class="chart-container">
-                  <!-- <app-donut-chart [data]="dataCharts.responseToComments" [chartName]="'comments'" [selectedIndicator]="selectedIndicator">
-                  </app-donut-chart> -->
-                </div>
-              </div>
-              <div
-                class="chart"
-                [ngClass]="{
-                  'assessment-by-field-r2': currentUser.cycle.cycle_stage == true || activeCompleteDash
-                }">
-                <div class="header-chart">
-                  <h4 class="chart-title">Assessment by field</h4>
-                  <div class="link-fs">View in full screen</div>
-                  <i class="icon-info" [pTooltip]="popTemplateChartD"></i>
-                  <ng-template #popTemplateChartD>
-                    <div [innerHtml]="descriptionCharts.assessmentByField"></div>
-                  </ng-template>
-                </div>
-                <div class="chart-container" *ngIf="dataCharts.assessmentByField">
-                  <!-- <app-line-chart
-                    [indicatorName]="selectedIndicator"
-                    [total]="dataSelected.total"
-                    [data]="dataCharts.assessmentByField"
-                    [isModal]="false"></app-line-chart> -->
-                </div>
-              </div>
-              <!-- <button class="btn btn-green-secondary">Download all comments and replies</button> -->
-              <button
-                class="btn btn-primary"
-                *ngIf="dashboardData && (dashboardData | json) != ({} | json)"
-                routerLinkActive="active"
-                [routerLinkActive]="['active']"
-                routerLink="../../indicator/{{ selectedIndicator.split('qa_')[1] }}/id">
-                Go to {{ getIndicatorName(selectedIndicator) }}
-              </button>
-            </div>
+
+            @if (this.dashboardData) {
+              <app-dashboard [dashboardData]="dashboardData"></app-dashboard>
+            }
 
             <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
               You don't have any indicator assingned. Please contact your Administrator.
