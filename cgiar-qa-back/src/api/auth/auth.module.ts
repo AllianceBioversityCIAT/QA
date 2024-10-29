@@ -17,6 +17,7 @@ import { JwtMiddleware } from '../../shared/middlewares/jwt.middleware';
 import { JwtModule, JwtService } from '@nestjs/jwt';
 import constConfig from '../../config/const.config';
 import { PermissionRepository } from './repositories/permission.repository';
+import { UserRoleRepository } from '../users/user-role.repository';
 
 @Module({
   controllers: [AuthController],
@@ -31,6 +32,7 @@ import { PermissionRepository } from './repositories/permission.repository';
     RoleRepository,
     PermissionRepository,
     JwtService,
+    UserRoleRepository
   ],
   exports: [AuthService, RoleRepository, PermissionRepository],
   imports: [

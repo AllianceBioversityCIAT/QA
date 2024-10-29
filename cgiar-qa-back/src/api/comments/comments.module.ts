@@ -27,6 +27,7 @@ import { CommentsMetaRepository } from './repositories/comments-meta.repository'
 import { BatchesRepository } from '../../shared/repositories/batch.repository';
 import { EvaluationRepository } from '../evaluations/repositories/evaluation.repository';
 import { QuickCommentsRepository } from './repositories/quick-comments.repository';
+import { UserRoleRepository } from '../users/user-role.repository';
 
 @Module({
   controllers: [CommentsController],
@@ -51,6 +52,7 @@ import { QuickCommentsRepository } from './repositories/quick-comments.repositor
     AuthService,
     BcryptPasswordEncoder,
     TokenAuthRepository,
+    UserRoleRepository
   ],
   imports: [AuthModule],
 })

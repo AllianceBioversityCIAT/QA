@@ -211,25 +211,39 @@ export class AuthService {
 
   async tokenLoginService(tokenLoginDto: TokenLoginDto) {
     const { crp_id, token } = tokenLoginDto;
-    if (!(crp_id && token)) {
-      throw new BadRequestException('CRP ID and token are required.');
+    try {
+      if (!(crp_id && token)) {
+        throw new BadRequestException('CRP ID and token are required.');
+      }
+
+      const crp = await this._crpRepository.findOne({ where: { crp_id } });
+      if (!crp) {
+        throw new NotFoundException('CRP not found.');
+      }
+
+      const authToken = await this._tokenAuthRepository.findOne({
+        where: { crp_id, token },
+      });
+      if (!authToken) {
+        throw new BadRequestException('Invalid token.');
+      }
+
+      const user = await this._userRepository.createOrReturnUser(authToken);
+
+      return ResponseUtils.format({
+        data: user,
+        description: 'CRP Logged',
+        status: HttpStatus.OK,
+      });
+    } catch (error) {
+      this._logger.error(error);
+      return ResponseUtils.format({
+        data: {},
+        description: error.message,
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        errors: error,
+      });
     }
-
-    const crp = await this._crpRepository.findOne({ where: { crp_id } });
-    if (!crp) {
-      throw new NotFoundException('CRP not found.');
-    }
-
-    const authToken = await this._tokenAuthRepository.findOne({
-      where: { crp_id, token },
-    });
-    if (!authToken) {
-      throw new BadRequestException('Invalid token.');
-    }
-
-    const user = await this._userRepository.createOrReturnUser(authToken);
-
-    return { data: user, message: 'CRP Logged' };
   }
 
   async changePassword(changePasswordDto: ChangePasswordDto, user: TokenDto) {

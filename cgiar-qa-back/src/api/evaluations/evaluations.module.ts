@@ -23,6 +23,7 @@ import { ReplyTypeRepository } from '../comments/repositories/reply-type.reposit
 import { CommentsRepliesRepository } from '../comments/repositories/comments-reply.repository';
 import { IndicatorsRepository } from '../indicators/repositories/indicators.repository';
 import { BatchesRepository } from '../../shared/repositories/batch.repository';
+import { UserRoleRepository } from '../users/user-role.repository';
 
 @Module({
   controllers: [EvaluationsController],
@@ -44,6 +45,7 @@ import { BatchesRepository } from '../../shared/repositories/batch.repository';
     AuthService,
     BcryptPasswordEncoder,
     TokenAuthRepository,
+    UserRoleRepository
   ],
 })
 export class EvaluationsModule implements NestModule {

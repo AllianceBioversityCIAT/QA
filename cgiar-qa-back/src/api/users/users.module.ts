@@ -15,6 +15,7 @@ import { JwtMiddleware } from '../../shared/middlewares/jwt.middleware';
 import { AuthModule } from '../auth/auth.module';
 import { JwtService } from '@nestjs/jwt';
 import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
+import { UserRoleRepository } from './user-role.repository';
 
 @Module({
   controllers: [UsersController],
@@ -24,6 +25,7 @@ import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
     GeneralConfigurationRepository,
     CycleRepository,
     UserRepository,
+    UserRoleRepository,
     RoleRepository,
     JwtService,
     BcryptPasswordEncoder,

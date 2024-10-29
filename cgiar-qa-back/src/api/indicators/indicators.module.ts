@@ -21,6 +21,7 @@ import { AuthModule } from '../auth/auth.module';
 import { AuthService } from '../auth/auth.service';
 import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
 import { TokenAuthRepository } from '../auth/repositories/token-auth.repository';
+import { UserRoleRepository } from '../users/user-role.repository';
 
 @Module({
   controllers: [IndicatorsController],
@@ -39,6 +40,7 @@ import { TokenAuthRepository } from '../auth/repositories/token-auth.repository'
     AuthService,
     BcryptPasswordEncoder,
     TokenAuthRepository,
+    UserRoleRepository
   ],
   imports: [AuthModule],
   exports: [IndicatorsService, IndicatorsRepository],

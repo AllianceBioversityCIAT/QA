@@ -319,6 +319,10 @@ export class EvaluationsService {
     changedDataInitial: any[],
     changedDataPhase: any[],
   ): any[] {
+    if (!parsedData || !changedDataInitial || !changedDataPhase) {
+      return [];
+    }
+
     return parsedData.map((parsed) => {
       const matchInitial = changedDataInitial.find(
         (changed) => changed.field === parsed.col_name,
