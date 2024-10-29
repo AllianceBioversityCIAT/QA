@@ -7,7 +7,49 @@
       <h4 style="text-align: center" *ngIf="currentUser.hasOwnProperty('cycle') && !currentUser.hasOwnProperty('cycle_ended')">
         {{ currentUser.cycle.cycle_stage > 1 ? 'QA Round' + ': ' + currentUser.cycle.cycle_stage : '' }}
       </h4>
-      <!-- <app-results-table [resulList]="this.evaluationList" [returnedArray]="this.returnedArray" [showActionArea]="this.showActionArea"></app-results-table> -->
+
+      <div class="actions">
+        <div class="actions_buttons">
+          <a
+            href="https://docs.google.com/document/d/18T5YMKIt2Wq5W8QJcFs3PU8hpOGDBZQg/view"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-primary actions_buttons-item">
+            <span class="material-icons-round">description</span>
+            Technical report guidance
+          </a>
+          <a
+            href="https://drive.google.com/file/d/164SmSOcG8VOixHaiBMupo2hxT9t94Jui/view"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-primary actions_buttons-item">
+            <span class="material-icons-round">description</span>
+            Indicator Guidance
+          </a>
+          <div tooltip="Comment in excel format" container="body" placement="top" class="btn btn-primary file-button" style="height: 34px">
+            <i class="icon-download-excel"></i>
+          </div>
+        </div>
+
+        <div class="actions_info">
+          @if (indicatorType == 'knowledge_product') {
+            <i class="icon-autochecked icon-32"></i>
+            <p>Automatically validated</p>
+          }
+          <i class="icon-quality-assessed icon-32"></i>
+          <p>Quality Assessed</p>
+
+          <i class="icon-pending icon-32"></i>
+          <p>Pending</p>
+        </div>
+      </div>
+
+      <app-results-table
+        [resulList]="evaluationList"
+        [returnedArray]="returnedArray"
+        [indicatorType]="indicatorType"
+        [currentUser]="currentUser"
+        [isCRP]="true"></app-results-table>
     </div>
   </div>
 </div>

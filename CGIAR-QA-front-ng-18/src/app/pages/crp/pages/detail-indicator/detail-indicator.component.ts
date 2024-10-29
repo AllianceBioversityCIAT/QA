@@ -8,7 +8,7 @@ import { AlertService } from '@services/alert.service';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 
 import { User } from '@models/user.model';
-import { DetailedStatus, GeneralIndicatorName, GeneralStatus, StatusNames, StatusNamesCRP } from '@models/general-status.model';
+import { DetailedStatus, GeneralIndicatorName, StatusNames, StatusNamesCRP } from '@models/general-status.model';
 import { crpMEL } from '@models/crp.model';
 import { Role } from '@models/roles.model';
 import { DomSanitizer, Title } from '@angular/platform-browser';

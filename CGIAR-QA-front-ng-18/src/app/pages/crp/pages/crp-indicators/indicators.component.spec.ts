@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-
-import { CRPIndicatorsComponent } from './indicators.component';
+import CRPIndicatorsComponent from './indicators.component';
 
 describe('CRPIndicatorsComponent', () => {
   let component: CRPIndicatorsComponent;
@@ -8,9 +7,8 @@ describe('CRPIndicatorsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ CRPIndicatorsComponent ]
-    })
-    .compileComponents();
+      declarations: [CRPIndicatorsComponent]
+    }).compileComponents();
   }));
 
   beforeEach(() => {

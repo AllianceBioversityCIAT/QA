@@ -63,17 +63,18 @@
 </div> -->
 
 <div class="filters">
-  <div class="filters_date">
-    <p class="filters_date_title">Filter by submission date</p>
+  @if (!this.isCRP) {
+    <div class="filters_date">
+      <p class="filters_date_title">Filter by submission date</p>
 
-    <div class="filters_date_checkbox">
-      @for (item of submissionDates; track $index) {
-        <p-checkbox [label]="item.date" [value]="item.date" [(ngModel)]="selectedDates" />
-      }
+      <div class="filters_date_checkbox">
+        @for (item of submissionDates; track $index) {
+          <p-checkbox [label]="item.date" [value]="item.date" [(ngModel)]="selectedDates" />
+        }
+      </div>
     </div>
-  </div>
+  }
 
-  <!-- <div class="filters_multi"> -->
   <p-multiSelect
     [options]="columnsFiltersOptions"
     [(ngModel)]="selectedFilters"
@@ -92,7 +93,6 @@
       </div>
     </ng-template>
   </p-multiSelect>
-  <!-- </div> -->
 
   <div class="filters_buttons">
     <p-button label="Added items" [outlined]="evalStatusFilter !== 'Added'" (click)="handleFilterChange('Added')" severity="warning" />
@@ -106,14 +106,17 @@
 
 <p-table
   [value]="this.resulList | appResultsTablePipe: selectedDates : searchText : evalStatusFilter"
-  [paginator]="true"
+  [paginator]="(this.resulList | appResultsTablePipe: selectedDates : searchText : evalStatusFilter).length > 5"
   [rows]="5"
-  [styleClass]="'p-datatable-sm custom-td'">
+  [style]="{ 'font-family': 'Poppins' }"
+  styleClass="p-datatable-sm custom-td p-datatable-gridlines">
   <ng-template pTemplate="header">
     <tr>
       @for (colItem of this.columnNames; track $index) {
         @if (colItem.showIf()) {
-          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr">{{ colItem.name }} <p-sortIcon [field]="colItem.attr" /></th>
+          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr" style="text-align: center; font-size: 13px; font-weight: bold">
+            {{ colItem.name }} <p-sortIcon [field]="colItem.attr" />
+          </th>
         }
       }
     </tr>
@@ -123,7 +126,7 @@
     <tr>
       @for (colItem of this.columnNames; track $index) {
         @if (colItem.showIf()) {
-          <td>
+          <td style="text-align: center">
             @switch (colItem.attr) {
               @case ('status') {
                 <i style="width: 30px" class="icon-{{ statusIcon[result.status] }} status-icon"></i>
@@ -139,13 +142,14 @@
                 </a>
               }
               @case ('title') {
-                <div style="display: flex; justify-content: space-between; align-items: flex-start">
-                  <a routerLink="/indicator/{{ indicatorType }}/id/detail/{{ result.id }}">
+                <!-- <div style="display: flex; justify-content: space-between; align-items: flex-start"> -->
+                <div style="display: grid; grid-template-columns: 1fr 50px">
+                  <a routerLink="./detail/{{ result.id }}">
                     <p style="font-size: 13px; text-align: center">
                       {{ result[colItem.attr] }}
                     </p>
                   </a>
-                  <p style="font-size: 10px">
+                  <p style="font-size: 10px; text-align: center">
                     {{ result.evaluation_status }}
                   </p>
                 </div>
@@ -159,4 +163,12 @@
       }
     </tr>
   </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [colSpan]="getTotalTableColumns()" style="text-align: center; font-size: 14px; font-weight: 500; padding: 1rem">No results found</td>
+    </tr>
+  </ng-template>
 </p-table>
+
+<p class="total">Total items: {{ (this.resulList | appResultsTablePipe: selectedDates : searchText : evalStatusFilter).length }}</p>
