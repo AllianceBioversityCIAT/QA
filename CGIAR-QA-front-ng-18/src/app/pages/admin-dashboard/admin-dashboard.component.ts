@@ -1,7 +1,7 @@
 import { Component, OnInit, TemplateRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Router, RouterModule } from '@angular/router';
 
 import { DashboardService } from '../../services/dashboard.service';
 import { AuthenticationService } from '../../services/authentication.service';
@@ -27,12 +27,24 @@ import { CommonModule } from '@angular/common';
 import { TimelineComponent } from '../../components/timeline/timeline.component';
 import { sortBy } from 'lodash';
 import { SortByPipe } from '../../pipes/sort-by.pipe';
-import { TooltipModule } from 'ngx-bootstrap/tooltip';
+import { TooltipModule } from 'primeng/tooltip';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-admin-dashboard',
   standalone: true,
-  imports: [CommonModule, FormsModule, ReactiveFormsModule, TimelineComponent, SortByPipe, TooltipModule.forRoot(), NgxSpinnerModule],
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    TimelineComponent,
+    SortByPipe,
+    TooltipModule,
+    NgxSpinnerModule,
+    DropdownModule,
+    FormsModule,
+    RouterModule
+  ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
 })
@@ -51,6 +63,7 @@ export default class AdminDashboardComponent implements OnInit {
   generalStatus = GeneralStatus;
   indicatorsName = GeneralIndicatorName;
   isDataNull: boolean = false;
+  sss: any;
 
   assessorsChat = {
     isOpen: false,
@@ -116,13 +129,14 @@ export default class AdminDashboardComponent implements OnInit {
   selectedIndicator = 'qa_knowledge_product';
   dataSelected: any;
   indicatorData: any;
-  feedList: [];
+  feedList: any[];
   itemStatusByIndicator = {};
 
-  enableQATooltip: string = 'Enable the assessment process so Quality Assessors can start the process of providing recommendations. If this option is disabled, they cannot provide any comments.';
-  enableCommentsTooltip: string = 'If this option is enabled, Initiatives will be able to see all comments provided by the Quality Assessors in PRMS Reporting tool; and also will be able to react to the comments.';
+  enableQATooltip: string =
+    'Enable the assessment process so Quality Assessors can start the process of providing recommendations. If this option is disabled, they cannot provide any comments.';
+  enableCommentsTooltip: string =
+    'If this option is enabled, Initiatives will be able to see all comments provided by the Quality Assessors in PRMS Reporting tool; and also will be able to react to the comments.';
 
-  modalRef: BsModalRef;
   multi = [];
   rawCommentsData = [];
   has_comments: boolean = false;
@@ -151,7 +165,21 @@ export default class AdminDashboardComponent implements OnInit {
 
   isRound2 = true;
 
-  constructor(private formBuilder: FormBuilder, private dashService: DashboardService, private modalService: BsModalService, private router: Router, private calendar: NgbCalendar, public formatter: NgbDateParserFormatter, private spinner: NgxSpinnerService, private authenticationService: AuthenticationService, private indicatorService: IndicatorsService, private commentService: CommentService, private titleService: Title, private alertService: AlertService, private _exportTableSE: ExportTablesService) {
+  constructor(
+    private formBuilder: FormBuilder,
+    private dashService: DashboardService,
+    private router: Router,
+    private calendar: NgbCalendar,
+    public formatter: NgbDateParserFormatter,
+    private spinner: NgxSpinnerService,
+    private authenticationService: AuthenticationService,
+    private indicatorService: IndicatorsService,
+    private commentService: CommentService,
+    private titleService: Title,
+    private alertService: AlertService,
+    private _exportTableSE: ExportTablesService
+  ) {
+    console.log('admin dashboard');
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
     });
@@ -183,6 +211,7 @@ export default class AdminDashboardComponent implements OnInit {
   }
 
   actualIndicator(indicator: string) {
+    console.log('actual indicator', indicator);
     this.selectedIndicator = indicator;
     this.dataSelected = this.dashboardData[this.selectedIndicator];
     let crp_id = this.selectedProg.crp_id ? this.selectedProg.crp_id : undefined;
@@ -238,6 +267,7 @@ export default class AdminDashboardComponent implements OnInit {
   }
 
   getItemStatusByIndicatorService(indicator: string, crp_id?: string): Observable<any> {
+    console.log('getItemStatusByIndicatorService');
     return this.indicatorService.getItemStatusByIndicator(indicator, crp_id).pipe();
   }
 
@@ -310,7 +340,9 @@ export default class AdminDashboardComponent implements OnInit {
       if (comments_accepted_with_comment) dataset.push(comments_accepted_with_comment);
 
       let comments_accepted_without_comment = data.find(item => item.comments_accepted_without_comment != '0');
-      comments_accepted_without_comment = comments_accepted_without_comment ? { name: 'Accepted', value: +comments_accepted_without_comment.value } : null;
+      comments_accepted_without_comment = comments_accepted_without_comment
+        ? { name: 'Accepted', value: +comments_accepted_without_comment.value }
+        : null;
       if (comments_accepted_without_comment) dataset.push(comments_accepted_without_comment);
 
       let comments_rejected = data.find(item => item.comments_rejected != '0');
@@ -431,7 +463,12 @@ export default class AdminDashboardComponent implements OnInit {
     this.showSpinner();
 
     if (this.currenTcycle.cycle_stage == '1') {
-      let responses = forkJoin([this.getAllDashData(crp_id), this.getCommentStats(crp_id), this.getAllTags(crp_id), this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id)]);
+      let responses = forkJoin([
+        this.getAllDashData(crp_id),
+        this.getCommentStats(crp_id),
+        this.getAllTags(crp_id),
+        this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id)
+      ]);
 
       responses.subscribe(
         res => {
@@ -463,7 +500,12 @@ export default class AdminDashboardComponent implements OnInit {
         }
       );
     } else {
-      let responses = forkJoin([this.getAllDashData(crp_id), this.getCommentStats(crp_id), this.getAllTags(crp_id), this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id)]);
+      let responses = forkJoin([
+        this.getAllDashData(crp_id),
+        this.getCommentStats(crp_id),
+        this.getAllTags(crp_id),
+        this.getItemStatusByIndicatorService(this.selectedIndicator, crp_id)
+      ]);
 
       responses.subscribe(
         res => {
@@ -504,8 +546,17 @@ export default class AdminDashboardComponent implements OnInit {
   loadDashData() {
     this.showSpinner();
 
-    let responses = forkJoin([this.getAllDashData(), this.getAllCRP(), this.getIndicatorsByCRP(), this.getCommentStats(), this.getCycles(), this.getAllTags(), this.getFeedTags(this.selectedIndicator), this.getItemStatusByIndicatorService(this.selectedIndicator)]);
-    responses.subscribe(
+    let responses = forkJoin([
+      this.getAllDashData(),
+      this.getAllCRP(),
+      this.getIndicatorsByCRP(),
+      this.getCommentStats(),
+      this.getCycles(),
+      this.getAllTags(),
+      this.getFeedTags(this.selectedIndicator),
+      this.getItemStatusByIndicatorService(this.selectedIndicator)
+    ]);
+    responses?.subscribe(
       res => {
         const [dashData, crps, indicatorsByCrps, commentsStats, cycleData, allTags, feedTags, assessmentByField] = res;
 
@@ -621,7 +672,7 @@ export default class AdminDashboardComponent implements OnInit {
 
   openModal(template: TemplateRef<any>) {
     this.getRawComments(this.selectedProg['crp_id']);
-    this.modalRef = this.modalService.show(template);
+    // this.modalRef = this.modalService.show(template);
   }
 
   updateCycle() {
@@ -826,7 +877,7 @@ export default class AdminDashboardComponent implements OnInit {
     this.showSideMenu = !this.showSideMenu;
   }
 
-  openChart(template: TemplateRef<any>, e) {
-    this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
-  }
+  // openChart(template: TemplateRef<any>, e) {
+  //   this.modalRef = this.modalService.show(template, { class: 'modal-xl' });
+  // }
 }

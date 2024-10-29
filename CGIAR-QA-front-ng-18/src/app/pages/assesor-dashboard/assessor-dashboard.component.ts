@@ -106,6 +106,7 @@ export default class AssessorDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
+    console.log('assessor dashboard');
     this.usersService.getUserById(this.currentUser?.id).subscribe(res => {
       this.authenticationService.parseUpdateIndicators(res.data.indicators);
     });
@@ -114,7 +115,13 @@ export default class AssessorDashboardComponent implements OnInit {
   }
 
   loadDashData() {
-    let responses = forkJoin([this.getDashData(), this.getCommentStats(), this.getAllTags(), this.getItemStatusByIndicatorService(this.selectedIndicator), this.dashService.getHighlightedData()]);
+    let responses = forkJoin([
+      this.getDashData(),
+      this.getCommentStats(),
+      this.getAllTags(),
+      this.getItemStatusByIndicatorService(this.selectedIndicator),
+      this.dashService.getHighlightedData()
+    ]);
     responses.subscribe(res => {
       const [dashData, commentsStats, allTags, assessmentByField, highlightData] = res;
 
@@ -290,7 +297,9 @@ export default class AssessorDashboardComponent implements OnInit {
       if (comments_accepted_with_comment) dataset.push(comments_accepted_with_comment);
 
       let comments_accepted_without_comment = data.find(item => item.comments_accepted_without_comment != '0');
-      comments_accepted_without_comment = comments_accepted_without_comment ? { name: 'Accepted', value: +comments_accepted_without_comment.value } : null;
+      comments_accepted_without_comment = comments_accepted_without_comment
+        ? { name: 'Accepted', value: +comments_accepted_without_comment.value }
+        : null;
       if (comments_accepted_without_comment) dataset.push(comments_accepted_without_comment);
 
       let comments_rejected = data.find(item => item.comments_rejected != '0');

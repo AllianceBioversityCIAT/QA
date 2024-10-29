@@ -3,21 +3,14 @@
 </div> -->
 <app-timeline></app-timeline>
 <div class="row justify-content-center dashboard-container">
-  <button
-    [ngClass]="{ 'open-side-menu': showSideMenu }"
-    class="btn-toggle-menu"
-    (click)="toggleSideMenu()"
-  >
+  <button [ngClass]="{ 'open-side-menu': showSideMenu }" class="btn-toggle-menu" (click)="toggleSideMenu()">
     <i class="icon-settings"></i>
   </button>
   <div [ngClass]="{ 'open-side-menu': showSideMenu }" class="col-programs">
     <p class="card-title">Programs/Platforms ({{ selectedProgramName }})</p>
     <div class="card">
       <div class="card-body">
-        <form
-          [formGroup]="programsForm"
-          class="programs-form btn-group-vertical"
-        >
+        <form [formGroup]="programsForm" class="programs-form btn-group-vertical">
           <input
             (change)="onProgramChange($event, 'null')"
             id="program-all"
@@ -25,16 +18,9 @@
             class="custom-control-input"
             value="null"
             name="program"
-            formControlName="program"
-          />
+            formControlName="program" />
           <label class="custom-control-label" for="program-all"> All </label>
-          <div
-            class=""
-            *ngFor="
-              let program of crps | sortBy : 'asc' : 'name';
-              let i = index
-            "
-          >
+          <div class="" *ngFor="let program of crps | sortBy: 'asc' : 'name'; let i = index">
             <input
               (change)="onProgramChange($event, program)"
               id="program-{{ program.id }}"
@@ -42,14 +28,9 @@
               class="custom-control-input"
               value="{{ program.id }}"
               name="program"
-              formControlName="program"
-            />
+              formControlName="program" />
             <label class="custom-control-label" for="program-{{ program.id }}">
-              {{
-                program.acronym === "" || program.acronym === " "
-                  ? program.name
-                  : program.acronym
-              }}
+              {{ program.acronym === '' || program.acronym === ' ' ? program.name : program.acronym }}
               {{ getPendings(program) }}
             </label>
           </div>
@@ -63,22 +44,11 @@
       <div class="card">
         <div class="row row-padding qa-settings">
           <div class="col-sm"></div>
-          <div class="col-sm" tooltip="{{ enableQATooltip }}" placement="top">
-            Enable Assessment
-          </div>
-          <div
-            class="col-sm"
-            tooltip="{{ enableCommentsTooltip }}"
-            placement="top"
-          >
-            Submit comments
-          </div>
+          <div class="col-sm" pTooltip="{{ enableQATooltip }}" placement="top">Enable Assessment</div>
+          <div class="col-sm" pTooltip="{{ enableCommentsTooltip }}" placement="top">Submit comments</div>
         </div>
         <form [formGroup]="settingsForm" novalidate>
-          <div
-            *ngFor="let indicator of configurationData"
-            class="activity-container"
-          >
+          <div *ngFor="let indicator of configurationData" class="activity-container">
             <!-- <div *ngFor="let indicator of configurationData | keyvalue" class="activity-container"> -->
             <div class="row row-padding activity-item">
               <!--<div class="col-sm" (click)="indicator.value.isCollapsed = !indicator.value.isCollapsed">-->
@@ -93,12 +63,8 @@
                     (change)="onCheckboxChange($event, 'enableQA')"
                     type="checkbox"
                     class="custom-control-input"
-                    id="switch-a-{{ indicator.id }}"
-                  />
-                  <label
-                    class="custom-control-label"
-                    for="switch-a-{{ indicator.id }}"
-                  ></label>
+                    id="switch-a-{{ indicator.id }}" />
+                  <label class="custom-control-label" for="switch-a-{{ indicator.id }}"></label>
                 </div>
               </div>
               <div class="col-sm">
@@ -109,12 +75,8 @@
                     [checked]="isChecked(indicator, 'enableCRP')"
                     (change)="onCheckboxChange($event, 'enableCRP')"
                     class="custom-control-input"
-                    id="switch-b-{{ indicator.id }}"
-                  />
-                  <label
-                    class="custom-control-label"
-                    for="switch-b-{{ indicator.id }}"
-                  ></label>
+                    id="switch-b-{{ indicator.id }}" />
+                  <label class="custom-control-label" for="switch-b-{{ indicator.id }}"></label>
                 </div>
               </div>
             </div>
@@ -127,14 +89,7 @@
         <div class="row row-padding qa-settings">
           <form class="form-inline" style="justify-content: center">
             <div *ngFor="let cycle of dashboardCyclesData">
-              <div
-                class="row"
-                style="
-                  display: flex;
-                  flex-direction: column;
-                  align-items: flex-start;
-                "
-              >
+              <div class="row" style="display: flex; flex-direction: column; align-items: flex-start">
                 <p style="margin: 0 1em; padding: 0.5em">
                   Stage: <strong>{{ cycle.cycle_stage }}</strong>
                 </p>
@@ -147,21 +102,14 @@
                       placeholder="yyyy-mm-dd"
                       name="dpFromDate"
                       [value]="formatter.format(cycle.start_date)"
-                      (input)="
-                        fromDate = validateInput(
-                          cycle.start_date,
-                          dpFromDate.value
-                        )
-                      "
-                    />
+                      (input)="fromDate = validateInput(cycle.start_date, dpFromDate.value)" />
                     <!-- (input)="validateInput(cycle.start_date, dpFromDate.value)"> -->
                     <div class="input-group-append">
-                      <button
+                      <!-- <button
                         [disabled]="!cycle.is_active"
                         class="btn btn-outline-secondary calendar"
                         (click)="datepicker.toggle()"
-                        type="button"
-                      ></button>
+                        type="button"></button> -->
                     </div>
                   </div>
                 </div>
@@ -174,18 +122,14 @@
                       placeholder="yyyy-mm-dd"
                       name="dpToDate"
                       [value]="formatter.format(cycle.end_date)"
-                      (input)="
-                        toDate = validateInput(cycle.end_date, dpToDate.value)
-                      "
-                    />
+                      (input)="toDate = validateInput(cycle.end_date, dpToDate.value)" />
                     <!-- (input)="validateInput(cycle.end_date, dpToDate.value)"> -->
                     <div class="input-group-append">
-                      <button
+                      <!-- <button
                         [disabled]="!cycle.is_active"
                         class="btn btn-outline-secondary calendar"
                         (click)="datepicker.toggle()"
-                        type="button"
-                      ></button>
+                        type="button"></button> -->
                     </div>
                   </div>
                 </div>
@@ -193,7 +137,7 @@
             </div>
             <div class="form-group hidden">
               <div class="input-group">
-                <input
+                <!-- <input
                   name="datepicker"
                   style="opacity: 0"
                   class="form-control"
@@ -204,8 +148,7 @@
                   [displayMonths]="2"
                   [dayTemplate]="t"
                   outsideDays="hidden"
-                  [startDate]="fromDate!"
-                />
+                  [startDate]="fromDate!" /> -->
                 <ng-template #t let-date let-focused="focused">
                   <span
                     class="custom-day"
@@ -213,8 +156,7 @@
                     [class.range]="isRange(date)"
                     [class.faded]="isHovered(date) || isInside(date)"
                     (mouseenter)="hoveredDate = date"
-                    (mouseleave)="hoveredDate = null"
-                  >
+                    (mouseleave)="hoveredDate = null">
                     {{ date.day }}
                   </span>
                 </ng-template>
@@ -222,13 +164,7 @@
             </div>
           </form>
 
-          <button
-            style="margin: 2em auto"
-            type="button"
-            class="btn btn-outline-warning"
-            (click)="updateCycle()"
-            [disabled]="!validateNewDate()"
-          >
+          <button style="margin: 2em auto" type="button" class="btn btn-outline-warning" (click)="updateCycle()" [disabled]="!validateNewDate()">
             Update cycle
           </button>
         </div>
@@ -238,180 +174,117 @@
   <div class="col col-progress">
     <div class="row mini-header" style="padding: 0 15px">
       <button class="css-button-3d--sand" (click)="goToPDF('AR')">
-        <span class="material-icons-round icon">description</span>Technical
-        report guidance
+        <span class="material-icons-round icon">description</span>Technical report guidance
       </button>
-      <button
-        class="css-button-3d--sand"
-        (click)="goToPDF('ASSESSORS_GUIDANCE')"
-      >
-        <span class="material-icons-round icon">description</span>2023 Assessor
-        Guidance
+      <button class="css-button-3d--sand" (click)="goToPDF('ASSESSORS_GUIDANCE')">
+        <span class="material-icons-round icon">description</span>2023 Assessor Guidance
       </button>
     </div>
     <div class="row" style="padding: 0 15px">
       <p class="card-title col-9">Progress by Assessors</p>
 
-      <button
-        type="button"
-        class="btn btn-success col-3"
-        (click)="downloadRawComments()"
-      >
-        Download comments and assessment status
-      </button>
+      <button type="button" class="btn btn-success col-3" (click)="downloadRawComments()">Download comments and assessment status</button>
     </div>
     <div class="card">
       <div class="card-body">
         <div class="dashboard-container row w-100">
-          <div
-            class="card-body dashboard-container-charts col"
-            [ngClass]="{ 'col-sm-12': isRound2, 'col-sm-9': !isRound2 }"
-          >
+          <div class="card-body dashboard-container-charts col" [ngClass]="{ 'col-sm-12': isRound2, 'col-sm-9': !isRound2 }">
             <div class="w-100 dashboard-header mb-2">
-              <div class="h-100 title">
-                Dashboard {{ getIndicatorName(selectedIndicator) }}
-              </div>
+              <div class="h-100 title">Dashboard {{ getIndicatorName(selectedIndicator) }} here</div>
+
               <div class="btn-group h-100 selector" dropdown>
                 <button
                   id="button-animated"
                   dropdownToggle
                   type="button"
                   class="btn btn-white dropdown-toggle w-100"
-                  aria-controls="dropdown-animated"
-                >
+                  aria-controls="dropdown-animated">
                   {{ getIndicatorName(selectedIndicator) }}
                   <span class="caret"></span>
                 </button>
-                <ul
-                  id="dropdown-animated"
-                  *dropdownMenu
-                  class="dropdown-menu w-100"
-                  role="menu"
-                  aria-labelledby="button-animated"
-                >
-                  <li
-                    *ngFor="let indicator of indicatorsAvailable"
-                    role="menuitem"
-                  >
-                    <a
-                      class="dropdown-item"
-                      (click)="actualIndicator(indicator.viewname)"
-                      >{{ indicator.name }}</a
-                    >
+                <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
+                  <li *ngFor="let indicator of indicatorsAvailable" role="menuitem">
+                    <a class="dropdown-item" (click)="actualIndicator(indicator.viewname)">{{ indicator.name }}</a>
                   </li>
                 </ul>
               </div>
             </div>
             <div *ngIf="isDataNull" class="no-data-container">
-              <div class="no-data-message">
-                No results available at the moment.
-              </div>
+              <div class="no-data-message">No results available at the moment.</div>
             </div>
-            <div
-              *ngIf="
-                dashboardData &&
-                (dashboardData | json) != ({} | json) &&
-                !isDataNull
-              "
-              class="w-100 grid-container"
-            >
+            <div *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !isDataNull" class="w-100 grid-container">
               <div class="chart chart-1">
                 <div class="header-chart">
-                  <h4 class="chart-title" [tooltip]="popTemplateChartA">
+                  <h4 class="chart-title" [pTooltip]="popTemplateChartA">
                     Status -
                     {{ dataSelected.total }}
                     {{ getIndicatorName(selectedIndicator) }}
                   </h4>
-                  <i class="icon-info" [tooltip]="popTemplateChartA"></i>
+                  <i class="icon-info" [pTooltip]="popTemplateChartA"></i>
                   <ng-template #popTemplateChartA>
                     <div [innerHtml]="descriptionCharts.generalStatus"></div>
                   </ng-template>
                 </div>
                 <div class="chart-container">
-                  <app-donut-chart
+                  <!-- <app-donut-chart
                     *ngIf="dataSelected"
                     [data]="dataCharts.generalStatus"
                     [chartName]="indicator_status"
-                    [selectedIndicator]="selectedIndicator"
-                  >
-                  </app-donut-chart>
+                    [selectedIndicator]="selectedIndicator">
+                  </app-donut-chart> -->
                 </div>
               </div>
               <div class="chart chart-2">
                 <div class="header-chart">
                   <h4 class="chart-title">Assessors interactions</h4>
-                  <i class="icon-info" [tooltip]="popTemplateChartB"></i>
+                  <i class="icon-info" [pTooltip]="popTemplateChartB"></i>
                   <ng-template #popTemplateChartB>
-                    <div
-                      [innerHtml]="descriptionCharts.assessorsInteractions"
-                    ></div>
+                    <div [innerHtml]="descriptionCharts.assessorsInteractions"></div>
                   </ng-template>
                 </div>
                 <div class="chart-container">
-                  <app-bar-chart
+                  <!-- <app-bar-chart
                     *ngIf="indicatorsTags"
                     [data]="dataCharts.assessorsInteractions"
-                    (filterTagEvent)="updateFeedTags($event)"
-                  ></app-bar-chart>
+                    (filterTagEvent)="updateFeedTags($event)"></app-bar-chart> -->
                 </div>
               </div>
               <div
                 class="chart"
                 [ngClass]="{
-                  'responses-to-comments-r2':
-                    currentUser.cycle.cycle_stage != '1' || activeCompleteDash
-                }"
-              >
+                  'responses-to-comments-r2': currentUser.cycle.cycle_stage != '1' || activeCompleteDash
+                }">
                 <div class="header-chart">
                   <h4 class="chart-title">Responses to comments</h4>
-                  <i class="icon-info" [tooltip]="popTemplateChartC"></i>
+                  <i class="icon-info" [pTooltip]="popTemplateChartC"></i>
                   <ng-template #popTemplateChartC>
-                    <div
-                      [innerHtml]="descriptionCharts.responseToComments"
-                    ></div>
+                    <div [innerHtml]="descriptionCharts.responseToComments"></div>
                   </ng-template>
                 </div>
-                <div
-                  *ngIf="dashboardCommentsData[selectedIndicator]"
-                  class="chart-container"
-                >
-                  <app-donut-chart
-                    [data]="dataCharts.responseToComments"
-                    [chartName]="'comments'"
-                    [selectedIndicator]="selectedIndicator"
-                  >
-                  </app-donut-chart>
+                <div *ngIf="dashboardCommentsData[selectedIndicator]" class="chart-container">
+                  <!-- <app-donut-chart [data]="dataCharts.responseToComments" [chartName]="'comments'" [selectedIndicator]="selectedIndicator">
+                  </app-donut-chart> -->
                 </div>
               </div>
               <div
                 class="chart"
                 [ngClass]="{
-                  'assessment-by-field-r2':
-                    currentUser.cycle.cycle_stage == true || activeCompleteDash
-                }"
-              >
+                  'assessment-by-field-r2': currentUser.cycle.cycle_stage == true || activeCompleteDash
+                }">
                 <div class="header-chart">
                   <h4 class="chart-title">Assessment by field</h4>
-                  <div class="link-fs" (click)="openChart(chartD, $event)">
-                    View in full screen
-                  </div>
-                  <i class="icon-info" [tooltip]="popTemplateChartD"></i>
+                  <div class="link-fs">View in full screen</div>
+                  <i class="icon-info" [pTooltip]="popTemplateChartD"></i>
                   <ng-template #popTemplateChartD>
-                    <div
-                      [innerHtml]="descriptionCharts.assessmentByField"
-                    ></div>
+                    <div [innerHtml]="descriptionCharts.assessmentByField"></div>
                   </ng-template>
                 </div>
-                <div
-                  class="chart-container"
-                  *ngIf="dataCharts.assessmentByField"
-                >
-                  <app-line-chart
+                <div class="chart-container" *ngIf="dataCharts.assessmentByField">
+                  <!-- <app-line-chart
                     [indicatorName]="selectedIndicator"
                     [total]="dataSelected.total"
                     [data]="dataCharts.assessmentByField"
-                    [isModal]="false"
-                  ></app-line-chart>
+                    [isModal]="false"></app-line-chart> -->
                 </div>
               </div>
               <!-- <button class="btn btn-green-secondary">Download all comments and replies</button> -->
@@ -420,17 +293,13 @@
                 *ngIf="dashboardData && (dashboardData | json) != ({} | json)"
                 routerLinkActive="active"
                 [routerLinkActive]="['active']"
-                routerLink="../../indicator/{{
-                  selectedIndicator.split('qa_')[1]
-                }}/id"
-              >
+                routerLink="../../indicator/{{ selectedIndicator.split('qa_')[1] }}/id">
                 Go to {{ getIndicatorName(selectedIndicator) }}
               </button>
             </div>
 
             <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
-              You don't have any indicator assingned. Please contact your
-              Administrator.
+              You don't have any indicator assingned. Please contact your Administrator.
             </div>
           </div>
           <div class="card-body feed col col-sm-3" *ngIf="!isRound2">
@@ -441,13 +310,10 @@
                   class="notification"
                   *ngFor="let item of feedList"
                   [routerLinkActive]="['active']"
-                  routerLink="../../indicator/{{
-                    item.indicator_view_name.split('qa_')[1]
-                  }}/id/detail/{{ item.indicator_view_id }}"
-                >
+                  routerLink="../../indicator/{{ item.indicator_view_name.split('qa_')[1] }}/id/detail/{{ item.indicator_view_id }}">
                   <!-- <div [ngClass]="{'agree': item.tagName == 'agree', 'notsure': item.tagName == 'notsure', 'disagree': item.tagName == 'disagree'}" class="tag-color"></div> -->
                   <div class="datetime">
-                    {{ item.updatedAt | date : "long" : "+0530" }}
+                    {{ item.updatedAt | date: 'long' : '+0530' }}
                   </div>
                   <!-- <div class="datetime">{{formatDate(item.updatedAt)}}</div> -->
                   <div class="content-action">
@@ -457,19 +323,11 @@
                         notsure: item.tagName == 'notsure',
                         disagree: item.tagName == 'disagree'
                       }"
-                      class="tag-color"
-                    ></div>
+                      class="tag-color"></div>
                     <p>
                       <strong>{{ item.name }}</strong>
                       {{ tagMessages[item.tagName] }}
-                      <strong>
-                        QA-{{
-                          item.indicator_view_name
-                            .split("qa_")[1]
-                            .substring(0, 2)
-                            .toUpperCase()
-                        }}-{{ item.indicator_view_id }}</strong
-                      >
+                      <strong> QA-{{ item.indicator_view_name.split('qa_')[1].substring(0, 2).toUpperCase() }}-{{ item.indicator_view_id }}</strong>
                     </p>
                   </div>
                 </li>
@@ -531,34 +389,22 @@
       </div>
     </div>
   </div>
-  <ngx-spinner
-    bdColor="rgba(0, 0, 0, 0.8)"
-    color="#fff"
-    type="square-jelly-box"
-    [fullScreen]="true"
-  >
+  <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" color="#fff" type="square-jelly-box" [fullScreen]="true">
     <p style="color: white">Loading...</p>
   </ngx-spinner>
 
   <ng-template #template class="modal-dialog">
     <div class="modal-content modal-lg">
       <div class="modal-header">
-        <button class="btn btn-warning" (click)="downloadRawComments()">
-          Download comments
-        </button>
+        <button class="btn btn-warning" (click)="downloadRawComments()">Download comments</button>
         <h2 style="margin-left: 1em">All comments</h2>
-        <button
-          type="button"
-          class="close pull-right"
-          (click)="modalRef.hide()"
-          aria-label="Close"
-        >
+        <button type="button" class="close pull-right" aria-label="Close">
           <span aria-hidden="true">&times;</span>
         </button>
       </div>
       <div class="modal-body">
         <div class="row justify-content-center comments-dash-container">
-          <ngx-charts-bar-vertical-stacked
+          <!-- <ngx-charts-bar-vertical-stacked
             *ngIf="has_comments"
             [scheme]="colorScheme"
             [results]="multi"
@@ -573,13 +419,10 @@
             [animations]="animations"
             (activate)="onActivate($event)"
             (deactivate)="onDeactivate($event)"
-            (select)="onSelect($event)"
-          >
-          </ngx-charts-bar-vertical-stacked>
+            (select)="onSelect($event)">
+          </ngx-charts-bar-vertical-stacked> -->
 
-          <div *ngIf="!has_comments && !has_comments_detailed" class="no-data">
-            Sorry, we couldn't get comments. Please contact support.
-          </div>
+          <div *ngIf="!has_comments && !has_comments_detailed" class="no-data">Sorry, we couldn't get comments. Please contact support.</div>
         </div>
       </div>
     </div>
@@ -587,23 +430,17 @@
 
   <ng-template #chartD style="max-width: 1800px">
     <div class="options-modal">
-      <button
-        type="button"
-        class="close pull-right"
-        (click)="modalRef.hide()"
-        aria-label="Close"
-      >
+      <button type="button" class="close pull-right" aria-label="Close">
         <span aria-hidden="true">&times;</span>
       </button>
     </div>
     <div class="modal-content modal-lg">
       <div class="chart-modal-container" *ngIf="dataCharts.assessmentByField">
-        <app-line-chart
+        <!-- <app-line-chart
           [indicatorName]="selectedIndicator"
           [total]="dataSelected.total"
           [data]="dataCharts.assessmentByField"
-          [isModal]="true"
-        ></app-line-chart>
+          [isModal]="true"></app-line-chart> -->
       </div>
     </div>
   </ng-template>
