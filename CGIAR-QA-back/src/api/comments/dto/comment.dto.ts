@@ -21,3 +21,14 @@ export class PatchPpuDto {
   @ApiProperty({ description: 'Comment Reply ID', example: 123 })
   commentReplyId: number;
 }
+
+export class ToggleApprovedNoCommentsDto {
+  @ApiProperty({ description: 'Comment ID', example: 123 })
+  meta_array: number[];
+
+  @ApiProperty({ description: 'User ID', example: 123 })
+  userId: number;
+
+  @ApiProperty({ description: 'Approved status', example: true })
+  noComment: boolean;
+}

@@ -15,17 +15,24 @@ export class CommentsReplies {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @ManyToOne(() => Comments, (comment) => comment.replies)
-  comment: Comments;
+  @Column({
+    name: 'commentId',
+    type: 'int',
+  })
+  comment: number;
+
+  @ManyToOne(() => Comments, (comment) => comment.obj_replies)
+  @JoinColumn({ name: 'commentId' })
+  obj_comment: Comments;
 
   @Column({
-    name: 'user',
+    name: 'userId',
     type: 'int',
   })
   user: number;
 
-  @ManyToOne(() => Users, (user) => user.replies)
-  @JoinColumn({ name: 'user' })
+  @ManyToOne(() => Users, (user) => user.obj_replies)
+  @JoinColumn({ name: 'userId' })
   obj_user: Users;
 
   @Column({

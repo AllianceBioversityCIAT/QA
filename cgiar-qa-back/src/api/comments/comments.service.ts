@@ -10,6 +10,7 @@ import { EvaluationRepository } from '../evaluations/repositories/evaluation.rep
 import { BatchesRepository } from '../../shared/repositories/batch.repository';
 import { QuickCommentsRepository } from './repositories/quick-comments.repository';
 import { TokenDto } from '../../shared/global-dto/token.dto';
+import { ToggleApprovedNoCommentsDto } from './dto/comment.dto';
 
 @Injectable()
 export class CommentsService {
@@ -189,10 +190,9 @@ export class CommentsService {
 
   async toggleApprovedNoComments(
     evaluationId: number,
-    meta_array: number[],
-    userId: number,
-    noComment: boolean,
+    toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto,
   ) {
+    const { meta_array, userId, noComment } = toggleApprovedNoCommentsDto;
     try {
       const user = await this._usersRepository.findOneOrFail({
         where: { id: userId },
@@ -212,7 +212,7 @@ export class CommentsService {
 
       for (const metaId of meta_array) {
         let comment = existingComments.find(
-          (comment) => comment.meta.id === metaId,
+          (comment) => comment.meta === metaId,
         );
 
         if (comment) {
@@ -220,7 +220,7 @@ export class CommentsService {
           comment.is_deleted = !noComment;
           comment.approved_no_comment = noComment;
           comment.detail = null;
-          comment.user = user.id;
+          comment.userId = user.id;
         } else {
           comment = this._commentsRepository.createComment(
             user,

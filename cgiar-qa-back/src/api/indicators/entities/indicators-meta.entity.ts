@@ -47,8 +47,8 @@ export class IndicatorsMeta {
   })
   description: string;
 
-  @OneToMany(() => Comments, (comment) => comment.meta)
-  comments: Comments[];
+  @OneToMany(() => Comments, (comment) => comment.obj_meta)
+  obj_comments: Comments[];
 
   @CreateDateColumn()
   createdAt: Date;

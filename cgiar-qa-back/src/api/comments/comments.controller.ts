@@ -24,7 +24,11 @@ import {
   ApiTags,
   ApiHeader,
 } from '@nestjs/swagger';
-import { PatchPpuDto, UpdateCycleDto } from './dto/comment.dto';
+import {
+  PatchPpuDto,
+  ToggleApprovedNoCommentsDto,
+  UpdateCycleDto,
+} from './dto/comment.dto';
 import { UserToken } from '../../shared/decorators/user.decorator';
 import { TokenDto } from '../../shared/global-dto/token.dto';
 
@@ -108,9 +112,7 @@ export class CommentsController {
   @ApiOperation({ summary: 'Retrieve all tags by indicator' })
   @ApiResponse({ status: 200, description: 'Tags retrieved successfully' })
   @ApiResponse({ status: 404, description: 'Tags not found' })
-  async getAllIndicatorTags(
-    @Query('crp_id') crp_id: string,
-  ) {
+  async getAllIndicatorTags(@Query('crp_id') crp_id: string) {
     return await this.commentsService.getAllIndicatorTags(crp_id);
   }
 
@@ -142,18 +144,12 @@ export class CommentsController {
   @ApiResponse({ status: 404, description: 'Comments not set as approved' })
   async toggleApprovedNoComments(
     @Param('evaluationId') evaluationId: number,
-    @Body('meta_array') meta_array: number[],
-    @Body('userId') userId: number,
-    @Body('noComment') noComment: boolean,
-    @Res() res: Response,
+    @Body() toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto,
   ) {
-    const result = await this.commentsService.toggleApprovedNoComments(
+    return await this.commentsService.toggleApprovedNoComments(
       evaluationId,
-      meta_array,
-      userId,
-      noComment,
+      toggleApprovedNoCommentsDto,
     );
-    res.status(HttpStatus.OK).send(result);
   }
 
   @ApiOperation({ summary: 'Get raw comments data as Excel for a given CRP' })

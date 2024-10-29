@@ -1,5 +1,5 @@
-import { Injectable } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
+import { Injectable, Logger } from '@nestjs/common';
+import { DataSource, IsNull, Repository } from 'typeorm';
 import { Comments } from '../entities/comments.entity';
 import { Users } from '../../users/entities/user.entity';
 import { Evaluations } from '../../evaluations/entities/evaluation.entity';
@@ -7,6 +7,7 @@ import { Cycle } from '../../../shared/entities/cycle.entity';
 
 @Injectable()
 export class CommentsRepository extends Repository<Comments> {
+  private readonly _logger = new Logger(CommentsRepository.name);
   constructor(private readonly dataSource: DataSource) {
     super(Comments, dataSource.createEntityManager());
   }
@@ -433,12 +434,12 @@ export class CommentsRepository extends Repository<Comments> {
     const comment = new Comments();
     comment.approved = noComment;
     comment.is_deleted = !noComment;
-    comment.evaluation = evaluation;
+    comment.evaluation = evaluation.id;
     comment.meta = { id: metaId } as any;
     comment.detail = null;
     comment.approved_no_comment = noComment;
-    comment.user = user.id;
-    comment.cycle = cycle;
+    comment.userId = user.id;
+    comment.cycle = cycle.id;
     return comment;
   }
 
@@ -811,17 +812,51 @@ export class CommentsRepository extends Repository<Comments> {
         highlight_comment,
         highlightById
       FROM qa_comments
-      WHERE metaId = :metaId AND evaluationId = :evaluationId
+      WHERE metaId = ? AND evaluationId = ?
         AND approved_no_comment IS NULL;
     `;
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(
-        sqlQuery,
-        { metaId, evaluationId },
-        {},
-      );
-    return await queryRunner.connection.query(query, parameters);
+    return await this.query(sqlQuery, [metaId, evaluationId]);
+  }
+
+  async findComments(metaId: number, evaluationId: number): Promise<any[]> {
+    try {
+      let whereClause = {};
+      if (metaId) {
+        whereClause = {
+          meta: metaId,
+          evaluation: evaluationId,
+          approved_no_comment: IsNull(),
+        };
+      } else {
+        whereClause = {
+          evaluation: evaluationId,
+          approved_no_comment: IsNull(),
+        };
+      }
+
+      let comments = await this.find({
+        relations: {
+          obj_user: {
+            roles: {
+              role: {
+                permissions: true,
+              },
+            },
+          },
+          obj_cycle: true,
+          tags: true,
+          replyType: true,
+        },
+        where: whereClause,
+        order: {
+          createdAt: 'ASC',
+        },
+      });
+
+      return comments;
+    } catch (error) {
+      this._logger.error(error);
+    }
   }
 
   async findTagsByCommentId(commentId: number): Promise<any[]> {
@@ -832,15 +867,8 @@ export class CommentsRepository extends Repository<Comments> {
       FROM qa_tags tag
       JOIN qa_tag_type tt ON tt.id = tag.tagTypeId
       JOIN qa_users us ON us.id = tag.userId
-      WHERE tag.commentId = :commentId;
+      WHERE tag.commentId = ?;
     `;
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(
-        sqlQuery,
-        { commentId },
-        {},
-      );
-    return await queryRunner.connection.query(query, parameters);
+    return await this.query(sqlQuery, [commentId]);
   }
 }

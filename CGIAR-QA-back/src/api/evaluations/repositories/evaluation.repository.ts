@@ -8,6 +8,7 @@ import * as moment from 'moment';
 import { Comments } from '../../comments/entities/comments.entity';
 import { IndicatorsMeta } from '../../indicators/entities/indicators-meta.entity';
 import { Cycle } from '../../../shared/entities/cycle.entity';
+import { CreateCommentDto } from '../dto/evaluation.dto';
 
 @Injectable()
 export class EvaluationRepository extends Repository<Evaluations> {
@@ -1222,15 +1223,19 @@ export class EvaluationRepository extends Repository<Evaluations> {
   }
 
   async createComment(
-    detail: string,
-    approved: boolean,
-    userId: number,
-    metaId: number | null,
-    evaluationId: number,
-    original_field: string | null,
-    require_changes: boolean,
-    tpb: boolean,
+    createCommentDto: CreateCommentDto,
   ): Promise<Comments | null> {
+    const {
+      userId,
+      evaluationId,
+      metaId,
+      detail,
+      approved,
+      require_changes,
+      tpb,
+      original_field,
+    } = createCommentDto;
+
     try {
       const userRepository = this.dataSource.getRepository(Users);
       const metaRepository = this.dataSource.getRepository(IndicatorsMeta);
@@ -1260,15 +1265,17 @@ export class EvaluationRepository extends Repository<Evaluations> {
       let comment_ = new Comments();
       comment_.detail = detail;
       comment_.approved = approved;
-      comment_.meta = meta;
-      comment_.evaluation = evaluation;
-      comment_.user = user.id;
-      comment_.cycle = currentCycle;
+      comment_.meta = meta.id;
+      comment_.evaluation = evaluation.id;
+      comment_.userId = user.id;
+      comment_.cycle = currentCycle.qa_cycle_id;
       comment_.require_changes = require_changes;
       comment_.tpb = tpb;
       if (original_field) comment_.original_field = original_field;
       let new_comment = await commentRepository.save(comment_);
+      return new_comment;
     } catch (error) {
+      this._logger.error(error);
       return null;
     }
   }

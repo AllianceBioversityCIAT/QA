@@ -584,31 +584,12 @@ export class EvaluationsService {
   }
 
   async createComment(createCommentDto: CreateCommentDto): Promise<any> {
-    const {
-      detail,
-      approved,
-      userId,
-      metaId,
-      evaluationId,
-      original_field,
-      require_changes,
-      tpb,
-    } = createCommentDto;
-
     try {
-      const newComment = await this._evaluationsRepository.createComment(
-        detail,
-        approved,
-        userId,
-        metaId,
-        evaluationId,
-        original_field,
-        require_changes,
-        tpb,
-      );
+      const newComment =
+        await this._evaluationsRepository.createComment(createCommentDto);
 
       if (!newComment) {
-        throw new Error('Could not create comment');
+        this._logger.error('Could not create comment');
       }
 
       return { data: newComment, message: 'Comment created successfully.' };
@@ -634,13 +615,13 @@ export class EvaluationsService {
 
       comment.replyType = replyType;
 
-      const reply = this._commentReplyRepository.create({
+      const newReply = await this._commentReplyRepository.save({
         detail,
-        comment,
-        user: user.id,
+        user: userId,
+        comment: commentId,
+        crp_approved,
+        approved,
       });
-
-      const newReply = await this._commentReplyRepository.save(reply);
 
       if (
         user.roles.some((role) => role.role.description === RolesHandler.crp)
@@ -686,7 +667,7 @@ export class EvaluationsService {
       comment.tpb = tpb;
 
       if (detail) comment.detail = detail;
-      if (userId) comment.user = userId;
+      if (userId) comment.userId = userId;
 
       const updatedComment = await this._commentRepository.save(comment);
 
@@ -713,7 +694,7 @@ export class EvaluationsService {
 
       if (is_deleted) {
         const comment = await this._commentRepository.findOneById(
-          reply.comment.id,
+          reply.comment,
         );
         if (comment) {
           comment.crp_approved = null;
@@ -733,12 +714,18 @@ export class EvaluationsService {
 
   async getComments(evaluationId: number, metaId: number): Promise<any> {
     try {
-      const comments = await this._commentRepository.findCommentsWithReplies(
-        evaluationId,
+      const comments = await this._commentRepository.findComments(
         metaId,
+        evaluationId,
       );
 
       for (const comment of comments) {
+        const replies = await this._commentRepository.findCommentsWithReplies(
+          evaluationId,
+          metaId,
+        );
+        comment.replies = replies;
+
         const tags = await this._commentRepository.findTagsByCommentId(
           comment.id,
         );
@@ -859,10 +846,7 @@ export class EvaluationsService {
           evaluations.indicator_view_name;
       `;
 
-      this._logger.log('Ejecutando consulta SQL:', query);
-
       const highlights = await this._evaluationsRepository.query(query);
-      this._logger.log('Resultados obtenidos:', highlights);
 
       if (highlights.length === 0) {
         throw new Error('No evaluations found for this user.');
