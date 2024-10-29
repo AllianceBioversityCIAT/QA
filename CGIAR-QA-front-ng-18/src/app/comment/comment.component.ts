@@ -36,12 +36,24 @@ import { BsDropdownModule } from 'ngx-bootstrap/dropdown';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { OrderModule } from 'ngx-order-pipe';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
+import { DialogModule } from 'primeng/dialog';
+import { ButtonModule } from 'primeng/button';
 
 // ProgressbarModule.forRoot(), ButtonsModule.forRoot(), CollapseModule.forRoot(), PaginationModule.forRoot(), TooltipModule.forRoot(), CarouselModule.forRoot(), BsDropdownModule.forRoot()
 @Component({
   selector: 'app-comment',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, FormsModule, TagsBarComponent, NgxSpinnerModule, FormsModule, TagsBarComponent],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    FormsModule,
+    TagsBarComponent,
+    NgxSpinnerModule,
+    FormsModule,
+    TagsBarComponent,
+    DialogModule,
+    ButtonModule
+  ],
   templateUrl: './comment.component.html',
   styleUrls: ['./comment.component.scss'],
   providers: [WordCounterPipe]
@@ -69,6 +81,7 @@ export class CommentComponent implements OnInit {
   detailItemFounded = null;
   detailItemFounded2 = null;
   adminUser: any = false;
+  showDialog = false;
 
   // require_changes = false;
 
@@ -99,7 +112,14 @@ export class CommentComponent implements OnInit {
   @ViewChild('commentContainer') private commentContainer: ElementRef;
   allRoles = Role;
 
-  constructor(private alertService: AlertService, private formBuilder: FormBuilder, private authenticationService: AuthenticationService, private commentService: CommentService, private wordCount: WordCounterPipe, private spinner: NgxSpinnerService) {
+  constructor(
+    private alertService: AlertService,
+    private formBuilder: FormBuilder,
+    private authenticationService: AuthenticationService,
+    private commentService: CommentService,
+    private wordCount: WordCounterPipe,
+    private spinner: NgxSpinnerService
+  ) {
     this.authenticationService.currentUser.subscribe(x => {
       this.currentUser = x;
       // console.log(this.currentUser.cycle_ended);
@@ -531,6 +551,7 @@ export class CommentComponent implements OnInit {
 
     // template.elementRef.nativeElement.style.top.px = this.currentY;
     // this.confirmModal.nativeElement.style.top = `${this.currentY}px`;
+    this.showDialog = true;
   }
 
   answerComment(is_approved: any, replyTypeId: number, comment: any) {
@@ -555,7 +576,11 @@ export class CommentComponent implements OnInit {
   replyComment(currentComment) {
     // console.log(currentComment.replyTypeId);
 
-    if ((this.commentGroup.invalid || this.formData['comment'].value === '') && currentComment.replyTypeId != this.replyTypes.accepted && currentComment.replyTypeId != this.replyTypes.accepted_with_comment) {
+    if (
+      (this.commentGroup.invalid || this.formData['comment'].value === '') &&
+      currentComment.replyTypeId != this.replyTypes.accepted &&
+      currentComment.replyTypeId != this.replyTypes.accepted_with_comment
+    ) {
       this.alertService.error('Comment is required', false);
       return;
     }
@@ -641,7 +666,13 @@ export class CommentComponent implements OnInit {
       batchValidation = true;
     }
 
-    const isCommentUnavailable = !this.availableComment && !this.crpComment && this.commentsByColSelected?.tpb !== 1 && this.currentUser.hasOwnProperty('cycle') && !this.isCRP && batchValidation;
+    const isCommentUnavailable =
+      !this.availableComment &&
+      !this.crpComment &&
+      this.commentsByColSelected?.tpb !== 1 &&
+      this.currentUser.hasOwnProperty('cycle') &&
+      !this.isCRP &&
+      batchValidation;
 
     return isCommentUnavailable;
   }
