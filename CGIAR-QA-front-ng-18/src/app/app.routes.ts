@@ -2,7 +2,6 @@ import { Routes } from '@angular/router';
 import { rolesGuard } from './guards/roles.guard';
 import { AuthGuard } from '@helpers/auth.guard';
 import { Role } from '@models/roles.model';
-import CrpDashboardComponent from '@pages/crp/pages/crp-dashboard/crp-dashboard.component';
 import { AvailableGuard } from './_helpers/available.guard';
 
 export const routes: Routes = [
@@ -34,7 +33,6 @@ export const routes: Routes = [
       },
       {
         path: 'indicator/:type/:primary_column',
-        loadComponent: () => import('@pages/crp/pages/detail-indicator/detail-indicator.component'),
         children: [
           {
             path: '',

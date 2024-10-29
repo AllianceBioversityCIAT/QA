@@ -23,6 +23,7 @@ export class ResultsTableComponent {
   @Input() submissionDates: any[] = [];
   @Input() indicatorType: string;
   @Input() currentUser: any;
+  @Input() isCRP: boolean;
 
   statusIcon = StatusIcon;
 
@@ -30,15 +31,9 @@ export class ResultsTableComponent {
   searchText = '';
   selectedDates = [];
 
-  selectedFilters = [
-    {
-      label: 'Action Area',
-      key: 'showActionArea'
-    }
-  ];
+  selectedFilters = [];
 
   columnsFiltersOptions = [
-    { label: 'Action Area', key: 'showActionArea' },
     { label: 'Accepted Comments', key: 'showAcceptedComments' },
     { label: 'Disagreed Comments', key: 'showDisagreedComments' },
     { label: 'Highlighted Comments', key: 'showHighlightedComments' },
@@ -65,12 +60,12 @@ export class ResultsTableComponent {
     {
       name: 'Initiative',
       attr: 'full_title',
-      showIf: () => true
+      showIf: () => !this.isCRP
     },
     {
       name: 'Action Area',
       attr: 'crp_action_area',
-      showIf: () => this.getColumnsFilters('showActionArea')
+      showIf: () => this.getColumnsFilters('showActionArea') && !this.isCRP
     },
     {
       name: 'is Melia',
@@ -118,7 +113,7 @@ export class ResultsTableComponent {
       showIf: () => this.getColumnsFilters('showHighlightedComments')
     },
     {
-      name: 'T-pb instructions',
+      name: 'Third party broker instructions',
       attr: 'comments_tpb_count',
       showIf: () => this.getColumnsFilters('showTpbComments')
     },
@@ -135,7 +130,7 @@ export class ResultsTableComponent {
     {
       name: 'Assessed By',
       attr: 'comment_by',
-      showIf: () => this.currentUser.cycle.cycle_stage != 2
+      showIf: () => this.currentUser.cycle.cycle_stage != 2 && !this.isCRP
     },
     {
       name: 'Assessed By (2nd round)',
@@ -153,6 +148,15 @@ export class ResultsTableComponent {
 
   ngOnInit() {
     this.showhighlightColumn();
+
+    if (!this.isCRP) {
+      this.columnsFiltersOptions.unshift({ label: 'Action Area', key: 'showActionArea' });
+      this.selectedFilters.push({ label: 'Action Area', key: 'showActionArea' });
+    }
+  }
+
+  getTotalTableColumns() {
+    return this.columnNames.filter(column => column.showIf()).length;
   }
 
   getColumnsFilters(key: string) {
