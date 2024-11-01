@@ -36,19 +36,19 @@ export class Users {
   @Column({ default: false })
   is_marlo: boolean;
 
-  @OneToMany(() => UserRole, (userRole) => userRole.user, { eager: false })
+  @OneToMany(() => UserRole, (userRole) => userRole.user, { eager: true })
   roles: UserRole[];
 
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Comments, (comment) => comment.obj_user, { eager: false })
+  @OneToMany(() => Comments, (comment) => comment.obj_user, { eager: true })
   comments: Comments[];
 
-  @OneToMany(() => CommentsReplies, (reply) => reply.obj_user, { eager: false })
+  @OneToMany(() => CommentsReplies, (reply) => reply.obj_user, { eager: true })
   obj_replies: CommentsReplies[];
 
-  @OneToMany(() => Tags, (tag) => tag.obj_user, { eager: false })
+  @OneToMany(() => Tags, (tag) => tag.obj_user, { eager: true })
   tags: Tags[];
 
   @UpdateDateColumn()
