@@ -137,7 +137,7 @@ export default class IndicatorsComponent implements OnInit {
     this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column).subscribe({
       next: res => {
         this.order = 'status';
-
+        this.evaluationList = res.data;
         // this.evaluationList = this.orderPipe.transform(res.data, this.order);
 
         // this.collectionSize = this.evaluationList.length;
@@ -150,10 +150,9 @@ export default class IndicatorsComponent implements OnInit {
         //   this.order
         // );
 
-        // this.evaluationList.forEach(evaluation => {
-        //   evaluation.full_title = evaluation.initiative + ' - ' + evaluation.short_name;
-        // });
-        this.evaluationList = res.data;
+        this.evaluationList.forEach(evaluation => {
+          evaluation.full_title = evaluation.initiative + ' - ' + evaluation.short_name;
+        });
         this.returnedArray = this.evaluationList.slice(0, 10);
 
         console.log(this.evaluationList);

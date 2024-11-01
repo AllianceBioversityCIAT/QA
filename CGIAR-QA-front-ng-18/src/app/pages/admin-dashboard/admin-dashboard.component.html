@@ -195,15 +195,20 @@
                 [options]="indicatorsAvailable"
                 [(ngModel)]="selectedIndicator"
                 optionLabel="name"
-                placeholder="Select a City"
+                [placeholder]="getIndicatorName(selectedIndicator)"
                 (ngModelChange)="actualIndicator($event)" />
             </div>
             <div *ngIf="isDataNull" class="no-data-container">
               <div class="no-data-message">No results available at the moment.</div>
             </div>
 
-            @if (this.dashboardData) {
-              <app-dashboard [dashboardData]="dashboardData"></app-dashboard>
+            @if (
+              this.dataCharts.generalStatus ||
+              this.dataCharts.assessorsInteractions ||
+              this.dataCharts.responseToComments ||
+              this.dataCharts.assessmentByField
+            ) {
+              <app-dashboard [dataCharts]="this.dataCharts"></app-dashboard>
             }
 
             <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">

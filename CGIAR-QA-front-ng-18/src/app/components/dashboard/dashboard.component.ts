@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
 
 @Component({
@@ -6,40 +6,45 @@ import { ChartModule } from 'primeng/chart';
   standalone: true,
   imports: [ChartModule],
   templateUrl: './dashboard.component.html',
-  styleUrl: './dashboard.component.scss'
+  styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent {
-  @Input() dashboardData: any[];
-
-  data: any;
-
-  options: any;
-
-  ngOnInit() {
-    console.log(this.dashboardData);
+export class DashboardComponent implements OnChanges {
+  @Input() dataCharts: any;
+  
+  dataGeneralStatus: any;
+  optionGeneralStatus: any;
+  dataAssessorInteractions: any;
+  optionAssessorInteractions: any;
+  dataResponseToComments: any;
+  optionResponseToComments: any;
+  dataAssessmentByField: any;
+  optionAssessmentByField: any;
+  
+  ngOnChanges(changes: SimpleChanges) {
+    console.log("🚀 ~ DashboardComponent ~ ngOnChanges ~ changes:", changes)
+    if (changes['dataCharts'] && this.dataCharts) {
+      this.updateChartData();
+    }
+  }
+  
+  updateChartData() {
+    console.log("🚀 ~ DashboardComponent ~ dataCharts:", this.dataCharts)
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
 
-    this.data = {
-      labels: ['A', 'B', 'C'],
+    const createChartData = (dataset: any[], colors: string[]) => ({
+      labels: dataset.map((item: any) => item.name),
       datasets: [
         {
-          data: [300, 50, 100],
-          backgroundColor: [
-            documentStyle.getPropertyValue('--blue-500'),
-            documentStyle.getPropertyValue('--yellow-500'),
-            documentStyle.getPropertyValue('--green-500')
-          ],
-          hoverBackgroundColor: [
-            documentStyle.getPropertyValue('--blue-400'),
-            documentStyle.getPropertyValue('--yellow-400'),
-            documentStyle.getPropertyValue('--green-400')
-          ]
+          label: 'Count',
+          data: dataset.map((item: any) => item.value),
+          backgroundColor: colors.map(color => documentStyle.getPropertyValue(color)),
+          hoverBackgroundColor: colors.map(color => documentStyle.getPropertyValue(color).replace('500', '400'))
         }
       ]
-    };
+    });
 
-    this.options = {
+    const createChartOptions = () => ({
       cutout: '60%',
       plugins: {
         legend: {
@@ -48,6 +53,26 @@ export class DashboardComponent {
           }
         }
       }
-    };
+    });
+
+    if (this.dataCharts.generalStatus) {
+      this.dataGeneralStatus = createChartData(this.dataCharts.generalStatus.dataset, ['--blue-500', '--yellow-500', '--green-500']);
+      this.optionGeneralStatus = createChartOptions();
+    }
+
+    if (this.dataCharts.assessorsInteractions) {
+      this.dataAssessorInteractions = createChartData(this.dataCharts.assessorsInteractions.dataset, ['--blue-500', '--yellow-500', '--green-500']);
+      this.optionAssessorInteractions = createChartOptions();
+    }
+
+    if (this.dataCharts.responseToComments) {
+      this.dataResponseToComments = createChartData(this.dataCharts.responseToComments.dataset, ['--blue-500', '--yellow-500', '--green-500']);
+      this.optionResponseToComments = createChartOptions();
+    }
+
+    if (this.dataCharts.assessmentByField) {
+      this.dataAssessmentByField = createChartData(this.dataCharts.assessmentByField.dataset, ['--blue-500', '--yellow-500', '--green-500']);
+      this.optionAssessmentByField = createChartOptions();
+    }
   }
 }

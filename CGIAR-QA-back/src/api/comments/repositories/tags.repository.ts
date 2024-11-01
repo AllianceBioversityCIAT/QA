@@ -53,8 +53,8 @@ export class TagsRepository extends Repository<Tags> {
       LEFT JOIN qa_users us ON us.id = tag.userId
       LEFT JOIN qa_comments qc ON qc.id = tag.commentId
       LEFT JOIN qa_evaluations qe ON qe.id = qc.evaluationId
-      WHERE qe.indicator_view_name = :indicator_view_name
-      AND tt.id = :tagTypeId
+      WHERE qe.indicator_view_name = ?
+      AND tt.id = ?
       ORDER BY tag.createdAt DESC`;
 
     return await this.query(query, [indicator_view_name, tagTypeId]);
@@ -68,7 +68,7 @@ export class TagsRepository extends Repository<Tags> {
       LEFT JOIN qa_users us ON us.id = tag.userId
       LEFT JOIN qa_comments qc ON qc.id = tag.commentId
       LEFT JOIN qa_evaluations qe ON qe.id = qc.evaluationId
-      WHERE qe.indicator_view_name = :indicator_view_name
+      WHERE qe.indicator_view_name = ?
       ORDER BY tag.createdAt DESC`;
 
     return await this.query(query, [indicator_view_name]);

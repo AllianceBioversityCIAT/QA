@@ -151,6 +151,13 @@ export class IndicatorsService {
   async findAll() {
     try {
       const indicators = await this._indicatorsRepository.find({
+        select: {
+          id: true,
+          name: true,
+          description: true,
+          view_name: true,
+          primary_field: true,
+        },
         where: { is_active: true },
       });
 

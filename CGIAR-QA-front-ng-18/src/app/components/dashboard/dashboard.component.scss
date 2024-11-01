@@ -1,25 +1,23 @@
 .charts {
-  grid-template-columns: 1fr 1fr 1fr;
   display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 18px;
   padding-top: 10px;
+
   [class*='chart-'] {
-    padding: 10px;
     display: flex;
-    justify-content: center;
+    flex-direction: column; /* Organiza el título y el gráfico en columna */
+    align-items: center;
     background-color: white;
     padding: 10px;
-    width: 100%;
     border-radius: 8px;
-  }
+    width: 100%;
 
-  .chart-1 {
-  }
-
-  .chart-2 {
-  }
-
-  .chart-3 {
+    h3 {
+      margin-bottom: 15px; /* Espacio entre el título y el gráfico */
+      font-weight: bold;
+      text-align: center;
+    }
   }
 
   .chart-4 {

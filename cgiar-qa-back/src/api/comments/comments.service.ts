@@ -165,13 +165,16 @@ export class CommentsService {
   ): Promise<any> {
     try {
       let feedTags;
-      if (indicator_view_name && tagTypeId) {
+      if (indicator_view_name !== 'undefined' && tagTypeId !== 'undefined') {
         feedTags =
           await this._tagsRepository.fetchFeedTagsByIndicatorAndTagType(
             indicator_view_name,
             tagTypeId,
           );
-      } else if (indicator_view_name) {
+      } else if (
+        indicator_view_name !== 'undefined' &&
+        tagTypeId === 'undefined'
+      ) {
         feedTags =
           await this._tagsRepository.fetchFeedTagsByIndicator(
             indicator_view_name,

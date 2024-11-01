@@ -3,8 +3,12 @@
   <div class="row col col-xl-12 icons-header">
     <h4>Progress on Quality Assessment</h4>
     <div class="text-left">
-      <button class="css-button-3d--sand" (click)="goToPDF('AR')"><span class="material-icons-round icon">description</span>Technical report guidance</button>
-      <button class="css-button-3d--sand" (click)="goToPDF('ASSESSORS_GUIDANCE')"><span class="material-icons-round icon">description</span>2023 Assessor Guidance</button>
+      <button class="css-button-3d--sand" (click)="goToPDF('AR')">
+        <span class="material-icons-round icon">description</span>Technical report guidance
+      </button>
+      <button class="css-button-3d--sand" (click)="goToPDF('ASSESSORS_GUIDANCE')">
+        <span class="material-icons-round icon">description</span>2023 Assessor Guidance
+      </button>
     </div>
     <button type="button" class="btn btn-success" (click)="downloadRawComments()">Download comments and assessment status</button>
   </div>
@@ -34,7 +38,16 @@
           'grid-container': currentUser.cycle.cycle_stage == '1',
           'grid-second-round': currentUser.cycle.cycle_stage == '2'
         }">
-        <div class="chart chart-1">
+        @if (
+          this.dataCharts.generalStatus ||
+          this.dataCharts.assessorsInteractions ||
+          this.dataCharts.responseToComments ||
+          this.dataCharts.assessmentByField ||
+          this.dataCharts.highlitedPendingComments
+        ) {
+          <app-dashboard [dataCharts]="this.dataCharts"></app-dashboard>
+        }
+        <!-- <div class="chart chart-1">
           <div class="header-chart">
             <h4 class="chart-title" [ngbTooltip]="popTemplateChartA">
               Status -
@@ -47,7 +60,7 @@
             </ng-template>
           </div>
           <div class="chart-container">
-            <!-- <app-donut-chart *ngIf="dataSelected" [data]="dataCharts.generalStatus" [chartName]="indicator_status" [selectedIndicator]="selectedIndicator"> </app-donut-chart> -->
+            <app-donut-chart *ngIf="dataSelected" [data]="dataCharts.generalStatus" [chartName]="indicator_status" [selectedIndicator]="selectedIndicator"> </app-donut-chart>
           </div>
         </div>
         <div *ngIf="currentUser.cycle.cycle_stage == '1'" class="chart chart-2">
@@ -59,7 +72,7 @@
             </ng-template>
           </div>
           <div class="chart-container">
-            <!-- <app-bar-chart *ngIf="indicatorsTags" [data]="dataCharts.assessorsInteractions" (filterTagEvent)="updateFeedTags($event)"></app-bar-chart> -->
+            <app-bar-chart *ngIf="indicatorsTags" [data]="dataCharts.assessorsInteractions" (filterTagEvent)="updateFeedTags($event)"></app-bar-chart>
           </div>
         </div>
         <div
@@ -77,7 +90,7 @@
             </ng-template>
           </div>
           <div *ngIf="dashboardCommentsData[selectedIndicator]" class="chart-container">
-            <!-- <app-donut-chart [data]="dataCharts.responseToComments" [chartName]="'comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart> -->
+            <app-donut-chart [data]="dataCharts.responseToComments" [chartName]="'comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart>
           </div>
         </div>
         <div
@@ -94,7 +107,7 @@
             </ng-template>
           </div>
           <div *ngIf="dataCharts.highlitedPendingComments" class="chart-container">
-            <!-- <app-donut-chart [data]="dataCharts.highlitedPendingComments" [chartName]="'highlight_comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart> -->
+            <app-donut-chart [data]="dataCharts.highlitedPendingComments" [chartName]="'highlight_comments'" [selectedIndicator]="selectedIndicator"> </app-donut-chart>
           </div>
         </div>
         <div
@@ -112,18 +125,20 @@
             </ng-template>
           </div>
           <div class="chart-container" *ngIf="dataCharts.assessmentByField">
-            <!-- <app-line-chart
+            <app-line-chart
               [indicatorName]="selectedIndicator"
               [total]="dataSelected.total"
               [data]="dataCharts.assessmentByField"
-            ></app-line-chart> -->
+            ></app-line-chart>
           </div>
         </div>
         <button class="btn btn-assessment" (click)="openChart(chartD, $event)">See Assessment by field <i class="icon-analytics-chart"></i></button>
         <button class="btn btn-primary" *ngIf="dashboardData && (dashboardData | json) != ({} | json) && actualStatusIndicator(dataSelected)" routerLinkActive="active" [routerLinkActive]="['active']" routerLink="../../indicator/{{ selectedIndicator.split('qa_')[1] }}/id">Go to {{ getIndicatorName(selectedIndicator) }}</button>
-        <button class="btn btn-red-secondary disabled" title="Indicator {{ getIndicatorName(selectedIndicator) }} isn't enable" *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !actualStatusIndicator(dataSelected)">Go to {{ getIndicatorName(selectedIndicator) }}</button>
+        <button class="btn btn-red-secondary disabled" title="Indicator {{ getIndicatorName(selectedIndicator) }} isn't enable" *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !actualStatusIndicator(dataSelected)">Go to {{ getIndicatorName(selectedIndicator) }}</button> -->
       </div>
-      <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">You don't have any indicator assingned. Please contact your Administrator.</div>
+      <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
+        You don't have any indicator assingned. Please contact your Administrator.
+      </div>
     </div>
     <div class="card-body feed col col-sm-3" *ngIf="currentUser.cycle.cycle_stage == '2'"></div>
   </div>

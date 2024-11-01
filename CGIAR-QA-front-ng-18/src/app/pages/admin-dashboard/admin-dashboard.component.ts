@@ -42,7 +42,6 @@ import { DropdownModule } from 'primeng/dropdown';
     SortByPipe,
     TooltipModule,
     NgxSpinnerModule,
-    DropdownModule,
     FormsModule,
     RouterModule,
     DashboardComponent,
@@ -604,7 +603,7 @@ export default class AdminDashboardComponent implements OnInit {
     this.dataCharts.assessorsInteractions = this.formatIndicatorTags();
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(this.dashboardCommentsData[this.selectedIndicator], this.selectedIndicator);
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
-    console.log('🚀 ~ AdminDashboardComponent ~ updateDataCharts ~ this.dataCharts.assessmentByField:', this.dataCharts.assessmentByField);
+    console.log("🚀 ~ AdminDashboardComponent ~ updateDataCharts ~ this.dataCharts:", this.dataCharts)
   }
 
   updateFeedTags(tagTypeId) {

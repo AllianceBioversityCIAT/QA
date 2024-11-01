@@ -20,11 +20,12 @@ import { ExportTablesService } from '../../services/export-tables.service';
 import { CommonModule } from '@angular/common';
 import { TimelineComponent } from '../../components/timeline/timeline.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { DashboardComponent } from "../../components/dashboard/dashboard.component";
 
 @Component({
   selector: 'app-assessor-dashboard',
   standalone: true,
-  imports: [CommonModule, TimelineComponent, NgbTooltipModule, NgxSpinnerModule, RouterLink, RouterLinkActive],
+  imports: [CommonModule, TimelineComponent, NgbTooltipModule, NgxSpinnerModule, RouterLink, RouterLinkActive, DashboardComponent],
   templateUrl: './assessor-dashboard.component.html',
   styleUrls: ['./assessor-dashboard.component.scss']
 })
@@ -72,6 +73,8 @@ export default class AssessorDashboardComponent implements OnInit {
     qa_innovation_use: 0,
     qa_innovation_use_ipsr: 0
   };
+
+  indicatorsAvailable;
 
   indicatorsNameDropdwon = [
     { name: 'Innovation Use (IPSR)', viewname: 'qa_innovation_use_ipsr' },

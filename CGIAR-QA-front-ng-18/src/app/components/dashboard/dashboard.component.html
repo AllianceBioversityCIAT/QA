@@ -1,12 +1,20 @@
 <div class="charts">
   <div class="chart-1">
-    <p-chart type="doughnut" height="300px" width="300px" [data]="data" [options]="options" />
+    <h3>Evaluation status</h3>
+    <p-chart type="doughnut" height="300px" width="300px" [data]="dataGeneralStatus" [options]="optionGeneralStatus" />
   </div>
   <div class="chart-2">
-    <p-chart type="doughnut" height="300px" width="300px" [data]="data" [options]="options" />
+    <h3>Assessors Interactions</h3>
+    <p-chart type="bar" height="300px" width="300px" [data]="dataAssessorInteractions" [options]="optionAssessorInteractions" />
   </div>
   <div class="chart-3">
-    <p-chart type="doughnut" height="300px" width="300px" [data]="data" [options]="options" />
+    <h3>Response to comments</h3>
+    <p-chart type="pie" height="300px" width="300px" [data]="dataResponseToComments" [options]="optionResponseToComments" />
   </div>
-  <div class="chart-4"><p-chart height="300px" type="bar" [data]="data" [options]="options" /></div>
+  @if (dataAssessmentByField?.datasets[0]?.data?.length > 0) {
+    <div class="chart-4">
+      <h3>Assessment by Field</h3>
+      <p-chart type="line" height="300px" [data]="dataAssessmentByField" [options]="optionAssessmentByField"> </p-chart>
+    </div>
+  }
 </div>
