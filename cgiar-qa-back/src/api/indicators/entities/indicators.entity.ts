@@ -33,18 +33,16 @@ export class Indicators {
   @Column({ default: 0 })
   order: number;
 
-  @OneToMany(() => IndicatorUser, (indicators) => indicators.indicator, {
-    eager: false,
-  })
+  @OneToMany(() => IndicatorUser, (indicators) => indicators.indicator)
   user_indicator: IndicatorUser[];
 
   @OneToMany(() => IndicatorsMeta, (meta) => meta.indicator, {
-    eager: false,
+    eager: true,
   })
   meta: IndicatorsMeta[];
 
   @OneToOne(() => CommentsMeta, (comments_meta) => comments_meta.indicator, {
-    eager: false,
+    eager: true,
   })
   comment_meta: CommentsMeta;
 

@@ -603,7 +603,6 @@ export default class AdminDashboardComponent implements OnInit {
     this.dataCharts.assessorsInteractions = this.formatIndicatorTags();
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(this.dashboardCommentsData[this.selectedIndicator], this.selectedIndicator);
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
-    console.log("🚀 ~ AdminDashboardComponent ~ updateDataCharts ~ this.dataCharts:", this.dataCharts)
   }
 
   updateFeedTags(tagTypeId) {

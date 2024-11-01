@@ -42,13 +42,13 @@ export class Users {
   @CreateDateColumn()
   createdAt: Date;
 
-  @OneToMany(() => Comments, (comment) => comment.obj_user, { eager: true })
+  @OneToMany(() => Comments, (comment) => comment.obj_user)
   comments: Comments[];
 
-  @OneToMany(() => CommentsReplies, (reply) => reply.obj_user, { eager: true })
+  @OneToMany(() => CommentsReplies, (reply) => reply.obj_user)
   obj_replies: CommentsReplies[];
 
-  @OneToMany(() => Tags, (tag) => tag.obj_user, { eager: true })
+  @OneToMany(() => Tags, (tag) => tag.obj_user)
   tags: Tags[];
 
   @UpdateDateColumn()
