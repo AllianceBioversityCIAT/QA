@@ -16,17 +16,13 @@
     <div class="card-body dashboard-container-charts col" [ngClass]="{ 'col-sm-12': currentUser.cycle.cycle_stage == '1' }">
       <div class="w-100 dashboard-header mb-2">
         <div class="h-100 title">Dashboard {{ getIndicatorName(selectedIndicator) }}</div>
-        <div class="btn-group h-100 selector" dropdown>
-          <button id="button-animated" dropdownToggle type="button" class="btn btn-white dropdown-toggle w-100" aria-controls="dropdown-animated">
-            {{ getIndicatorName(selectedIndicator) }}
-            <span class="caret"></span>
-          </button>
-          <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
-            <li *ngFor="let indicator of indicatorsNameDropdwon" role="menuitem">
-              <a class="dropdown-item" (click)="actualIndicator(indicator.viewname)">{{ indicator.name }}</a>
-            </li>
-          </ul>
-        </div>
+        <p-dropdown
+          [style]="{ width: '100%', backgroundColor: 'white' }"
+          [options]="this.indicatorsNameDropdwon"
+          [(ngModel)]="selectedIndicator"
+          optionLabel="name"
+          [placeholder]="getIndicatorName(selectedIndicator)"
+          (ngModelChange)="actualIndicator($event)" />
       </div>
       <div *ngIf="isDataNull" class="no-data-container">
         <div class="no-data-message">No results available at the moment.</div>

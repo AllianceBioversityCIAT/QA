@@ -20,12 +20,24 @@ import { ExportTablesService } from '../../services/export-tables.service';
 import { CommonModule } from '@angular/common';
 import { TimelineComponent } from '../../components/timeline/timeline.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
-import { DashboardComponent } from "../../components/dashboard/dashboard.component";
+import { DashboardComponent } from '../../components/dashboard/dashboard.component';
+import { DropdownModule } from 'primeng/dropdown';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-assessor-dashboard',
   standalone: true,
-  imports: [CommonModule, TimelineComponent, NgbTooltipModule, NgxSpinnerModule, RouterLink, RouterLinkActive, DashboardComponent],
+  imports: [
+    CommonModule,
+    TimelineComponent,
+    NgbTooltipModule,
+    NgxSpinnerModule,
+    RouterLink,
+    RouterLinkActive,
+    DashboardComponent,
+    DropdownModule,
+    FormsModule
+  ],
   templateUrl: './assessor-dashboard.component.html',
   styleUrls: ['./assessor-dashboard.component.scss']
 })
