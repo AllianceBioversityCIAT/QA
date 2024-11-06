@@ -20,23 +20,21 @@ export class UsersService {
   }
 
   getAllUsers() {
-    return this.http.get<any>(`${environment.apiUrl}/user/all`)
+    return this.http.get<any>(`${environment.apiBaseUrl}/user/all`);
     // .pipe(map(res => {
     //   return res.data;
     // }));
   }
 
   createUser(userData) {
-    return this.http.post<any>(`${environment.apiUrl}/user/`, userData);
+    return this.http.post<any>(`${environment.apiBaseUrl}/user/`, userData);
   }
 
   deleteUser(id) {
-    return this.http.delete<any>(`${environment.apiUrl}/user/${id}`);
+    return this.http.delete<any>(`${environment.apiBaseUrl}/user/${id}`);
   }
 
   getUserById(id) {
-    return this.http.get<any>(`${environment.apiUrl}/user/${id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/user/${id}`);
   }
-
-
 }

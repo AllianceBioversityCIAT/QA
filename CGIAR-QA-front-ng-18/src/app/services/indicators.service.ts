@@ -12,8 +12,8 @@ export class IndicatorsService {
     orderByStatus: null,
     orderByAcceptedWC: null,
     orderByDisagree: null,
-    orderByClarification: null,
-  }
+    orderByClarification: null
+  };
   pageList = {
     qa_impact_contribution: 1,
     qa_other_outcome: 1,
@@ -24,31 +24,30 @@ export class IndicatorsService {
     qa_policy_change: 1,
     qa_innovation_use: 1,
     qa_innovation_use_ipsr: 1
-  }
-  constructor(private http: HttpClient) { }
+  };
+  constructor(private http: HttpClient) {}
 
   // get indicators by user
   getIndicatorsByUser(id, crp_id?) {
-    return this.http.get<any>(`${environment.apiUrl}/indicator/user/${id}?crp_id=${crp_id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/user/${id}?crp_id=${crp_id}`);
   }
   // update indicators by user
   updateIndicatorsByUser(id, params) {
-    return this.http.patch<any>(`${environment.apiUrl}/indicator/${id}/user`, params);
+    return this.http.patch<any>(`${environment.apiBaseUrl}/indicator/${id}/user`, params);
   }
   //get all indicators
   getIndicators() {
-    return this.http.get<any>(`${environment.apiUrl}/indicator/`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/`);
   }
   //get crp
   getCRP(crp_id) {
-    return this.http.get<any>(`${environment.apiUrl}/indicator/crp/${crp_id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/crp/${crp_id}`);
   }
   getCurrentOrder() {
     for (const key in this.allOrderTypes) {
-      if(this.allOrderTypes[key] != null)
-      return {type: key, value: this.allOrderTypes[key]};
+      if (this.allOrderTypes[key] != null) return { type: key, value: this.allOrderTypes[key] };
     }
-    return {type: null, value: null};
+    return { type: null, value: null };
   }
   getOrderByStatus() {
     return this.allOrderTypes['orderByStatus'];
@@ -86,11 +85,11 @@ export class IndicatorsService {
   }
 
   getItemStatusByIndicator(indicator_name, crp_id?) {
-    return this.http.get<any>(`${environment.apiUrl}/indicator/items/${indicator_name}?crp_id=${crp_id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/items/${indicator_name}?crp_id=${crp_id}`);
   }
 
   getAllItemStatusByIndicator() {
-    return this.http.get<any>(`${environment.apiUrl}/indicator/items`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/items`);
   }
 
   formatItemStatusByIndicator(obj) {

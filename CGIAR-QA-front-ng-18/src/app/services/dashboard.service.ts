@@ -3,90 +3,84 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 
 import { environment } from '../../environments/environment';
 
-
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
-
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   // get dash data (evaluations) by user
   getDashboardEvaluations(id) {
-    return this.http.get<any>(`${environment.apiUrl}/evaluation/user/${id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/user/${id}`);
   }
 
   // get list dash data (evaluations)
   geListDashboardEvaluations(id, view_name, view_primary_field, crp_id?) {
     let params = {
-      'view_name': view_name,
-      'view_primary_field': view_primary_field,
-    }
-    return this.http.post<any>(`${environment.apiUrl}/evaluation/${id}/list?crp_id=${crp_id}`, params);
+      view_name: view_name,
+      view_primary_field: view_primary_field
+    };
+    return this.http.post<any>(`${environment.apiBaseUrl}/evaluation/${id}/list?crp_id=${crp_id}`, params);
   }
 
   /**
-   * 
-   * 
+   *
+   *
    * Admin Dashboard
-   * 
+   *
    */
-
 
   // get all dash data (evaluations)
   getAllDashboardEvaluations(crp_id?) {
-    let params = new HttpParams().set('crp_id', crp_id)
+    let params = new HttpParams().set('crp_id', crp_id);
     // params.set('is_crp', is_crp);
-    return this.http.get<any>(`${environment.apiUrl}/evaluation/`, { params });
+    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/`, { params });
   }
   // get all dash data by crp (evaluations)
   getAllDashboardEvaluationsByCRP(crp_id?) {
-    let params = new HttpParams().set('crp_id', crp_id)
+    let params = new HttpParams().set('crp_id', crp_id);
     // params.set('is_crp', is_crp);
-    return this.http.get<any>(`${environment.apiUrl}/evaluation/status/crp`, { params });
+    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/status/crp`, { params });
   }
-
 
   //get all qa crps
   getCRPS() {
-    return this.http.get<any>(`${environment.apiUrl}/evaluation/crp`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/crp`);
   }
 
   //get indicators by crp
   getIndicatorsByCRP() {
-    return this.http.get<any>(`${environment.apiUrl}/evaluation/crp/indicators`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/crp/indicators`);
   }
 
-  //get batches 
+  //get batches
   getAllBatches() {
-    return this.http.get<any>(`${environment.apiUrl}/comment/batches`);
+    return this.http.get<any>(`${environment.apiBaseUrl}/comment/batches`);
   }
 
   // get hihglighted data
   getHighlightedData() {
-    return this.http.get<any>(`${environment.apiUrl}/evaluation/highlight-status`)
+    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/highlight-status`);
   }
 
   sortProperties(obj) {
     // convert object into array
     var sortable = [];
-    for (var key in obj)
-      if (obj.hasOwnProperty(key))
-        sortable.push([key, obj[key]]); // each item is an array in format [key, value]
+    for (var key in obj) if (obj.hasOwnProperty(key)) sortable.push([key, obj[key]]); // each item is an array in format [key, value]
 
     // sort items by value
     sortable.sort(function (a, b) {
       return a[1] - b[1]; // compare numbers
     });
 
-    let resp = {}
+    let resp = {};
     for (let index = 0; index < sortable.length; index++) {
       const element = sortable[index];
-      console.log(element, resp)
-      resp[element[0]] = element[1]
+      console.log(element, resp);
+      resp[element[0]] = element[1];
     }
 
-    console.log(resp)
+    console.log(resp);
     return sortable; // array in format [ [ key1, val1 ], [ key2, val2 ], ... ]
   }
   // group data
@@ -102,17 +96,14 @@ export class DashboardService {
     }
     // console.log(this.sortProperties(data))
     // console.log(data)
-    return (data);
+    return data;
   }
 
   groupByProp(array, key) {
     let result = array.reduce((result, currentValue) => {
-      (result[currentValue[key]] = result[currentValue[key]] || []).push(
-        currentValue
-      );
+      (result[currentValue[key]] = result[currentValue[key]] || []).push(currentValue);
       return result;
     }, {});
     return result;
-  };
-
+  }
 }

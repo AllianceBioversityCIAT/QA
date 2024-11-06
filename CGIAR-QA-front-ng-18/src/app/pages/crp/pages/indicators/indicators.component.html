@@ -5,6 +5,9 @@
 <div class="row col indicator-header">
   <div class="text-left">
     <div *ngIf="!criteria_loading" [innerHTML]="criteriaData.qa_criteria"></div>
+    <div class="open-url-button">
+      <a href="http://" target="_blank" rel="noopener noreferrer">Quality Assurance AI Helper</a>
+    </div>
   </div>
   <div class="text-right">
     <div *ngIf="indicatorType == 'publications'" class="circle autochecked" style="margin-left: 50px"></div>

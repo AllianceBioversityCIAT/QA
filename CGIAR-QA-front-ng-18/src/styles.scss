@@ -41,3 +41,11 @@ html {
 .jumbotron {
   background-color: white;
 }
+
+.open-url-button {
+  cursor: pointer;
+  background-color: rgb(130, 130, 255);
+  color: white !important;
+  padding: 5px;
+  border-radius: 5px;
+}
