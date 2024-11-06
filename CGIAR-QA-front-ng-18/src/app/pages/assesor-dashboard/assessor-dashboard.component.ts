@@ -113,7 +113,6 @@ export default class AssessorDashboardComponent implements OnInit {
     private _exportTableSE: ExportTablesService
   ) {
     this.authenticationService.currentUser.subscribe(x => {
-      console.log(x);
       this.currentUser = x;
     });
     /** set page title */
@@ -121,7 +120,6 @@ export default class AssessorDashboardComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log('assessor dashboard');
     this.usersService.getUserById(this.currentUser?.id).subscribe(res => {
       this.authenticationService.parseUpdateIndicators(res.data.indicators);
     });

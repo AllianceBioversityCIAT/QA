@@ -167,14 +167,12 @@ export class CommentComponent implements OnInit {
     };
 
     this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id);
-    console.log('🚀 ~ file:  UpdateHighlightComment ~ this.detailItemFounded', this.detailItemFounded);
     if (!this.detailItemFounded) {
       this.detailItemFounded = this.commentsByColSelected;
       this.detailItemFounded.highlight_comment = !isHighlighted;
     } else {
       this.detailItemFounded.highlight_comment = !isHighlighted;
     }
-    console.log(this.detailedData);
 
     (comment.highlight_comment = !isHighlighted), console.log('🚀 ~ file: comment.component.ts:144 ~ UpdateHighlightComment ~ comment', comment);
     console.log(params, '<===id');
@@ -463,7 +461,7 @@ export class CommentComponent implements OnInit {
         switch (this.currentUser.roles[0].description) {
           case this.allRoles.crp:
             this.commentsByCol = res.data.filter(data => data.approved);
-            console.log("🚀 ~ getItemCommentData ~ commentsByCol:", this.commentsByCol)
+            console.log('🚀 ~ getItemCommentData ~ commentsByCol:', this.commentsByCol);
 
             this.currentComment = this.commentsByCol.find(comment => comment.approved);
             this.crpComment = true;

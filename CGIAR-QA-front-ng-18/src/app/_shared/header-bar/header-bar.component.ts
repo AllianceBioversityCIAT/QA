@@ -67,7 +67,6 @@ export class HeaderBarComponent implements OnInit {
             if (x) {
               // this.currentRole = x.roles[0].role.description.toLowerCase();
               this.currentRole = x.roles[0].description.toLowerCase();
-              console.log("🚀 ~ HeaderBarComponent ~ this.router.events.pipe ~ this.currentRole:", this.currentRole)
 
               if (!this.indicators.length) this.ngOnInit();
 

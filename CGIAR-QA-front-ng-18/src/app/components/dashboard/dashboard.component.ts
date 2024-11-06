@@ -10,7 +10,7 @@ import { ChartModule } from 'primeng/chart';
 })
 export class DashboardComponent implements OnChanges {
   @Input() dataCharts: any;
-  
+
   dataGeneralStatus: any;
   optionGeneralStatus: any;
   dataAssessorInteractions: any;
@@ -19,16 +19,14 @@ export class DashboardComponent implements OnChanges {
   optionResponseToComments: any;
   dataAssessmentByField: any;
   optionAssessmentByField: any;
-  
+
   ngOnChanges(changes: SimpleChanges) {
-    console.log("🚀 ~ DashboardComponent ~ ngOnChanges ~ changes:", changes)
     if (changes['dataCharts'] && this.dataCharts) {
       this.updateChartData();
     }
   }
-  
+
   updateChartData() {
-    console.log("🚀 ~ DashboardComponent ~ dataCharts:", this.dataCharts)
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
 

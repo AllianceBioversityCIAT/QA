@@ -18,10 +18,13 @@ export class TawkToComponent implements OnInit {
   currentUser: User;
   config = environment;
 
-  constructor(private _renderer: Renderer2, @Inject(DOCUMENT) private _document, private authService: AuthenticationService) {
+  constructor(
+    private _renderer: Renderer2,
+    @Inject(DOCUMENT) private _document,
+    private authService: AuthenticationService
+  ) {
     this.authService.currentUser.subscribe(x => {
       this.currentUser = x;
-      console.log(this.currentUser);
     });
 
     this.script = this._renderer.createElement('script');

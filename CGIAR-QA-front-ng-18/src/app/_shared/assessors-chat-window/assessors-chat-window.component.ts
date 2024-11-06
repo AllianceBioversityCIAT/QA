@@ -9,7 +9,6 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
   styleUrls: ['./assessors-chat-window.component.scss']
 })
 export class AssessorsChatWindowComponent implements OnInit {
-
   // @Input() currentUser;
   currentUser;
   currentRole;
@@ -18,33 +17,31 @@ export class AssessorsChatWindowComponent implements OnInit {
   assessorsChat = {
     isOpen: false,
     openTab: false
-  }
-  constructor(private sanitizer: DomSanitizer,
+  };
+  constructor(
+    private sanitizer: DomSanitizer,
     private activeRoute: ActivatedRoute,
-    private authenticationService: AuthenticationService) {
-      this.activeRoute.params.subscribe(routeParams => {
-        console.log(routeParams);
-        this.authenticationService.currentUser.subscribe(x => {
-          this.currentUser = x;
-          if (x) {
-            this.currentRole = x.roles[0].description.toLowerCase();
-            console.log(this.currentUser);
-            
-            this.ngOnInit();
-            // this.getHeaderLinks();
-            // this.isHome = `/dashboard/${this.currentUser}`;
-            // this.isHome = this.router.isActive( `/dashboard/${this.currentUser}` , true)
-          }
-        });
-      })
-    }
+    private authenticationService: AuthenticationService
+  ) {
+    this.activeRoute.params.subscribe(routeParams => {
+      this.authenticationService.currentUser.subscribe(x => {
+        this.currentUser = x;
+        if (x) {
+          this.currentRole = x.roles[0].description.toLowerCase();
+
+          this.ngOnInit();
+          // this.getHeaderLinks();
+          // this.isHome = `/dashboard/${this.currentUser}`;
+          // this.isHome = this.router.isActive( `/dashboard/${this.currentUser}` , true)
+        }
+      });
+    });
+  }
 
   ngOnInit() {
-    console.log('ASSESSORS CHAT');
-    
     this.chatRooms = {
-      general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/Njt10-3wG?username=${this.currentUser.name}`),
-    }
+      general: this.sanitizer.bypassSecurityTrustResourceUrl(`https://deadsimplechat.com/Njt10-3wG?username=${this.currentUser.name}`)
+    };
   }
 
   toggleAssessorsChat() {
@@ -54,7 +51,7 @@ export class AssessorsChatWindowComponent implements OnInit {
   }
   toggleChannels() {
     this.assessorsChat.openTab = !this.assessorsChat.openTab;
-    if(!this.assessorsChat.openTab) this.assessorsChat.isOpen = false;
+    if (!this.assessorsChat.openTab) this.assessorsChat.isOpen = false;
     // this.assessorsChat.isOpen = !this.assessorsChat.isOpen;
 
     // if(this.assessorsChat.openTab) this.assessorsChat.isOpen = false;
@@ -68,10 +65,9 @@ export class AssessorsChatWindowComponent implements OnInit {
       case false:
         this.assessorsChat.openTab = false;
         break;
-    
+
       default:
         break;
     }
   }
-
 }

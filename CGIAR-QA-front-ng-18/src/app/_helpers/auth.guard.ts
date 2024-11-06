@@ -12,7 +12,10 @@ import { Role } from '../_models/roles.model';
   providedIn: 'root'
 })
 export class AuthGuard implements CanActivate {
-  constructor(private router: Router, private authenticationService: AuthenticationService) {}
+  constructor(
+    private router: Router,
+    private authenticationService: AuthenticationService
+  ) {}
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     const currentUser = this.authenticationService.currentUserValue;
@@ -21,7 +24,6 @@ export class AuthGuard implements CanActivate {
         return role ? role['description'] : null;
       });
 
-      // console.log(this.validateConfig(currentUser))
       if (this.validateConfig(currentUser)) {
         this.router.navigate(['/qa-close']);
         return false;
@@ -75,9 +77,6 @@ export class AuthGuard implements CanActivate {
           return role === Role.crp || role === Role.admin;
         });
     }
-    // console.log('validatecycle', isAssessor);
-
-    // console.log('validateCycle',  isAdmin ? false : !currentUser.hasOwnProperty('cycle'));
     return isAssessor && !currentUser.hasOwnProperty('cycle') ? true : false;
   }
 }

@@ -19,7 +19,6 @@ export class TimelineComponent implements OnInit {
 
   getBatches() {
     this.dashboardService.getAllBatches().subscribe(res => {
-      console.log({ res });
       this.batches = res.data;
     });
   }

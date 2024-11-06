@@ -132,9 +132,6 @@ export class CommentService {
         }
       });
     }
-    console.log('🚀 ~ CommentService ~ tagsType.forEach ~ tagsByIndicator:', tagsByIndicator);
-
-    // console.log('TAGS BY INDICATOR',tagsByIndicator);
     return tagsByIndicator;
   }
 
