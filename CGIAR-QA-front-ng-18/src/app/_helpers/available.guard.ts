@@ -57,7 +57,7 @@ export class AvailableGuard implements CanActivate {
         return true;
       } else {
         //this._location.back();
-        this.router.navigate(['/dashboard/assessor']);
+        this.router.navigate(['/dashboard']);
         return false;
       }
     }
