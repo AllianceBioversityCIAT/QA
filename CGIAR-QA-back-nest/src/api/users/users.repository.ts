@@ -48,7 +48,6 @@ export class UserRepository extends Repository<Users> {
     const crpRole = await this._roleRepository.findOne({
       where: { description: 'CRP' },
     });
-    console.log('🚀 ~ UserRepository ~ createOrReturnUser ~ crpRole:', crpRole);
 
     if (!crpRole) {
       throw new NotFoundException('CRP Role not found');
@@ -128,7 +127,7 @@ export class UserRepository extends Repository<Users> {
       })),
       token,
       config: generalConfig,
-      cycle: currentCycle,
+      cycle: currentCycle[0],
     };
 
     return formattedUser;

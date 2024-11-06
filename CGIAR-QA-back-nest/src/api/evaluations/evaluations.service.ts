@@ -627,9 +627,7 @@ export class EvaluationsService {
         approved,
       });
 
-      if (
-        user.roles.some((role) => role.role.description === RolesHandler.crp)
-      ) {
+      if (user.roles.some((role) => role.qa_role === 3)) {
         comment.crp_approved = crp_approved;
         await this._commentRepository.save(comment);
       }
@@ -697,9 +695,11 @@ export class EvaluationsService {
       if (userId) reply.user = userId;
 
       if (is_deleted) {
-        const comment = await this._commentRepository.findOneById(
-          reply.comment,
-        );
+        const comment = await this._commentRepository.findOne({
+          where: {
+            id: reply.comment,
+          },
+        });
         if (comment) {
           comment.crp_approved = null;
           comment.replyType = null;

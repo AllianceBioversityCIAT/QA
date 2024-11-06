@@ -160,7 +160,7 @@ export class AuthService {
         })),
         token,
         config: generalConfig,
-        cycle: currentCycle,
+        cycle: currentCycle[0],
       };
 
       delete formattedUser.password;
@@ -228,7 +228,8 @@ export class AuthService {
         throw new BadRequestException('Invalid token.');
       }
 
-      const user = await this._userRepository.createOrReturnUser(authToken);
+      const user: Users = await this._userRepository.createOrReturnUser(authToken);
+      
 
       return ResponseUtils.format({
         data: user,

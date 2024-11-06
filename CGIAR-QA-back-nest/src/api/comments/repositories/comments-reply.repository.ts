@@ -11,7 +11,9 @@ export class CommentsRepliesRepository extends Repository<CommentsReplies> {
   async findOneWithComment(id: number): Promise<CommentsReplies | null> {
     return await this.findOne({
       where: { id },
-      relations: ['comment'],
+      relations: {
+        obj_comment: true,
+      },
     });
   }
 
