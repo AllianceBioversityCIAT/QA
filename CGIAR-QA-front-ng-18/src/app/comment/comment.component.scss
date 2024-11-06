@@ -1,6 +1,12 @@
 @import '@public/variables.scss';
 
 .comments-container {
+  .accept-comment-prompt {
+    font-size: 1.4em; // Adjust the size as needed
+    font-weight: bold;
+    color: #333; // You can change the color if needed
+  }
+
   app-on-boarding {
     border-radius: 10px;
   }

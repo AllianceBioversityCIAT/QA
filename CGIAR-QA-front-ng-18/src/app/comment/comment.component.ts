@@ -533,25 +533,6 @@ export class CommentComponent implements OnInit {
     }
   }
 
-  //ACCEPT COMMENT
-  openModal(template: TemplateRef<any>, e) {
-    console.log(e.clientY);
-    this.currentY = e.clientY;
-
-    // template.elementRef.nativeElement.style.top = `${this.currentY}px`;
-    // this.modalRef = this.modalService.show(template, {
-    //   class: 'pos-modal modal-sm'
-    // });
-    document.querySelector('body').style.cssText = `--position-top: ${this.currentY - 300}px`;
-    // const modal = this.elem.nativeElement.querySelector('.modal-content');
-    // console.log(modal);
-    // console.log(template.elementRef.nativeElement);
-
-    // template.elementRef.nativeElement.style.top.px = this.currentY;
-    // this.confirmModal.nativeElement.style.top = `${this.currentY}px`;
-    this.showDialog = true;
-  }
-
   answerComment(is_approved: any, replyTypeId: number, comment: any) {
     comment.crp_response = is_approved;
     comment.replyTypeId = replyTypeId;
