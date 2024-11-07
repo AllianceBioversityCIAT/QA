@@ -435,6 +435,8 @@ export class CommentComponent implements OnInit {
       evaluationId: this.dataFromItem.evaluation_id,
       metaId: this.dataFromItem.field_id
     };
+
+    console.log('getItemCommentData');
     this.commentService.getDataComment(params).subscribe(
       res => {
         this.hideSpinner(this.spinner_comment);
@@ -446,6 +448,7 @@ export class CommentComponent implements OnInit {
 
         if (answered_comments.length > 0) {
           answered_comments.map(ac => {
+            console.log(ac);
             replies_count += +ac.replies.replies_count;
           });
         }
@@ -545,16 +548,10 @@ export class CommentComponent implements OnInit {
     let newReplyTypeId = this.formData['comment'].value ? this.replyTypes.accepted_with_comment : this.replyTypes.accepted;
     this.answerComment(true, newReplyTypeId, comment);
     this.replyComment(comment);
-    // this.modalRef.hide();
+    this.showDialog = false;
   }
 
-  // cancel(): void {
-  //   this.modalRef.hide();
-  // }
-
   replyComment(currentComment) {
-    // console.log(currentComment.replyTypeId);
-
     if (
       (this.commentGroup.invalid || this.formData['comment'].value === '') &&
       currentComment.replyTypeId != this.replyTypes.accepted &&
