@@ -11,16 +11,17 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      # Paso 1: Imprimir el nombre de la rama que está ejecutando el job
-      - name: Print the branch name
+      # Paso 1: Obtener el nombre de la rama y construir la URL para Jenkins
+      - name: Get branch name and build Jenkins URL
         run: |
           BRANCH_NAME=${GITHUB_REF#refs/heads/}  # Eliminar 'refs/heads/' de GITHUB_REF
-          echo "The job is being triggered from the branch: $BRANCH_NAME"
+          JENKINS_URL="https://automation.prms.cgiar.org/job/qa-application-${BRANCH_NAME}/build"
+          echo "Jenkins job URL for the branch $BRANCH_NAME is: $JENKINS_URL"
         
-      # Paso 2: Ejecutar el comando curl para disparar el job en Jenkins
+      # Paso 2: Ejecutar el comando curl para disparar el job en Jenkins con la URL construida dinámicamente
       - name: Trigger Jenkins Job
         run: |
-          curl -X POST "https://automation.prms.cgiar.org/job/qa-application-${BRANCH_NAME}/build" --user ${{ secrets.JENKINS_USERNAME }}:${{ secrets.JENKINS_API_TOKEN }}
+          curl -X POST "$JENKINS_URL" --user ${{ secrets.JENKINS_USERNAME }}:${{ secrets.JENKINS_API_TOKEN }}
         env:
           JENKINS_USERNAME: ${{ secrets.JENKINS_USERNAME }}
           JENKINS_API_TOKEN: ${{ secrets.JENKINS_API_TOKEN }}
