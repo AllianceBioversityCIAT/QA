@@ -14,7 +14,8 @@ jobs:
       # Paso 1: Imprimir el nombre de la rama que está ejecutando el job
       - name: Print the branch name
         run: |
-          echo "The job is being triggered from the branch: $GITHUB_REF"
+          BRANCH_NAME=${GITHUB_REF#refs/heads/}  # Eliminar 'refs/heads/' de GITHUB_REF
+          echo "The job is being triggered from the branch: $BRANCH_NAME"
         
       # Paso 2: Ejecutar el comando curl para disparar el job en Jenkins
       - name: Trigger Jenkins Job
