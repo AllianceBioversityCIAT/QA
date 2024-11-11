@@ -73,6 +73,7 @@ export class AuthService {
 
       if (marloUser) {
         const isMarlo = await this.validateAD(marloUser, password);
+        this._logger.log('Is Marlo: ' + isMarlo);
         if (isMarlo) {
           user = marloUser;
         } else {
