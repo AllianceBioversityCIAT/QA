@@ -114,6 +114,8 @@ export class AuthService {
         }
       }
 
+      this._logger.log('User found: ' + user.username);
+
       const userRoles = user.roles.map((userRole) => userRole.role.description);
       if (
         userRoles.includes(RolesHandler.crp) &&
@@ -142,6 +144,9 @@ export class AuthService {
           },
         }),
       ]);
+
+      this._logger.log('General Config: ' + generalConfig);
+      this._logger.log('Current Cycle: ' + currentCycle);
 
       const token = jwt.sign(
         { userId: user.id, username: user.username, role: user.roles },
