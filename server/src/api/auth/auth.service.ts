@@ -10,7 +10,7 @@ import { LoginDto } from './dto/login.dto';
 import { UserRepository } from '../users/users.repository';
 import { GeneralConfigurationRepository } from '../../shared/repositories/general-config.repository';
 import { CycleRepository } from '../../shared/repositories/cycle.repository';
-import ActiveDirectory from 'activedirectory';
+import * as ActiveDirectory from 'activedirectory';
 import config from '../../config/const.config';
 import { Users } from '../users/entities/user.entity';
 import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
@@ -185,18 +185,20 @@ export class AuthService {
     const adUser = user.email;
 
     try {
-      return await new Promise<boolean>((resolve, reject) => {
+      const valid = await new Promise<boolean>((resolve, reject) => {
         ad.authenticate(adUser, password, (err, auth) => {
-          if (err) {
-            if (err.errno === 'ENOTFOUND') {
+          if (auth) {
+            this._logger.log('User authenticated');
+            resolve(true);
+          } else if (err) {
+            if (err.errno) {
+              this._logger.error('Domain Controller Server not found');
               reject(new Error('Domain Controller Server not found'));
             } else {
               reject(
                 new UnauthorizedException('The supplied credential is invalid'),
               );
             }
-          } else if (auth) {
-            resolve(true);
           } else {
             reject(
               new UnauthorizedException('The supplied credential is invalid'),
@@ -204,6 +206,7 @@ export class AuthService {
           }
         });
       });
+      return valid;
     } catch (error) {
       throw error;
     }
@@ -228,8 +231,8 @@ export class AuthService {
         throw new BadRequestException('Invalid token.');
       }
 
-      const user: Users = await this._userRepository.createOrReturnUser(authToken);
-      
+      const user: Users =
+        await this._userRepository.createOrReturnUser(authToken);
 
       return ResponseUtils.format({
         data: user,
