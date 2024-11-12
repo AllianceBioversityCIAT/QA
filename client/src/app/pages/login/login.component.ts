@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { first } from 'rxjs/operators';
@@ -11,6 +11,7 @@ import { GeneralStatus } from '../../_models/general-status.model';
 import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
+import { ActionsService } from '../../services/actions.service';
 
 @Component({
   selector: 'app-login',
@@ -20,6 +21,7 @@ import { environment } from '../../../environments/environment';
   styleUrls: ['./login.component.scss']
 })
 export default class LoginComponent implements OnInit {
+  actions = inject(ActionsService);
   loginForm: FormGroup;
   loading = false;
   submitted = false;
@@ -75,13 +77,17 @@ export default class LoginComponent implements OnInit {
           this.handleLoginSuccess(data);
         },
         error => {
-          console.log(error);
           this.handleLoginError(error);
         }
       );
   }
 
   private handleLoginSuccess(data: any) {
+    this.actions.showToast({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Login successful'
+    });
     if (data?.config?.length && data.config[0].status === GeneralStatus.Open) {
       this.router.navigate([`dashboard`]);
     } else {
@@ -89,8 +95,18 @@ export default class LoginComponent implements OnInit {
     }
   }
 
-  private handleLoginError(error: any) {
-    this.alertService.error('Something went wrong, please validate your credentials or contact technical support.');
+  private handleLoginError(HttpError: any) {
+    // this.alertService.error('Something went wrong, please validate your credentials or contact technical support.');
+    const { errors, status } = HttpError.error;
+    console.log(HttpError.error);
+
+    if (status === 401) {
+      this.actions.showGlobalAlert({
+        severity: 'warning',
+        summary: 'Warning',
+        detail: errors
+      });
+    }
     this.loading = false;
   }
 }

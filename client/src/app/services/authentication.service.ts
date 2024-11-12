@@ -55,6 +55,7 @@ export class AuthenticationService {
   tokenLogin(params: {}) {
     return this.http.post<any>(`${environment.apiBaseUrl}/auth/token/login`, params).pipe(
       map(user => {
+        console.log(user);
         this.parseMultipleCRP(user.data, params['crp_id']);
         return this.setUserLogged(user.data);
       })
@@ -62,6 +63,7 @@ export class AuthenticationService {
   }
 
   private setUserLogged(user: User) {
+    if (!user) return;
     const cookieName = user.crp == null ? this.usrCookie : this.crpUsrCookie;
 
     let currentUsr = this.parseIndicators(user);
