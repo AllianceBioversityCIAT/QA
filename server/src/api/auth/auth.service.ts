@@ -1,5 +1,6 @@
 import {
   BadRequestException,
+  HttpException,
   HttpStatus,
   Injectable,
   Logger,
@@ -43,11 +44,14 @@ export class AuthService {
   async loginService(loginDto: LoginDto): Promise<any> {
     const { username, password } = loginDto;
     if (!(username && password)) {
-      return ResponseUtils.format({
-        data: null,
-        description: 'Username and password are required.',
-        status: HttpStatus.BAD_REQUEST,
-      });
+      throw new HttpException(
+        {
+          errorMessage: 'Username and password are required.',
+          status: HttpStatus.BAD_REQUEST,
+          severity: 'danger',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
     }
 
     try {
@@ -77,11 +81,14 @@ export class AuthService {
         if (isMarlo) {
           user = marloUser;
         } else {
-          return ResponseUtils.format({
-            data: null,
-            description: 'User password incorrect.',
-            status: HttpStatus.UNAUTHORIZED,
-          });
+          throw new HttpException(
+            {
+              errorMessage: 'User not found or password incorrect.',
+              status: HttpStatus.UNAUTHORIZED,
+              severity: 'warning',
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
         }
       } else {
         user = await this._userRepository.findOne({
@@ -107,11 +114,14 @@ export class AuthService {
           !this._bcryptPasswordEncoder.matches(password, user.password)
         ) {
           this._logger.error('User not found or password incorrect.');
-          return ResponseUtils.format({
-            data: null,
-            description: 'User not found or password incorrect.',
-            status: HttpStatus.UNAUTHORIZED,
-          });
+          throw new HttpException(
+            {
+              errorMessage: 'User not found or password incorrect.',
+              status: HttpStatus.UNAUTHORIZED,
+              severity: 'warning',
+            },
+            HttpStatus.UNAUTHORIZED,
+          );
         }
       }
 
@@ -123,11 +133,10 @@ export class AuthService {
         userRoles.includes(RolesHandler.assesor)
       ) {
         this._logger.log('User is CRP and Assessor');
-        return ResponseUtils.format({
-          data: null,
-          description: 'The user is CRP and Assessor, please validate with the technical team.',
-          status: HttpStatus.UNAUTHORIZED,
-        });
+        throw new HttpException(
+          'User is CRP and Assessor, please contact the Technical Team.',
+          HttpStatus.UNAUTHORIZED,
+        );
       }
 
       const [generalConfig, currentCycle] = await Promise.all([
@@ -177,11 +186,10 @@ export class AuthService {
       });
     } catch (error) {
       this._logger.error(error);
-      return ResponseUtils.format({
-        data: null,
-        description: error,
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-      });
+      throw new HttpException(
+        error.response.errorMessage || error,
+        error.response.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      );
     }
   }
 
@@ -246,12 +254,7 @@ export class AuthService {
       });
     } catch (error) {
       this._logger.error(error);
-      return ResponseUtils.format({
-        data: null,
-        description: error,
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
-        errors: error,
-      });
+      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
     }
   }
 
