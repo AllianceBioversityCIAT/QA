@@ -2,7 +2,7 @@ SET
     SQL_SAFE_UPDATES = 0;
 
 SET
-    group_concat_max_len = 25000;
+    group_concat_max_len = 2000000;
 
 -- POLICY CHANGE
 INSERT INTO
@@ -90,7 +90,8 @@ SELECT
 FROM
     qa_policy_change_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM
@@ -179,7 +180,8 @@ SELECT
 FROM
     qa_innovation_use_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM
@@ -262,7 +264,8 @@ SELECT
 FROM
     qa_other_outcome_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM
@@ -470,7 +473,8 @@ SELECT
 FROM
     qa_innovation_development_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM
@@ -553,7 +557,8 @@ SELECT
 FROM
     qa_other_output_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM
@@ -636,7 +641,8 @@ SELECT
 FROM
     qa_impact_contribution_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM
@@ -753,7 +759,8 @@ SELECT
 FROM
     qa_knowledge_product_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM
@@ -764,12 +771,12 @@ WHERE
 
 INSERT INTO
     qa_innovation_use_ipsr_data (
+        id,
         phase_name,
         phase_year,
         included_AR,
         is_active,
         crp_id,
-        id,
         result_code,
         result_level,
         result_type,
@@ -809,12 +816,12 @@ INSERT INTO
         results_from_previous_portfolio
     )
 SELECT
+    DISTINCT cc.id,
     cc.phase_name,
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
     cc.crp_id,
-    cc.id,
     cc.result_code,
     cc.result_level,
     cc.result_type,
@@ -855,7 +862,8 @@ SELECT
 FROM
     qa_innovation_use_ipsr_view cc
 WHERE
-    NOT EXISTS (
+    cc.is_active = 1
+    AND NOT EXISTS (
         SELECT
             1
         FROM

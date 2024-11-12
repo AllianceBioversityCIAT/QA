@@ -44,7 +44,7 @@ export class AuthService {
     const { username, password } = loginDto;
     if (!(username && password)) {
       return ResponseUtils.format({
-        data: {},
+        data: null,
         description: 'Username and password are required.',
         status: HttpStatus.BAD_REQUEST,
       });
@@ -78,7 +78,7 @@ export class AuthService {
           user = marloUser;
         } else {
           return ResponseUtils.format({
-            data: {},
+            data: null,
             description: 'User password incorrect.',
             status: HttpStatus.UNAUTHORIZED,
           });
@@ -106,9 +106,10 @@ export class AuthService {
           !user ||
           !this._bcryptPasswordEncoder.matches(password, user.password)
         ) {
+          this._logger.error('User not found or password incorrect.');
           return ResponseUtils.format({
-            data: {},
-            description: 'User password incorrect.',
+            data: null,
+            description: 'User not found or password incorrect.',
             status: HttpStatus.UNAUTHORIZED,
           });
         }
@@ -121,9 +122,10 @@ export class AuthService {
         userRoles.includes(RolesHandler.crp) &&
         userRoles.includes(RolesHandler.assesor)
       ) {
+        this._logger.log('User is CRP and Assessor');
         return ResponseUtils.format({
-          data: {},
-          description: 'User unauthorized.',
+          data: null,
+          description: 'The user is CRP and Assessor, please validate with the technical team.',
           status: HttpStatus.UNAUTHORIZED,
         });
       }
@@ -144,9 +146,6 @@ export class AuthService {
           },
         }),
       ]);
-
-      this._logger.log('General Config: ' + generalConfig);
-      this._logger.log('Current Cycle: ' + currentCycle);
 
       const token = jwt.sign(
         { userId: user.id, username: user.username, role: user.roles },
@@ -177,10 +176,10 @@ export class AuthService {
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error(error.message);
+      this._logger.error(error);
       return ResponseUtils.format({
-        data: {},
-        description: error.message,
+        data: null,
+        description: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -248,8 +247,8 @@ export class AuthService {
     } catch (error) {
       this._logger.error(error);
       return ResponseUtils.format({
-        data: {},
-        description: error.message,
+        data: null,
+        description: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
         errors: error,
       });
@@ -314,10 +313,10 @@ export class AuthService {
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error(error.message);
+      this._logger.error(error);
       return ResponseUtils.format({
-        data: {},
-        description: error.message,
+        data: null,
+        description: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -347,8 +346,8 @@ export class AuthService {
     } catch (error) {
       this._logger.error('An error occurred while saving the token', error);
       return ResponseUtils.format({
-        data: {},
-        description: error.message,
+        data: null,
+        description: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
