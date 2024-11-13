@@ -251,7 +251,12 @@ export class AuthService {
       });
     } catch (error) {
       this._logger.error(error);
-      throw new HttpException(error, HttpStatus.INTERNAL_SERVER_ERROR);
+      return ResponseUtils.format({
+        data: null,
+        description: error.message,
+        status: error.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        errors: error.message,
+      });
     }
   }
 
@@ -285,7 +290,11 @@ export class AuthService {
 
     delete userExist.password;
 
-    return { data: user };
+    return ResponseUtils.format({
+      data: user,
+      description: 'Password changed successfully.',
+      status: HttpStatus.OK,
+    });
   }
 
   async createGeneralConfig(createConfigDto: CreateGeneralConfigDto) {
@@ -339,10 +348,11 @@ export class AuthService {
 
       tokenEmbed = await this._tokenAuthRepository.save(tokenEmbed);
 
-      return {
+      return ResponseUtils.format({
         data: tokenEmbed,
-        message: 'Token successfully saved in QA',
-      };
+        description: 'Token saved successfully.',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('An error occurred while saving the token', error);
       return ResponseUtils.format({

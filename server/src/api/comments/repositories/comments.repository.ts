@@ -447,11 +447,17 @@ export class CommentsRepository extends Repository<Comments> {
     const queryRunner = this.dataSource.createQueryRunner();
     await queryRunner.connect();
     try {
+      if(crp_id !== undefined && crp_id !== "undefined") {
       const commentsQuery = `
-        SELECT
+             SELECT
             evaluations.crp_id AS 'Initiative ID',
             (
-                SELECT action_area FROM qa_crp WHERE crp_id = evaluations.crp_id
+                SELECT
+                    action_area
+                FROM
+                    qa_crp
+                WHERE
+                    crp_id = evaluations.crp_id
             ) AS 'Action area',
             CASE
                 comments.replyTypeId
@@ -462,7 +468,8 @@ export class CommentsRepository extends Repository<Comments> {
                 WHEN 5 THEN 'Discarded'
                 ELSE 'Pending'
             END AS 'Status',
-            CASE evaluations.indicator_view_name
+            CASE
+                evaluations.indicator_view_name
                 WHEN 'qa_other_output' THEN qood2.result_code
                 WHEN 'qa_innovation_development' THEN qidd.result_code
                 WHEN 'qa_knowledge_product' THEN qkp.result_code
@@ -476,36 +483,110 @@ export class CommentsRepository extends Repository<Comments> {
             END AS 'Result Code',
             comments.id AS 'Comment ID',
             (
-                SELECT name FROM qa_indicators WHERE view_name = evaluations.indicator_view_name
+                SELECT
+                    name
+                FROM
+                    qa_indicators
+                WHERE
+                    view_name = evaluations.indicator_view_name
             ) AS 'Indicator type',
             (
-                SELECT display_name FROM qa_indicators_meta WHERE id = comments.metaId
+                SELECT
+                    display_name
+                FROM
+                    qa_indicators_meta
+                WHERE
+                    id = comments.metaId
             ) AS 'Field',
             clean_html_tags(comments.original_field) AS 'Original field',
+            CASE
+                evaluations.indicator_view_name
+                WHEN 'qa_other_output' THEN qood2.result_code
+                WHEN 'qa_innovation_development' THEN qidd.result_code
+                WHEN 'qa_knowledge_product' THEN qkp.result_code
+                WHEN 'qa_capdev' THEN qcd.result_code
+                WHEN 'qa_impact_contribution' THEN qicd.result_code
+                WHEN 'qa_other_outcome' THEN qood.result_code
+                WHEN 'qa_innovation_use' THEN qiud.result_code
+                WHEN 'qa_policy_change' THEN qpcd.result_code
+                WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
+                ELSE NULL
+            END AS 'Result Code',
             IF(qim.is_core = 1, 'Yes', 'No') AS 'Is core',
             comments.detail AS 'Assessor comment',
             comments.createdAt AS 'Comment created at',
             comments.id AS 'Comment ID',
             (
-                SELECT username FROM qa_users WHERE id = comments.userId
+                SELECT
+                    username
+                FROM
+                    qa_users
+                WHERE
+                    id = comments.userId
             ) as 'Assessor',
             (
-                SELECT cycle_stage FROM qa_cycle WHERE id = comments.cycleId
+                SELECT
+                    cycle_stage
+                from
+                    qa_cycle
+                WHERE
+                    id = comments.cycleId
             ) as 'Round',
             IFNULL(
-                (SELECT GROUP_CONCAT(detail SEPARATOR '\n') FROM qa_comments_replies WHERE commentId = comments.id AND is_deleted = 0),
+                (
+                    SELECT
+                        GROUP_CONCAT(detail SEPARATOR '\n')
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        commentId = comments.id
+                        and qa_comments_replies.is_deleted = 0
+                ),
                 '<not replied>'
             ) as 'Reply',
             IFNULL(
-                (SELECT GROUP_CONCAT(username SEPARATOR '\n') FROM qa_users WHERE id = replies.userId AND replies.is_deleted = 0),
+                (
+                    SELECT
+                        GROUP_CONCAT(
+                            (
+                                SELECT
+                                    username
+                                from
+                                    qa_users
+                                WHERE
+                                    id = userId
+                            ) SEPARATOR '\n'
+                        )
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        commentId = comments.id
+                        and qa_comments_replies.is_deleted = 0
+                ),
                 '<not replied>'
             ) AS 'User reply',
-            IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highlight comment',
+            (
+                CASE
+                    WHEN qrt.id = 1 THEN 'Accepted'
+                    WHEN qrt.id = 2 THEN 'Disagreed'
+                    WHEN qrt.id = 4 THEN 'Accepted with comments'
+                    ELSE 'Pending'
+                END
+            ) AS 'Reply status',
+            IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highligth comment',
             IF(comments.require_changes = 1, 'Yes', 'No') AS 'Require changes comment',
             IF(comments.tpb = 1, 'Yes', 'No') AS 'TPB Instruction',
             IF(comments.ppu = 1, 'Yes', 'No') AS 'Implemented changes',
             IFNULL(
-                (SELECT GROUP_CONCAT(createdAt SEPARATOR '\n') FROM qa_comments_replies WHERE commentId = comments.id AND is_deleted = 0),
+                (
+                    SELECT
+                        GROUP_CONCAT(createdAt SEPARATOR '\n')
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        commentId = comments.id
+                        and qa_comments_replies.is_deleted = 0
+                ),
                 '<not replied>'
             ) AS 'Reply date'
         FROM
@@ -516,41 +597,372 @@ export class CommentsRepository extends Repository<Comments> {
             AND replies.is_deleted = 0
             LEFT JOIN qa_cycle qc ON qc.id = comments.cycleId
             LEFT JOIN qa_indicators_meta qim ON qim.id = comments.metaId
+            LEFT JOIN qa_reply_type qrt ON qrt.id = comments.replyTypeId
+            LEFT JOIN qa_innovation_use_data qiud ON qiud.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_development_data qidd ON qidd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_knowledge_product qkp ON qkp.id = evaluations.indicator_view_id
+            LEFT JOIN qa_capdev_data qcd ON qcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_impact_contribution_data qicd ON qicd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_outcome_data qood ON qood.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_output_data qood2 ON qood2.id = evaluations.indicator_view_id
+            LEFT JOIN qa_policy_change_data qpcd ON qpcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
         WHERE
             comments.is_deleted = 0
             AND comments.detail IS NOT NULL
             AND evaluations.phase_year = actual_phase_year()
             AND evaluations.batchDate >= actual_batch_date()
-            AND evaluations.crp_id = ?
-        GROUP BY evaluations.crp_id, 'display_name', 'cycle_stage', comments.id
-        ORDER BY evaluations.crp_id, indicator_view_id;`;
+            AND evaluations.crp_id = '${crp_id}'
+        GROUP BY
+            evaluations.crp_id,
+            'display_name',
+            'cycle_stage',
+            comments.id
+        ORDER BY
+            evaluations.crp_id,
+            indicator_view_id;
+          `;
 
       const evaluationQuery = `
-        SELECT
+       SELECT
             evaluations.crp_id AS 'Initiative ID',
             (
-                SELECT name FROM qa_indicators WHERE view_name = evaluations.indicator_view_name
+                SELECT
+                    name
+                FROM
+                    qa_indicators
+                WHERE
+                    view_name = evaluations.indicator_view_name
             ) AS 'Indicator type',
+            CASE
+                evaluations.indicator_view_name
+                WHEN 'qa_other_output' THEN qood2.result_code
+                WHEN 'qa_innovation_development' THEN qidd.result_code
+                WHEN 'qa_knowledge_product' THEN qkp.result_code
+                WHEN 'qa_capdev' THEN qcd.result_code
+                WHEN 'qa_impact_contribution' THEN qicd.result_code
+                WHEN 'qa_other_outcome' THEN qood.result_code
+                WHEN 'qa_innovation_use' THEN qiud.result_code
+                WHEN 'qa_policy_change' THEN qpcd.result_code
+                WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
+                ELSE NULL
+            END AS 'Result code',
             evaluations.evaluation_status AS 'Result status',
+            CASE
+                evaluations.status
+                WHEN 'pending' THEN 'Pending'
+                WHEN 'autochecked' THEN 'Automatically Validated'
+                WHEN 'finalized' THEN 'Quality assessed'
+                WHEN 'qa_capdev' THEN qcd.result_code
+                ELSE NULL
+            END AS 'Evaluation status',
             IFNULL (
-                (SELECT GROUP_CONCAT(DISTINCT qu.name SEPARATOR '\n') FROM qa_comments qc LEFT JOIN qa_users qu ON qu.id = qc.userId WHERE qc.evaluationId = evaluations.id AND qc.is_deleted = 0),
+                (
+                    SELECT
+                        GROUP_CONCAT(
+                            DISTINCT qu.name SEPARATOR '\n'
+                        ) 
+                    FROM
+                        qa_comments qc
+                        LEFT JOIN qa_users qu ON qu.id = qc.userId
+                    WHERE
+                        qc.evaluationId = evaluations.id
+                        AND qc.is_deleted = 0
+                ),
                 '~'
             ) AS 'Assessed by',
-            (
-                SELECT title FROM qa_data WHERE id = evaluations.indicator_view_id
-            ) AS 'Result title'
-        FROM qa_evaluations evaluations
-        WHERE evaluations.phase_year = actual_phase_year()
-        AND evaluations.crp_id = ?
-        AND evaluations.batchDate >= actual_batch_date()
-        ORDER BY evaluations.crp_id ASC;`;
+            CASE
+                evaluations.indicator_view_name
+                WHEN 'qa_other_output' THEN qood2.title
+                WHEN 'qa_innovation_development' THEN qidd.title
+                WHEN 'qa_knowledge_product' THEN qkp.title
+                WHEN 'qa_capdev' THEN qcd.title
+                WHEN 'qa_impact_contribution' THEN qicd.title
+                WHEN 'qa_other_outcome' THEN qood.title
+                WHEN 'qa_innovation_use' THEN qiud.title
+                WHEN 'qa_policy_change' THEN qpcd.title
+                WHEN 'qa_innovation_use_ipsr' THEN qiuid.title
+                ELSE NULL
+            END AS 'Result title'
+        FROM
+            qa_evaluations evaluations
+            LEFT JOIN qa_innovation_use_data qiud ON qiud.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_development_data qidd ON qidd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_knowledge_product qkp ON qkp.id = evaluations.indicator_view_id
+            LEFT JOIN qa_capdev_data qcd ON qcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_impact_contribution_data qicd ON qicd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_outcome_data qood ON qood.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_output_data qood2 ON qood2.id = evaluations.indicator_view_id
+            LEFT JOIN qa_policy_change_data qpcd ON qpcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
+        WHERE
+            evaluations.phase_year = actual_phase_year()
+            AND evaluations.crp_id = '${crp_id}'
+            AND evaluations.batchDate >= actual_batch_date()
+        ORDER BY
+            evaluations.crp_id ASC;`;
 
       const commentsData = await queryRunner.query(commentsQuery, [crp_id]);
       const evaluationData = await queryRunner.query(evaluationQuery, [crp_id]);
 
       return [commentsData, evaluationData];
-    } finally {
-      await queryRunner.release();
+      } else {
+        const comments = `
+        SELECT
+            evaluations.crp_id AS 'Initiative ID',
+            (
+                SELECT
+                    action_area
+                FROM
+                    qa_crp
+                WHERE
+                    crp_id = evaluations.crp_id
+            ) AS 'Action area',
+            CASE
+                comments.replyTypeId
+                WHEN 1 THEN 'Accepted'
+                WHEN 2 THEN 'Disagree'
+                WHEN 3 THEN 'Clarification'
+                WHEN 4 THEN 'Accepted with comment'
+                WHEN 5 THEN 'Discarded'
+                ELSE 'Pending'
+            END AS 'Status',
+            CASE
+                evaluations.indicator_view_name
+                WHEN 'qa_other_output' THEN qood2.result_code
+                WHEN 'qa_innovation_development' THEN qidd.result_code
+                WHEN 'qa_knowledge_product' THEN qkp.result_code
+                WHEN 'qa_capdev' THEN qcd.result_code
+                WHEN 'qa_impact_contribution' THEN qicd.result_code
+                WHEN 'qa_other_outcome' THEN qood.result_code
+                WHEN 'qa_innovation_use' THEN qiud.result_code
+                WHEN 'qa_policy_change' THEN qpcd.result_code
+                WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
+                ELSE NULL
+            END AS 'Result Code',
+            comments.id AS 'Comment ID',
+            (
+                SELECT
+                    name
+                FROM
+                    qa_indicators
+                WHERE
+                    view_name = evaluations.indicator_view_name
+            ) AS 'Indicator type',
+            (
+                SELECT
+                    display_name
+                FROM
+                    qa_indicators_meta
+                WHERE
+                    id = comments.metaId
+            ) AS 'Field',
+            clean_html_tags(comments.original_field) AS 'Original field',
+            CASE
+                evaluations.indicator_view_name
+                WHEN 'qa_other_output' THEN qood2.result_code
+                WHEN 'qa_innovation_development' THEN qidd.result_code
+                WHEN 'qa_knowledge_product' THEN qkp.result_code
+                WHEN 'qa_capdev' THEN qcd.result_code
+                WHEN 'qa_impact_contribution' THEN qicd.result_code
+                WHEN 'qa_other_outcome' THEN qood.result_code
+                WHEN 'qa_innovation_use' THEN qiud.result_code
+                WHEN 'qa_policy_change' THEN qpcd.result_code
+                WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
+                ELSE NULL
+            END AS 'Result Code',
+            IF(qim.is_core = 1, 'Yes', 'No') AS 'Is core',
+            comments.detail AS 'Assessor comment',
+            comments.createdAt AS 'Comment created at',
+            comments.id AS 'Comment ID',
+            (
+                SELECT
+                    username
+                FROM
+                    qa_users
+                WHERE
+                    id = comments.userId
+            ) as 'Assessor',
+            (
+                SELECT
+                    cycle_stage
+                from
+                    qa_cycle
+                WHERE
+                    id = comments.cycleId
+            ) as 'Round',
+            IFNULL(
+                (
+                    SELECT
+                        GROUP_CONCAT(detail SEPARATOR '\n')
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        commentId = comments.id
+                        and qa_comments_replies.is_deleted = 0
+                ),
+                '<not replied>'
+            ) as 'Reply',
+            IFNULL(
+                (
+                    SELECT
+                        GROUP_CONCAT(
+                            (
+                                SELECT
+                                    username
+                                from
+                                    qa_users
+                                WHERE
+                                    id = userId
+                            ) SEPARATOR '\n'
+                        )
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        commentId = comments.id
+                        and qa_comments_replies.is_deleted = 0
+                ),
+                '<not replied>'
+            ) AS 'User reply',
+            (
+                CASE
+                    WHEN qrt.id = 1 THEN 'Accepted'
+                    WHEN qrt.id = 2 THEN 'Disagreed'
+                    WHEN qrt.id = 4 THEN 'Accepted with comments'
+                    ELSE 'Pending'
+                END
+            ) AS 'Reply status',
+            IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highligth comment',
+            IF(comments.require_changes = 1, 'Yes', 'No') AS 'Require changes comment',
+            IF(comments.tpb = 1, 'Yes', 'No') AS 'TPB Instruction',
+            IF(comments.ppu = 1, 'Yes', 'No') AS 'Implemented changes',
+            IFNULL(
+                (
+                    SELECT
+                        GROUP_CONCAT(createdAt SEPARATOR '\n')
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        commentId = comments.id
+                        and qa_comments_replies.is_deleted = 0
+                ),
+                '<not replied>'
+            ) AS 'Reply date'
+        FROM
+            qa_comments comments
+            LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
+            AND evaluations.status <> 'Deleted'
+            LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id
+            AND replies.is_deleted = 0
+            LEFT JOIN qa_cycle qc ON qc.id = comments.cycleId
+            LEFT JOIN qa_indicators_meta qim ON qim.id = comments.metaId
+            LEFT JOIN qa_reply_type qrt ON qrt.id = comments.replyTypeId
+            LEFT JOIN qa_innovation_use_data qiud ON qiud.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_development_data qidd ON qidd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_knowledge_product qkp ON qkp.id = evaluations.indicator_view_id
+            LEFT JOIN qa_capdev_data qcd ON qcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_impact_contribution_data qicd ON qicd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_outcome_data qood ON qood.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_output_data qood2 ON qood2.id = evaluations.indicator_view_id
+            LEFT JOIN qa_policy_change_data qpcd ON qpcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
+        WHERE
+            comments.is_deleted = 0
+            AND comments.detail IS NOT NULL
+            AND evaluations.phase_year = actual_phase_year()
+            AND evaluations.batchDate >= actual_batch_date()
+        GROUP BY
+            evaluations.crp_id,
+            'display_name',
+            'cycle_stage',
+            comments.id
+        ORDER BY
+            evaluations.crp_id,
+            indicator_view_id;`;
+
+        const evaluation = `
+        SELECT
+            evaluations.crp_id AS 'Initiative ID',
+            (
+                SELECT
+                    name
+                FROM
+                    qa_indicators
+                WHERE
+                    view_name = evaluations.indicator_view_name
+            ) AS 'Indicator type',
+            CASE
+                evaluations.indicator_view_name
+                WHEN 'qa_other_output' THEN qood2.result_code
+                WHEN 'qa_innovation_development' THEN qidd.result_code
+                WHEN 'qa_knowledge_product' THEN qkp.result_code
+                WHEN 'qa_capdev' THEN qcd.result_code
+                WHEN 'qa_impact_contribution' THEN qicd.result_code
+                WHEN 'qa_other_outcome' THEN qood.result_code
+                WHEN 'qa_innovation_use' THEN qiud.result_code
+                WHEN 'qa_policy_change' THEN qpcd.result_code
+                WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
+                ELSE NULL
+            END AS 'Result code',
+            evaluations.evaluation_status AS 'Result status',
+            CASE
+                evaluations.status
+                WHEN 'pending' THEN 'Pending'
+                WHEN 'autochecked' THEN 'Automatically Validated'
+                WHEN 'finalized' THEN 'Quality assessed'
+                WHEN 'qa_capdev' THEN qcd.result_code
+                ELSE NULL
+            END AS 'Evaluation status',
+            IFNULL (
+                (
+                    SELECT
+                        GROUP_CONCAT(
+                            DISTINCT qu.name SEPARATOR '\n'
+                        ) 
+                    FROM
+                        qa_comments qc
+                        LEFT JOIN qa_users qu ON qu.id = qc.userId
+                    WHERE
+                        qc.evaluationId = evaluations.id
+                        AND qc.is_deleted = 0
+                ),
+                '~'
+            ) AS 'Assessed by',
+            CASE
+                evaluations.indicator_view_name
+                WHEN 'qa_other_output' THEN qood2.title
+                WHEN 'qa_innovation_development' THEN qidd.title
+                WHEN 'qa_knowledge_product' THEN qkp.title
+                WHEN 'qa_capdev' THEN qcd.title
+                WHEN 'qa_impact_contribution' THEN qicd.title
+                WHEN 'qa_other_outcome' THEN qood.title
+                WHEN 'qa_innovation_use' THEN qiud.title
+                WHEN 'qa_policy_change' THEN qpcd.title
+                WHEN 'qa_innovation_use_ipsr' THEN qiuid.title
+                ELSE NULL
+            END AS 'Result title'
+        FROM
+            qa_evaluations evaluations
+            LEFT JOIN qa_innovation_use_data qiud ON qiud.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_development_data qidd ON qidd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_knowledge_product qkp ON qkp.id = evaluations.indicator_view_id
+            LEFT JOIN qa_capdev_data qcd ON qcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_impact_contribution_data qicd ON qicd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_outcome_data qood ON qood.id = evaluations.indicator_view_id
+            LEFT JOIN qa_other_output_data qood2 ON qood2.id = evaluations.indicator_view_id
+            LEFT JOIN qa_policy_change_data qpcd ON qpcd.id = evaluations.indicator_view_id
+            LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
+        WHERE
+            evaluations.phase_year = actual_phase_year()
+            AND evaluations.batchDate >= actual_batch_date()
+        ORDER BY
+            evaluations.crp_id ASC;`;
+        const query1 = await queryRunner.connection.query(comments);
+        const query2 = await queryRunner.connection.query(evaluation);
+        return [query1, query2];
+      }
+    } catch (error) {
+      throw new Error(error);
     }
   }
 

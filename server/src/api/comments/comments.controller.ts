@@ -171,14 +171,7 @@ export class CommentsController {
     @Param('crp_id') crp_id: string,
     @Res() res: Response,
   ) {
-    try {
-      const rawData = await this.commentsService.getRawCommentsExcel(crp_id);
-      return res.status(200).send(rawData);
-    } catch (error) {
-      return res
-        .status(404)
-        .json({ message: 'Comments raw data error', data: error });
-    }
+    return await this.commentsService.getRawCommentsExcel(crp_id);
   }
 
   @UseGuards(RolesGuard)

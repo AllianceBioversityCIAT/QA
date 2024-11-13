@@ -562,13 +562,19 @@ export class EvaluationsService {
         throw new Error('Could not create tag');
       }
 
-      return {
+      return ResponseUtils.format({
         data: newTag,
-        message: 'Tag created successfully.',
-      };
+        status: HttpStatus.CREATED,
+        description: 'Tag created successfully.',
+      });
     } catch (error) {
       this._logger.error('Error creating or removing tag:', error);
-      throw new Error('Tag could not be created or removed.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Tag could not be created or removed.',
+      });
     }
   }
 
@@ -583,7 +589,12 @@ export class EvaluationsService {
       return { message: 'Tag deleted successfully.' };
     } catch (error) {
       this._logger.error('Error deleting tag:', error);
-      throw new Error('Tag not found.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Tag could not be deleted.',
+      });
     }
   }
 
@@ -596,10 +607,19 @@ export class EvaluationsService {
         this._logger.error('Could not create comment');
       }
 
-      return { data: newComment, message: 'Comment created successfully.' };
+      return ResponseUtils.format({
+        data: newComment,
+        status: HttpStatus.CREATED,
+        description: 'Comment created successfully',
+      });
     } catch (error) {
       this._logger.error('Error creating comment:', error);
-      throw new Error('Comment could not be created.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Comment could not be created.',
+      });
     }
   }
 
@@ -632,10 +652,19 @@ export class EvaluationsService {
         await this._commentRepository.save(comment);
       }
 
-      return { data: newReply, message: 'Reply created successfully.' };
+      return ResponseUtils.format({
+        data: newReply,
+        status: HttpStatus.CREATED,
+        description: 'Reply created successfully',
+      });
     } catch (error) {
       this._logger.error('Error creating reply:', error);
-      throw new Error('Reply could not be created.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Reply could not be created.',
+      });
     }
   }
 
@@ -673,10 +702,19 @@ export class EvaluationsService {
 
       const updatedComment = await this._commentRepository.save(comment);
 
-      return { data: updatedComment, message: 'Comment updated successfully.' };
+      return ResponseUtils.format({
+        data: updatedComment,
+        status: HttpStatus.OK,
+        description: 'Comment updated successfully',
+      });
     } catch (error) {
       this._logger.error('Error updating comment:', error);
-      throw new Error('Comment could not be updated.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Comment could not be updated.',
+      });
     }
   }
 
@@ -709,10 +747,19 @@ export class EvaluationsService {
 
       const updatedReply = await this._commentReplyRepository.save(reply);
 
-      return { data: updatedReply, message: 'Reply updated successfully.' };
+      return ResponseUtils.format({
+        data: updatedReply,
+        status: HttpStatus.OK,
+        description: 'Reply updated successfully',
+      });
     } catch (error) {
       this._logger.error('Error updating reply:', error);
-      throw new Error('Reply could not be updated.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Reply could not be updated.',
+      });
     }
   }
 
@@ -736,10 +783,19 @@ export class EvaluationsService {
         comment.tags = tags;
       }
 
-      return { data: comments, message: 'All comments' };
+      return ResponseUtils.format({
+        data: comments,
+        status: HttpStatus.OK,
+        description: 'All comments retrieved successfully.',
+      });
     } catch (error) {
       this._logger.error('Error retrieving comments:', error);
-      throw new Error('Comments could not be retrieved.');
+      return ResponseUtils.format({
+        data: null,
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Could not retrieve any comments.',
+      });
     }
   }
 
@@ -752,10 +808,19 @@ export class EvaluationsService {
       const replies =
         await this._commentReplyRepository.findRepliesByCommentId(commentId);
 
-      return { data: replies, message: 'All comments replies' };
+      return ResponseUtils.format({
+        data: replies,
+        description: 'All comments replies',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error retrieving replies:', error);
-      throw new Error('Replies could not be retrieved.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Could not retrieve any replies.',
+      });
     }
   }
 
@@ -770,10 +835,19 @@ export class EvaluationsService {
         throw new Error('No evaluation criteria found.');
       }
 
-      return { data: criteria, message: 'Indicator evaluation criteria' };
+      return ResponseUtils.format({
+        data: criteria,
+        description: 'Indicator evaluation criteria',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error retrieving evaluation criteria:', error);
-      throw new Error('Could not retrieve any evaluation criteria.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Could not retrieve evaluation criteria.',
+      });
     }
   }
 
@@ -795,7 +869,12 @@ export class EvaluationsService {
       };
     } catch (error) {
       this._logger.error('Error retrieving assessors:', error);
-      throw new Error('Could not retrieve any assessor for this evaluation.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Could not retrieve assessors.',
+      });
     }
   }
 
@@ -815,13 +894,19 @@ export class EvaluationsService {
       evaluation.require_second_assessment = requireSecondAssessment;
       await this._evaluationsRepository.save(evaluation);
 
-      return {
+      return ResponseUtils.format({
         data: evaluation,
-        message: `Evaluation ${evaluationId} updated.`,
-      };
+        description: `Evaluation ${evaluationId} updated.`,
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error(`Error updating evaluation ${evaluationId}:`, error);
-      throw new Error('Could not update the evaluation.');
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: `Error updating evaluation ${evaluationId}.`,
+      });
     }
   }
 
@@ -892,18 +977,22 @@ export class EvaluationsService {
         evaluations_status: item.evaluations_status,
       }));
 
-      return {
+      return ResponseUtils.format({
         data,
-        message: `Evaluation status for result: ${resultId}`,
-      };
+        description: `Evaluation status for result: ${resultId}`,
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error(
         `Error retrieving evaluation status for result: ${resultId}`,
         error.message,
       );
-      throw new Error(
-        'An error occurred when trying to retrieve the evaluation status',
-      );
+      return ResponseUtils.format({
+        data: {},
+        errors: error,
+        status: HttpStatus.NOT_FOUND,
+        description: 'Could not retrieve evaluation status.',
+      });
     }
   }
 }

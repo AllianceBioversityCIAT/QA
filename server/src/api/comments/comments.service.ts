@@ -124,7 +124,11 @@ export class CommentsService {
         );
       }
 
-      return commentsData;
+      return ResponseUtils.format({
+        data: commentsData,
+        description: 'Comments retrieved successfully.',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error fetching comments:', error);
       throw ResponseUtils.format({
@@ -182,11 +186,16 @@ export class CommentsService {
       } else {
         feedTags = await this._tagsRepository.fetchAllFeedTags();
       }
-      return feedTags;
+      return ResponseUtils.format({
+        data: feedTags,
+        description: 'Feed tags retrieved successfully.',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error retrieving feed tags:', error);
       throw ResponseUtils.format({
-        data: {},
+        data: null,
+        errors: 'Feed tags cannot be retrieved.',
         description: 'Feed tags cannot be retrieved.',
         status: HttpStatus.NOT_FOUND,
       });
@@ -363,7 +372,22 @@ export class CommentsService {
   }
 
   async getRawCommentsExcel(crp_id: string) {
-    return await this._commentsRepository.getRawCommentsExcel(crp_id);
+    try {
+      const data = await this._commentsRepository.getRawCommentsExcel(crp_id);
+
+      return ResponseUtils.format({
+        data,
+        description: 'Raw comments excel data retrieved successfully',
+        status: HttpStatus.OK,
+      });
+    } catch (error) {
+      this._logger.error('Error fetching raw comments excel data:', error);
+      return ResponseUtils.format({
+        data: {},
+        description: 'Could not retrieve raw comments excel data',
+        status: HttpStatus.NOT_FOUND,
+      });
+    }
   }
 
   async getRawCommentsData(crp_id?: string): Promise<any> {
