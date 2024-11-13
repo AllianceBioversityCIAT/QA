@@ -82,11 +82,7 @@ export class AuthService {
           user = marloUser;
         } else {
           throw new HttpException(
-            {
-              errorMessage: 'User not found or password incorrect.',
-              status: HttpStatus.UNAUTHORIZED,
-              severity: 'warning',
-            },
+            'User not found or password incorrect.',
             HttpStatus.UNAUTHORIZED,
           );
         }
@@ -115,11 +111,7 @@ export class AuthService {
         ) {
           this._logger.error('User not found or password incorrect.');
           throw new HttpException(
-            {
-              errorMessage: 'User not found or password incorrect.',
-              status: HttpStatus.UNAUTHORIZED,
-              severity: 'warning',
-            },
+            'User not found or password incorrect.',
             HttpStatus.UNAUTHORIZED,
           );
         }
