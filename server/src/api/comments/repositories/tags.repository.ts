@@ -20,7 +20,7 @@ export class TagsRepository extends Repository<Tags> {
       LEFT JOIN qa_comments qc ON qc.id = tag.commentId
       LEFT JOIN qa_evaluations qe ON qe.id = qc.evaluationId
       WHERE tt.name NOT LIKE 'seen'
-      AND qe.crp_id = :crp_id
+      AND qe.crp_id = ?
       AND qe.phase_year = actual_phase_year()
       GROUP BY qe.indicator_view_name, tt.name`;
 

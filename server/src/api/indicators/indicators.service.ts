@@ -3,6 +3,7 @@ import { Response } from 'express';
 import {
   AssignIndicatorDto,
   CreateIndicatorDto,
+  IndicatorEnableDto,
   UpdateIndicatorDto,
 } from './dto/indicator.dto';
 import { Indicators } from './entities/indicators.entity';
@@ -13,6 +14,7 @@ import { IndicatorUsersRepository } from './repositories/indicators-users.reposi
 import { EvaluationRepository } from '../evaluations/repositories/evaluation.repository';
 import { Users } from '../users/entities/user.entity';
 import { CrpRepository } from '../../shared/repositories/crp.repository';
+import { CommentsMetaRepository } from '../comments/repositories/comments-meta.repository';
 
 @Injectable()
 export class IndicatorsService {
@@ -24,6 +26,7 @@ export class IndicatorsService {
     private readonly _indicatorUserRepository: IndicatorUsersRepository,
     private readonly _evaluationsRepository: EvaluationRepository,
     private readonly _crpRepository: CrpRepository,
+    private readonly _commentsMetaRepository: CommentsMetaRepository,
   ) {}
 
   async create(createIndicatorDto: CreateIndicatorDto) {
@@ -189,7 +192,41 @@ export class IndicatorsService {
     }
   }
 
-  async update(id: number, updateIndicatorDto: UpdateIndicatorDto) {
+  async editIndicators(id: number, indicatorEnableDto: IndicatorEnableDto) {
+    const { enable, isActive } = indicatorEnableDto;
+
+    try {
+      const updateFields =
+        enable === 'enable_assessor'
+          ? {
+              enable_assessor: isActive ? true : false,
+              enable_crp: isActive ? false : true,
+            }
+          : {
+              enable_assessor: isActive ? false : true,
+              enable_crp: isActive ? true : false,
+            };
+      await this._commentsMetaRepository.update({ id }, updateFields);
+
+      const indicator = await this._indicatorsRepository.findOneOrFail({
+        where: { id },
+      });
+      return ResponseUtils.format({
+        data: indicator,
+        description: 'Indicator updated successfully',
+        status: HttpStatus.OK,
+      });
+    } catch (error) {
+      this._logger.error(error);
+      return ResponseUtils.format({
+        data: {},
+        description: 'Indicator already in use',
+        status: HttpStatus.CONFLICT,
+      });
+    }
+  }
+
+  async editIndicators1(id: number, updateIndicatorDto: UpdateIndicatorDto) {
     const { name, description, view_name, primary_field } = updateIndicatorDto;
 
     let indicator: Indicators;
@@ -217,14 +254,14 @@ export class IndicatorsService {
       );
     }
 
-    if (!indicator.name || !indicator.description || !indicator.view_name) {
-      return ResponseUtils.format({
-        data: {},
-        description:
-          'Validation errors: name, description, and view_name are required',
-        status: HttpStatus.BAD_REQUEST,
-      });
-    }
+    // if (!indicator.name || !indicator.description || !indicator.view_name) {
+    //   return ResponseUtils.format({
+    //     data: {},
+    //     description:
+    //       'Validation errors: name, description, and view_name are required',
+    //     status: HttpStatus.BAD_REQUEST,
+    //   });
+    // }
 
     try {
       await this._indicatorsRepository.save(indicator);
@@ -499,7 +536,6 @@ export class IndicatorsService {
       totalEvaluationsByIndicator[indicator] = Object.values(
         totalEvaluationsByIndicator[indicator],
       );
-      console.log("🚀 ~ IndicatorsService ~ totalEvaluationsByIndicator:", totalEvaluationsByIndicator)
       return ResponseUtils.format({
         data: totalEvaluationsByIndicator,
         description: 'Item status by indicators retrieved successfully',

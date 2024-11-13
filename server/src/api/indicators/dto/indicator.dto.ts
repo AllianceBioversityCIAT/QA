@@ -67,3 +67,11 @@ export class UpdateIndicatorDto {
   })
   primary_field?: string;
 }
+
+export class IndicatorEnableDto {
+  @ApiProperty({ example: 'enable_assesor', description: 'Item' })
+  enable: string;
+
+  @ApiProperty({ example: true, description: 'Active status' })
+  isActive: boolean;
+}

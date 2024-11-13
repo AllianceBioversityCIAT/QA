@@ -16,6 +16,7 @@ import { IndicatorsService } from './indicators.service';
 import {
   AssignIndicatorDto,
   CreateIndicatorDto,
+  IndicatorEnableDto,
   UpdateIndicatorDto,
 } from './dto/indicator.dto';
 import { Roles } from '../../shared/decorators/roles.decorator';
@@ -69,7 +70,7 @@ export class IndicatorsController {
 
   @UseGuards(RolesGuard)
   @Roles([RolesHandler.admin])
-  @Patch(':id')
+  @Patch(':id/user')
   @ApiOperation({ summary: 'Edit an indicator by ID' })
   @ApiResponse({ status: 200, description: 'Indicator updated successfully.' })
   @ApiResponse({ status: 404, description: 'Indicator not found.' })
@@ -77,9 +78,9 @@ export class IndicatorsController {
   @ApiResponse({ status: 409, description: 'Indicator already in use.' })
   update(
     @Param('id') id: string,
-    @Body() updateIndicatorDto: UpdateIndicatorDto,
+    @Body() indicatorEnableDto: IndicatorEnableDto,
   ) {
-    return this.indicatorsService.update(+id, updateIndicatorDto);
+    return this.indicatorsService.editIndicators(+id, indicatorEnableDto);
   }
 
   @UseGuards(RolesGuard)
