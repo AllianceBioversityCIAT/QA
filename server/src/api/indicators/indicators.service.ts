@@ -406,11 +406,7 @@ export class IndicatorsService {
         }
       }
 
-      return ResponseUtils.format({
-        data: totalEvaluationsByIndicator,
-        description: 'Item status by indicators retrieved successfully',
-        status: HttpStatus.OK,
-      });
+      return res.status(HttpStatus.OK).json(totalEvaluationsByIndicator);
     } catch (error) {
       res.status(HttpStatus.NOT_FOUND).json({
         message: 'All items status by indicators can not be retrived.',
@@ -503,6 +499,7 @@ export class IndicatorsService {
       totalEvaluationsByIndicator[indicator] = Object.values(
         totalEvaluationsByIndicator[indicator],
       );
+      console.log("🚀 ~ IndicatorsService ~ totalEvaluationsByIndicator:", totalEvaluationsByIndicator)
       return ResponseUtils.format({
         data: totalEvaluationsByIndicator,
         description: 'Item status by indicators retrieved successfully',
