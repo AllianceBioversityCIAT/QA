@@ -49,7 +49,11 @@ export class ResponseInterceptor implements NestInterceptor {
         }
         const description: string = `[${request.method}]: ${request.url} status: ${modifiedData.status} - By ${ip}`;
 
-        this.logBasedOnStatus(modifiedData.status, description, res?.stack);
+        this.logBasedOnStatus(
+          modifiedData.status,
+          description,
+          res?.description,
+        );
 
         response?.status?.(modifiedData.status);
         return modifiedData;

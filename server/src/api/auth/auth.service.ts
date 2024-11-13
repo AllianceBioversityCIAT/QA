@@ -44,14 +44,11 @@ export class AuthService {
   async loginService(loginDto: LoginDto): Promise<any> {
     const { username, password } = loginDto;
     if (!(username && password)) {
-      throw new HttpException(
-        {
-          errorMessage: 'Username and password are required.',
-          status: HttpStatus.BAD_REQUEST,
-          severity: 'danger',
-        },
-        HttpStatus.BAD_REQUEST,
-      );
+      return ResponseUtils.format({
+        data: null,
+        description: 'Username and password are required.',
+        status: HttpStatus.BAD_REQUEST,
+      });
     }
 
     try {
@@ -81,10 +78,12 @@ export class AuthService {
         if (isMarlo) {
           user = marloUser;
         } else {
-          throw new HttpException(
-            'User not found or password incorrect.',
-            HttpStatus.UNAUTHORIZED,
-          );
+          return ResponseUtils.format({
+            data: null,
+            description: 'User not found or password incorrect.',
+            status: HttpStatus.UNAUTHORIZED,
+            errors: 'User not found or password incorrect.',
+          });
         }
       } else {
         user = await this._userRepository.findOne({
@@ -110,10 +109,12 @@ export class AuthService {
           !this._bcryptPasswordEncoder.matches(password, user.password)
         ) {
           this._logger.error('User not found or password incorrect.');
-          throw new HttpException(
-            'User not found or password incorrect.',
-            HttpStatus.UNAUTHORIZED,
-          );
+          return ResponseUtils.format({
+            data: null,
+            description: 'User not found or password incorrect.',
+            status: HttpStatus.UNAUTHORIZED,
+            errors: 'User not found or password incorrect.',
+          });
         }
       }
 
@@ -125,10 +126,12 @@ export class AuthService {
         userRoles.includes(RolesHandler.assesor)
       ) {
         this._logger.log('User is CRP and Assessor');
-        throw new HttpException(
-          'User is CRP and Assessor, please contact the Technical Team.',
-          HttpStatus.UNAUTHORIZED,
-        );
+        return ResponseUtils.format({
+          data: null,
+          description:
+            'User is CRP and Assessor, please contact the Technical Team.',
+          status: HttpStatus.UNAUTHORIZED,
+        });
       }
 
       const [generalConfig, currentCycle] = await Promise.all([
@@ -177,11 +180,13 @@ export class AuthService {
         status: HttpStatus.OK,
       });
     } catch (error) {
+      console.log('🚀 ~ AuthService ~ loginService ~ error:', error);
       this._logger.error(error);
-      throw new HttpException(
-        error.response.errorMessage || error,
-        error.response.status || HttpStatus.INTERNAL_SERVER_ERROR,
-      );
+      return ResponseUtils.format({
+        data: null,
+        description: error.response.errorMessage || error,
+        status: error.response.status || HttpStatus.INTERNAL_SERVER_ERROR,
+      });
     }
   }
 

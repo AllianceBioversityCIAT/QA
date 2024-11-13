@@ -15,6 +15,7 @@ import { LoggingInterceptor } from './shared/interceptor/loggin.interceptor';
 import { JwtService } from '@nestjs/jwt';
 import { JwtMiddleware } from './shared/middlewares/jwt.middleware';
 import { RolesModule } from './api/roles/roles.module';
+import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
 
 @Module({
   imports: [
@@ -37,6 +38,10 @@ import { RolesModule } from './api/roles/roles.module';
     {
       provide: APP_INTERCEPTOR,
       useClass: LoggingInterceptor,
+    },
+    {
+      provide: APP_INTERCEPTOR,
+      useClass: ResponseInterceptor,
     },
     {
       provide: APP_FILTER,
