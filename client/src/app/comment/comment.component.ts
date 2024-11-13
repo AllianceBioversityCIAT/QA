@@ -15,6 +15,7 @@ import { CommentService } from '../services/comment.service';
 import { WordCounterPipe } from '../pipes/word-counter.pipe';
 import { mergeMap } from 'rxjs/operators';
 // import { HttpClient } from '@angular/common/http';
+import { MenuModule } from 'primeng/menu';
 
 // import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 // import { EvaluationsService } from '../services/evaluations.service';
@@ -38,6 +39,8 @@ import { OrderModule } from 'ngx-order-pipe';
 import { Ng2SearchPipeModule } from 'ng2-search-filter';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
+import { MenuItem } from 'primeng/api';
 
 // ProgressbarModule.forRoot(), ButtonsModule.forRoot(), CollapseModule.forRoot(), PaginationModule.forRoot(), TooltipModule.forRoot(), CarouselModule.forRoot(), BsDropdownModule.forRoot()
 @Component({
@@ -52,7 +55,9 @@ import { ButtonModule } from 'primeng/button';
     FormsModule,
     TagsBarComponent,
     DialogModule,
-    ButtonModule
+    ButtonModule,
+    DropdownModule,
+    MenuModule
   ],
   templateUrl: './comment.component.html',
   styleUrls: ['./comment.component.scss'],
@@ -82,6 +87,7 @@ export class CommentComponent implements OnInit {
   detailItemFounded2 = null;
   adminUser: any = false;
   showDialog = false;
+  selectedQuickComment: string = '';
 
   // require_changes = false;
 
@@ -90,7 +96,21 @@ export class CommentComponent implements OnInit {
 
   // modalRef: BsModalRef;
   message: string;
-
+  items: MenuItem[] = [
+    {
+      label: 'Options',
+      items: [
+        {
+          label: 'Refresh',
+          icon: 'pi pi-refresh'
+        },
+        {
+          label: 'Export',
+          icon: 'pi pi-upload'
+        }
+      ]
+    }
+  ];
   quickComments;
 
   currentComment;
@@ -217,6 +237,7 @@ export class CommentComponent implements OnInit {
     this.commentService.getQuickComments().subscribe(
       res => {
         this.quickComments = res.data;
+        console.log(this.quickComments, '🔥🔥');
       },
       error => {
         console.log(error);
@@ -653,8 +674,8 @@ export class CommentComponent implements OnInit {
     return isCommentUnavailable;
   }
 
-  setCommentValue(event, value: string) {
-    event.preventDefault();
-    this.commentGroup.controls['comment'].setValue(value);
+  setCommentValue(comment: string, buttonHtml: HTMLButtonElement) {
+    this.commentGroup.controls['comment'].setValue(comment);
+    buttonHtml.blur();
   }
 }

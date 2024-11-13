@@ -1,5 +1,40 @@
 @import '@public/variables.scss';
 
+.dropdown-toggle {
+  width: 100%;
+  position: relative;
+  &:focus {
+    .content {
+      display: flex;
+    }
+  }
+  .content {
+    display: none;
+    flex-direction: column;
+    gap: 20px;
+    position: absolute;
+    width: 100%;
+    top: 32px;
+    left: 0;
+    background-color: white;
+    box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.1);
+    max-height: 200px;
+    overflow-y: scroll;
+    padding-top: 20px;
+
+    .option {
+      display: flex;
+      align-items: center;
+      justify-content: start;
+      padding: 10px;
+      cursor: pointer;
+      color: black;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+  }
+}
 .comments-container {
   .accept-comment-prompt {
     font-size: 1.4em; // Adjust the size as needed

@@ -336,16 +336,33 @@
       <!-- <p><span class="textarea" role="textbox" contenteditable maxlength="{{totalChar}}" formControlName="comment"></span></p> -->
       <textarea maxlength="{{ totalChar }}" formControlName="comment"></textarea>
     </form>
-    <div *ngIf="!this.isCRP" class="btn-group w-100" dropdown>
-      <button id="button-animated" dropdownToggle type="button" class="btn btn-primary dropdown-toggle w-100" aria-controls="dropdown-animated">
+    <div *ngIf="!this.isCRP">
+      <button #buttonAnimated type="button" class="btn btn-primary dropdown-toggle w-100" aria-controls="dropdown-animated">
         Quick comment <span class="caret"></span>
+        <div class="content">
+          @for (quickComment of quickComments; track $index) {
+            <div class="option" (click)="setCommentValue(quickComment.comment, buttonAnimated)">{{ $index + 1 }}. {{ quickComment.comment }}</div>
+          }
+        </div>
       </button>
-      <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
+      <!-- <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
         <li role="menuitem" *ngFor="let quickComment of quickComments">
           <a class="dropdown-item" (click)="setCommentValue($event, quickComment.comment)" href="#">{{ quickComment.comment }}</a>
           <div class="dropdown-divider"></div>
         </li>
-      </ul>
+      </ul> -->
+      <!-- <p-button class="quick-comment-btn" (onClick)="menu.toggle($event)" icon="pi pi-ellipsis-v" label="Quick comment" />
+      <p-menu #menu [model]="items" [popup]="true" /> -->
+      <!-- <div style="width: 100%; position: relative; max-width: 300px">
+        <p-dropdown
+          [style]="{ width: '100%' }"
+          [options]="quickComments"
+          optionLabel="comment"
+          optionValue="comment"
+          placeholder="Quick comment"
+          [(ngModel)]="selectedQuickComment"
+          (ngModelChange)="setCommentValue()" />
+      </div> -->
     </div>
     <footer>
       <span class="wordCount">{{ getWordCount(formData['comment'].value) }} / 1000 words</span>
