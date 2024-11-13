@@ -95,10 +95,12 @@ export class IndicatorsService {
 
         const savedIndicators =
           await this._indicatorUserRepository.save(savePromises);
-        return {
-          message: 'Indicator by user saved',
+
+        return ResponseUtils.format({
           data: savedIndicators,
-        };
+          description: 'Indicators assigned successfully',
+          status: HttpStatus.OK,
+        });
       } catch (error) {
         this._logger.error(error);
         return ResponseUtils.format({
@@ -125,10 +127,11 @@ export class IndicatorsService {
           .getMany();
 
         if (hasAssignedIndicators.length > 0) {
-          return {
-            message: 'Indicator already assigned to user',
+          return ResponseUtils.format({
             data: selectedIndicator,
-          };
+            description: 'Indicator already assigned',
+            status: HttpStatus.CONFLICT,
+          });
         }
       } catch (error) {
         this._logger.error(error);
@@ -136,6 +139,7 @@ export class IndicatorsService {
           data: {},
           description: 'Users or indicator not found',
           status: HttpStatus.NOT_FOUND,
+          errors: error,
         });
       }
 
@@ -170,10 +174,11 @@ export class IndicatorsService {
         });
       }
 
-      return {
-        message: 'All indicators retrieved successfully',
+      return ResponseUtils.format({
         data: indicators,
-      };
+        description: 'Indicators retrieved successfully',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error(error);
       return ResponseUtils.format({
@@ -400,7 +405,12 @@ export class IndicatorsService {
           });
         }
       }
-      return res.status(HttpStatus.OK).json(totalEvaluationsByIndicator);
+
+      return ResponseUtils.format({
+        data: totalEvaluationsByIndicator,
+        description: 'Item status by indicators retrieved successfully',
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       res.status(HttpStatus.NOT_FOUND).json({
         message: 'All items status by indicators can not be retrived.',
