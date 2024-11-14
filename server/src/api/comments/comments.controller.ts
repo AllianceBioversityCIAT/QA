@@ -167,10 +167,7 @@ export class CommentsController {
     description: 'Comments raw data error',
   })
   @Get('/excel-raw/:crp_id')
-  async getRawCommentsExcel(
-    @Param('crp_id') crp_id: string,
-    @Res() res: Response,
-  ) {
+  async getRawCommentsExcel(@Param('crp_id') crp_id: string) {
     return await this.commentsService.getRawCommentsExcel(crp_id);
   }
 
@@ -190,18 +187,10 @@ export class CommentsController {
   @ApiResponse({ status: 404, description: 'Comments raw data error' })
   async getRawCommentsData(
     @Param('crp_id') crp_id: string,
-    @Res() res: Response,
   ) {
-    try {
-      const data = await this.commentsService.getRawCommentsData(
-        crp_id !== 'undefined' ? crp_id : undefined,
-      );
-      res.status(200).json({ message: 'Comments raw data', data });
-    } catch (error) {
-      res
-        .status(404)
-        .json({ message: 'Comments raw data error', data: error.message });
-    }
+    return await this.commentsService.getRawCommentsData(
+      crp_id !== 'undefined' ? crp_id : undefined,
+    );
   }
 
   @UseGuards(RolesGuard)
