@@ -45,7 +45,7 @@ export class AuthenticationService {
   }
 
   login(username, password) {
-    return this.http.post<any>(`${environment.apiBaseUrl}/auth/login`, { username, password }).pipe(
+    return this.http.post<any>(`${environment.apiBaseUrl}auth/login`, { username, password }).pipe(
       map(user => {
         return this.setUserLogged(user.data);
       })
@@ -53,7 +53,7 @@ export class AuthenticationService {
   }
 
   tokenLogin(params: {}) {
-    return this.http.post<any>(`${environment.apiBaseUrl}/auth/token/login`, params).pipe(
+    return this.http.post<any>(`${environment.apiBaseUrl}auth/token/login`, params).pipe(
       map(user => {
         console.log(user);
         this.parseMultipleCRP(user.data, params['crp_id']);

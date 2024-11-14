@@ -11,7 +11,7 @@ export class DashboardService {
 
   // get dash data (evaluations) by user
   getDashboardEvaluations(id) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/user/${id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/user/${id}`);
   }
 
   // get list dash data (evaluations)
@@ -20,7 +20,7 @@ export class DashboardService {
       view_name: view_name,
       view_primary_field: view_primary_field
     };
-    return this.http.post<any>(`${environment.apiBaseUrl}/evaluation/${id}/list?crp_id=${crp_id}`, params);
+    return this.http.post<any>(`${environment.apiBaseUrl}evaluation/${id}/list?crp_id=${crp_id}`, params);
   }
 
   /**
@@ -34,33 +34,33 @@ export class DashboardService {
   getAllDashboardEvaluations(crp_id?) {
     let params = new HttpParams().set('crp_id', crp_id);
     // params.set('is_crp', is_crp);
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/`, { params });
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/`, { params });
   }
   // get all dash data by crp (evaluations)
   getAllDashboardEvaluationsByCRP(crp_id?) {
     let params = new HttpParams().set('crp_id', crp_id);
     // params.set('is_crp', is_crp);
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/status/crp`, { params });
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/status/crp`, { params });
   }
 
   //get all qa crps
   getCRPS() {
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/crp`);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/crp`);
   }
 
   //get indicators by crp
   getIndicatorsByCRP() {
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/crp/indicators`);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/crp/indicators`);
   }
 
   //get batches
   getAllBatches() {
-    return this.http.get<any>(`${environment.apiBaseUrl}/comment/batches`);
+    return this.http.get<any>(`${environment.apiBaseUrl}comment/batches`);
   }
 
   // get hihglighted data
   getHighlightedData() {
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/highlight-status`);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/highlight-status`);
   }
 
   sortProperties(obj) {

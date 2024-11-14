@@ -406,7 +406,7 @@ export class CommentComponent implements OnInit {
       is_deleted: data.is_deleted,
       id: data.id,
       detail: data.detail,
-      userId: data.user.id,
+      userId: data?.obj_user?.id,
       require_changes: false
     };
     this.showSpinner(this.spinner_comment);

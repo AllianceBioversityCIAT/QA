@@ -36,7 +36,7 @@
                 <i
                   *ngIf="
                     (comment.obj_user.id === currentUser.id || currentUser.roles[0].description === allRoles.admin || userIsLeader) &&
-                    comment.replies.replies_count == '0' &&
+                    !comment.loaded_replies.length &&
                     !crpComment
                   "
                   (click)="updateComment('is_deleted', comment, dataFromItem.general_comment_id)"
@@ -54,10 +54,10 @@
               (tagEvent)="toggleTag($event)"></app-tags-bar>
 
             <!-- currentUser.indicators.isTPB != 1 -->
-            <a *ngIf="comment.replies.replies_count != '0'" style="cursor: pointer" (click)="comment.isCollapsed = !comment.isCollapsed">
-              {{ comment.replies.replies_count }} replies:
+            <a *ngIf="comment.loaded_replies.length" style="cursor: pointer" (click)="comment.isCollapsed = !comment.isCollapsed">
+              {{ comment.loaded_replies.length }} replies:
             </a>
-            <div [attr.aria-expanded]="!comment.isCollapsed" id="collapseBasic-{{ comment.id }}">
+            <div *ngIf="comment.loaded_replies.length" [attr.aria-expanded]="!comment.isCollapsed" id="collapseBasic-{{ comment.id }}">
               <div>
                 <div class="well well-lg card card-block card-header">
                   <ng-container *ngFor="let reply of comment.loaded_replies" class="replies-container">

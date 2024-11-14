@@ -29,19 +29,19 @@ export class IndicatorsService {
 
   // get indicators by user
   getIndicatorsByUser(id, crp_id?) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/user/${id}?crp_id=${crp_id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}indicator/user/${id}?crp_id=${crp_id}`);
   }
   // update indicators by user
   updateIndicatorsByUser(id, params) {
-    return this.http.patch<any>(`${environment.apiBaseUrl}/indicator/${id}/user`, params);
+    return this.http.patch<any>(`${environment.apiBaseUrl}indicator/${id}/user`, params);
   }
   //get all indicators
   getIndicators() {
-    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/`);
+    return this.http.get<any>(`${environment.apiBaseUrl}indicator/`);
   }
   //get crp
   getCRP(crp_id) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/crp/${crp_id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}indicator/crp/${crp_id}`);
   }
   getCurrentOrder() {
     for (const key in this.allOrderTypes) {
@@ -85,11 +85,11 @@ export class IndicatorsService {
   }
 
   getItemStatusByIndicator(indicator_name, crp_id?) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/items/${indicator_name}?crp_id=${crp_id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}indicator/items/${indicator_name}?crp_id=${crp_id}`);
   }
 
   getAllItemStatusByIndicator() {
-    return this.http.get<any>(`${environment.apiBaseUrl}/indicator/items`);
+    return this.http.get<any>(`${environment.apiBaseUrl}indicator/items`);
   }
 
   formatItemStatusByIndicator(obj) {

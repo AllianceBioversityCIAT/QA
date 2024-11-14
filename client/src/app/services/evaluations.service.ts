@@ -11,28 +11,28 @@ export class EvaluationsService {
 
   // get data for evaluation
   getDataEvaluation(id, params) {
-    return this.http.post<any>(`${environment.apiBaseUrl}/evaluation/${id}/detail`, params);
+    return this.http.post<any>(`${environment.apiBaseUrl}evaluation/${id}/detail`, params);
   }
 
   // update comment data for evaluation
   updateDataEvaluation(params, id) {
-    return this.http.patch<any>(`${environment.apiBaseUrl}/evaluation/${id}/detail/`, params);
+    return this.http.patch<any>(`${environment.apiBaseUrl}evaluation/${id}/detail/`, params);
   }
   // update require_second_assessment for evaluation
   updateRequireSecondAssessmentEvaluation(id, params) {
-    return this.http.patch<any>(`${environment.apiBaseUrl}/evaluation/${id}/detail/second_assessment`, params);
+    return this.http.patch<any>(`${environment.apiBaseUrl}evaluation/${id}/detail/second_assessment`, params);
   }
 
   // get criteria by indicator
   getCriteriaByIndicator(id) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/indicator/${id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/indicator/${id}`);
   }
 
   // get assessors by indicator
   getAssessorsByEvaluation(id) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/${id}/assessors`);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/${id}/assessors`);
   }
   getEvaluationStatus(result_id) {
-    return this.http.get<any>(`${environment.apiBaseUrl}/evaluation/status/${result_id}`);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/status/${result_id}`);
   }
 }
