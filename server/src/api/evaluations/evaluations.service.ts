@@ -194,7 +194,7 @@ export class EvaluationsService {
         return ResponseUtils.format({
           data: [],
           description: 'No evaluations found for this user.',
-          status: HttpStatus.NOT_FOUND,
+          status: HttpStatus.OK,
         });
       }
 
@@ -936,10 +936,6 @@ export class EvaluationsService {
       `;
 
       const highlights = await this._evaluationsRepository.query(query);
-
-      if (highlights.length === 0) {
-        throw new Error('No evaluations found for this user.');
-      }
 
       const data = highlights.map((highlight: any) => ({
         pending_highlight_comments:
