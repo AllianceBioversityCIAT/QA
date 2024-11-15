@@ -218,9 +218,7 @@ export class CommentsController {
   @ApiOperation({ summary: 'Update a cycle' })
   @ApiResponse({ status: 200, description: 'Cycle updated successfully' })
   @ApiResponse({ status: 404, description: 'Cycle not found' })
-  async updateCycle(
-    @Body() updateCycleDto: UpdateCycleDto,
-  ) {
+  async updateCycle(@Body() updateCycleDto: UpdateCycleDto) {
     const { id, start_date, end_date } = updateCycleDto;
     return await this.commentsService.updateCycle(id, start_date, end_date);
   }
@@ -239,18 +237,7 @@ export class CommentsController {
     @Res() res: Response,
   ) {
     const { ppu, commentReplyId } = patchPpuChangesDto;
-    try {
-      const result = await this.commentsService.patchPpuChanges(
-        ppu,
-        commentReplyId,
-      );
-      res.status(HttpStatus.ACCEPTED).send(result);
-    } catch (error) {
-      res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message || 'An error occurred',
-        data: error.data || {},
-      });
-    }
+    return await this.commentsService.patchPpuChanges(ppu, commentReplyId);
   }
 
   @Get('batches')
@@ -299,11 +286,6 @@ export class CommentsController {
     @Param('crp_id') crp_id: string,
     @Res() res: Response,
   ) {
-    try {
-      const data = await this.commentsService.getExcelComments(crp_id);
-      res.status(200).send(data);
-    } catch (error) {
-      res.status(404).send(error);
-    }
+    return await this.commentsService.getExcelComments(crp_id);
   }
 }
