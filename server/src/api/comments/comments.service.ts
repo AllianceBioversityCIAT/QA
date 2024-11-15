@@ -376,7 +376,7 @@ export class CommentsService {
       const data = await this._commentsRepository.getRawCommentsExcel(crp_id);
 
       return ResponseUtils.format({
-        data,
+        data: data,
         description: 'Raw comments excel data retrieved successfully',
         status: HttpStatus.OK,
       });
