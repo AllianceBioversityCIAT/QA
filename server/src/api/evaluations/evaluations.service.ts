@@ -863,10 +863,11 @@ export class EvaluationsService {
         assessed_r2: assessedR2[0]?.assessed_r2 || 'Not yet assessed',
       };
 
-      return {
+      return ResponseUtils.format({
         data: response,
-        message: `Assessors in evaluation ${evaluationId}`,
-      };
+        description: `Assessors in evaluation ${evaluationId}`,
+        status: HttpStatus.OK,
+      });
     } catch (error) {
       this._logger.error('Error retrieving assessors:', error);
       return ResponseUtils.format({

@@ -185,9 +185,7 @@ export class CommentsController {
     description: 'Comments raw data retrieved successfully',
   })
   @ApiResponse({ status: 404, description: 'Comments raw data error' })
-  async getRawCommentsData(
-    @Param('crp_id') crp_id: string,
-  ) {
+  async getRawCommentsData(@Param('crp_id') crp_id: string) {
     return await this.commentsService.getRawCommentsData(
       crp_id !== 'undefined' ? crp_id : undefined,
     );
@@ -220,24 +218,9 @@ export class CommentsController {
   @ApiOperation({ summary: 'Update a cycle' })
   @ApiResponse({ status: 200, description: 'Cycle updated successfully' })
   @ApiResponse({ status: 404, description: 'Cycle not found' })
-  async updateCycle(
-    @Body() updateCycleDto: UpdateCycleDto,
-    @Res() res: Response,
-  ) {
+  async updateCycle(@Body() updateCycleDto: UpdateCycleDto) {
     const { id, start_date, end_date } = updateCycleDto;
-    try {
-      const result = await this.commentsService.updateCycle(
-        id,
-        start_date,
-        end_date,
-      );
-      res.status(HttpStatus.OK).send(result);
-    } catch (error) {
-      res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message || 'An error occurred',
-        data: error.data || {},
-      });
-    }
+    return await this.commentsService.updateCycle(id, start_date, end_date);
   }
 
   @UseGuards(RolesGuard)
@@ -254,18 +237,7 @@ export class CommentsController {
     @Res() res: Response,
   ) {
     const { ppu, commentReplyId } = patchPpuChangesDto;
-    try {
-      const result = await this.commentsService.patchPpuChanges(
-        ppu,
-        commentReplyId,
-      );
-      res.status(HttpStatus.ACCEPTED).send(result);
-    } catch (error) {
-      res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message || 'An error occurred',
-        data: error.data || {},
-      });
-    }
+    return await this.commentsService.patchPpuChanges(ppu, commentReplyId);
   }
 
   @Get('batches')
@@ -314,11 +286,6 @@ export class CommentsController {
     @Param('crp_id') crp_id: string,
     @Res() res: Response,
   ) {
-    try {
-      const data = await this.commentsService.getExcelComments(crp_id);
-      res.status(200).send(data);
-    } catch (error) {
-      res.status(404).send(error);
-    }
+    return await this.commentsService.getExcelComments(crp_id);
   }
 }
