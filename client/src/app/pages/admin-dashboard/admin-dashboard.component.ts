@@ -425,7 +425,8 @@ export default class AdminDashboardComponent implements OnInit {
     this.showSpinner();
     request.subscribe(
       res => {
-        // this.loadDashData();
+        this.loadDashData();
+        this.hideSpinner();
       },
       error => {
         this.hideSpinner();
