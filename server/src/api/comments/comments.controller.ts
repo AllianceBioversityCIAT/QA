@@ -185,9 +185,7 @@ export class CommentsController {
     description: 'Comments raw data retrieved successfully',
   })
   @ApiResponse({ status: 404, description: 'Comments raw data error' })
-  async getRawCommentsData(
-    @Param('crp_id') crp_id: string,
-  ) {
+  async getRawCommentsData(@Param('crp_id') crp_id: string) {
     return await this.commentsService.getRawCommentsData(
       crp_id !== 'undefined' ? crp_id : undefined,
     );
@@ -222,22 +220,9 @@ export class CommentsController {
   @ApiResponse({ status: 404, description: 'Cycle not found' })
   async updateCycle(
     @Body() updateCycleDto: UpdateCycleDto,
-    @Res() res: Response,
   ) {
     const { id, start_date, end_date } = updateCycleDto;
-    try {
-      const result = await this.commentsService.updateCycle(
-        id,
-        start_date,
-        end_date,
-      );
-      res.status(HttpStatus.OK).send(result);
-    } catch (error) {
-      res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message || 'An error occurred',
-        data: error.data || {},
-      });
-    }
+    return await this.commentsService.updateCycle(id, start_date, end_date);
   }
 
   @UseGuards(RolesGuard)
