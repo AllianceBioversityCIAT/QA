@@ -1,14 +1,16 @@
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, effect, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
-
+import { JsonPipe } from '@angular/common';
+import { DashboardCacheService } from './dashboard-cache.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ChartModule],
+  imports: [ChartModule, JsonPipe],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
-export class DashboardComponent implements OnChanges {
+export class DashboardComponent {
+  dashboardCacheService = inject(DashboardCacheService);
   @Input() dataCharts: any;
 
   dataGeneralStatus: any;
@@ -20,13 +22,19 @@ export class DashboardComponent implements OnChanges {
   dataAssessmentByField: any;
   optionAssessmentByField: any;
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes['dataCharts'] && this.dataCharts) {
-      this.updateChartData();
-    }
-  }
+  onChange = effect(
+    () => {
+      console.log('update');
+      if (this.dashboardCacheService.updateChartData()) {
+        this.updateChartData();
+        this.dashboardCacheService.updateChartData.set(false);
+      }
+    },
+    { allowSignalWrites: true }
+  );
 
   updateChartData() {
+    console.log('updateChartData');
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, Input, OnInit, TemplateRef } from '@angular/core';
 import { BsModalService, BsModalRef } from 'ngx-bootstrap/modal';
 import { FormBuilder, FormGroup, FormArray, FormControl, Validators, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Router, RouterModule } from '@angular/router';
@@ -30,6 +30,7 @@ import { SortByPipe } from '../../pipes/sort-by.pipe';
 import { TooltipModule } from 'primeng/tooltip';
 import { DashboardComponent } from '../../components/dashboard/dashboard.component';
 import { DropdownModule } from 'primeng/dropdown';
+import { DashboardCacheService } from '../../components/dashboard/dashboard-cache.service';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -66,6 +67,7 @@ export default class AdminDashboardComponent implements OnInit {
   indicatorsName = GeneralIndicatorName;
   isDataNull: boolean = false;
   sss: any;
+  dashboardCacheService = inject(DashboardCacheService);
 
   assessorsChat = {
     isOpen: false,
@@ -231,6 +233,7 @@ export default class AdminDashboardComponent implements OnInit {
       this.updateDataCharts();
 
       this.hideSpinner();
+      this.dashboardCacheService.updateChartData.set(true);
     });
   }
 
@@ -603,6 +606,9 @@ export default class AdminDashboardComponent implements OnInit {
     this.dataCharts.assessorsInteractions = this.formatIndicatorTags();
     this.dataCharts.responseToComments = this.formatCommentsIndicatorData(this.dashboardCommentsData[this.selectedIndicator], this.selectedIndicator);
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
+    setTimeout(() => {
+      this.dashboardCacheService.updateChartData.set(true);
+    }, 500);
   }
 
   updateFeedTags(tagTypeId) {

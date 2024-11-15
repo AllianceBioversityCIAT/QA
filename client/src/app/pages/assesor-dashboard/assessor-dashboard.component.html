@@ -27,13 +27,7 @@
       <div *ngIf="isDataNull" class="no-data-container">
         <div class="no-data-message">No results available at the moment.</div>
       </div>
-      <div
-        *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !isDataNull"
-        class="w-100"
-        [ngClass]="{
-          'grid-container': currentUser.cycle.cycle_stage == '1',
-          'grid-second-round': currentUser.cycle.cycle_stage == '2'
-        }">
+      <div *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !isDataNull" class="w-100">
         @if (
           this.dataCharts.generalStatus ||
           this.dataCharts.assessorsInteractions ||

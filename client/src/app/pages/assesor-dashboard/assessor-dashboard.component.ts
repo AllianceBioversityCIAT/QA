@@ -1,4 +1,4 @@
-import { Component, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, TemplateRef } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -23,6 +23,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { DashboardComponent } from '../../components/dashboard/dashboard.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { FormsModule } from '@angular/forms';
+import { DashboardCacheService } from '../../components/dashboard/dashboard-cache.service';
 
 @Component({
   selector: 'app-assessor-dashboard',
@@ -42,6 +43,7 @@ import { FormsModule } from '@angular/forms';
   styleUrls: ['./assessor-dashboard.component.scss']
 })
 export default class AssessorDashboardComponent implements OnInit {
+  dashboardCacheService = inject(DashboardCacheService);
   currentUser: User;
   dashboardData: any[];
   dashboardCommentsData: any[];
@@ -174,14 +176,16 @@ export default class AssessorDashboardComponent implements OnInit {
     return this.indicatorsName[indicator];
   }
 
-  actualIndicator(indicator: string) {
-    this.selectedIndicator = indicator;
+  actualIndicator(indicator: any) {
+    console.log('actualIndicator', indicator);
+    this.selectedIndicator = indicator?.viewname;
     this.dataSelected = this.dashboardData[this.selectedIndicator];
 
     this.showSpinner();
 
     let responses = forkJoin([this.getItemStatusByIndicatorService(this.selectedIndicator)]);
     responses.subscribe(res => {
+      console.log(res);
       const [assessmentByField] = res;
 
       this.itemStatusByIndicator = assessmentByField.data;
@@ -400,6 +404,9 @@ export default class AssessorDashboardComponent implements OnInit {
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
     let find = this.highlightedData.find(indi => indi.indicator_view_name == this.selectedIndicator);
     this.dataCharts.highlitedPendingComments = this.getHighlightData(find, this.selectedIndicator);
+    setTimeout(() => {
+      this.dashboardCacheService.updateChartData.set(true);
+    }, 500);
   }
 
   updateFeedTags(tagTypeId) {
