@@ -424,8 +424,10 @@ export default class AssessorDashboardComponent implements OnInit {
     if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
 
     this.commentService.getCommentsRawExcel().subscribe(
-      res => {
-        this._exportTableSE.exportMultipleSheetsExcel(res[0], filename, null, res[1]);
+      (res: { data: any[] }) => {
+        console.clear();
+        const [commentRaw, assessmentRaw] = res.data;
+        this._exportTableSE.exportMultipleSheetsExcel(commentRaw, filename, null, assessmentRaw);
         this.hideSpinner();
       },
       error => {
