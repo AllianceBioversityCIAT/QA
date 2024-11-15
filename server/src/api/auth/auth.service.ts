@@ -180,18 +180,18 @@ export class AuthService {
         status: HttpStatus.OK,
       });
     } catch (error) {
-      console.log('🚀 ~ AuthService ~ loginService ~ error:', error);
       this._logger.error(error);
       return ResponseUtils.format({
         data: null,
-        description: error.response.errorMessage || error,
-        status: error.response.status || HttpStatus.INTERNAL_SERVER_ERROR,
+        description: 'An error occurred while logging in, please try again.',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
   }
 
   async validateAD(user: any, password: string): Promise<boolean> {
     const ad = new ActiveDirectory(config.active_directory);
+    this._logger.log('Validating user in AD', ad);
     const adUser = user.email;
 
     try {
@@ -201,18 +201,15 @@ export class AuthService {
             this._logger.log('User authenticated');
             resolve(true);
           } else if (err) {
+            this._logger.error(err);
             if (err.errno) {
               this._logger.error('Domain Controller Server not found');
-              reject(new Error('Domain Controller Server not found'));
+              reject();
             } else {
-              reject(
-                new UnauthorizedException('The supplied credential is invalid'),
-              );
+              reject();
             }
           } else {
-            reject(
-              new UnauthorizedException('The supplied credential is invalid'),
-            );
+            reject();
           }
         });
       });
