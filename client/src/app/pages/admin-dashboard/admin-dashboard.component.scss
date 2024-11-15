@@ -639,3 +639,21 @@
   box-shadow: 0 0 #adb5bd;
   top: 5px;
 }
+
+.stages-container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  padding: 15px;
+  .stage-row {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    p-calendar {
+      width: 100%;
+    }
+  }
+  .update-cycle-btn {
+    grid-column: span 2;
+  }
+}

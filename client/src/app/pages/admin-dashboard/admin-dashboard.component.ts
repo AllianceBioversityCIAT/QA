@@ -23,7 +23,7 @@ import { NgbDate, NgbCalendar, NgbDateParserFormatter } from '@ng-bootstrap/ng-b
 
 import * as moment from 'moment';
 import { ExportTablesService } from '../../services/export-tables.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { TimelineComponent } from '../../components/timeline/timeline.component';
 import { sortBy } from 'lodash';
 import { SortByPipe } from '../../pipes/sort-by.pipe';
@@ -31,6 +31,7 @@ import { TooltipModule } from 'primeng/tooltip';
 import { DashboardComponent } from '../../components/dashboard/dashboard.component';
 import { DropdownModule } from 'primeng/dropdown';
 import { DashboardCacheService } from '../../components/dashboard/dashboard-cache.service';
+import { CalendarModule } from 'primeng/calendar';
 
 @Component({
   selector: 'app-admin-dashboard',
@@ -46,7 +47,9 @@ import { DashboardCacheService } from '../../components/dashboard/dashboard-cach
     FormsModule,
     RouterModule,
     DashboardComponent,
-    DropdownModule
+    DropdownModule,
+    CalendarModule,
+    JsonPipe
   ],
   templateUrl: './admin-dashboard.component.html',
   styleUrls: ['./admin-dashboard.component.scss']
@@ -584,6 +587,14 @@ export default class AdminDashboardComponent implements OnInit {
 
         this.dashboardCyclesData = this.parseCycleDates(cycleData.data);
 
+        console.log(this.dashboardCyclesData);
+        this.dashboardCyclesData.map(cycle => {
+          console.log(`${cycle.start_date.year}-${cycle.start_date.month}-${cycle.start_date.day}`);
+          cycle.cycle_start_date = `${cycle.start_date.year}-${cycle.start_date.month}-${cycle.start_date.day}`;
+          cycle.cycle_end_date = `${cycle.end_date.year}-${cycle.end_date.month}-${cycle.end_date.day}`;
+        });
+        console.log(this.dashboardCyclesData);
+
         this.indicatorsTags = this.commentService.groupTags(allTags.data);
 
         this.feedList = feedTags.data;
@@ -690,15 +701,56 @@ export default class AdminDashboardComponent implements OnInit {
 
   updateCycle() {
     let copyCurrenCycle = Object.assign({}, this.currenTcycle);
-    copyCurrenCycle.start_date = this.formatDate(this.currenTcycle.start_date)['format']('YYYY-MM-DDT00:00:00.000Z');
-    copyCurrenCycle.end_date = this.formatDate(this.currenTcycle.end_date)['format']('YYYY-MM-DDT23:59:00.000Z');
+    console.clear();
+    console.log(this.currenTcycle.start_date);
+    console.log(copyCurrenCycle);
+
+    console.log(copyCurrenCycle.cycle_start_date);
+    console.log(copyCurrenCycle.cycle_end_date);
+    const splitDate = (dateString: string | Date): any => {
+      if (!dateString) return null;
+
+      // Handle Date object format
+      if (dateString instanceof Date) {
+        return {
+          year: dateString.getFullYear(),
+          month: dateString.getMonth() + 1, // getMonth() returns 0-11
+          day: dateString.getDate()
+        };
+      }
+
+      // Handle string date format
+      if (dateString.includes('-')) {
+        const [year, month, day] = dateString.split('-').map(Number);
+        return { year, month, day };
+      }
+
+      // Handle string date format like "Tue Oct 29 2024..."
+      const date = new Date(dateString);
+      if (!isNaN(date.getTime())) {
+        return {
+          year: date.getFullYear(),
+          month: date.getMonth() + 1,
+          day: date.getDate()
+        };
+      }
+
+      return null;
+    };
+    console.log(splitDate(copyCurrenCycle.cycle_start_date));
+    console.log(splitDate(copyCurrenCycle.cycle_end_date));
+    copyCurrenCycle.start_date = this.formatDate(splitDate(copyCurrenCycle.cycle_start_date))['format']('YYYY-MM-DDT00:00:00.000Z');
+    copyCurrenCycle.end_date = this.formatDate(splitDate(copyCurrenCycle.cycle_end_date))['format']('YYYY-MM-DDT23:59:00.000Z');
     this.showSpinner();
+    console.log(copyCurrenCycle);
+
     this.setCycle(copyCurrenCycle).subscribe(
       res => {
         console.log(res);
         this.getCycles().subscribe(
           res => {
-            this.dashboardCyclesData = this.parseCycleDates(res.data);
+            // this.dashboardCyclesData = this.parseCycleDates(res.data);
+            this.loadDashData();
             this.hideSpinner();
           },
           error => {
