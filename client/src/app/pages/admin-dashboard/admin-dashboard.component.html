@@ -204,10 +204,11 @@
             </div>
 
             @if (
-              this.dataCharts.generalStatus ||
-              this.dataCharts.assessorsInteractions ||
-              this.dataCharts.responseToComments ||
-              this.dataCharts.assessmentByField
+              (this.dataCharts.generalStatus ||
+                this.dataCharts.assessorsInteractions ||
+                this.dataCharts.responseToComments ||
+                this.dataCharts.assessmentByField) &&
+              !isDataNull
             ) {
               <app-dashboard [dataCharts]="this.dataCharts"></app-dashboard>
             }

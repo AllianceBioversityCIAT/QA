@@ -29,11 +29,12 @@
       </div>
       <div *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !isDataNull" class="w-100">
         @if (
-          this.dataCharts.generalStatus ||
-          this.dataCharts.assessorsInteractions ||
-          this.dataCharts.responseToComments ||
-          this.dataCharts.assessmentByField ||
-          this.dataCharts.highlitedPendingComments
+          (this.dataCharts.generalStatus ||
+            this.dataCharts.assessorsInteractions ||
+            this.dataCharts.responseToComments ||
+            this.dataCharts.assessmentByField ||
+            this.dataCharts.highlitedPendingComments) &&
+          !isDataNull
         ) {
           <app-dashboard [dataCharts]="this.dataCharts"></app-dashboard>
         }
