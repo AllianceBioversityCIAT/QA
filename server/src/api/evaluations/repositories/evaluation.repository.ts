@@ -1531,16 +1531,9 @@ export class EvaluationRepository extends Repository<Evaluations> {
       SELECT group_concat(DISTINCT users.username SEPARATOR ', ') AS assessed_r1
       FROM qa_evaluations_assessed_by_qa_users qea
       LEFT JOIN qa_users users ON users.id = qea.qaUsersId
-      WHERE qea.qaEvaluationsId = :evaluationId;
+      WHERE qea.qaEvaluationsId = ?;
     `;
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(
-        sqlQuery,
-        { evaluationId },
-        {},
-      );
-    return await queryRunner.connection.query(query, parameters);
+    return await this.query(sqlQuery, [evaluationId]);
   }
 
   async findAssessorsR2(evaluationId: number): Promise<any[]> {
@@ -1548,16 +1541,9 @@ export class EvaluationRepository extends Repository<Evaluations> {
       SELECT group_concat(DISTINCT users2.username SEPARATOR ', ') AS assessed_r2
       FROM qa_evaluations_assessed_by_second_round_qa_users qea2
       LEFT JOIN qa_users users2 ON users2.id = qea2.qaUsersId
-      WHERE qea2.qaEvaluationsId = :evaluationId;
+      WHERE qea2.qaEvaluationsId = ?;
     `;
-    const queryRunner = this.dataSource.createQueryRunner();
-    const [query, parameters] =
-      queryRunner.connection.driver.escapeQueryWithParameters(
-        sqlQuery,
-        { evaluationId },
-        {},
-      );
-    return await queryRunner.connection.query(query, parameters);
+    return await this.query(sqlQuery, [evaluationId]);
   }
 
   async getPendingHighlights(): Promise<any[]> {
