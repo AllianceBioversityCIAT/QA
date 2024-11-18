@@ -125,40 +125,6 @@
                         </div>
                         <p *ngIf="detailedData[i].value &&  detailedData[i].col_name === 'evidence_link' ">
                             {{detailedData[i].value}}</p> -->
-            <span
-              *ngIf="detailedData[i].hide_original_field && detailedData[i].original_field != null"
-              class="original-field"
-              (click)="detailedData[i].hide_original_field = !detailedData[i].hide_original_field; $event.stopPropagation()"
-              >Show original value
-              <i
-                pTooltip="{{ tooltips.changes_not_implemented }}"
-                *ngIf="
-                  detailedData[i].original_field === detailedData[i].value &&
-                  detailedData[i].count_disagree_comments != 1 &&
-                  detailedData[i].is_core &&
-                  detailedData[i].comments_replies_count > 0
-                "
-                class="material-icons-round"
-                >warning</i
-              >
-            </span>
-            <span
-              *ngIf="!detailedData[i].hide_original_field && detailedData[i].original_field != null"
-              class="original-field"
-              (click)="detailedData[i].hide_original_field = !detailedData[i].hide_original_field; $event.stopPropagation()"
-              >Hide original value
-              <i
-                pTooltip="{{ tooltips.changes_not_implemented }}"
-                *ngIf="
-                  detailedData[i].original_field === detailedData[i].value &&
-                  detailedData[i].count_disagree_comments != 1 &&
-                  detailedData[i].is_core &&
-                  detailedData[i].comments_replies_count > 0
-                "
-                class="material-icons-round"
-                >warning</i
-              >
-            </span>
 
             <div
               class="field-container original-field-container"
@@ -287,19 +253,6 @@
                 </div>
               </div>
             </div>
-
-            <span
-              *ngIf="detailedData[i].hide_original_field && detailedData[i].original_field != null"
-              class="original-field"
-              (click)="detailedData[i].hide_original_field = !detailedData[i].hide_original_field"
-              >Show original value</span
-            >
-            <span
-              *ngIf="!detailedData[i].hide_original_field && detailedData[i].original_field != null"
-              class="original-field"
-              (click)="detailedData[i].hide_original_field = !detailedData[i].hide_original_field"
-              >Hide original value</span
-            >
             <div class="field-container original-field-container" *ngIf="!detailedData[i].hide_original_field" [@inOutAnimation]>
               {{ detailedData[i].original_field }}
             </div>
