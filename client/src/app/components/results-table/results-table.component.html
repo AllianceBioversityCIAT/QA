@@ -107,7 +107,8 @@
 <p-table
   [value]="this.resulList | appResultsTablePipe: selectedDates : searchText : evalStatusFilter"
   [paginator]="(this.resulList | appResultsTablePipe: selectedDates : searchText : evalStatusFilter).length > 5"
-  [rows]="5"
+  [rows]="10"
+  [rowsPerPageOptions]="[10, 20, 50, 100]"
   [style]="{ 'font-family': 'Poppins' }"
   styleClass="p-datatable-sm custom-td p-datatable-gridlines">
   <ng-template pTemplate="header">
