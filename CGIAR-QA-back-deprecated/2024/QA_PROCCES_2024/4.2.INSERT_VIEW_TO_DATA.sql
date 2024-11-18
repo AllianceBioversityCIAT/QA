@@ -45,7 +45,8 @@ INSERT INTO
         nutrition_tag_level,
         environmental_biodiversity_tag_level,
         poverty_tag_level,
-        result_related
+        result_related,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -86,7 +87,8 @@ SELECT
     cc.nutrition_tag_level,
     cc.environmental_biodiversity_tag_level,
     cc.poverty_tag_level,
-    cc.result_related
+    cc.result_related,
+    cc.evidence
 FROM
     qa_policy_change_view cc
 WHERE
@@ -138,7 +140,8 @@ INSERT INTO
         poverty_tag_level,
         actors,
         organizations,
-        other_quantitative
+        other_quantitative,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -176,7 +179,8 @@ SELECT
     cc.poverty_tag_level,
     cc.actors,
     cc.organizations,
-    cc.other_quantitative
+    cc.other_quantitative,
+    cc.evidence
 FROM
     qa_innovation_use_view cc
 WHERE
@@ -225,7 +229,8 @@ INSERT INTO
         sdg,
         nutrition_tag_level,
         environmental_biodiversity_tag_level,
-        poverty_tag_level
+        poverty_tag_level,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -260,7 +265,8 @@ SELECT
     cc.sdg,
     cc.nutrition_tag_level,
     cc.environmental_biodiversity_tag_level,
-    cc.poverty_tag_level
+    cc.poverty_tag_level,
+    cc.evidence
 FROM
     qa_other_outcome_view cc
 WHERE
@@ -313,7 +319,8 @@ INSERT INTO
         action_area,
         impact_area_targets,
         sdg,
-        number_of_people_trained
+        number_of_people_trained,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -352,7 +359,8 @@ SELECT
     cc.action_area,
     cc.impact_area_targets,
     cc.sdg,
-    cc.number_of_people_trained
+    cc.number_of_people_trained,
+    cc.evidence
 FROM
     qa_capdev_view cc
 WHERE
@@ -518,7 +526,8 @@ INSERT INTO
         sdg,
         nutrition_tag_level,
         environmental_biodiversity_tag_level,
-        poverty_tag_level
+        poverty_tag_level,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -553,7 +562,8 @@ SELECT
     cc.sdg,
     cc.nutrition_tag_level,
     cc.environmental_biodiversity_tag_level,
-    cc.poverty_tag_level
+    cc.poverty_tag_level,
+    cc.evidence
 FROM
     qa_other_output_view cc
 WHERE
@@ -602,7 +612,8 @@ INSERT INTO
         sdg,
         nutrition_tag_level,
         environmental_biodiversity_tag_level,
-        poverty_tag_level
+        poverty_tag_level,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -637,7 +648,8 @@ SELECT
     cc.sdg,
     cc.nutrition_tag_level,
     cc.environmental_biodiversity_tag_level,
-    cc.poverty_tag_level
+    cc.poverty_tag_level,
+    cc.evidence
 FROM
     qa_impact_contribution_view cc
 WHERE
@@ -703,7 +715,8 @@ INSERT INTO
         nutrition_tag_level,
         environmental_biodiversity_tag_level,
         poverty_tag_level,
-        online_date
+        online_date,
+        evidence
     )
 SELECT
     cc.crp_id,
@@ -755,7 +768,8 @@ SELECT
     cc.nutrition_tag_level,
     cc.environmental_biodiversity_tag_level,
     cc.poverty_tag_level,
-    cc.online_date
+    cc.online_date,
+    cc.evidence
 FROM
     qa_knowledge_product_view cc
 WHERE
@@ -772,6 +786,7 @@ WHERE
 INSERT INTO
     qa_innovation_use_ipsr_data (
         id,
+        version,
         phase_name,
         phase_year,
         included_AR,
@@ -817,6 +832,7 @@ INSERT INTO
     )
 SELECT
     DISTINCT cc.id,
+    version,
     cc.phase_name,
     cc.phase_year,
     cc.included_AR,

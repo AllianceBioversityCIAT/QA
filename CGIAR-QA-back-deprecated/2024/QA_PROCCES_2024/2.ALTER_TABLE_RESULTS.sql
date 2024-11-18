@@ -44,8 +44,100 @@ ALTER TABLE
 ADD
     COLUMN version INT NULL;
 
+-- 2024
+ALTER TABLE
+    qa_capdev_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_impact_contribution_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_innovation_development_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_innovation_use_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_innovation_use_ipsr_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_knowledge_product_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_other_outcome_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_other_output_data
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_policy_change_data
+ADD
+    COLUMN result_code INT NULL;
+
+-- 2024
+ALTER TABLE
+    qa_capdev_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_impact_contribution_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_innovation_development_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_innovation_use_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_innovation_use_ipsr_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_knowledge_product_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_other_outcome_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_other_output_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
+ALTER TABLE
+    qa_policy_change_data_initial
+ADD
+    COLUMN result_code INT NULL;
+
 -- INITIAL
-CREATE TABLE qa_capdev_data_initial LIKE qa_capdev_data;
+CREATE TABLE qa_capdev_data_initial LIKE _initial;
 
 CREATE TABLE qa_impact_contribution_data_initial LIKE qa_impact_contribution_data;
 

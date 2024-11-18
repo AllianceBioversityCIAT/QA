@@ -69,6 +69,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
         LEFT JOIN qa_evaluations evaluations ON evaluations.indicator_view_name = indicator.view_name
         WHERE 
             evaluations.batchDate >= actual_batch_date()
+            AND evaluations.phase_year = actual_phase_year()
         GROUP BY
             evaluations.status, indicator.view_name, indicator_order, indicator.primary_field
         ORDER BY indicator.order ASC, evaluations.status;
