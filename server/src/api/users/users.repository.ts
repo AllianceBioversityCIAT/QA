@@ -42,7 +42,7 @@ export class UserRepository extends Repository<Users> {
     });
 
     if (!crp) {
-      throw new NotFoundException('CRP not found');
+      throw new Error('CRP not found');
     }
 
     const crpRole = await this._roleRepository.findOne({
@@ -50,10 +50,11 @@ export class UserRepository extends Repository<Users> {
     });
 
     if (!crpRole) {
-      throw new NotFoundException('CRP Role not found');
+      throw new Error('CRP role not found');
     }
 
     if (!user) {
+      this._logger.log('User not found, creating new user');
       user = new Users();
       user.email = authToken.email;
       user.username = authToken.username;
@@ -68,8 +69,6 @@ export class UserRepository extends Repository<Users> {
         qa_user: user.id,
         qa_role: crpRole.id,
       });
-    } else {
-
     }
 
     const userCrpQuery = `
@@ -83,7 +82,8 @@ export class UserRepository extends Repository<Users> {
     `;
     const userCrpExists = await this.query(userCrpQuery, [crp.id, user.id]);
 
-    if (user && userCrpExists === 0) {
+    if (user && !userCrpExists.length) {
+      this._logger.log('User found, updating user');
       const userCrpInsertQuery = `
         INSERT INTO qa_user_crps (qa_crp, qa_user)
         VALUES (?, ?)

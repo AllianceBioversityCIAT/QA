@@ -223,19 +223,31 @@ export class AuthService {
     const { crp_id, token } = tokenLoginDto;
     try {
       if (!(crp_id && token)) {
-        throw new BadRequestException('CRP ID and token are required.');
+        return ResponseUtils.format({
+          data: null,
+          description: 'CRP ID and token are required.',
+          status: HttpStatus.BAD_REQUEST,
+        });
       }
 
       const crp = await this._crpRepository.findOne({ where: { crp_id } });
       if (!crp) {
-        throw new NotFoundException('CRP not found.');
+        return ResponseUtils.format({
+          data: null,
+          description: 'CRP not found.',
+          status: HttpStatus.NOT_FOUND,
+        });
       }
 
       const authToken = await this._tokenAuthRepository.findOne({
         where: { crp_id, token },
       });
       if (!authToken) {
-        throw new BadRequestException('Invalid token.');
+        return ResponseUtils.format({
+          data: null,
+          description: 'Token not found.',
+          status: HttpStatus.NOT_FOUND,
+        });
       }
 
       const user: Users =
