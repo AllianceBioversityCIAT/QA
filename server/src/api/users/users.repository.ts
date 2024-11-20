@@ -68,6 +68,8 @@ export class UserRepository extends Repository<Users> {
         qa_user: user.id,
         qa_role: crpRole.id,
       });
+    } else {
+
     }
 
     const userCrpQuery = `
@@ -82,8 +84,11 @@ export class UserRepository extends Repository<Users> {
     const userCrpExists = await this.query(userCrpQuery, [crp.id, user.id]);
 
     if (user && userCrpExists === 0) {
-      user.crps.push(crp);
-      user = await this.save(user);
+      const userCrpInsertQuery = `
+        INSERT INTO qa_user_crps (qa_crp, qa_user)
+        VALUES (?, ?)
+      `;
+      await this.query(userCrpInsertQuery, [crp.id, user.id]);
 
       await this._userRoleRepository.save({
         qa_user: user.id,
