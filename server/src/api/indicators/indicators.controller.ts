@@ -192,12 +192,6 @@ export class IndicatorsController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles([
-    RolesHandler.admin,
-    RolesHandler.assesor,
-    RolesHandler.crp,
-    RolesHandler.guest,
-  ])
   @Get('/crp/:crp_id')
   @ApiOperation({ summary: 'Get CRP data by ID' })
   @ApiResponse({ status: 200, description: 'CRP data retrieved successfully.' })
