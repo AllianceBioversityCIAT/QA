@@ -168,7 +168,7 @@
                             NEEDED</button> -->
           </div>
           <!-- *ngIf="crpComment" -->
-          <div class="done-button" *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 0 && currentUser.cycle.cycle_stage == 2 && adminUser">
+          <div class="done-button" *ngIf="(comment.tpb == 1 && crpComment && comment.ppu == 0 && currentUser.cycle.cycle_stage == 2) && (adminUser || istpbUser)">
             <button class="done-button" (click)="implementedChange(commentsByColSelected?.id, comment.ppu)" primary>
               <!-- <span class="tooltiptext"
                 >make sure you have made the changes!

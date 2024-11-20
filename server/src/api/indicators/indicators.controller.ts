@@ -51,12 +51,6 @@ export class IndicatorsController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles([
-    RolesHandler.admin,
-    RolesHandler.assesor,
-    RolesHandler.crp,
-    RolesHandler.guest,
-  ])
   @Get()
   @ApiOperation({ summary: 'Get all active indicators' })
   @ApiResponse({
