@@ -2,7 +2,7 @@ import { Component, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
-import { StatusIcon } from '../../_models/general-status.model';
+import { StatusIcon, StatusIconCRP } from '../../_models/general-status.model';
 import { CommentService } from '../../services/comment.service';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ButtonModule } from 'primeng/button';
@@ -39,6 +39,7 @@ export class ResultsTableComponent {
   @Input() isCRP: boolean;
 
   statusIcon = StatusIcon;
+  StatusIconCRP = StatusIconCRP;
 
   evalStatusFilter = null;
   searchText = '';
