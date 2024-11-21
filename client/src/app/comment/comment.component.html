@@ -134,38 +134,25 @@
             <p-dialog [modal]="true" [(visible)]="this.showDialog" [style]="{ width: '50vw' }">
               <div class="modal-body text-center">
                 <!-- Cchange -->
-                <strong class="accept-comment-prompt">Do you want to {{ this.is_approved ? 'ACCEPT' : 'DISAGREE' }} this comment?</strong>
-                <p>Before you accept this comment, please make sure you have updated the information in PRMS reporting</p>
+                <strong class="accept-comment-prompt">Do you want to {{ this.is_approved ? 'accept' : 'disagree' }} this comment?</strong>
+                @if (this.is_approved) {
+                  <p>Before you accept this comment, please make sure you have updated the information in PRMS reporting</p>
+                } @else {
+                  <p>Please note that the comment is mandatory.</p>
+                }
+
                 <form [formGroup]="commentGroup">
                   <textarea
                     maxlength="{{ totalChar }}"
                     formControlName="comment"
-                    placeholder="Leaving a comment when accepting is optional..."></textarea>
+                    placeholder="Leaving a comment when {{ this.is_approved ? 'accepting is optional...' : 'disagreeing is mandatory' }}"></textarea>
                 </form>
                 <button type="button" class="btn accept" (click)="confirm(comment)">Accept</button>
                 <button type="button" class="btn btn-white" (click)="this.showDialog = false">Cancel</button>
               </div>
             </p-dialog>
 
-            <!-- <ng-template #confirmModal style="max-width: 200px">
-              <div class="modal-body text-center">
-                <h5>Do you want to ACCEPT this comment?</h5>
-                <p>Before you accept this comment, please make sure you have updated the information in PRMS reporting</p>
-                <form [formGroup]="commentGroup">
-                  <textarea
-                    maxlength="{{ totalChar }}"
-                    formControlName="comment"
-                    placeholder="Leaving a comment when accepting is optional..."></textarea>
-                </form>
-                <button type="button" class="btn accept" (click)="confirm(true, replyTypes.accepted, comment)">Accept</button>
-              </div>
-            </ng-template> -->
             <button type="button" class="btn disagree" (click)="this.showDialog = true; this.is_approved = false">DISAGREE</button>
-
-            <!-- <button  type="button"
-                            class="btn request-clarification"
-                            (click)="answerComment(false,replyTypes.clarification,comment)">CLARIFICATION
-                            NEEDED</button> -->
           </div>
           <!-- *ngIf="crpComment" -->
           <div
@@ -209,8 +196,7 @@
             <p class="update-reminder" *ngIf="comment.replyTypeId === 3">
               Be clear with any doubts you may have regarding the comment so that an assessor can help you
             </p>
-            <!-- * Before you accept this comment, please
-                            make sure you have updated the information in MARLO/MEL. -->
+
             <div *ngIf="comment.hasOwnProperty('crp_response')">
               <form [formGroup]="commentGroup">
                 <textarea maxlength="{{ totalChar }}" formControlName="comment"></textarea>
