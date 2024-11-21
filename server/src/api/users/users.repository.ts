@@ -119,8 +119,19 @@ export class UserRepository extends Repository<Users> {
       { expiresIn: config.jwtTime },
     );
 
+    const newUser = await this.findOne({
+      where: { id: user.id },
+      relations: {
+        roles: {
+          role: true,
+        },
+        crps: true,
+        crp: true,
+      },
+    });
+    
     const formattedUser = {
-      ...user,
+      ...newUser,
       roles: user.roles.map((userRole) => ({
         id: userRole.role.id,
         description: userRole.role.description,
