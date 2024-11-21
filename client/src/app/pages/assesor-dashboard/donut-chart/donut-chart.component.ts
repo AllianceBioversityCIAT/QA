@@ -101,7 +101,7 @@ export class DonutChartComponent implements OnInit {
         status = false;
         this.indicatorService.setOrderByStatus(status);
         break;
-      case 'Accepted with comments':
+      case 'AcceptedWC':
         status = false;
         this.indicatorService.setOrderByAccpetedWC(status);
         break;
