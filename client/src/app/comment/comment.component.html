@@ -126,7 +126,7 @@
             *ngIf="crpComment && comment.crp_approved === null && comment.tpb == 0 && currentUser.cycle.cycle_stage == 1"
             style="flex-direction: row"
             class="add-comment-container">
-            <button type="button" class="btn accept" (click)="this.showDialog = true">ACCEPT</button>
+            <button type="button" class="btn accept" (click)="this.showDialog = true; this.is_approved = true">ACCEPT</button>
             <!-- <button type="button" class="btn btn-primary"  (click)="answerComment(true,replyTypes.accepted, comment)" >Open modal</button> -->
             <!-- <br><br>
                         <pre class="card card-block card-header">{{message}}</pre> -->
@@ -134,7 +134,7 @@
             <p-dialog [modal]="true" [(visible)]="this.showDialog" [style]="{ width: '50vw' }">
               <div class="modal-body text-center">
                 <!-- Cchange -->
-                <strong class="accept-comment-prompt">Do you want to ACCEPT this comment?</strong>
+                <strong class="accept-comment-prompt">Do you want to {{ this.is_approved ? 'ACCEPT' : 'DISAGREE' }} this comment?</strong>
                 <p>Before you accept this comment, please make sure you have updated the information in PRMS reporting</p>
                 <form [formGroup]="commentGroup">
                   <textarea
@@ -142,7 +142,7 @@
                     formControlName="comment"
                     placeholder="Leaving a comment when accepting is optional..."></textarea>
                 </form>
-                <button type="button" class="btn accept" (click)="confirm(true, replyTypes.accepted, comment)">Accept</button>
+                <button type="button" class="btn accept" (click)="confirm(comment)">Accept</button>
                 <button type="button" class="btn btn-white" (click)="this.showDialog = false">Cancel</button>
               </div>
             </p-dialog>
@@ -160,7 +160,7 @@
                 <button type="button" class="btn accept" (click)="confirm(true, replyTypes.accepted, comment)">Accept</button>
               </div>
             </ng-template> -->
-            <button type="button" class="btn disagree" (click)="answerComment(false, replyTypes.disagree, comment)">DISAGREE</button>
+            <button type="button" class="btn disagree" (click)="this.showDialog = true; this.is_approved = false">DISAGREE</button>
 
             <!-- <button  type="button"
                             class="btn request-clarification"
@@ -168,7 +168,9 @@
                             NEEDED</button> -->
           </div>
           <!-- *ngIf="crpComment" -->
-          <div class="done-button" *ngIf="(comment.tpb == 1 && crpComment && comment.ppu == 0 && currentUser.cycle.cycle_stage == 2) && (adminUser || istpbUser)">
+          <div
+            class="done-button"
+            *ngIf="comment.tpb == 1 && crpComment && comment.ppu == 0 && currentUser.cycle.cycle_stage == 2 && (adminUser || istpbUser)">
             <button class="done-button" (click)="implementedChange(commentsByColSelected?.id, comment.ppu)" primary>
               <!-- <span class="tooltiptext"
                 >make sure you have made the changes!

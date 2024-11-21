@@ -565,9 +565,14 @@ export class CommentComponent implements OnInit {
     // this.is_approved = is_approved;
     // this.availableComment = true
   }
-  confirm(is_approved: any, replyTypeId: number, comment: any): void {
-    let newReplyTypeId = this.formData['comment'].value ? this.replyTypes.accepted_with_comment : this.replyTypes.accepted;
-    this.answerComment(true, newReplyTypeId, comment);
+  confirm(comment: any): void {
+    let newReplyTypeId;
+    if (this.is_approved) {
+      newReplyTypeId = this.formData['comment'].value ? this.replyTypes.accepted_with_comment : this.replyTypes.accepted;
+    } else {
+      newReplyTypeId = this.replyTypes.disagree;
+    }
+    this.answerComment(this.is_approved, newReplyTypeId, comment);
     this.replyComment(comment);
     this.showDialog = false;
   }
