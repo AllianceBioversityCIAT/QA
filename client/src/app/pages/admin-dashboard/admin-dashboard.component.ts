@@ -346,7 +346,9 @@ export default class AdminDashboardComponent implements OnInit {
 
     if (data) {
       let comments_accepted_with_comment = data.find(item => item.comments_accepted_with_comment != '0');
-      comments_accepted_with_comment = comments_accepted_with_comment ? { name: 'AcceptedWC', value: +comments_accepted_with_comment.value } : null;
+      comments_accepted_with_comment = comments_accepted_with_comment
+        ? { name: 'Accepted with comments', value: +comments_accepted_with_comment.value }
+        : null;
       if (comments_accepted_with_comment) dataset.push(comments_accepted_with_comment);
 
       let comments_accepted_without_comment = data.find(item => item.comments_accepted_without_comment != '0');

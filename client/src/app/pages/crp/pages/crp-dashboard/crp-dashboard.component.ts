@@ -123,7 +123,18 @@ export default class CrpDashboardComponent implements OnInit {
     group: ScaleType.Ordinal // Add group property
   };
 
-  constructor(private activeRoute: ActivatedRoute, private router: Router, private authenticationService: AuthenticationService, private commentService: CommentService, private dashService: DashboardService, private alertService: AlertService, private titleService: Title, private spinner: NgxSpinnerService, private indicatorService: IndicatorsService, private _exportTableSE: ExportTablesService) {
+  constructor(
+    private activeRoute: ActivatedRoute,
+    private router: Router,
+    private authenticationService: AuthenticationService,
+    private commentService: CommentService,
+    private dashService: DashboardService,
+    private alertService: AlertService,
+    private titleService: Title,
+    private spinner: NgxSpinnerService,
+    private indicatorService: IndicatorsService,
+    private _exportTableSE: ExportTablesService
+  ) {
     console.log('crp-dashboard');
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
@@ -320,11 +331,15 @@ export default class CrpDashboardComponent implements OnInit {
 
     if (data) {
       let comments_accepted_with_comment = data.find(item => item.comments_accepted_with_comment != '0');
-      comments_accepted_with_comment = comments_accepted_with_comment ? { name: 'AcceptedWC', value: +comments_accepted_with_comment.value } : null;
+      comments_accepted_with_comment = comments_accepted_with_comment
+        ? { name: 'Accepted with comments', value: +comments_accepted_with_comment.value }
+        : null;
       if (comments_accepted_with_comment) dataset.push(comments_accepted_with_comment);
 
       let comments_accepted_without_comment = data.find(item => item.comments_accepted_without_comment != '0');
-      comments_accepted_without_comment = comments_accepted_without_comment ? { name: 'Accepted', value: +comments_accepted_without_comment.value } : null;
+      comments_accepted_without_comment = comments_accepted_without_comment
+        ? { name: 'Accepted', value: +comments_accepted_without_comment.value }
+        : null;
       if (comments_accepted_without_comment) dataset.push(comments_accepted_without_comment);
 
       let comments_rejected = data.find(item => item.comments_rejected != '0');
