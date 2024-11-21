@@ -54,10 +54,10 @@
               (tagEvent)="toggleTag($event)"></app-tags-bar>
 
             <!-- currentUser.indicators.isTPB != 1 -->
-            <a *ngIf="comment.loaded_replies.length" style="cursor: pointer" (click)="comment.isCollapsed = !comment.isCollapsed">
-              {{ comment.loaded_replies.length }} replies:
+            <a *ngIf="comment?.loaded_replies?.length" style="cursor: pointer" (click)="comment.isCollapsed = !comment.isCollapsed">
+              {{ comment?.loaded_replies?.length }} replies:
             </a>
-            <div *ngIf="comment.loaded_replies.length" [attr.aria-expanded]="!comment.isCollapsed" id="collapseBasic-{{ comment.id }}">
+            <div *ngIf="comment?.loaded_replies?.length" [attr.aria-expanded]="!comment.isCollapsed" id="collapseBasic-{{ comment.id }}">
               <div>
                 <div class="well well-lg card card-block card-header">
                   <ng-container *ngFor="let reply of comment.loaded_replies" class="replies-container">

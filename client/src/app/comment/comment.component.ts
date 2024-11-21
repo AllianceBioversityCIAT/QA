@@ -457,30 +457,22 @@ export class CommentComponent implements OnInit {
       metaId: this.dataFromItem.field_id
     };
 
-    console.log('getItemCommentData');
     this.commentService.getDataComment(params).subscribe(
       res => {
         this.hideSpinner(this.spinner_comment);
-        console.log('COMMENT DATA', res.data);
-        // const replies_count = res.data.filter(data => data.approved)[0]?  +res.data.filter(data => data.approved)[0].replies.replies_count : 0;
         let replies_count = 0;
         const answered_comments = res.data.filter(data => data.approved);
-        console.log({ answered_comments });
 
-        if (answered_comments.length > 0) {
-          answered_comments.map(ac => {
-            console.log(ac);
-            replies_count += +ac.replies.replies_count;
+        if (answered_comments.length)
+          answered_comments.forEach(ac => {
+            if (ac?.replyType?.hasOwnProperty('id')) replies_count++;
           });
-        }
-        console.log({ replies_count });
 
         this.updateNumCommnts.emit({
           length: res.data.filter(field => field.is_deleted == false).length,
           replies_count: replies_count,
           validateFields
         });
-        //  console.log(this.currentUser.roles[0].description);
 
         switch (this.currentUser.roles[0].description) {
           case this.allRoles.crp:
@@ -501,7 +493,6 @@ export class CommentComponent implements OnInit {
             this.commentsByCol = res.data;
             break;
         }
-        // console.log(this.commentsByCol);
 
         this.commentsByCol.forEach(comment => {
           if (comment.replies.replies_count != '0') {
@@ -519,12 +510,6 @@ export class CommentComponent implements OnInit {
             }
           }
         });
-        // this.limitCommentsByTpb = this.commentsByCol.find((tpbComment) => {
-        //   if (tpbComment?.tpb && tpbComment?.is_deleted === false) {
-        //     this.limitCommentsByTpb = tpbComment.tpb
-        //     console.log("🚀 ~this.limitCommentsByTpb", this.limitCommentsByTpb)
-        //   }
-        // })
       },
       error => {
         console.log('getItemCommentData', error);
@@ -536,17 +521,13 @@ export class CommentComponent implements OnInit {
 
   getCommentReplies(comment) {
     if (comment.isCollapsed) {
-      // this.showSpinner(this.spinner_comment);
       let params = {
         commentId: comment.id,
         evaluationId: this.dataFromItem.evaluation_id
       };
       this.commentService.getDataCommentReply(params).subscribe(
         res => {
-          // this.hideSpinner(this.spinner_comment);
-          // console.log('getCommentReplies', res)
           comment.loaded_replies = res.data;
-          // this.commentsByColReplies = res.data
         },
         error => {
           console.log('getItemCommentData', error);
@@ -561,9 +542,6 @@ export class CommentComponent implements OnInit {
     comment.crp_response = is_approved;
     comment.replyTypeId = replyTypeId;
     this.evalu_stat.emit();
-    // this.eval_stat.emit();
-    // this.is_approved = is_approved;
-    // this.availableComment = true
   }
   confirm(comment: any): void {
     let newReplyTypeId;
@@ -586,7 +564,6 @@ export class CommentComponent implements OnInit {
       this.alertService.error('Comment is required', false);
       return;
     }
-    // console.log("CRP_RESPONSE", currentComment.crp_response);
     this.showSpinner(this.spinner_comment);
     this.commentService
       .createDataCommentReply({
