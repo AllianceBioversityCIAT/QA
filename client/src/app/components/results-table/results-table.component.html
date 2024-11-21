@@ -118,7 +118,11 @@
               @case ("status") {
                 <i
                   style="width: 30px"
-                  class="icon-{{ statusIcon[result.status] }} status-icon"
+                  class="icon-{{
+                    isCRP
+                      ? StatusIconCRP[result.status]
+                      : statusIcon[result.status]
+                  }} status-icon"
                 ></i>
                 @if (result?.require_second_assessment) {
                   <div class="require-second-assessment">
