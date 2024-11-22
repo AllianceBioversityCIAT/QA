@@ -282,7 +282,6 @@ export class CommentsController {
   })
   async getExcelComments(
     @Param('crp_id') crp_id: string,
-    @Res() res: Response,
   ) {
     return await this.commentsService.getExcelComments(crp_id);
   }
