@@ -5,11 +5,7 @@
 
       <div class="filters_date_checkbox">
         @for (item of submissionDates; track $index) {
-          <p-checkbox
-            [label]="item.date"
-            [value]="item.date"
-            [(ngModel)]="selectedDates"
-          />
+          <p-checkbox [label]="item.date" [value]="item.date" [(ngModel)]="selectedDates" />
         }
       </div>
     </div>
@@ -23,85 +19,42 @@
     placeholder="Select Filters"
     [selectedItemsLabel]="selectedFilters.length + ' filters selected'"
     [showToggleAll]="true"
-    [filter]="false"
-  >
+    [filter]="false">
     <ng-template let-country pTemplate="footer">
       <div class="py-2 px-3">
         <b>
           {{ selectedFilters ? selectedFilters.length : 0 }}
         </b>
-        filter{{
-          (selectedFilters ? selectedFilters.length : 0) > 1 ? "s" : ""
-        }}
+        filter{{ (selectedFilters ? selectedFilters.length : 0) > 1 ? 's' : '' }}
         selected.
       </div>
     </ng-template>
   </p-multiSelect>
 
   <div class="filters_buttons">
-    <p-button
-      label="Added items"
-      [outlined]="evalStatusFilter !== 'Added'"
-      (click)="handleFilterChange('Added')"
-      severity="warning"
-    />
-    <p-button
-      label="Removed items"
-      [outlined]="evalStatusFilter !== 'Removed'"
-      (click)="handleFilterChange('Removed')"
-      severity="danger"
-    />
-    <p-button
-      label="Updated items"
-      [outlined]="evalStatusFilter !== 'Updated'"
-      (click)="handleFilterChange('Updated')"
-    />
-    <p-button
-      label="Type Changed"
-      [outlined]="evalStatusFilter !== 'Changed'"
-      (click)="handleFilterChange('Changed')"
-      severity="secondary"
-    />
+    <p-button label="Added items" [outlined]="evalStatusFilter !== 'Added'" (click)="handleFilterChange('Added')" severity="warning" />
+    <p-button label="Removed items" [outlined]="evalStatusFilter !== 'Removed'" (click)="handleFilterChange('Removed')" severity="danger" />
+    <p-button label="Updated items" [outlined]="evalStatusFilter !== 'Updated'" (click)="handleFilterChange('Updated')" />
+    <p-button label="Type Changed" [outlined]="evalStatusFilter !== 'Changed'" (click)="handleFilterChange('Changed')" severity="secondary" />
   </div>
 
-  <input
-    type="text"
-    pInputText
-    [(ngModel)]="searchText"
-    placeholder="Search here"
-    style="width: 100%"
-  />
+  <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search here" style="width: 100%" />
 </div>
 
 <p-table
-  [value]="
-    this.resulList
-      | appFilterByEvalstatus: evalStatusFilter
-      | appFilterByDates: selectedDates
-      | appFilterTableBySearch: searchText
-  "
+  [value]="this.resulList | appFilterByEvalstatus: evalStatusFilter | appFilterByDates: selectedDates | appFilterTableBySearch: searchText"
   [paginator]="
-    (
-      this.resulList
-      | appFilterByEvalstatus: evalStatusFilter
-      | appFilterByDates: selectedDates
-      | appFilterTableBySearch: searchText
-    ).length > 5
+    (this.resulList | appFilterByEvalstatus: evalStatusFilter | appFilterByDates: selectedDates | appFilterTableBySearch: searchText).length > 5
   "
   [rows]="10"
   [rowsPerPageOptions]="[10, 20, 50, 100]"
   [style]="{ 'font-family': 'Poppins' }"
-  styleClass="p-datatable-sm custom-td p-datatable-gridlines"
->
+  styleClass="p-datatable-sm custom-td p-datatable-gridlines">
   <ng-template pTemplate="header">
     <tr>
       @for (colItem of this.columnNames; track $index) {
         @if (colItem.showIf()) {
-          <th
-            [pSortableColumn]="colItem.attr"
-            [id]="colItem.attr"
-            style="text-align: center; font-size: 13px; font-weight: bold"
-          >
+          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr" style="text-align: center; font-size: 13px; font-weight: bold">
             {{ colItem.name }} <p-sortIcon [field]="colItem.attr" />
           </th>
         }
@@ -115,34 +68,25 @@
         @if (colItem.showIf()) {
           <td style="text-align: center">
             @switch (colItem.attr) {
-              @case ("status") {
-                <i
-                  style="width: 30px"
-                  class="icon-{{
-                    isCRP
-                      ? StatusIconCRP[result.status]
-                      : statusIcon[result.status]
-                  }} status-icon"
-                ></i>
+              @case ('status') {
+                <i style="width: 30px" class="icon-{{ isCRP ? StatusIconCRP[result.status] : statusIcon[result.status] }} status-icon"></i>
                 @if (result?.require_second_assessment) {
-                  <div class="require-second-assessment">
-                    Further assessment
-                  </div>
+                  <div class="require-second-assessment">Further assessment</div>
                 }
               }
-              @case ("export_comments") {
+              @case ('export_comments') {
                 <a target="_blank">
                   <div
                     tooltip="Comment in excel format"
                     container="body"
                     placement="top"
                     class="btn btn-primary file-button"
-                  >
+                    (click)="onGenerateExcel(result)">
                     <i class="icon-download-excel"></i>
                   </div>
                 </a>
               }
-              @case ("title") {
+              @case ('title') {
                 <!-- <div style="display: flex; justify-content: space-between; align-items: flex-start"> -->
                 <div style="display: grid; grid-template-columns: 1fr 50px">
                   <a routerLink="./detail/{{ result.id }}">
@@ -167,29 +111,12 @@
 
   <ng-template pTemplate="emptymessage">
     <tr>
-      <td
-        [colSpan]="getTotalTableColumns()"
-        style="
-          text-align: center;
-          font-size: 14px;
-          font-weight: 500;
-          padding: 1rem;
-        "
-      >
-        No results found
-      </td>
+      <td [colSpan]="getTotalTableColumns()" style="text-align: center; font-size: 14px; font-weight: 500; padding: 1rem">No results found</td>
     </tr>
   </ng-template>
 </p-table>
 
 <p class="total">
   Total items:
-  {{
-    (
-      this.resulList
-      | appFilterByEvalstatus: evalStatusFilter
-      | appFilterByDates: selectedDates
-      | appFilterTableBySearch: searchText
-    ).length
-  }}
+  {{ (this.resulList | appFilterByEvalstatus: evalStatusFilter | appFilterByDates: selectedDates | appFilterTableBySearch: searchText).length }}
 </p>

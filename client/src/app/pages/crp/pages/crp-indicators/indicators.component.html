@@ -26,7 +26,13 @@
             <span class="material-icons-round">description</span>
             Indicator Guidance
           </a>
-          <div tooltip="Comment in excel format" container="body" placement="top" class="btn btn-primary file-button" style="height: 34px">
+          <div
+            (click)="exportComments(null, true)"
+            tooltip="Comment in excel format"
+            container="body"
+            placement="top"
+            class="btn btn-primary file-button"
+            style="height: 34px">
             <i class="icon-download-excel"></i>
           </div>
         </div>
@@ -45,6 +51,7 @@
       </div>
 
       <app-results-table
+        (generateExcel)="exportComments($event)"
         [resulList]="evaluationList"
         [returnedArray]="returnedArray"
         [indicatorType]="indicatorType"

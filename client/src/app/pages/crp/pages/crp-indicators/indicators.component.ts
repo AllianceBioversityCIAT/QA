@@ -81,6 +81,7 @@ export default class CRPIndicatorsComponent implements OnInit {
   }
 
   exportComments(item, all?) {
+    console.log(item);
     let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}${item ? '-' + item.id : ''}_${moment().format('YYYYMMDD_HHmm')}`;
     console.log('filename', filename);
     if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
@@ -94,9 +95,8 @@ export default class CRPIndicatorsComponent implements OnInit {
         crp_id: all ? this.currentUser.crp.crp_id : undefined
       })
       .subscribe({
-        next: res => {
-          console.log(res);
-          this._exportTableSE.exportExcel(res, filename);
+        next: (res: any) => {
+          this._exportTableSE.exportExcel(res?.data, filename);
         },
         error: error => {
           this.alertService.error(error);

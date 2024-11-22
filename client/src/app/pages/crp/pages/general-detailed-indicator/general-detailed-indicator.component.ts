@@ -466,6 +466,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   }
 
   getCommentsExcel(evaluation) {
+    console.log('geco');
     this.showSpinner('spinner1');
     let evaluationId = evaluation.evaluation_id;
     let title = this.detailedData.find(data => data.col_name === 'title');
