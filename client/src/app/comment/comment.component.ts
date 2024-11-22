@@ -237,7 +237,6 @@ export class CommentComponent implements OnInit {
     this.commentService.getQuickComments().subscribe(
       res => {
         this.quickComments = res.data;
-        console.log(this.quickComments, '🔥🔥');
       },
       error => {
         console.log(error);

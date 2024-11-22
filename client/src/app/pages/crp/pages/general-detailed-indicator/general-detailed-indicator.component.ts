@@ -34,19 +34,20 @@ import { animate, style, transition, trigger } from '@angular/animations';
 import { Subscription } from 'rxjs';
 
 import { environment } from 'src/environments/environment';
-import { CommonModule } from '@angular/common';
+import { CommonModule, JsonPipe } from '@angular/common';
 import { TooltipModule } from 'primeng/tooltip';
 // import { MarkdownModule } from 'ngx-markdown';
 import { CommentComponent } from '../../../../comment/comment.component';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
+import { DropdownModule } from 'primeng/dropdown';
 
 @Component({
   selector: 'app-general-detailed-indicator',
   standalone: true,
   templateUrl: './general-detailed-indicator.component.html',
   styleUrls: ['./general-detailed-indicator.component.scss'],
-  providers: [UrlTransformPipe, WordCounterPipe],
+  providers: [UrlTransformPipe, WordCounterPipe, JsonPipe],
   imports: [
     CommonModule,
     FormsModule,
@@ -56,7 +57,8 @@ import { ButtonModule } from 'primeng/button';
     TooltipModule,
     CommentComponent,
     DialogModule,
-    ButtonModule
+    ButtonModule,
+    DropdownModule
   ],
   animations: [
     trigger('inOutAnimation', [
@@ -127,6 +129,8 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   assessed_by_r1;
   assessed_by_r2 = null;
   currentUserHasAssessed = null;
+  selectedStatus = null;
+
   @ViewChild('commentsElem') commentsElem: ElementRef;
   @ViewChild('containerElement') containerElement: ElementRef;
   @ViewChildren('commElement') commElements: QueryList<ElementRef>;
@@ -389,6 +393,11 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   }
   updateHighlight(e) {}
 
+  changeStatus() {
+    // this.selectedStatus = status;
+    // this.updateEvaluation(status, data);
+  }
+
   getDetailedData() {
     this.evaluationService.getDataEvaluation(this.currentUser.id, this.params).subscribe(
       res => {
@@ -413,6 +422,8 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
         this.generalCommentGroup.patchValue({
           general_comment: this.detailedData[0].general_comment
         });
+
+        this.selectedStatus = { key: this.detailedData[0].status, value: this.statusNames[this.detailedData[0].status] };
         this.gnralInfo = {
           evaluation_id: this.detailedData[0].evaluation_id,
           general_comment: this.detailedData[0].general_comment,

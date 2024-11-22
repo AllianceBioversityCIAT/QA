@@ -29,10 +29,9 @@
       margin: 5px;
     }
 
-
     .core-tag {
-      color: #2196F3;
-      border: 2px dashed #2196F3;
+      color: #2196f3;
+      border: 2px dashed #2196f3;
       padding: 3px 10px;
       border-radius: 12px;
       font-weight: bold;
@@ -42,7 +41,7 @@
     }
 
     .core-tag:hover {
-      background-color: #E3F2FD;
+      background-color: #e3f2fd;
       transition: background-color 0.3s;
     }
 
@@ -52,8 +51,8 @@
     }
 
     .custom-button {
-      color: #4CAF50;
-      border: 2px dashed #4CAF50;
+      color: #4caf50;
+      border: 2px dashed #4caf50;
       padding: 5px 15px;
       border-radius: 12px;
       font-weight: bold;
@@ -61,12 +60,14 @@
       background-color: transparent;
       cursor: pointer;
       transition: background-color 0.3s;
-      transition: border 0.8s ease-in-out, background-color 0.5s ease-in-out;
+      transition:
+        border 0.8s ease-in-out,
+        background-color 0.5s ease-in-out;
     }
 
     .custom-button:hover {
-      border: 2px solid #4CAF50;
-      background-color: #E8F5E9;
+      border: 2px solid #4caf50;
+      background-color: #e8f5e9;
     }
 
     label {
@@ -76,7 +77,6 @@
     }
 
     @media (max-width: 600px) {
-
       .core-tag,
       .changed-tag,
       .changed-previous-tag {
@@ -142,7 +142,7 @@
   cursor: pointer;
 }
 
-.custom-control-input:checked~.custom-control-label::before {
+.custom-control-input:checked ~ .custom-control-label::before {
   background-color: var(--color-agree);
   content: '✔';
   font-size: 14px;
@@ -217,13 +217,17 @@
 .hide {
   visibility: hidden;
   opacity: 0;
-  transition: visibility 0s linear 300ms, opacity 300ms;
+  transition:
+    visibility 0s linear 300ms,
+    opacity 300ms;
 }
 
 .show {
   visibility: visible;
   opacity: 1;
-  transition: visibility 0s linear 0s, opacity 300ms;
+  transition:
+    visibility 0s linear 0s,
+    opacity 300ms;
 }
 
 .original-field-container {
@@ -498,11 +502,11 @@
             }
           }
 
-          input:checked+.slider {
+          input:checked + .slider {
             background-color: var(--gray-tertiary);
           }
 
-          input:checked+.slider:before {
+          input:checked + .slider:before {
             transform: translateX(18px);
             background: var(--color-blue);
             background: white;
@@ -659,7 +663,12 @@
   bottom: 4em;
   z-index: 10;
   border-radius: 10px;
-  box-shadow: 0 1.1px 2.2px rgba(0, 0, 0, 0.059), 0 2.9px 5.5px rgba(0, 0, 0, 0.084), 0 5.8px 11.2px rgba(0, 0, 0, 0.106), 0 12px 23px rgba(0, 0, 0, 0.131), 0 33px 63px rgba(0, 0, 0, 0.19);
+  box-shadow:
+    0 1.1px 2.2px rgba(0, 0, 0, 0.059),
+    0 2.9px 5.5px rgba(0, 0, 0, 0.084),
+    0 5.8px 11.2px rgba(0, 0, 0, 0.106),
+    0 12px 23px rgba(0, 0, 0, 0.131),
+    0 33px 63px rgba(0, 0, 0, 0.19);
 
   iframe {
     width: 100%;
@@ -768,4 +777,15 @@
 
 .buttons {
   display: flex;
+}
+
+.status-icon {
+  width: 24px;
+  height: 24px;
+}
+
+.status-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5em;
 }
