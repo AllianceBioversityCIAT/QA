@@ -103,23 +103,17 @@ export class CommentsService {
     const { userId, crp_id, indicatorName } = query;
 
     try {
-      const user = await this._usersRepository.findOneOrFail({
-        where: { id: userId },
-        relations: ['roles'],
-      });
-
-      const currentRole = user.roles[0]?.role.description;
-
       let commentsData;
       if (!evaluationId || evaluationId === 'undefined') {
+        this._logger.error('Evaluation ID is required.');
         commentsData = await this._commentsRepository.fetchCommentsByCRP(
           crp_id,
           indicatorName,
         );
       } else {
+        this
         commentsData = await this._commentsRepository.fetchCommentsByEvaluation(
           evaluationId,
-          currentRole,
           indicatorName,
         );
       }
