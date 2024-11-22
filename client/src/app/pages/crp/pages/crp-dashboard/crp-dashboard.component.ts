@@ -154,6 +154,43 @@ export default class CrpDashboardComponent implements OnInit {
     if ((this.indicators = [])) this.getCRPIndicators();
   }
 
+  // example for exportExcel
+  // exportComments(item, all?) {
+  // // console.log(item);
+  // let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}${item ? '-' + item.id : ''}_${moment().format('YYYYMMDD_HHmm')}`;
+  // console.log('filename', filename);
+  // if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
+
+  //   this.commentService
+  //     .getCommentsExcel({
+  //       evaluationId: item ? item.evaluation_id : undefined,
+  //       id: this.currentUser.id,
+  //       name: filename,
+  //       indicatorName: `qa_${this.indicatorType}`,
+  //       crp_id: all ? this.currentUser.crp.crp_id : undefined
+  //     })
+  //     .subscribe({
+  //       next: (res: any) => {
+  //         this._exportTableSE.exportExcel(res?.data, filename);
+  //       },
+  //       error: error => {
+  //         this.alertService.error(error);
+  //       }
+  //     });
+  // }
+
+  exportExcel() {
+    // console.log(item);
+    let filename = `QA-initiative_${this.currentUser.crp.crp_id}_${moment().format('YYYYMMDD_HHmm')}`;
+    // console.log('filename', filename);
+    // if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
+
+    this.commentService.getCommentsExcelByInitiative(this.currentUser.crp.crp_id).subscribe((res: any) => {
+      console.log(res);
+      this._exportTableSE.exportExcel(res?.data, filename);
+    });
+  }
+
   getCRPIndicators() {
     if (!this.indicators.length && this.currentUser) {
       this.showSpinner(this.spinner1);

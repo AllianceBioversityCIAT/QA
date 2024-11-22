@@ -1,87 +1,40 @@
-<div
-  class="row justify-content-center"
-  *ngIf="
-    currentUser &&
-    !currentUser.hasOwnProperty('cycle') &&
-    currentUser.cycle_ended
-  "
->
+<div class="row justify-content-center" *ngIf="currentUser && !currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended">
   <h2 style="margin: 1em auto">The quality assessment process has ended.</h2>
 </div>
 
 <div class="row justify-content-center dashboard-container">
   <div class="col-12 col-progress">
-    <p-button label="Export all comments" />
-    <div
-      *ngIf="
-        !isDashboardDataEmpty() &&
-        dashboardData &&
-        dashboardCommentsData &&
-        indicators
-      "
-      class="dashboard-grid"
-    >
-      <div
-        *ngFor="
-          let indicator of dashboardData
-            | keyvalue
-            | sortBy : 'asc' : 'value.order'
-        "
-        class="indicator"
-      >
+    <p-button label="Export all comments" (click)="this.exportExcel()" />
+    <div *ngIf="!isDashboardDataEmpty() && dashboardData && dashboardCommentsData && indicators" class="dashboard-grid">
+      <div *ngFor="let indicator of dashboardData | keyvalue | sortBy: 'asc' : 'value.order'" class="indicator">
         <div class="chart status-chart">
           <app-status-chart
             [indicator]="[{ name: indicator.key, series: indicator.value }]"
             [indicators]="indicators"
-            [total]="indicator.value.total"
-          ></app-status-chart>
+            [total]="indicator.value.total"></app-status-chart>
         </div>
         <div class="chart comments-chart">
           <app-comments-chart
             *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
             [total]="dashboardCommentsData[indicator.key].total"
-            [data]="
-              formatCommentsIndicatorData(
-                dashboardCommentsData[indicator.key],
-                indicator.key
-              )
-            "
+            [data]="formatCommentsIndicatorData(dashboardCommentsData[indicator.key], indicator.key)"
             [selectedIndicator]="indicator.key"
-            [chartName]="indicator.key"
-          >
+            [chartName]="indicator.key">
           </app-comments-chart>
-          <app-comments-chart
-            *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
-            [total]="0"
-            [data]="false"
-          >
-          </app-comments-chart>
+          <app-comments-chart *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)" [total]="0" [data]="false"> </app-comments-chart>
         </div>
         <div class="chart comments-chart" class="chart pending-responses">
-          <div
-            *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
-            class="total-pending"
-          >
+          <div *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)" class="total-pending">
             {{ totalPendings[indicator.key] }}
           </div>
-          <div
-            *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
-            class="total-pending"
-          >
-            0
-          </div>
-          <button
-            *ngIf="indicatorIsEnable(indicator.key)"
-            class="btn btn-primary btn-response-pending"
-            (click)="goToPendingItems(indicator.key)"
-          >
+          <div *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)" class="total-pending">0</div>
+          <button *ngIf="indicatorIsEnable(indicator.key)" class="btn btn-primary btn-response-pending" (click)="goToPendingItems(indicator.key)">
             Click here to respond pending comments
           </button>
           <button
             *ngIf="!indicatorIsEnable(indicator.key)"
             class="btn btn-red-secondary btn-response-pending disabled"
-            title="Indicator isn't enable"
-          >
+            title="Indicator isn't enable">
             This indicator is closed for initiatives
           </button>
         </div>
@@ -90,36 +43,23 @@
             *ngIf="dashboardCommentsData.hasOwnProperty(indicator.key)"
             class="total-pending"
             onload="formatPendingTpbData(dashboardCommentsData[indicator.key],
-                indicator.key)"
-          >
+                indicator.key)">
             {{ pendings[indicator.key] }}
           </div>
-          <div
-            *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)"
-            class="total-pending"
-          >
-            0
-          </div>
-          <button
-            *ngIf="indicatorIsEnable(indicator.key)"
-            class="btn btn-primary btn-response-pending"
-            (click)="goToPendingItems(indicator.key)"
-          >
+          <div *ngIf="!dashboardCommentsData.hasOwnProperty(indicator.key)" class="total-pending">0</div>
+          <button *ngIf="indicatorIsEnable(indicator.key)" class="btn btn-primary btn-response-pending" (click)="goToPendingItems(indicator.key)">
             Pending third party broker decisions
           </button>
           <button
             *ngIf="!indicatorIsEnable(indicator.key)"
             class="btn btn-red-secondary btn-response-pending disabled"
-            title="Indicator isn't enable"
-          >
+            title="Indicator isn't enable">
             This indicator is closed for PPU
           </button>
         </div>
       </div>
     </div>
-    <div *ngIf="isDashboardDataEmpty()" class="no-results">
-      📃 No results reported.
-    </div>
+    <div *ngIf="isDashboardDataEmpty()" class="no-results">📃 No results reported.</div>
   </div>
 </div>
 

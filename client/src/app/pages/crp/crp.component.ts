@@ -28,10 +28,17 @@ export default class CrpComponent implements OnInit {
   allRoles = Role;
   env = environment;
 
-  constructor(private authenticationService: AuthenticationService, private cookieService: CookieService, private route: ActivatedRoute, private indicatorService: IndicatorsService, private router: Router, private alertService: AlertService, private spinner: NgxSpinnerService) {
+  constructor(
+    private authenticationService: AuthenticationService,
+    private cookieService: CookieService,
+    private route: ActivatedRoute,
+    private indicatorService: IndicatorsService,
+    private router: Router,
+    private alertService: AlertService,
+    private spinner: NgxSpinnerService
+  ) {
     this.route.queryParamMap.subscribe(params => {
       this.params = params;
-      console.log(this.params);
       this.crp_id = this.params['params']['crp_id'];
 
       if (params.has('token')) {
@@ -46,9 +53,6 @@ export default class CrpComponent implements OnInit {
 
   ngOnInit() {
     this.indicators = JSON.parse(localStorage.getItem('indicatorsCRP')) || [];
-    console.log('🚀 ~ file: crp.component.ts:53 ~ CrpComponent ~ ngOnInit ~ this.indicators', this.indicators);
-    // if (this.indicators = [])
-    //   this.getCRPIndicators();
   }
 
   validateToken(params: {}) {
@@ -56,19 +60,15 @@ export default class CrpComponent implements OnInit {
     this.showSpinner(this.spinner_name);
     this.authenticationService.tokenLogin(params).subscribe(
       res => {
-        // console.log(res)
         this.authenticationService.currentUser.subscribe(x => {
           this.hideSpinner(this.spinner_name);
           this.currentUser = x;
           this.getCRP(this.crp_id);
-          // console.log(this.currentUser)
           if ((this.indicators = [])) this.getCRPIndicators();
         });
       },
       error => {
-        console.log('validateToken', error);
         this.hideSpinner(this.spinner_name);
-        // this.logout()
         this.alertService.error(error);
       }
     );
@@ -79,11 +79,7 @@ export default class CrpComponent implements OnInit {
       this.showSpinner(this.spinner_name);
       this.indicatorService.getIndicators().subscribe(
         res => {
-          console.log('🚀 ~ file: crp.component.ts:103 ~ CrpComponent ~ getCRPIndicators ~ res', res);
-
           this.indicators = res.data.sort((a, b) => a.order - b.order);
-          //TO-DO
-          // this.indicators.pop();
           localStorage.setItem('indicatorsCRP', JSON.stringify(this.indicators));
           this.hideSpinner(this.spinner_name);
           this.router.navigate([`/crp/dashboard`]);
@@ -103,28 +99,6 @@ export default class CrpComponent implements OnInit {
     });
   }
 
-  // getCRPIndicators() {
-
-  //   if (this.indicators.length == 0 && this.currentUser) {
-  //     this.showSpinner(this.spinner_name)
-  //     this.indicatorService.getIndicatorsByUser(this.currentUser.id, this.currentUser.crp.crp_id)
-  //       .subscribe(
-  //         res => {
-  //           this.indicators = res.data;
-  //           // localStorage.setItem('indicatorsCRP', JSON.stringify(res.data));
-  //           this.authenticationService.userHeaders = res.data;
-  //           console.log(this.authenticationService.userHeaders)
-  //           this.hideSpinner(this.spinner_name);
-  //         },
-  //         error => {
-  //           this.hideSpinner(this.spinner_name);
-  //           console.log("getCRPIndicators", error);
-  //           this.alertService.error(error);
-  //         }
-  //       );
-  //   }
-  // }
-
   logout() {
     this.authenticationService.logout();
     this.router.navigate(['/qa-close'], { relativeTo: this.route });
@@ -134,11 +108,6 @@ export default class CrpComponent implements OnInit {
     this.authenticationService.logout();
   }
 
-  /***
-   *
-   *  Spinner
-   *
-   ***/
   showSpinner(name: string) {
     this.spinner.show(name);
   }

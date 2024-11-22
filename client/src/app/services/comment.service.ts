@@ -65,6 +65,11 @@ export class CommentService {
     );
   }
 
+  getCommentsExcelByInitiative(crp_id) {
+    // return this.http.get(`${environment.apiBaseUrl}comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}`, { responseType: HttpRequest })
+    return this.http.get(`${environment.apiBaseUrl}comment/excel/initiative/${crp_id}`);
+  }
+
   // get comments excel
   getCommentsRawExcel(crp_id?) {
     // return this.http.get(`${environment.apiBaseUrl}comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}`, { responseType: HttpRequest })
