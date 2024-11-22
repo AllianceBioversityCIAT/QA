@@ -1,4 +1,4 @@
-import { Component, inject, Input } from '@angular/core';
+import { Component, EventEmitter, Output, inject, Input } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -25,10 +25,10 @@ import { FilterByEvalstatusPipe } from './pipes/filter-by-evalstatus.pipe';
     RouterLink,
     FilterTableBySearchPipe,
     FilterByDatesPipe,
-    FilterByEvalstatusPipe,
+    FilterByEvalstatusPipe
   ],
   templateUrl: './results-table.component.html',
-  styleUrl: './results-table.component.scss',
+  styleUrl: './results-table.component.scss'
 })
 export class ResultsTableComponent {
   @Input() resulList: any[] = [];
@@ -37,6 +37,7 @@ export class ResultsTableComponent {
   @Input() indicatorType: string;
   @Input() currentUser: any;
   @Input() isCRP: boolean;
+  @Output() generateExcel = new EventEmitter<any>();
 
   statusIcon = StatusIcon;
   StatusIconCRP = StatusIconCRP;
@@ -52,114 +53,110 @@ export class ResultsTableComponent {
     { label: 'Disagreed Comments', key: 'showDisagreedComments' },
     { label: 'Highlighted Comments', key: 'showHighlightedComments' },
     { label: 'Third party broker instructions', key: 'showTpbComments' },
-    { label: 'Implemented Decisions', key: 'showImplementedDecisions' },
+    { label: 'Implemented Decisions', key: 'showImplementedDecisions' }
   ];
 
   columnNames = [
     {
       name: 'Result code',
       attr: 'result_code',
-      showIf: () => true,
+      showIf: () => true
     },
     {
       name: 'Brief contribution',
       attr: 'result_title',
-      showIf: () => this.returnedArray?.[0]?.brief,
+      showIf: () => this.returnedArray?.[0]?.brief
     },
     {
       name: 'Title',
       attr: 'title',
-      showIf: () => true,
+      showIf: () => true
     },
     {
       name: 'Initiative',
       attr: 'full_title',
-      showIf: () => !this.isCRP,
+      showIf: () => !this.isCRP
     },
     {
       name: 'Action Area',
       attr: 'crp_action_area',
-      showIf: () => this.getColumnsFilters('showActionArea') && !this.isCRP,
+      showIf: () => this.getColumnsFilters('showActionArea') && !this.isCRP
     },
     {
       name: 'is Melia',
       attr: 'is_melia',
-      showIf: () => this.indicatorType === 'knowledge_product',
+      showIf: () => this.indicatorType === 'knowledge_product'
     },
     {
       name: 'KP type',
       attr: 'knowledge_product_type',
-      showIf: () => this.indicatorType === 'knowledge_product',
+      showIf: () => this.indicatorType === 'knowledge_product'
     },
     {
       name: 'Flagship',
       attr: 'fp',
-      showIf: () => this.returnedArray?.[0]?.fp,
+      showIf: () => this.returnedArray?.[0]?.fp
     },
     {
       name: "Assessors' comments",
       attr: 'comments_count',
-      showIf: () => true,
+      showIf: () => true
     },
     {
       name: 'Comments answered by initiatives',
       attr: 'comments_replies_count',
-      showIf: () => true,
+      showIf: () => true
     },
     {
       name: 'Accepted comments',
       attr: 'comments_accepted_count',
-      showIf: () => this.getColumnsFilters('showAcceptedComments'),
+      showIf: () => this.getColumnsFilters('showAcceptedComments')
     },
     {
       name: 'Accepted w. comment',
       attr: 'comments_accepted_with_comment_count',
-      showIf: () =>
-        this.returnedArray?.[0]?.comments_accepted_with_comment_count &&
-        this.currentUser.cycle.cycle_stage == 2,
+      showIf: () => this.returnedArray?.[0]?.comments_accepted_with_comment_count && this.currentUser.cycle.cycle_stage == 2
     },
     {
       name: 'Disagreed comments',
       attr: 'comments_disagreed_count',
-      showIf: () =>
-        this.returnedArray?.[0]?.comments_disagreed_count &&
-        this.getColumnsFilters('showDisagreedComments'),
+      showIf: () => this.returnedArray?.[0]?.comments_disagreed_count && this.getColumnsFilters('showDisagreedComments')
     },
     {
       name: 'Highlighted comments on core fields',
       attr: 'comments_highlight_count',
-      showIf: () => this.getColumnsFilters('showHighlightedComments'),
+      showIf: () => this.getColumnsFilters('showHighlightedComments')
     },
     {
       name: 'Third party broker instructions',
       attr: 'comments_tpb_count',
-      showIf: () => this.getColumnsFilters('showTpbComments'),
+      showIf: () => this.getColumnsFilters('showTpbComments')
     },
     {
       name: 'Implemented Decisions',
       attr: 'comments_ppu_count',
-      showIf: () => this.getColumnsFilters('showImplementedDecisions'),
+      showIf: () => this.getColumnsFilters('showImplementedDecisions')
     },
     {
       name: 'Export comments',
       attr: 'export_comments',
-      showIf: () => true,
+      showIf: () => true
     },
     {
       name: 'Assessed By',
       attr: 'comment_by',
-      showIf: () => this.currentUser.cycle.cycle_stage != 2 && !this.isCRP,
+      showIf: () => this.currentUser.cycle.cycle_stage != 2 && !this.isCRP
     },
     {
       name: 'Assessed By (2nd round)',
       attr: 'assessed_r2',
-      showIf: () => this.currentUser.cycle.cycle_stage == 2,
+      showIf: () => this.currentUser.cycle.cycle_stage == 2
     },
     {
       name: 'QA Status',
       attr: 'status',
-      showIf: () => true,
-    },
+      showIf: () => true
+    }
   ];
 
   private readonly commentService = inject(CommentService);
@@ -170,32 +167,36 @@ export class ResultsTableComponent {
     if (!this.isCRP) {
       this.columnsFiltersOptions.unshift({
         label: 'Action Area',
-        key: 'showActionArea',
+        key: 'showActionArea'
       });
       this.selectedFilters.push({
         label: 'Action Area',
-        key: 'showActionArea',
+        key: 'showActionArea'
       });
     }
   }
 
+  onGenerateExcel(result: any) {
+    this.generateExcel.emit(result);
+  }
+
   getTotalTableColumns() {
-    return this.columnNames.filter((column) => column.showIf()).length;
+    return this.columnNames.filter(column => column.showIf()).length;
   }
 
   getColumnsFilters(key: string) {
-    return this.selectedFilters.find((filter) => filter.key === key);
+    return this.selectedFilters.find(filter => filter.key === key);
   }
 
   showhighlightColumn() {
     if (this.currentUser?.cycle.cycle_stage == 2) {
       this.selectedFilters.push({
         label: 'Highlighted Comments',
-        key: 'showHighlightedComments',
+        key: 'showHighlightedComments'
       });
       this.selectedFilters.push({
         label: 'Third party broker instructions',
-        key: 'showTpbComments',
+        key: 'showTpbComments'
       });
     }
   }

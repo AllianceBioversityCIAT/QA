@@ -45,6 +45,7 @@
       </div>
 
       <app-results-table
+        (generateExcel)="exportComments($event)"
         [resulList]="evaluationList"
         [returnedArray]="returnedArray"
         [indicatorType]="indicatorType"
