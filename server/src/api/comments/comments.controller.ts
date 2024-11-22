@@ -97,13 +97,11 @@ export class CommentsController {
       crp_id: string;
       indicatorName: string;
     },
-    @Res() res: Response,
   ) {
-    const comments = await this.commentsService.getCommentsExcel(
+    return await this.commentsService.getCommentsExcel(
       evaluationId,
       query,
     );
-    res.status(200).send(comments);
   }
 
   @UseGuards(RolesGuard)

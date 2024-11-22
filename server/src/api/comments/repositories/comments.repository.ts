@@ -540,20 +540,19 @@ export class CommentsRepository extends Repository<Comments> {
       LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
       LEFT JOIN qa_indicators_meta meta ON meta.id = comments.metaId
       WHERE comments.detail IS NOT NULL
-        AND evaluations.indicator_view_name = :indicatorName
+        AND evaluations.indicator_view_name = ?
         AND (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
         AND comments.approved = 1
         AND comments.is_deleted = 0
-        AND evaluations.crp_id = :crp_id
+        AND evaluations.crp_id = ?
         AND evaluations.phase_year = actual_phase_year()
       ORDER BY createdAt ASC`;
 
-    return await this.query(query, [crp_id, indicatorName]);
+    return await this.query(query, [indicatorName, crp_id ]);
   }
 
   async fetchCommentsByEvaluation(
     evaluationId: string,
-    currentRole: string,
     indicatorName: string,
   ) {
     const query = `
@@ -578,7 +577,7 @@ export class CommentsRepository extends Repository<Comments> {
         AND qcd.result_code IN (
           SELECT qcd2.result_code FROM ${indicatorName} qcd2
           JOIN qa_evaluations qe ON qe.indicator_view_id = qcd2.id
-          WHERE qe.indicator_view_id = qcd2.id AND qe.id = :evaluationId
+          WHERE qe.indicator_view_id = qcd2.id AND qe.id = ?
         )
         AND (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
         AND comments.approved = 1
