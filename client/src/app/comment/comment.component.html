@@ -134,7 +134,7 @@
             <p-dialog [modal]="true" [(visible)]="this.showDialog" [style]="{ width: '50vw' }">
               <div class="modal-body text-center">
                 <!-- Cchange -->
-                <strong class="accept-comment-prompt">Do you want to {{ this.is_approved ? 'accept' : 'disagree' }} this comment?</strong>
+                <strong class="accept-comment-prompt">Do you want to {{ this.is_approved ? 'accept' : 'disagree with' }} this comment?</strong>
                 @if (this.is_approved) {
                   <p>Before you accept this comment, please make sure you have updated the information in PRMS reporting</p>
                 } @else {
@@ -147,7 +147,7 @@
                     formControlName="comment"
                     placeholder="Leaving a comment when {{ this.is_approved ? 'accepting is optional...' : 'disagreeing is mandatory' }}"></textarea>
                 </form>
-                <button type="button" class="btn accept" (click)="confirm(comment)">Accept</button>
+                <button type="button" class="btn accept" (click)="confirm(comment)">Send comment</button>
                 <button type="button" class="btn btn-white" (click)="this.showDialog = false">Cancel</button>
               </div>
             </p-dialog>
