@@ -16,21 +16,6 @@
     }}
   </p>
   <div class="col status" *ngIf="currentUser.hasOwnProperty('cycle')">
-    <!-- <div class="assessment-status">
-      <p>Assessment Status:</p>
-      <div class="status">
-        <i
-          [ngClass]="{
-            'icon-in-progress': gnralInfo.status === statusHandler.Complete,
-            'icon-pending': gnralInfo.status === statusHandler.Pending,
-            'icon-quality-assessed':
-              gnralInfo.status === statusHandler.Finalized
-          }"
-        >
-        </i>
-        {{ statusNames[gnralInfo.status] }}
-      </div>
-    </div> -->
     <div class="response-status">
       <p>Response Status:</p>
       <div class="status">

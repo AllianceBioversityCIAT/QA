@@ -246,9 +246,6 @@ export class CommentComponent implements OnInit {
 
   updateData(data: any, params: any) {
     this.commentsByColSelected = [];
-
-    console.log(data);
-    console.log('🚀 ~ file: comment.component.ts ~ line 201 ~ CommentComponent ~ updateData ~ data', data);
     Object.assign(this.dataFromItem, data, params);
     this.availableComment = false;
     this.showSpinner(this.spinner_comment);

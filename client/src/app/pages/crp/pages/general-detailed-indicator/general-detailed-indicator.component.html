@@ -33,66 +33,35 @@
     </div>
   </div>
 
-  <strong class="status-title">Status:</strong>
-  <p-dropdown
-    [options]="statusNames | keyvalue | slice: 2 : 4"
-    [(ngModel)]="selectedStatus"
-    (ngModelChange)="updateEvaluation(selectedStatus.key, detailedData)"
-    optionLabel="value"
-    placeholder="Select status">
-    <ng-template pTemplate="selectedItem">
-      <div class="status-item" *ngIf="selectedStatus">
-        <i
-          [ngClass]="{
-            'icon-pending': selectedStatus.key === statusHandler.Pending,
-            'icon-quality-assessed': selectedStatus.key === statusHandler.Finalized
-          }"
-          class="status-icon"></i>
-        <div>{{ selectedStatus.value }}</div>
-      </div>
-    </ng-template>
-    <ng-template let-status pTemplate="item">
-      <div class="status-item">
-        <i
-          [ngClass]="{ 'icon-pending': status.key === statusHandler.Pending, 'icon-quality-assessed': status.key === statusHandler.Finalized }"
-          class="status-icon"></i>
-        <div>{{ status.value }}</div>
-      </div>
-    </ng-template>
-  </p-dropdown>
-
-  <!-- <div class="btn-group h-100" dropdown>
-    <button id="button-animated" dropdownToggle type="button" class="btn btn-white dropdown-toggle w-100" aria-controls="dropdown-animated">
-      <div class="status-title">Status:</div>
-      <div class="status">
-        <i
-          [ngClass]="{
-            'icon-in-progress': gnralInfo.status === statusHandler.Complete,
-            'icon-pending': gnralInfo.status === statusHandler.Pending,
-            'icon-quality-assessed': gnralInfo.status === statusHandler.Finalized
-          }">
-        </i>
-        {{ statusNames[gnralInfo.status] }}
-      </div>
-      <span class="caret"></span>
-    </button>
-    <ul id="dropdown-animated" *dropdownMenu class="dropdown-menu w-100" role="menu" aria-labelledby="button-animated">
-      <li *ngFor="let status of statusNames | keyvalue | slice: 2 : 4" role="menuitem">
-        <a class="dropdown-item" (click)="updateEvaluation(status.key, detailedData)">
+  <div class="dropdown-container">
+    <strong class="status-title">Status:</strong>
+    <p-dropdown
+      [options]="statusNames | keyvalue | slice: 2 : 4"
+      [(ngModel)]="selectedStatus"
+      (ngModelChange)="updateEvaluation(selectedStatus.key, detailedData)"
+      optionLabel="value"
+      placeholder="Select status">
+      <ng-template pTemplate="selectedItem">
+        <div class="status-item" *ngIf="selectedStatus">
           <i
             [ngClass]="{
-              'icon-in-progress': status.key === statusHandler.Complete,
-              'icon-pending': status.key === statusHandler.Pending,
-              'icon-quality-assessed': status.key === statusHandler.Finalized
-            }">
-          </i>
-          <span>
-            {{ status.value }}
-          </span>
-        </a>
-      </li>
-    </ul>
-  </div> -->
+              'icon-pending': selectedStatus.key === statusHandler.Pending,
+              'icon-quality-assessed': selectedStatus.key === statusHandler.Finalized
+            }"
+            class="status-icon"></i>
+          <div>{{ selectedStatus.value }}</div>
+        </div>
+      </ng-template>
+      <ng-template let-status pTemplate="item">
+        <div class="status-item">
+          <i
+            [ngClass]="{ 'icon-pending': status.key === statusHandler.Pending, 'icon-quality-assessed': status.key === statusHandler.Finalized }"
+            class="status-icon"></i>
+          <div>{{ status.value }}</div>
+        </div>
+      </ng-template>
+    </p-dropdown>
+  </div>
 
   <p *ngIf="!currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended" class="text-danger" style="text-transform: initial; text-align: center">
     The quality assessment process has ended.
