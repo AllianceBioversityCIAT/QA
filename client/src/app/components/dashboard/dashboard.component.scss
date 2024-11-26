@@ -23,4 +23,15 @@
   .chart-4 {
     grid-column: span 3;
   }
+
+  .chart-5 {
+    .no-data {
+      text-align: center;
+      font-size: 1.1rem;
+      font-weight: 500;
+      font-style: italic;
+      padding: 10px;
+      color: #c27d00;
+    }
+  }
 }

@@ -11,6 +11,7 @@ import { DashboardCacheService } from './dashboard-cache.service';
 })
 export class DashboardComponent {
   dashboardCacheService = inject(DashboardCacheService);
+  @Input() cycle_stage: string;
   @Input() dataCharts: any;
 
   dataGeneralStatus: any;
@@ -21,10 +22,11 @@ export class DashboardComponent {
   optionResponseToComments: any;
   dataAssessmentByField: any;
   optionAssessmentByField: any;
+  dataHighlightComment: any;
+  optionHighlightComment: any;
 
   onChange = effect(
     () => {
-      console.log('update');
       if (this.dashboardCacheService.updateChartData()) {
         this.updateChartData();
         this.dashboardCacheService.updateChartData.set(false);
@@ -33,8 +35,11 @@ export class DashboardComponent {
     { allowSignalWrites: true }
   );
 
+  allAreZero(list) {
+    return list.every(item => item.value === 0);
+  }
+
   updateChartData() {
-    console.log('updateChartData');
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue('--text-color');
 
@@ -79,6 +84,10 @@ export class DashboardComponent {
     if (this.dataCharts.assessmentByField) {
       this.dataAssessmentByField = createChartData(this.dataCharts.assessmentByField.dataset, ['--blue-500', '--yellow-500', '--green-500']);
       this.optionAssessmentByField = createChartOptions();
+    }
+    if (this.dataCharts.highlitedPendingComments) {
+      this.dataHighlightComment = createChartData(this.dataCharts.highlitedPendingComments.dataset, ['--blue-500', '--yellow-500', '--green-500']);
+      this.optionHighlightComment = createChartOptions();
     }
   }
 }

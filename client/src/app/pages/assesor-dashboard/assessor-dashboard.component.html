@@ -36,7 +36,7 @@
             this.dataCharts.highlitedPendingComments) &&
           !isDataNull
         ) {
-          <app-dashboard [dataCharts]="this.dataCharts"></app-dashboard>
+          <app-dashboard [dataCharts]="this.dataCharts" [cycle_stage]="currentUser.cycle.cycle_stage"></app-dashboard>
         }
       </div>
       <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
