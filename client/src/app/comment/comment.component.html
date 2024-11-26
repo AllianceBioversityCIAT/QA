@@ -9,7 +9,7 @@
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
         <div class="highlight-view-section" *ngIf="comment.highlight_comment && !comment.is_deleted">
-          <img class="fa-shake" src="assets/icons/highlight.svg" alt="" srcset="" />
+          <img class="fa-shake" src="icons/highlight.svg" alt="" srcset="" />
           <p class="highligt-header">Comment highlighted by {{ comment.replies.highlight_by }}</p>
         </div>
         <div
@@ -157,7 +157,7 @@
               <!-- <span class="tooltiptext"
                 >make sure you have made the changes!
               </span> -->
-              <img src="../../assets/icons/done.svg" alt="" />
+              <img src="icons/done.svg" alt="" />
               Click when done
             </button>
           </div>
@@ -167,7 +167,7 @@
             class="remove-implemented-changes">
             <button class="btn remove-implemented-changes btn-block" (click)="implementedChange(commentsByColSelected?.id, comment.ppu)">
               <span class="tooltiptext">Changes have not yet been implemented?</span>
-              <img src="assets/icons/marked-done.svg" />
+              <img src="icons/marked-done.svg" />
               changes Implemented
             </button>
           </div>
@@ -357,7 +357,7 @@
   </div>
   <!-- <div class="require-changes-set" *ngIf="dataFromItem.require_changes == 1"> -->
   <div class="require-changes-set" *ngIf="commentsByColSelected?.require_changes && commentsByCol.length > 0">
-    <img class="require-changes-img" src="assets/icons/require_changes.svg" alt="require changes" />
+    <img class="require-changes-img" src="icons/require_changes.svg" alt="require changes" />
     requires changes
   </div>
   <ngx-spinner [name]="spinner_comment" [fullScreen]="false"> </ngx-spinner>
