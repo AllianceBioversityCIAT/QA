@@ -109,16 +109,6 @@ export class HeaderBarComponent implements OnInit {
     // console.log('NAV INDICATORS', this.indicators);
   }
 
-  goToView(indicator: any) {
-    if (indicator === 'logo' || indicator === 'home') {
-      this.router.navigate([`dashboard/${this.currentUser.roles[0].description.toLowerCase()}`]);
-      return;
-    }
-
-    let view = indicator.indicator.name;
-    let primary_column = indicator.indicator.primary_field;
-  }
-
   goToAssessorsChat() {
     window.open('./assessors-chat');
   }
