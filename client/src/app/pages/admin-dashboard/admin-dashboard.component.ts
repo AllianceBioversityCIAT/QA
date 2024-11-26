@@ -780,8 +780,10 @@ export default class AdminDashboardComponent implements OnInit {
     if (this.authenticationService.getBrowser() === 'Safari') filename += `.xlsx`;
 
     this.commentService.getCommentsRawExcel(crp_id).subscribe(
-      res => {
-        this._exportTableSE.exportMultipleSheetsExcel(res[0], filename, null, res[1]);
+      (res: any) => {
+        console.clear();
+        const [commentRaw, assessmentRaw] = res?.data || [];
+        this._exportTableSE.exportMultipleSheetsExcel(commentRaw, filename, null, assessmentRaw);
         this.hideSpinner();
       },
       error => {
