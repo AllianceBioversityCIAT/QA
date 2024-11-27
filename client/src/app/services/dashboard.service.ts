@@ -59,8 +59,11 @@ export class DashboardService {
   }
 
   // get hihglighted data
-  getHighlightedData() {
-    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/highlight-status`);
+  getHighlightedData(type?: string) {
+    let typeQueryParam = '';
+    if (type) typeQueryParam = `?type=${type}`;
+    console.log(typeQueryParam);
+    return this.http.get<any>(`${environment.apiBaseUrl}evaluation/highlight-status${typeQueryParam}`);
   }
 
   sortProperties(obj) {

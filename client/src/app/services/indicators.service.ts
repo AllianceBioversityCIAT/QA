@@ -39,6 +39,12 @@ export class IndicatorsService {
   getIndicators() {
     return this.http.get<any>(`${environment.apiBaseUrl}indicator/`);
   }
+
+  //get action areas
+  getActionAreas() {
+    return this.http.get<any>(`${environment.apiBaseUrl}indicator/action-areas`);
+  }
+
   //get crp
   getCRP(crp_id) {
     return this.http.get<any>(`${environment.apiBaseUrl}indicator/crp/${crp_id}`);

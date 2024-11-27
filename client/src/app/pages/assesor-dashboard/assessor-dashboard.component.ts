@@ -1,4 +1,4 @@
-import { Component, inject, OnInit, TemplateRef } from '@angular/core';
+import { Component, inject, OnInit, signal, TemplateRef, WritableSignal } from '@angular/core';
 import { Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
@@ -60,7 +60,8 @@ export default class AssessorDashboardComponent implements OnInit {
   indicator_status: string = 'indicators_status';
   highlightedData = [];
   isDataNull: boolean = false;
-
+  actionAreaList: WritableSignal<{ action_area: string }[]> = signal([]);
+  selectedActionArea: WritableSignal<string> = signal(null);
   descriptionCharts = {
     generalStatus: 'This shows the progress of assessment of a specific indicator. ',
     assessorsInteractions: "This presents assessors' interactions with existing comments on an item being already evaluated by other assessors. ",
@@ -89,6 +90,8 @@ export default class AssessorDashboardComponent implements OnInit {
   };
 
   indicatorsAvailable;
+
+  istpbUser: WritableSignal<boolean> = signal(false);
 
   indicatorsNameDropdwon = [
     { name: 'Innovation Use (IPSR)', viewname: 'qa_innovation_use_ipsr' },
@@ -127,6 +130,26 @@ export default class AssessorDashboardComponent implements OnInit {
     });
     this.showSpinner();
     this.loadDashData();
+
+    this.indicatorService.getActionAreas().subscribe(res => {
+      this.actionAreaList.set(res.data);
+      console.log(this.actionAreaList());
+    });
+    this.getIstpbUser();
+  }
+
+  getIstpbUser() {
+    const found = this.currentUser.indicators.find(element => {
+      return element?.isTPB === true;
+    });
+    this.istpbUser.set(found ? true : false);
+  }
+
+  changeActionArea(actionArea: any) {
+    this.selectedActionArea.set(actionArea.action_area);
+    console.log('changeActionArea', this.selectedActionArea());
+    // this.updateDataCharts();
+    this.loadDashData();
   }
 
   loadDashData() {
@@ -135,10 +158,12 @@ export default class AssessorDashboardComponent implements OnInit {
       this.getCommentStats(),
       this.getAllTags(),
       this.getItemStatusByIndicatorService(this.selectedIndicator),
-      this.dashService.getHighlightedData()
+      this.dashService.getHighlightedData(this.selectedActionArea())
     ]);
     responses.subscribe(res => {
       const [dashData, commentsStats, allTags, assessmentByField, highlightData] = res;
+
+      console.log(res[4]);
 
       if (dashData.data) {
         this.dashboardData = this.dashService.groupData(dashData.data);
@@ -406,6 +431,7 @@ export default class AssessorDashboardComponent implements OnInit {
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
     let find = this.highlightedData.find(indi => indi.indicator_view_name == this.selectedIndicator);
     this.dataCharts.highlitedPendingComments = this.getHighlightData(find, this.selectedIndicator);
+    console.log(this.dataCharts.highlitedPendingComments);
     setTimeout(() => {
       this.dashboardCacheService.updateChartData.set(true);
     }, 500);

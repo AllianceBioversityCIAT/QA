@@ -16,13 +16,29 @@
     <div class="card-body dashboard-container-charts col" [ngClass]="{ 'col-sm-12': currentUser.cycle.cycle_stage == '1' }">
       <div class="w-100 dashboard-header mb-2">
         <div class="h-100 title">Dashboard {{ getIndicatorName(selectedIndicator) }}</div>
-        <p-dropdown
-          [style]="{ width: '100%', backgroundColor: 'white' }"
-          [options]="this.indicatorsNameDropdwon"
-          [(ngModel)]="selectedIndicator"
-          optionLabel="name"
-          [placeholder]="getIndicatorName(selectedIndicator)"
-          (ngModelChange)="actualIndicator($event)" />
+
+        <div class="w-100">
+          <label for="indicator">Indicator</label>
+          <p-dropdown
+            [style]="{ width: '100%', backgroundColor: 'white' }"
+            [options]="this.indicatorsNameDropdwon"
+            [(ngModel)]="selectedIndicator"
+            optionLabel="name"
+            [placeholder]="getIndicatorName(selectedIndicator)"
+            (ngModelChange)="actualIndicator($event)" />
+
+          @if (this.istpbUser()) {
+            <!-- <div></div> -->
+            <label for="actionArea">Action Area</label>
+            <p-dropdown
+              [style]="{ width: '100%', backgroundColor: 'white' }"
+              [options]="this.actionAreaList()"
+              [(ngModel)]="selectedActionArea"
+              optionLabel="action_area"
+              placeholder="Select Action Area"
+              (ngModelChange)="changeActionArea($event)" />
+          }
+        </div>
       </div>
       <div *ngIf="isDataNull" class="no-data-container">
         <div class="no-data-message">No results available at the moment.</div>
