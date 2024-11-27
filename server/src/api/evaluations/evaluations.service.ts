@@ -911,32 +911,37 @@ export class EvaluationsService {
     }
   }
 
-  async pendingHighlights(): Promise<any> {
+  async pendingHighlights(actionAreas: string): Promise<any> {
     try {
-      const query = `
-      SELECT
-          SUM(IF(comments.highlight_comment = 1 AND comments.is_deleted = 0, 1, 0)) AS pending_highlight_comments,
-          SUM(IF(comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS total_tpb_comments,
-          SUM(IF(comments.require_changes = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_with_require_request,
-          SUM(IF(comments.require_changes = 0 AND comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_without_require_request,
-          SUM(IF(comments.require_changes = 1 AND comments.ppu = 0 AND comments.is_deleted = 0, 1, 0)) AS pending_tpb_decisions,
-          evaluations.indicator_view_name
+      let query = `
+        SELECT
+            SUM(IF(comments.highlight_comment = 1 AND comments.is_deleted = 0, 1, 0)) AS pending_highlight_comments,
+            SUM(IF(comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS total_tpb_comments,
+            SUM(IF(comments.require_changes = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_with_require_request,
+            SUM(IF(comments.require_changes = 0 AND comments.tpb = 1 AND comments.is_deleted = 0, 1, 0)) AS solved_without_require_request,
+            SUM(IF(comments.require_changes = 1 AND comments.ppu = 0 AND comments.is_deleted = 0, 1, 0)) AS pending_tpb_decisions,
+            evaluations.indicator_view_name
         FROM
-          qa_comments comments
+            qa_comments comments
         LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
         LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
+        ${actionAreas ? 'LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id' : ''}
         WHERE
-          comments.is_deleted = 0
-          AND comments.detail IS NOT NULL
-          AND metaId IS NOT NULL
-          AND evaluation_status <> 'Deleted'
-          AND evaluations.phase_year = actual_phase_year()
-          AND evaluations.batchDate >= actual_batch_date()
+            comments.is_deleted = 0
+            AND comments.detail IS NOT NULL
+            AND metaId IS NOT NULL
+            AND evaluation_status <> 'Deleted'
+            AND evaluations.phase_year = actual_phase_year()
+            AND evaluations.batchDate >= actual_batch_date()
+            ${actionAreas ? 'AND crp.action_area = ?' : ''}
         GROUP BY
-          evaluations.indicator_view_name;
-      `;
+            evaluations.indicator_view_name;
+        `;
 
-      const highlights = await this._evaluationsRepository.query(query);
+      const highlights = await this._evaluationsRepository.query(
+        query,
+        actionAreas ? [actionAreas] : [],
+      );
 
       const data = highlights.map((highlight: any) => ({
         pending_highlight_comments:

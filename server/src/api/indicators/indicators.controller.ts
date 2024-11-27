@@ -193,4 +193,14 @@ export class IndicatorsController {
   getCRP(@Param('crp_id') crpId: string) {
     return this.indicatorsService.getCRP(crpId);
   }
+
+  @Get('action-areas')
+  @ApiOperation({ summary: 'Get all action areas' })
+  @ApiResponse({
+    status: 200,
+    description: 'Action areas retrieved successfully.',
+  })
+  actionAreas(){
+    return this.indicatorsService.getActionAreas();
+  }
 }

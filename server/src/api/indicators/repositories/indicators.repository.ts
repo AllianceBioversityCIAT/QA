@@ -720,4 +720,24 @@ export class IndicatorsRepository extends Repository<Indicators> {
       );
     return await queryRunner.connection.query(query, parameters);
   }
+
+  async getActionAreas() {
+    try {
+      const query = `
+        SELECT
+          DISTINCT action_area
+        FROM
+          qa_crp
+        WHERE
+          action_area IS NOT NULL
+          AND action_area <> '';
+      `;
+    
+      this._logger.log('Executing getActionAreas query');
+      return await this.dataSource.query(query);
+    } catch (error) {
+      this._logger.error('Error executing getActionAreas query:', error);
+      throw new Error('Failed to retrieve action areas.');
+    }
+  }
 }

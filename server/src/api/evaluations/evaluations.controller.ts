@@ -471,8 +471,10 @@ export class EvaluationsController {
     status: 500,
     description: 'Could not retrieve the highlighted status.',
   })
-  async pendingHighlights() {
-    return this.evaluationsService.pendingHighlights();
+  async pendingHighlights(
+    @Query('type') actionAreas: string,
+  ) {
+    return this.evaluationsService.pendingHighlights(actionAreas);
   }
 
   @UseGuards(RolesGuard)

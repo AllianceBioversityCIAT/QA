@@ -645,4 +645,23 @@ export class IndicatorsService {
       });
     }
   }
+
+  async getActionAreas() {
+    try {
+      const actionAreas = await this._indicatorsRepository.getActionAreas();
+
+      return ResponseUtils.format({
+        data: actionAreas,
+        description: 'Action areas retrieved successfully.',
+        status: HttpStatus.OK,
+      });
+    } catch (error) {
+      this._logger.error(error);
+      return ResponseUtils.format({
+        data: {},
+        description: 'Error retrieving action areas',
+        status: HttpStatus.INTERNAL_SERVER_ERROR,
+      });
+    }
+  }
 }
