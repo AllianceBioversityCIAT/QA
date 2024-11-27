@@ -200,6 +200,9 @@ export default class AssessorDashboardComponent implements OnInit {
 
   actualIndicator(indicator: any) {
     console.log('actualIndicator', indicator);
+    this.selectedActionArea = null;
+    this.changeActionArea(null);
+
     this.selectedIndicator = indicator?.viewname;
     this.dataSelected = this.dashboardData[this.selectedIndicator];
 
