@@ -17,26 +17,31 @@
       <div class="w-100 dashboard-header mb-2">
         <div class="h-100 title">Dashboard {{ getIndicatorName(selectedIndicator) }}</div>
 
-        <div class="w-100">
-          <label for="indicator">Indicator</label>
-          <p-dropdown
-            [style]="{ width: '100%', backgroundColor: 'white' }"
-            [options]="this.indicatorsNameDropdwon"
-            [(ngModel)]="selectedIndicator"
-            optionLabel="name"
-            [placeholder]="getIndicatorName(selectedIndicator)"
-            (ngModelChange)="actualIndicator($event)" />
-
-          @if (this.istpbUser()) {
-            <!-- <div></div> -->
-            <label for="actionArea">Action Area</label>
+        <div class="w-100 dropdowns">
+          <div class="dropdown">
+            <label for="indicator">Indicator</label>
             <p-dropdown
               [style]="{ width: '100%', backgroundColor: 'white' }"
-              [options]="this.actionAreaList()"
-              [(ngModel)]="selectedActionArea"
-              optionLabel="action_area"
-              placeholder="Select Action Area"
-              (ngModelChange)="changeActionArea($event)" />
+              [options]="this.indicatorsNameDropdwon"
+              [(ngModel)]="selectedIndicator"
+              optionLabel="name"
+              [placeholder]="getIndicatorName(selectedIndicator)"
+              (ngModelChange)="actualIndicator($event)" />
+          </div>
+
+          @if (this.istpbUser()) {
+            <div class="dropdown">
+              <label for="actionArea">Action Area</label>
+              <p-dropdown
+                [style]="{ width: '100%', backgroundColor: 'white' }"
+                [options]="this.actionAreaList()"
+                [(ngModel)]="selectedActionArea"
+                optionLabel="action_area"
+                optionValue="action_area"
+                placeholder="Select Action Area"
+                showClear="true"
+                (ngModelChange)="changeActionArea($event)" />
+            </div>
           }
         </div>
       </div>

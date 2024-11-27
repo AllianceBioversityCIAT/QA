@@ -61,7 +61,7 @@ export default class AssessorDashboardComponent implements OnInit {
   highlightedData = [];
   isDataNull: boolean = false;
   actionAreaList: WritableSignal<{ action_area: string }[]> = signal([]);
-  selectedActionArea: WritableSignal<string> = signal(null);
+  selectedActionArea: string = null;
   descriptionCharts = {
     generalStatus: 'This shows the progress of assessment of a specific indicator. ',
     assessorsInteractions: "This presents assessors' interactions with existing comments on an item being already evaluated by other assessors. ",
@@ -146,9 +146,6 @@ export default class AssessorDashboardComponent implements OnInit {
   }
 
   changeActionArea(actionArea: any) {
-    this.selectedActionArea.set(actionArea.action_area);
-    console.log('changeActionArea', this.selectedActionArea());
-    // this.updateDataCharts();
     this.loadDashData();
   }
 
@@ -158,7 +155,7 @@ export default class AssessorDashboardComponent implements OnInit {
       this.getCommentStats(),
       this.getAllTags(),
       this.getItemStatusByIndicatorService(this.selectedIndicator),
-      this.dashService.getHighlightedData(this.selectedActionArea())
+      this.dashService.getHighlightedData(this.selectedActionArea)
     ]);
     responses.subscribe(res => {
       const [dashData, commentsStats, allTags, assessmentByField, highlightData] = res;
