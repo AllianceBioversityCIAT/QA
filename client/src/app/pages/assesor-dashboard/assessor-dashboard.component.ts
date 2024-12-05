@@ -386,13 +386,13 @@ export default class AssessorDashboardComponent implements OnInit {
       dataset.push(pending_highlight_comment);
 
       let solved_with_require_request = {
-        name: 'Solved',
+        name: 'Requires changes',
         value: +data.solved_with_require_request
       };
       dataset.push(solved_with_require_request);
 
       let solved_without_require_request = {
-        name: 'SolvedWC',
+        name: 'No changes needed',
         value: +data.solved_without_require_request
       };
       dataset.push(solved_without_require_request);
