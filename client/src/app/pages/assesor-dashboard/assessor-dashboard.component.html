@@ -64,7 +64,7 @@
         You don't have any indicator assingned. Please contact your Administrator.
       </div>
     </div>
-    <div class="card-body feed col col-sm-3" *ngIf="currentUser.cycle.cycle_stage == '2'"></div>
+    <div class="card-body feed col col-sm-3" *ngIf="this.currentUser.cycle?.id == 2"></div>
   </div>
 </div>
 <ng-template #chartD style="max-width: 1800px">

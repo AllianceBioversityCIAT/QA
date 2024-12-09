@@ -211,7 +211,7 @@
                               <div id="old-data" class="flex-auto" [innerHTML]="sanitizedOldValue"></div>
                             }
 
-                            @if (detailedData[i]?.is_core && currentUser?.cycle[0]?.cycle_stage == '2' && detailedData[i]?.hasChanged) {
+                            @if (detailedData[i]?.is_core && this.currentUser.cycle?.id == 2 && detailedData[i]?.hasChanged) {
                               <label for="on-initial" class="font-semibold w-6rem">On Initial QA Submission:</label>
                               <div id="on-initial" class="flex-auto" [innerHTML]="sanitizedInitialValue"></div>
                             }
