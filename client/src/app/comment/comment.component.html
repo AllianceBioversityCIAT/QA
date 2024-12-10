@@ -10,7 +10,7 @@
       <ng-container *ngFor="let comment of commentsByCol">
         <div class="highlight-view-section" *ngIf="comment.highlight_comment && !comment.is_deleted">
           <img class="fa-shake" src="icons/highlight.svg" alt="" srcset="" />
-          <p class="highligt-header">Comment highlighted by {{ comment.replies.highlight_by }}</p>
+          <p class="highligt-header">Comment highlighted by {{ comment.replies[0].highlight_by }}</p>
         </div>
         <div
           class="comment-body {{ comment.replyType?.id === 1 || comment.replyType?.id === 4 ? 'approved' : '' }} {{
