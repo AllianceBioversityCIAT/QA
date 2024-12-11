@@ -133,7 +133,6 @@ export default class AssessorDashboardComponent implements OnInit {
 
     this.indicatorService.getActionAreas().subscribe(res => {
       this.actionAreaList.set(res.data);
-      console.log(this.actionAreaList());
     });
     this.getIstpbUser();
   }
@@ -159,9 +158,6 @@ export default class AssessorDashboardComponent implements OnInit {
     ]);
     responses.subscribe(res => {
       const [dashData, commentsStats, allTags, assessmentByField, highlightData] = res;
-
-      console.log(res[4]);
-
       if (dashData.data) {
         this.dashboardData = this.dashService.groupData(dashData.data);
         this.dataSelected = this.dashboardData[this.selectedIndicator];
@@ -199,7 +195,6 @@ export default class AssessorDashboardComponent implements OnInit {
   }
 
   actualIndicator(indicator: any) {
-    console.log('actualIndicator', indicator);
     this.selectedActionArea = null;
     this.changeActionArea(null);
 
@@ -210,7 +205,6 @@ export default class AssessorDashboardComponent implements OnInit {
 
     let responses = forkJoin([this.getItemStatusByIndicatorService(this.selectedIndicator)]);
     responses.subscribe(res => {
-      console.log(res);
       const [assessmentByField] = res;
 
       this.itemStatusByIndicator = assessmentByField.data;
@@ -431,7 +425,6 @@ export default class AssessorDashboardComponent implements OnInit {
     this.dataCharts.assessmentByField = this.itemStatusByIndicator;
     let find = this.highlightedData.find(indi => indi.indicator_view_name == this.selectedIndicator);
     this.dataCharts.highlitedPendingComments = this.getHighlightData(find, this.selectedIndicator);
-    console.log(this.dataCharts.highlitedPendingComments);
     setTimeout(() => {
       this.dashboardCacheService.updateChartData.set(true);
     }, 500);
@@ -453,7 +446,6 @@ export default class AssessorDashboardComponent implements OnInit {
 
     this.commentService.getCommentsRawExcel().subscribe(
       (res: { data: any[] }) => {
-        console.clear();
         const [commentRaw, assessmentRaw] = res.data;
         this._exportTableSE.exportMultipleSheetsExcel(commentRaw, filename, null, assessmentRaw);
         this.hideSpinner();
