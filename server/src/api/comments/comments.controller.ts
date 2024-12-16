@@ -232,7 +232,6 @@ export class CommentsController {
   })
   async patchPpuChanges(
     @Body() patchPpuChangesDto: PatchPpuDto,
-    @Res() res: Response,
   ) {
     const { ppu, commentReplyId } = patchPpuChangesDto;
     return await this.commentsService.patchPpuChanges(ppu, commentReplyId);

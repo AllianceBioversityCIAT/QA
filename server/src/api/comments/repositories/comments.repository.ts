@@ -625,7 +625,7 @@ export class CommentsRepository extends Repository<Comments> {
     try {
       if (crp_id !== undefined && crp_id !== 'undefined') {
         const commentsQuery = `
-             SELECT
+        SELECT
             evaluations.crp_id AS 'Initiative ID',
             (
                 SELECT
@@ -675,19 +675,6 @@ export class CommentsRepository extends Repository<Comments> {
                     id = comments.metaId
             ) AS 'Field',
             clean_html_tags(comments.original_field) AS 'Original field',
-            CASE
-                evaluations.indicator_view_name
-                WHEN 'qa_other_output' THEN qood2.result_code
-                WHEN 'qa_innovation_development' THEN qidd.result_code
-                WHEN 'qa_knowledge_product' THEN qkp.result_code
-                WHEN 'qa_capdev' THEN qcd.result_code
-                WHEN 'qa_impact_contribution' THEN qicd.result_code
-                WHEN 'qa_other_outcome' THEN qood.result_code
-                WHEN 'qa_innovation_use' THEN qiud.result_code
-                WHEN 'qa_policy_change' THEN qpcd.result_code
-                WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
-                ELSE NULL
-            END AS 'Result Code',
             IF(qim.is_core = 1, 'Yes', 'No') AS 'Is core',
             comments.detail AS 'Assessor comment',
             comments.createdAt AS 'Comment created at',
@@ -703,7 +690,7 @@ export class CommentsRepository extends Repository<Comments> {
             (
                 SELECT
                     cycle_stage
-                from
+                FROM
                     qa_cycle
                 WHERE
                     id = comments.cycleId
@@ -716,7 +703,7 @@ export class CommentsRepository extends Repository<Comments> {
                         qa_comments_replies
                     WHERE
                         commentId = comments.id
-                        and qa_comments_replies.is_deleted = 0
+                        AND qa_comments_replies.is_deleted = 0
                 ),
                 '<not replied>'
             ) as 'Reply',
@@ -727,7 +714,7 @@ export class CommentsRepository extends Repository<Comments> {
                             (
                                 SELECT
                                     username
-                                from
+                                FROM
                                     qa_users
                                 WHERE
                                     id = userId
@@ -737,7 +724,7 @@ export class CommentsRepository extends Repository<Comments> {
                         qa_comments_replies
                     WHERE
                         commentId = comments.id
-                        and qa_comments_replies.is_deleted = 0
+                        AND qa_comments_replies.is_deleted = 0
                 ),
                 '<not replied>'
             ) AS 'User reply',
@@ -750,8 +737,14 @@ export class CommentsRepository extends Repository<Comments> {
                 END
             ) AS 'Reply status',
             IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highligth comment',
-            IF(comments.require_changes = 1, 'Yes', 'No') AS 'Require changes comment',
-            IF(comments.tpb = 1, 'Yes', 'No') AS 'TPB Instruction',
+            CASE
+                WHEN require_changes_comments.id IS NULL THEN 'No'
+                ELSE 'Yes'
+            END AS 'Require changes comment',
+            CASE
+                WHEN tpb_comments.id IS NULL THEN 'No'
+                ELSE 'Yes'
+            END AS 'TPB Instruction',
             IF(comments.ppu = 1, 'Yes', 'No') AS 'Implemented changes',
             IFNULL(
                 (
@@ -761,7 +754,7 @@ export class CommentsRepository extends Repository<Comments> {
                         qa_comments_replies
                     WHERE
                         commentId = comments.id
-                        and qa_comments_replies.is_deleted = 0
+                        AND qa_comments_replies.is_deleted = 0
                 ),
                 '<not replied>'
             ) AS 'Reply date'
@@ -783,6 +776,14 @@ export class CommentsRepository extends Repository<Comments> {
             LEFT JOIN qa_other_output_data qood2 ON qood2.id = evaluations.indicator_view_id
             LEFT JOIN qa_policy_change_data qpcd ON qpcd.id = evaluations.indicator_view_id
             LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
+            LEFT JOIN qa_comments tpb_comments ON tpb_comments.evaluationId = comments.evaluationId
+            AND tpb_comments.metaId = comments.metaId
+            AND tpb_comments.tpb = 1
+            AND tpb_comments.is_deleted = 0
+            LEFT JOIN qa_comments require_changes_comments ON require_changes_comments.evaluationId = comments.evaluationId
+            AND require_changes_comments.metaId = comments.metaId
+            AND require_changes_comments.require_changes = 1
+            AND require_changes_comments.is_deleted = 0
         WHERE
             comments.is_deleted = 0
             AND comments.detail IS NOT NULL
@@ -796,8 +797,7 @@ export class CommentsRepository extends Repository<Comments> {
             comments.id
         ORDER BY
             evaluations.crp_id,
-            indicator_view_id;
-          `;
+            indicator_view_id;`;
 
         const evaluationQuery = `
        SELECT
@@ -936,19 +936,6 @@ export class CommentsRepository extends Repository<Comments> {
                     id = comments.metaId
             ) AS 'Field',
             clean_html_tags(comments.original_field) AS 'Original field',
-            CASE
-                evaluations.indicator_view_name
-                WHEN 'qa_other_output' THEN qood2.result_code
-                WHEN 'qa_innovation_development' THEN qidd.result_code
-                WHEN 'qa_knowledge_product' THEN qkp.result_code
-                WHEN 'qa_capdev' THEN qcd.result_code
-                WHEN 'qa_impact_contribution' THEN qicd.result_code
-                WHEN 'qa_other_outcome' THEN qood.result_code
-                WHEN 'qa_innovation_use' THEN qiud.result_code
-                WHEN 'qa_policy_change' THEN qpcd.result_code
-                WHEN 'qa_innovation_use_ipsr' THEN qiuid.result_code
-                ELSE NULL
-            END AS 'Result Code',
             IF(qim.is_core = 1, 'Yes', 'No') AS 'Is core',
             comments.detail AS 'Assessor comment',
             comments.createdAt AS 'Comment created at',
@@ -964,7 +951,7 @@ export class CommentsRepository extends Repository<Comments> {
             (
                 SELECT
                     cycle_stage
-                from
+                FROM
                     qa_cycle
                 WHERE
                     id = comments.cycleId
@@ -977,7 +964,7 @@ export class CommentsRepository extends Repository<Comments> {
                         qa_comments_replies
                     WHERE
                         commentId = comments.id
-                        and qa_comments_replies.is_deleted = 0
+                        AND qa_comments_replies.is_deleted = 0
                 ),
                 '<not replied>'
             ) as 'Reply',
@@ -988,7 +975,7 @@ export class CommentsRepository extends Repository<Comments> {
                             (
                                 SELECT
                                     username
-                                from
+                                FROM
                                     qa_users
                                 WHERE
                                     id = userId
@@ -998,7 +985,7 @@ export class CommentsRepository extends Repository<Comments> {
                         qa_comments_replies
                     WHERE
                         commentId = comments.id
-                        and qa_comments_replies.is_deleted = 0
+                        AND qa_comments_replies.is_deleted = 0
                 ),
                 '<not replied>'
             ) AS 'User reply',
@@ -1011,8 +998,14 @@ export class CommentsRepository extends Repository<Comments> {
                 END
             ) AS 'Reply status',
             IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highligth comment',
-            IF(comments.require_changes = 1, 'Yes', 'No') AS 'Require changes comment',
-            IF(comments.tpb = 1, 'Yes', 'No') AS 'TPB Instruction',
+            CASE
+                WHEN require_changes_comments.id IS NULL THEN 'No'
+                ELSE 'Yes'
+            END AS 'Require changes comment',
+            CASE
+                WHEN tpb_comments.id IS NULL THEN 'No'
+                ELSE 'Yes'
+            END AS 'TPB Instruction',
             IF(comments.ppu = 1, 'Yes', 'No') AS 'Implemented changes',
             IFNULL(
                 (
@@ -1022,7 +1015,7 @@ export class CommentsRepository extends Repository<Comments> {
                         qa_comments_replies
                     WHERE
                         commentId = comments.id
-                        and qa_comments_replies.is_deleted = 0
+                        AND qa_comments_replies.is_deleted = 0
                 ),
                 '<not replied>'
             ) AS 'Reply date'
@@ -1044,6 +1037,14 @@ export class CommentsRepository extends Repository<Comments> {
             LEFT JOIN qa_other_output_data qood2 ON qood2.id = evaluations.indicator_view_id
             LEFT JOIN qa_policy_change_data qpcd ON qpcd.id = evaluations.indicator_view_id
             LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
+            LEFT JOIN qa_comments tpb_comments ON tpb_comments.evaluationId = comments.evaluationId
+            AND tpb_comments.metaId = comments.metaId
+            AND tpb_comments.tpb = 1
+            AND tpb_comments.is_deleted = 0
+            LEFT JOIN qa_comments require_changes_comments ON require_changes_comments.evaluationId = comments.evaluationId
+            AND require_changes_comments.metaId = comments.metaId
+            AND require_changes_comments.require_changes = 1
+            AND require_changes_comments.is_deleted = 0
         WHERE
             comments.is_deleted = 0
             AND comments.detail IS NOT NULL
