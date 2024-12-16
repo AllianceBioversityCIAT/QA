@@ -480,8 +480,8 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
         indicatorName: `qa_${this.params.type}`
       })
       .subscribe(
-        res => {
-          this._exportTableSE.exportExcel(res, filename);
+        (res: any) => {
+          this._exportTableSE.exportExcel(res?.data || [], filename);
           this.hideSpinner('spinner1');
         },
         error => {
