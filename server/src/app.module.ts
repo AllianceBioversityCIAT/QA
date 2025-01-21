@@ -16,6 +16,7 @@ import { JwtService } from '@nestjs/jwt';
 import { JwtMiddleware } from './shared/middlewares/jwt.middleware';
 import { RolesModule } from './api/roles/roles.module';
 import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
+import { AiHelperModule } from './api/ai-helper/ai-helper.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { ResponseInterceptor } from './shared/interceptor/response.interceptor';
     IndicatorsModule,
     EvaluationsModule,
     CommentsModule,
+    AiHelperModule,
     RouterModule.register(MainRoutes),
     TypeOrmModule.forRoot({
       ...datasource.options,
