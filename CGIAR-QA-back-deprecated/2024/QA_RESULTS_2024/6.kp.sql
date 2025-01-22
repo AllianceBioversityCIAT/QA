@@ -9,7 +9,7 @@ SELECT
             rbi.inititiative_id = ci.id
     ) AS crp_id,
     'AR' AS phase_name,
-         (
+    (
         SELECT
             v1.phase_year
         FROM
@@ -1213,8 +1213,12 @@ WHERE
     )
     AND (
         rkp.is_melia = 1
-        OR (
-            rkp.knowledge_product_type = 'Journal Article'
+        OR rkp.knowledge_product_type = 'Journal Article'
+        OR r.id IN (
+            SELECT
+                qa.indicator_view_id
+            FROM
+                qadb.qa_evaluations qa
         )
     )
 GROUP BY
