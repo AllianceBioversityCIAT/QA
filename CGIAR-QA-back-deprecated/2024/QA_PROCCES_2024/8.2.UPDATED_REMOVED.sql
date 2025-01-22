@@ -1,4 +1,3 @@
--- OTHER_OUTPUT
 UPDATE
 	qa_evaluations e
 SET
@@ -215,6 +214,8 @@ SET
 WHERE
 	e.indicator_view_name = 'qa_innovation_use_ipsr'
 	AND evaluation_status != 'Removed'
+	AND e.phase_year = 2024
+	AND e.batchDate >= actual_batch_date()
 	AND not EXISTS (
 		SELECT
 			1
