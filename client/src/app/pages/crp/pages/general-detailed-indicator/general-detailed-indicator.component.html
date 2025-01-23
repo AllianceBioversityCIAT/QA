@@ -231,6 +231,14 @@
                       <!-- <h2 *ngIf="!validateCommentAvility(detailedData[i]) || detailedData[i].replies_count != '0' && !summon.value.isChecked ">
                                                 {{detailedData[i].display_name}}</h2> -->
 
+
+                      @if(AIMatchFields.includes(detailedData[i].col_name)) {
+                        <div class="ai-match-card" [ngClass]="{'ai-match-true': false, 'ai-match-false': true}">
+                          <span class="material-icons-round ai-match-icon" [ngStyle]="{'color': false ? '#4caf50' : '#F44336'}">auto_awesome</span>
+                          <p class="ai-match-card-title">{{false ? 'AI Match' : 'AI Mismatch (2) Principal'}}</p>
+                        </div>
+                      }
+
                       <div *ngIf="detailedData[i].meta_description && false">
                         <i [pTooltip]="popTemplate" container="body" placement="top" class="icon-pdf" style="height: 2em"></i>
                         <ng-template #popTemplate>

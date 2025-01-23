@@ -1,4 +1,4 @@
-@import '@public/variables.scss';
+@import "@public/variables.scss";
 
 .data-header {
   display: flex;
@@ -144,7 +144,7 @@
 
 .custom-control-input:checked ~ .custom-control-label::before {
   background-color: var(--color-agree);
-  content: '✔';
+  content: "✔";
   font-size: 14px;
   display: grid;
   place-items: center;
@@ -488,7 +488,7 @@
 
             &:before {
               position: absolute;
-              content: '';
+              content: "";
               height: 20px;
               width: 20px;
               left: -2px;
@@ -582,7 +582,7 @@
         cursor: pointer;
 
         i {
-          content: url('@public/icons/comment_icon_added.svg');
+          content: url("@public/icons/comment_icon_added.svg");
         }
 
         .replies-count {
@@ -795,4 +795,36 @@
   align-items: center;
   gap: 0.5em;
   font-size: 18px;
+}
+
+.ai-match-card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 8px 12px;
+  border-radius: 5px;
+  margin-left: 15px;
+}
+
+.ai-match-icon {
+  font-size: 16px !important;
+  margin: 0;
+}
+
+.ai-match-card-title {
+  font-size: 14px !important;
+  margin: 0 !important;
+}
+
+.ai-match-true {
+  color: #4caf50;
+  background-color: #dfffd6;
+  border: 1px solid #4caf50;
+}
+
+.ai-match-false {
+  color: #f44336;
+  background-color: #ffd6d6;
+  border: 1px solid #f44336;
 }

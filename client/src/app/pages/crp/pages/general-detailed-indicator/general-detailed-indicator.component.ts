@@ -161,6 +161,8 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   sanitizedOldValue: SafeHtml = '';
   sanitizedInitialValue: SafeHtml = '';
   sanitizedCurrentValue: SafeHtml = '';
+  AIMatchFields = ["gender_tag_level", "climate_change_level", "nutrition_tag_level", "environmental_biodiversity_tag_level", "poverty_tag_level"]
+  
   constructor(
     private activeRoute: ActivatedRoute,
     private router: Router,
