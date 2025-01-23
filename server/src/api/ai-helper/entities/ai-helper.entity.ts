@@ -1,4 +1,4 @@
-import { Column, Entity, PrimaryGeneratedColumn } from "typeorm";
+import { Column, CreateDateColumn, Entity, PrimaryGeneratedColumn, UpdateDateColumn } from "typeorm";
 
 @Entity("ai_matcher")
 export class AiHelper {
@@ -82,4 +82,10 @@ export class AiHelper {
 
   @Column({ type: "varchar", length: 50, nullable: true })
   innovation_ai_matching: string | null;
+
+  @CreateDateColumn()
+  created_at: Date;
+
+  @UpdateDateColumn()
+  updated_at: Date;
 }
