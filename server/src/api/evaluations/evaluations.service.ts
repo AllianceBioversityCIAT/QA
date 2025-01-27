@@ -1,22 +1,24 @@
-import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { EvaluationRepository } from './repositories/evaluation.repository';
-import { UserRepository } from '../users/users.repository';
-import { RolesHandler } from '../../shared/enum/roles-handler.enum';
-import { StatusHandler } from './enum/status-handler.enum';
-import { ResponseUtils } from '../../utils/response.utils';
-import { TokenDto } from '../../shared/global-dto/token.dto';
-import { CrpRepository } from '../../shared/repositories/crp.repository';
-import { CommentsRepository } from '../comments/repositories/comments.repository';
-import { TagsRepository } from '../comments/repositories/tags.repository';
+import { HttpStatus, Injectable, Logger } from "@nestjs/common";
+import { EvaluationRepository } from "./repositories/evaluation.repository";
+import { UserRepository } from "../users/users.repository";
+import { RolesHandler } from "../../shared/enum/roles-handler.enum";
+import { StatusHandler } from "./enum/status-handler.enum";
+import { ResponseUtils } from "../../utils/response.utils";
+import { TokenDto } from "../../shared/global-dto/token.dto";
+import { CrpRepository } from "../../shared/repositories/crp.repository";
+import { CommentsRepository } from "../comments/repositories/comments.repository";
+import { TagsRepository } from "../comments/repositories/tags.repository";
 import {
   CreateCommentDto,
   CreateReplyDto,
   UpdateCommentDto,
   UpdateReplyDto,
-} from './dto/evaluation.dto';
-import { ReplyTypeRepository } from '../comments/repositories/reply-type.repository';
-import { CommentsRepliesRepository } from '../comments/repositories/comments-reply.repository';
-import { IndicatorsRepository } from '../indicators/repositories/indicators.repository';
+} from "./dto/evaluation.dto";
+import { ReplyTypeRepository } from "../comments/repositories/reply-type.repository";
+import { CommentsRepliesRepository } from "../comments/repositories/comments-reply.repository";
+import { IndicatorsRepository } from "../indicators/repositories/indicators.repository";
+import { AiHelperRepository } from "../ai-helper/ai-helper.repository";
+import { AiHelper } from "../ai-helper/entities/ai-helper.entity";
 
 @Injectable()
 export class EvaluationsService {
@@ -30,57 +32,58 @@ export class EvaluationsService {
     private readonly _replyTypeRepository: ReplyTypeRepository,
     private readonly _commentReplyRepository: CommentsRepliesRepository,
     private readonly _indicatorRepository: IndicatorsRepository,
+    private readonly _aiHelperRepository: AiHelperRepository
   ) {}
 
   async getAllEvaluationsDash(
     crpId: string | undefined,
-    user: TokenDto,
+    user: TokenDto
   ): Promise<any> {
     const uData = await this._evaluationsRepository.getUser(user.userId);
     try {
       let rawData;
-      if (crpId !== undefined && crpId !== 'undefined') {
+      if (crpId !== undefined && crpId !== "undefined") {
         rawData = await this._evaluationsRepository.getEvaluationsByCrpId(
           crpId,
-          uData.roles[0].qa_role,
+          uData.roles[0].qa_role
         );
       } else {
         rawData = await this._evaluationsRepository.getAllEvaluations();
       }
 
       const response = rawData.map((element) => ({
-        indicator_view_name: element['indicator_view_name'],
-        status: element['status']
-          ? element['status']
-          : element['evaluations_status'],
+        indicator_view_name: element["indicator_view_name"],
+        status: element["status"]
+          ? element["status"]
+          : element["evaluations_status"],
         type: this._evaluationsRepository.getType(
-          element['status'] ? element['status'] : element['evaluations_status'],
-          crpId !== undefined && crpId !== 'undefined',
+          element["status"] ? element["status"] : element["evaluations_status"],
+          crpId !== undefined && crpId !== "undefined"
         ),
-        value: element['count'],
-        indicator_status: element['indicator_status'],
-        crp_id: crpId ? element['crp_id'] : null,
-        label: `${element['count']}`,
-        primary_field: element['primary_field'],
-        order: element['indicator_order'],
-        tpb_count: element['tpb_count'],
+        value: element["count"],
+        indicator_status: element["indicator_status"],
+        crp_id: crpId ? element["crp_id"] : null,
+        label: `${element["count"]}`,
+        primary_field: element["primary_field"],
+        order: element["indicator_order"],
+        tpb_count: element["tpb_count"],
       }));
 
       const data = this._evaluationsRepository.groupBy(
         response,
-        'indicator_view_name',
+        "indicator_view_name"
       );
       return ResponseUtils.format({
         data: data,
         status: HttpStatus.OK,
-        description: 'All evaluations retrieved successfully.',
+        description: "All evaluations retrieved successfully.",
       });
     } catch (error) {
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Error retrieving evaluations.',
+        description: "Error retrieving evaluations.",
       });
     }
   }
@@ -90,7 +93,7 @@ export class EvaluationsService {
     viewName: string,
     viewPrimaryField: string,
     crpId: string | undefined,
-    user: TokenDto,
+    user: TokenDto
   ): Promise<any> {
     try {
       const userEntity = await this._evaluationsRepository.getUser(user.userId);
@@ -98,51 +101,51 @@ export class EvaluationsService {
 
       let rawData;
 
-      if (isAdmin && (!crpId || crpId === 'undefined' || crpId === undefined)) {
+      if (isAdmin && (!crpId || crpId === "undefined" || crpId === undefined)) {
         rawData =
           await this._evaluationsRepository.getEvaluationsAdmin(viewName);
-        this._logger.log('Admin - getListEvaluationsDash');
+        this._logger.log("Admin - getListEvaluationsDash");
       } else if (userEntity.crps.length > 0) {
         rawData =
           await this._evaluationsRepository.getEvaluationsByCrpIdAndView(
             viewName,
-            crpId,
+            crpId
           );
-        this._logger.log('CRP - getListEvaluationsDash');
+        this._logger.log("CRP - getListEvaluationsDash");
       } else {
         rawData = await this._evaluationsRepository.getEvaluationsByIndicator(
           id,
-          viewName,
+          viewName
         );
-        this._logger.log('Assessor - getListEvaluationsDash');
+        this._logger.log("Assessor - getListEvaluationsDash");
       }
 
       const data = this._evaluationsRepository.parseEvaluationsData(rawData);
       return ResponseUtils.format({
         data,
         status: HttpStatus.OK,
-        description: 'Evaluations list retrieved successfully.',
+        description: "Evaluations list retrieved successfully.",
       });
     } catch (error) {
-      this._logger.error('Error retrieving evaluations list:', error);
+      this._logger.error("Error retrieving evaluations list:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Error retrieving evaluations list.',
+        description: "Error retrieving evaluations list.",
       });
     }
   }
 
   async getAllEvaluationsDashByCRP(
     crpId: string | undefined,
-    user: TokenDto,
+    user: TokenDto
   ): Promise<any> {
     try {
       const userData = await this._evaluationsRepository.getUser(user.userId);
 
       let rawData;
-      if (crpId && crpId !== 'undefined') {
+      if (crpId && crpId !== "undefined") {
         rawData =
           await this._evaluationsRepository.getEvaluationsDashByCRP(crpId);
       } else {
@@ -150,37 +153,37 @@ export class EvaluationsService {
       }
 
       const response = rawData.map((element) => ({
-        indicator_view_name: element['indicator_view_name'],
-        status: element['status'] || element['evaluations_status'],
+        indicator_view_name: element["indicator_view_name"],
+        status: element["status"] || element["evaluations_status"],
         type: this._evaluationsRepository.getType(
-          element['status'] || element['evaluations_status'],
-          !!crpId,
+          element["status"] || element["evaluations_status"],
+          !!crpId
         ),
-        value: element['count'],
-        indicator_status: element['indicator_status'],
-        crp_id: crpId ? element['crp_id'] : null,
-        label: `${element['count']}`,
-        primary_field: element['primary_field'],
-        order: element['indicator_order'],
+        value: element["count"],
+        indicator_status: element["indicator_status"],
+        crp_id: crpId ? element["crp_id"] : null,
+        label: `${element["count"]}`,
+        primary_field: element["primary_field"],
+        order: element["indicator_order"],
       }));
 
       const result = this._evaluationsRepository.groupBy(
         response,
-        'indicator_view_name',
+        "indicator_view_name"
       );
 
       return ResponseUtils.format({
         data: result,
-        description: 'All evaluations by CRP retrieved successfully.',
+        description: "All evaluations by CRP retrieved successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error retrieving evaluations by CRP:', error);
+      this._logger.error("Error retrieving evaluations by CRP:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Error retrieving evaluations by CRP.',
+        description: "Error retrieving evaluations by CRP.",
       });
     }
   }
@@ -193,39 +196,39 @@ export class EvaluationsService {
       if (rawData.length === 0) {
         return ResponseUtils.format({
           data: [],
-          description: 'No evaluations found for this user.',
+          description: "No evaluations found for this user.",
           status: HttpStatus.OK,
         });
       }
 
       const response = rawData.map((element) => ({
-        indicator_view_name: element['indicator_view_name'],
-        status: element['status'],
-        indicator_status: element['enable_assessor'],
-        type: this._evaluationsRepository.getType(element['status']),
-        value: element['count'],
-        label: `${element['count']}`,
-        primary_field: element['primary_field'],
-        order: element['indicator_order'],
+        indicator_view_name: element["indicator_view_name"],
+        status: element["status"],
+        indicator_status: element["enable_assessor"],
+        type: this._evaluationsRepository.getType(element["status"]),
+        value: element["count"],
+        label: `${element["count"]}`,
+        primary_field: element["primary_field"],
+        order: element["indicator_order"],
       }));
 
       const groupedResponse = this._evaluationsRepository.groupBy(
         response,
-        'indicator_view_name',
+        "indicator_view_name"
       );
 
       return ResponseUtils.format({
         data: groupedResponse,
         status: HttpStatus.OK,
-        description: 'User evaluations retrieved successfully.',
+        description: "User evaluations retrieved successfully.",
       });
     } catch (error) {
-      this._logger.error('Error retrieving evaluations:', error);
+      this._logger.error("Error retrieving evaluations:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        description: 'Error retrieving evaluations.',
+        description: "Error retrieving evaluations.",
       });
     }
   }
@@ -234,7 +237,7 @@ export class EvaluationsService {
     userId: number,
     type: string,
     indicatorId: number,
-    user: TokenDto,
+    user: TokenDto
   ): Promise<any> {
     const viewName = `qa_${type}`;
     const viewNamePsdo = `${type}`;
@@ -250,63 +253,110 @@ export class EvaluationsService {
             userId,
             viewName,
             viewNamePsdo,
-            indicatorId,
+            indicatorId
           );
-        this._logger.log('Admin - getDetailedEvaluationDash');
+        this._logger.log("Admin - getDetailedEvaluationDash");
       } else if (userData.crps.length > 0) {
         rawData = await this._evaluationsRepository.getDetailedEvaluationForCrp(
           userId,
           viewName,
           viewNamePsdo,
-          indicatorId,
+          indicatorId
         );
-        this._logger.log('CRP - getDetailedEvaluationDash');
+        this._logger.log("CRP - getDetailedEvaluationDash");
       } else {
         rawData =
           await this._evaluationsRepository.getDetailedEvaluationForUser(
             userId,
             viewName,
             viewNamePsdo,
-            indicatorId,
+            indicatorId
           );
-        this._logger.log('Assessor - getDetailedEvaluationDash');
+        this._logger.log("Assessor - getDetailedEvaluationDash");
       }
 
       const parsedData = this._evaluationsRepository.parseEvaluationsData(
         rawData,
-        viewNamePsdo,
+        viewNamePsdo
       );
 
       const changedDataInitial =
         await this._evaluationsRepository.changedFieldsInitial(
           viewName,
-          indicatorId,
+          indicatorId
         );
 
       const changedDataPhase =
         await this._evaluationsRepository.changedFieldsPhase(
           viewName,
-          indicatorId,
+          indicatorId
         );
 
       const mappedData = this.mapFieldsWithChanges(
         parsedData,
         changedDataInitial,
-        changedDataPhase,
+        changedDataPhase
       );
+
+      const aiHelperData: AiHelper = await this._aiHelperRepository.findOne({
+        where: {
+          result_code: parsedData[0].result_code,
+        },
+      });
+
+      const fieldsToMap = [
+        { col_name: "gender_tag_level", prefix: "gender" },
+        { col_name: "climate_change_level", prefix: "climate" },
+        { col_name: "nutrition_tag_level", prefix: "nutrition" },
+        {
+          col_name: "environmental_biodiversity_tag_level",
+          prefix: "environmental",
+        },
+        { col_name: "poverty_tag_level", prefix: "poverty" },
+        { col_name: "innovation_readiness_level", prefix: "innovation" },
+      ];
+
+      mappedData.forEach((item) => {
+        const fieldToMap = fieldsToMap.find(
+          (field) => field.col_name === item.col_name
+        );
+        if (fieldToMap && aiHelperData) {
+          if (fieldToMap.prefix === "innovation") {
+            if (aiHelperData[`${fieldToMap.prefix}_ai_prediction`] !== null) {
+              item[`${fieldToMap.prefix}_ai_prediction`] =
+                aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
+              item[`${fieldToMap.prefix}_ai_tag`] =
+                aiHelperData[`${fieldToMap.prefix}_ai_tag`];
+              item[`${fieldToMap.prefix}_ai_description`] =
+                aiHelperData[`${fieldToMap.prefix}_ai_description`];
+              item[`${fieldToMap.prefix}_ai_matching`] =
+                aiHelperData[`${fieldToMap.prefix}_ai_matching`];
+            }
+          } else {
+            item[`${fieldToMap.prefix}_ai_prediction`] =
+              aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
+            item[`${fieldToMap.prefix}_ai_tag`] =
+              aiHelperData[`${fieldToMap.prefix}_ai_tag`];
+            item[`${fieldToMap.prefix}_ai_description`] =
+              aiHelperData[`${fieldToMap.prefix}_ai_description`];
+            item[`${fieldToMap.prefix}_ai_matching`] =
+              aiHelperData[`${fieldToMap.prefix}_ai_matching`];
+          }
+        }
+      });
 
       return ResponseUtils.format({
         data: mappedData,
         status: HttpStatus.OK,
-        description: 'User evaluation detail retrieved successfully.',
+        description: "User evaluation detail retrieved successfully.",
       });
     } catch (error) {
-      this._logger.error('Error retrieving user evaluation detail:', error);
+      this._logger.error("Error retrieving user evaluation detail:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Error retrieving user evaluation detail.',
+        description: "Error retrieving user evaluation detail.",
       });
     }
   }
@@ -317,7 +367,7 @@ export class EvaluationsService {
   mapFieldsWithChanges(
     parsedData: any[],
     changedDataInitial: any[],
-    changedDataPhase: any[],
+    changedDataPhase: any[]
   ): any[] {
     if (!parsedData || !changedDataInitial || !changedDataPhase) {
       return [];
@@ -325,12 +375,12 @@ export class EvaluationsService {
 
     return parsedData.map((parsed) => {
       const matchInitial = changedDataInitial.find(
-        (changed) => changed.field === parsed.col_name,
+        (changed) => changed.field === parsed.col_name
       );
 
       const matchPhase = changedDataPhase.find(
         (changed) =>
-          changed.field === parsed.col_name && parsed.changes_updated === 1,
+          changed.field === parsed.col_name && parsed.changes_updated === 1
       );
 
       return {
@@ -348,12 +398,12 @@ export class EvaluationsService {
     id: number,
     userId: number,
     status: StatusHandler,
-    generalComments?: string,
+    generalComments?: string
   ): Promise<any> {
     try {
       const evaluation = await this._evaluationsRepository.findOneById(id);
       if (!evaluation) {
-        throw new Error('Evaluation not found');
+        throw new Error("Evaluation not found");
       }
 
       evaluation.status = status;
@@ -361,7 +411,7 @@ export class EvaluationsService {
       let metaId = null;
       if (status === StatusHandler.Finalized) {
         metaId = await this._evaluationsRepository.getMetaIdByViewName(
-          evaluation.indicator_view_name,
+          evaluation.indicator_view_name
         );
       }
 
@@ -371,15 +421,15 @@ export class EvaluationsService {
       return ResponseUtils.format({
         data: updatedEvaluation,
         status: HttpStatus.OK,
-        description: 'Evaluation updated successfully.',
+        description: "Evaluation updated successfully.",
       });
     } catch (error) {
-      this._logger.error('Error updating evaluation:', error);
+      this._logger.error("Error updating evaluation:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Error updating evaluation.',
+        description: "Error updating evaluation.",
       });
     }
   }
@@ -390,15 +440,15 @@ export class EvaluationsService {
       return ResponseUtils.format({
         data: allCRP,
         status: HttpStatus.OK,
-        description: 'All CRPs retrieved successfully.',
+        description: "All CRPs retrieved successfully.",
       });
     } catch (error) {
-      this._logger.error('Error retrieving CRPs:', error);
+      this._logger.error("Error retrieving CRPs:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve CRPs.',
+        description: "Could not retrieve CRPs.",
       });
     }
   }
@@ -409,15 +459,15 @@ export class EvaluationsService {
       return ResponseUtils.format({
         data: indicators,
         status: HttpStatus.OK,
-        description: 'Indicators settings retrieved successfully.',
+        description: "Indicators settings retrieved successfully.",
       });
     } catch (error) {
-      this._logger.error('Error retrieving indicators settings:', error);
+      this._logger.error("Error retrieving indicators settings:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve indicators settings.',
+        description: "Could not retrieve indicators settings.",
       });
     }
   }
@@ -425,7 +475,7 @@ export class EvaluationsService {
   async patchHighlightComment(
     commentId: number,
     highlightComment: boolean,
-    user: TokenDto,
+    user: TokenDto
   ): Promise<any> {
     try {
       const comment = await this._commentRepository.findOne({
@@ -433,7 +483,7 @@ export class EvaluationsService {
       });
 
       if (!comment) {
-        throw new Error('Comment not found');
+        throw new Error("Comment not found");
       }
 
       if (highlightComment) {
@@ -461,12 +511,12 @@ export class EvaluationsService {
         });
       }
     } catch (error) {
-      this._logger.error('Error updating highlight status:', error);
+      this._logger.error("Error updating highlight status:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.INTERNAL_SERVER_ERROR,
-        description: 'Could not update highlight status.',
+        description: "Could not update highlight status.",
       });
     }
   }
@@ -476,15 +526,15 @@ export class EvaluationsService {
       const comment = await this._commentRepository.findOneById(id);
 
       if (!comment) {
-        throw new Error('Comment not found');
+        throw new Error("Comment not found");
       }
 
       comment.require_changes = requireChanges;
       const updatedComment = await this._commentRepository.save(comment);
 
       const message = requireChanges
-        ? 'The TPB instruction was successfully created with require changes'
-        : 'The TPB instruction was successfully created';
+        ? "The TPB instruction was successfully created with require changes"
+        : "The TPB instruction was successfully created";
 
       return ResponseUtils.format({
         data: updatedComment,
@@ -492,12 +542,12 @@ export class EvaluationsService {
         description: message,
       });
     } catch (error) {
-      this._logger.error('Error marking require changes:', error);
+      this._logger.error("Error marking require changes:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.BAD_REQUEST,
-        description: 'Error occurred while marking require changes.',
+        description: "Error occurred while marking require changes.",
       });
     }
   }
@@ -505,31 +555,31 @@ export class EvaluationsService {
   async getTagId(
     commentId: number,
     tagTypeId: number,
-    userId: number,
+    userId: number
   ): Promise<any> {
     try {
       const tagId = await this._tagsRepository.findTagId(
         commentId,
         tagTypeId,
-        userId,
+        userId
       );
 
       if (!tagId) {
-        throw new Error('Tag ID not found');
+        throw new Error("Tag ID not found");
       }
 
       return ResponseUtils.format({
         data: tagId,
         status: HttpStatus.OK,
-        description: 'Tag ID found successfully.',
+        description: "Tag ID found successfully.",
       });
     } catch (error) {
-      this._logger.error('Error retrieving tag ID:', error);
+      this._logger.error("Error retrieving tag ID:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Tag ID could not be found.',
+        description: "Tag ID could not be found.",
       });
     }
   }
@@ -537,43 +587,43 @@ export class EvaluationsService {
   async createTag(
     userId: number,
     tagTypeId: number,
-    commentId: number,
+    commentId: number
   ): Promise<any> {
     try {
       const existingTag = await this._tagsRepository.findTagByCommentAndUser(
         commentId,
-        userId,
+        userId
       );
 
       if (existingTag) {
         await this._tagsRepository.remove(existingTag);
         return {
           data: null,
-          message: 'Tag removed successfully.',
+          message: "Tag removed successfully.",
         };
       }
 
       const newTag = await this._tagsRepository.createTag(
         userId,
         tagTypeId,
-        commentId,
+        commentId
       );
       if (!newTag) {
-        throw new Error('Could not create tag');
+        throw new Error("Could not create tag");
       }
 
       return ResponseUtils.format({
         data: newTag,
         status: HttpStatus.CREATED,
-        description: 'Tag created successfully.',
+        description: "Tag created successfully.",
       });
     } catch (error) {
-      this._logger.error('Error creating or removing tag:', error);
+      this._logger.error("Error creating or removing tag:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Tag could not be created or removed.',
+        description: "Tag could not be created or removed.",
       });
     }
   }
@@ -582,18 +632,18 @@ export class EvaluationsService {
     try {
       const tag = await this._tagsRepository.findOneById(id);
       if (!tag) {
-        throw new Error('Tag not found');
+        throw new Error("Tag not found");
       }
 
       await this._tagsRepository.delete(id);
-      return { message: 'Tag deleted successfully.' };
+      return { message: "Tag deleted successfully." };
     } catch (error) {
-      this._logger.error('Error deleting tag:', error);
+      this._logger.error("Error deleting tag:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Tag could not be deleted.',
+        description: "Tag could not be deleted.",
       });
     }
   }
@@ -604,21 +654,21 @@ export class EvaluationsService {
         await this._evaluationsRepository.createComment(createCommentDto);
 
       if (!newComment) {
-        this._logger.error('Could not create comment');
+        this._logger.error("Could not create comment");
       }
 
       return ResponseUtils.format({
         data: newComment,
         status: HttpStatus.CREATED,
-        description: 'Comment created successfully',
+        description: "Comment created successfully",
       });
     } catch (error) {
-      this._logger.error('Error creating comment:', error);
+      this._logger.error("Error creating comment:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Comment could not be created.',
+        description: "Comment could not be created.",
       });
     }
   }
@@ -634,7 +684,7 @@ export class EvaluationsService {
         await this._replyTypeRepository.findOneById(replyTypeId);
 
       if (!user || !comment || !replyType) {
-        throw new Error('Invalid data for creating reply.');
+        throw new Error("Invalid data for creating reply.");
       }
 
       comment.replyType = replyType;
@@ -655,15 +705,15 @@ export class EvaluationsService {
       return ResponseUtils.format({
         data: newReply,
         status: HttpStatus.CREATED,
-        description: 'Reply created successfully',
+        description: "Reply created successfully",
       });
     } catch (error) {
-      this._logger.error('Error creating reply:', error);
+      this._logger.error("Error creating reply:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Reply could not be created.',
+        description: "Reply could not be created.",
       });
     }
   }
@@ -684,7 +734,7 @@ export class EvaluationsService {
       const comment = await this._commentRepository.findOneWithTags(id);
 
       if (!comment) {
-        throw new Error('Comment not found');
+        throw new Error("Comment not found");
       }
 
       if (is_deleted) {
@@ -705,15 +755,15 @@ export class EvaluationsService {
       return ResponseUtils.format({
         data: updatedComment,
         status: HttpStatus.OK,
-        description: 'Comment updated successfully',
+        description: "Comment updated successfully",
       });
     } catch (error) {
-      this._logger.error('Error updating comment:', error);
+      this._logger.error("Error updating comment:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Comment could not be updated.',
+        description: "Comment could not be updated.",
       });
     }
   }
@@ -725,7 +775,7 @@ export class EvaluationsService {
       const reply = await this._commentReplyRepository.findOneWithComment(id);
 
       if (!reply) {
-        throw new Error('Reply not found');
+        throw new Error("Reply not found");
       }
 
       reply.is_deleted = is_deleted;
@@ -750,15 +800,15 @@ export class EvaluationsService {
       return ResponseUtils.format({
         data: updatedReply,
         status: HttpStatus.OK,
-        description: 'Reply updated successfully',
+        description: "Reply updated successfully",
       });
     } catch (error) {
-      this._logger.error('Error updating reply:', error);
+      this._logger.error("Error updating reply:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Reply could not be updated.',
+        description: "Reply could not be updated.",
       });
     }
   }
@@ -767,18 +817,18 @@ export class EvaluationsService {
     try {
       const comments = await this._commentRepository.findComments(
         metaId,
-        evaluationId,
+        evaluationId
       );
 
       for (const comment of comments) {
         const replies = await this._commentRepository.findCommentsWithReplies(
           evaluationId,
-          metaId,
+          metaId
         );
         comment.replies = replies;
 
         const tags = await this._commentRepository.findTagsByCommentId(
-          comment.id,
+          comment.id
         );
         comment.tags = tags;
       }
@@ -786,22 +836,22 @@ export class EvaluationsService {
       return ResponseUtils.format({
         data: comments,
         status: HttpStatus.OK,
-        description: 'All comments retrieved successfully.',
+        description: "All comments retrieved successfully.",
       });
     } catch (error) {
-      this._logger.error('Error retrieving comments:', error);
+      this._logger.error("Error retrieving comments:", error);
       return ResponseUtils.format({
         data: null,
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve any comments.',
+        description: "Could not retrieve any comments.",
       });
     }
   }
 
   async getCommentsReplies(commentId: number): Promise<any> {
     if (!commentId) {
-      throw new Error('Comment ID not provided.');
+      throw new Error("Comment ID not provided.");
     }
 
     try {
@@ -810,16 +860,16 @@ export class EvaluationsService {
 
       return ResponseUtils.format({
         data: replies,
-        description: 'All comments replies',
+        description: "All comments replies",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error retrieving replies:', error);
+      this._logger.error("Error retrieving replies:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve any replies.',
+        description: "Could not retrieve any replies.",
       });
     }
   }
@@ -828,25 +878,25 @@ export class EvaluationsService {
     try {
       const criteria =
         await this._indicatorRepository.findCriteriaByIndicatorName(
-          indicatorName,
+          indicatorName
         );
 
       if (!criteria) {
-        throw new Error('No evaluation criteria found.');
+        throw new Error("No evaluation criteria found.");
       }
 
       return ResponseUtils.format({
         data: criteria,
-        description: 'Indicator evaluation criteria',
+        description: "Indicator evaluation criteria",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error retrieving evaluation criteria:', error);
+      this._logger.error("Error retrieving evaluation criteria:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve evaluation criteria.',
+        description: "Could not retrieve evaluation criteria.",
       });
     }
   }
@@ -859,8 +909,8 @@ export class EvaluationsService {
         await this._evaluationsRepository.findAssessorsR2(evaluationId);
 
       const response = {
-        assessed_r1: assessedR1[0]?.assessed_r1 || 'Not yet assessed',
-        assessed_r2: assessedR2[0]?.assessed_r2 || 'Not yet assessed',
+        assessed_r1: assessedR1[0]?.assessed_r1 || "Not yet assessed",
+        assessed_r2: assessedR2[0]?.assessed_r2 || "Not yet assessed",
       };
 
       return ResponseUtils.format({
@@ -869,19 +919,19 @@ export class EvaluationsService {
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error retrieving assessors:', error);
+      this._logger.error("Error retrieving assessors:", error);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve assessors.',
+        description: "Could not retrieve assessors.",
       });
     }
   }
 
   async updateRequireSecondEvaluation(
     evaluationId: number,
-    requireSecondAssessment: boolean,
+    requireSecondAssessment: boolean
   ): Promise<any> {
     try {
       const evaluation = await this._evaluationsRepository.findOne({
@@ -925,7 +975,7 @@ export class EvaluationsService {
             qa_comments comments
         LEFT JOIN qa_evaluations evaluations ON evaluations.id = comments.evaluationId
         LEFT JOIN qa_comments_replies replies ON replies.commentId = comments.id AND replies.is_deleted = 0
-        ${actionAreas ? 'LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id' : ''}
+        ${actionAreas ? "LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id" : ""}
         WHERE
             comments.is_deleted = 0
             AND comments.detail IS NOT NULL
@@ -933,14 +983,14 @@ export class EvaluationsService {
             AND evaluation_status <> 'Deleted'
             AND evaluations.phase_year = actual_phase_year()
             AND evaluations.batchDate >= actual_batch_date()
-            ${actionAreas ? 'AND crp.action_area = ?' : ''}
+            ${actionAreas ? "AND crp.action_area = ?" : ""}
         GROUP BY
             evaluations.indicator_view_name;
         `;
 
       const highlights = await this._evaluationsRepository.query(
         query,
-        actionAreas ? [actionAreas] : [],
+        actionAreas ? [actionAreas] : []
       );
 
       const data = highlights.map((highlight: any) => ({
@@ -955,16 +1005,16 @@ export class EvaluationsService {
 
       return ResponseUtils.format({
         data,
-        description: 'All highlights status',
+        description: "All highlights status",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error retrieving highlighted status:', error.message);
+      this._logger.error("Error retrieving highlighted status:", error.message);
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve highlighted status.',
+        description: "Could not retrieve highlighted status.",
       });
     }
   }
@@ -987,13 +1037,13 @@ export class EvaluationsService {
     } catch (error) {
       this._logger.error(
         `Error retrieving evaluation status for result: ${resultId}`,
-        error.message,
+        error.message
       );
       return ResponseUtils.format({
         data: {},
         errors: error,
         status: HttpStatus.NOT_FOUND,
-        description: 'Could not retrieve evaluation status.',
+        description: "Could not retrieve evaluation status.",
       });
     }
   }
