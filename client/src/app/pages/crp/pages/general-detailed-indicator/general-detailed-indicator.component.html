@@ -233,9 +233,9 @@
 
 
                       @if(AIMatchFields.includes(detailedData[i].col_name)) {
-                        <div class="ai-match-card" [ngClass]="{'ai-match-true': false, 'ai-match-false': true}">
-                          <span class="material-icons-round ai-match-icon" [ngStyle]="{'color': false ? '#4caf50' : '#F44336'}">auto_awesome</span>
-                          <p class="ai-match-card-title">{{false ? 'AI Match' : 'AI Mismatch (2) Principal'}}</p>
+                        <div class="ai-match-card" [ngClass]="{'ai-match-true': detailedData[i].ai_matching === 'Match', 'ai-match-false': detailedData[i].ai_matching === 'Mismatch'}">
+                          <span class="material-icons-round ai-match-icon" [ngStyle]="{'color': detailedData[i].ai_matching === 'Match' ? '#4caf50' : '#F44336'}">auto_awesome</span>
+                          <p class="ai-match-card-title">{{detailedData[i].ai_matching === 'Match' ? 'AI Match' : 'AI Mismatch ' + detailedData[i].ai_tag}}</p>
                         </div>
                       }
 
