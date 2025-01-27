@@ -323,23 +323,21 @@ export class EvaluationsService {
         if (fieldToMap && aiHelperData) {
           if (fieldToMap.prefix === "innovation") {
             if (aiHelperData[`${fieldToMap.prefix}_ai_prediction`] !== null) {
-              item[`${fieldToMap.prefix}_ai_prediction`] =
+              item["ai_prediction"] =
                 aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
-              item[`${fieldToMap.prefix}_ai_tag`] =
-                aiHelperData[`${fieldToMap.prefix}_ai_tag`];
-              item[`${fieldToMap.prefix}_ai_description`] =
+              item["ai_tag"] = aiHelperData[`${fieldToMap.prefix}_ai_tag`];
+              item["ai_description"] =
                 aiHelperData[`${fieldToMap.prefix}_ai_description`];
-              item[`${fieldToMap.prefix}_ai_matching`] =
+              item["ai_matching"] =
                 aiHelperData[`${fieldToMap.prefix}_ai_matching`];
             }
           } else {
-            item[`${fieldToMap.prefix}_ai_prediction`] =
+            item["ai_prediction"] =
               aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
-            item[`${fieldToMap.prefix}_ai_tag`] =
-              aiHelperData[`${fieldToMap.prefix}_ai_tag`];
-            item[`${fieldToMap.prefix}_ai_description`] =
+            item["ai_tag"] = aiHelperData[`${fieldToMap.prefix}_ai_tag`];
+            item["ai_description"] =
               aiHelperData[`${fieldToMap.prefix}_ai_description`];
-            item[`${fieldToMap.prefix}_ai_matching`] =
+            item["ai_matching"] =
               aiHelperData[`${fieldToMap.prefix}_ai_matching`];
           }
         }
