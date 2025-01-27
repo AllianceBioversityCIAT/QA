@@ -233,9 +233,14 @@
 
 
                       @if(AIMatchFields.includes(detailedData[i].col_name)) {
-                        <div class="ai-match-card" [ngClass]="{'ai-match-true': detailedData[i].ai_matching === 'Match', 'ai-match-false': detailedData[i].ai_matching === 'Mismatch'}">
-                          <span class="material-icons-round ai-match-icon" [ngStyle]="{'color': detailedData[i].ai_matching === 'Match' ? '#4caf50' : '#F44336'}">auto_awesome</span>
-                          <p class="ai-match-card-title">{{detailedData[i].ai_matching === 'Match' ? 'AI Match' : 'AI Mismatch ' + detailedData[i].ai_tag}}</p>
+                        <div class="ai-match-card" [ngClass]="{'ai-match-true': detailedData[i].ai_matching === 'Match', 'ai-match-false': detailedData[i].ai_matching === 'Mismatch', 'ai-match-null': !detailedData[i].ai_matching }">
+                          @if(detailedData[i].ai_matching) {
+                            <span class="material-icons-round ai-match-icon" [ngStyle]="{'color': detailedData[i].ai_matching === 'Match' ? '#4caf50' : '#F44336'}">auto_awesome</span>
+                            <p class="ai-match-card-title">{{detailedData[i].ai_matching === 'Match' ? 'AI Match' : 'AI Mismatch ' + detailedData[i].ai_tag}}</p>
+                          } @else {
+                            <span class="material-symbols-rounded" style="font-size: 20px"> info </span>
+                            <p class="ai-match-card-title">AI could not provide a prediction due to insufficient evidence</p>
+                          }
                         </div>
                       }
 
