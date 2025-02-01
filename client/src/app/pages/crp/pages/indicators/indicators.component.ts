@@ -49,6 +49,7 @@ export default class IndicatorsComponent implements OnInit {
   criteria_loading = false;
 
   submission_dates: any[] = [];
+  selectedDates = [];
 
   constructor(
     private readonly activeRoute: ActivatedRoute,
@@ -108,6 +109,7 @@ export default class IndicatorsComponent implements OnInit {
           batch.checked = batch.batch_name == 3;
           this.submission_dates.push(batch);
         }
+        this.selectedDates = this.submission_dates.filter(date => date.checked).map(date => date.date);
       },
       error: error => {
         this.alertService.error(error);

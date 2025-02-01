@@ -37,6 +37,7 @@ export class ResultsTableComponent {
   @Input() indicatorType: string;
   @Input() currentUser: any;
   @Input() isCRP: boolean;
+  @Input() selectedDates = [];
   @Output() generateExcel = new EventEmitter<any>();
 
   statusIcon = StatusIcon;
@@ -44,7 +45,6 @@ export class ResultsTableComponent {
 
   evalStatusFilter = null;
   searchText = '';
-  selectedDates = [];
 
   selectedFilters = [];
 
