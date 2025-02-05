@@ -41,13 +41,16 @@ import { CommentComponent } from '../../../../comment/comment.component';
 import { DialogModule } from 'primeng/dialog';
 import { ButtonModule } from 'primeng/button';
 import { DropdownModule } from 'primeng/dropdown';
+import { ClipboardModule } from '@angular/cdk/clipboard';
+import { ToastModule } from 'primeng/toast';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-general-detailed-indicator',
   standalone: true,
   templateUrl: './general-detailed-indicator.component.html',
   styleUrls: ['./general-detailed-indicator.component.scss'],
-  providers: [UrlTransformPipe, WordCounterPipe, JsonPipe],
+  providers: [UrlTransformPipe, WordCounterPipe, JsonPipe, MessageService],
   imports: [
     CommonModule,
     FormsModule,
@@ -58,7 +61,9 @@ import { DropdownModule } from 'primeng/dropdown';
     CommentComponent,
     DialogModule,
     ButtonModule,
-    DropdownModule
+    DropdownModule,
+    ClipboardModule,
+    ToastModule
   ],
   animations: [
     trigger('inOutAnimation', [
@@ -162,6 +167,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   sanitizedInitialValue: SafeHtml = '';
   sanitizedCurrentValue: SafeHtml = '';
   AIMatchFields = ["gender_tag_level", "climate_change_level", "nutrition_tag_level", "environmental_biodiversity_tag_level", "poverty_tag_level", "innovation_readiness_level"]
+  aiMatchIcon = 'content_copy';
   
   constructor(
     private activeRoute: ActivatedRoute,
@@ -176,7 +182,8 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     private authenticationService: AuthenticationService,
     private evaluationService: EvaluationsService,
     private sanitizer: DomSanitizer,
-    private _exportTableSE: ExportTablesService
+    private _exportTableSE: ExportTablesService,
+    private messageService: MessageService
   ) {
     this.activeRoute.params.subscribe(routeParams => {
       this.authenticationService.currentUser.subscribe(x => {
@@ -803,5 +810,21 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
 
   sanitizeHtml(html: string): SafeHtml {
     return this.sanitizer.bypassSecurityTrustHtml(html);
+  }
+
+  copyToClipboard() {
+    this.aiMatchIcon = 'check_circle';
+
+    
+    this.messageService.add({
+      severity: 'success',
+      summary: 'Success',
+      detail: 'Copied to clipboard',
+    });
+    
+    
+    setTimeout(() => {
+      this.aiMatchIcon = 'content_copy';
+    }, 300);
   }
 }

@@ -234,8 +234,9 @@
 
                       @if(AIMatchFields.includes(detailedData[i].col_name)) {
                         <div class="ai-match-card" [ngClass]="{'ai-match-true': detailedData[i].ai_matching === 'Match', 'ai-match-false': detailedData[i].ai_matching === 'Mismatch', 'ai-match-null': !detailedData[i].ai_matching }"
-                        [pTooltip]="detailedData[i].ai_description" tooltipPosition="top" [tooltipStyleClass]="'ai-match-tooltip'">
+                        [pTooltip]="tooltipContent" tooltipPosition="top" [tooltipStyleClass]="'ai-match-tooltip'" [autoHide]="false">
                           @if(detailedData[i].ai_matching) {
+
                             <span class="material-icons-round ai-match-icon" [ngStyle]="{'color': detailedData[i].ai_matching === 'Match' ? '#4caf50' : '#F44336'}">auto_awesome</span>
                             <p class="ai-match-card-title">{{detailedData[i].ai_matching === 'Match' ? 'AI Match' : 'AI Mismatch ' + detailedData[i].ai_tag}}</p>
                           } @else {
@@ -243,6 +244,12 @@
                             <p class="ai-match-card-title">AI Matching not provided</p>
                           }
                         </div>
+                        <ng-template #tooltipContent>
+                            <div class="tooltip-content">
+                              <span class="material-icons-round ai-icon" [cdkCopyToClipboard]="detailedData[i].ai_description" (click)="copyToClipboard()">{{ aiMatchIcon }}</span>
+                              <p style="margin: 0"> {{detailedData[i].ai_description}} </p>
+                            </div>
+                        </ng-template>
                       }
 
                       <div *ngIf="detailedData[i].meta_description && false">
@@ -576,3 +583,6 @@
     </div>
   </div>
 </form>
+
+
+<p-toast position="bottom-right" />
