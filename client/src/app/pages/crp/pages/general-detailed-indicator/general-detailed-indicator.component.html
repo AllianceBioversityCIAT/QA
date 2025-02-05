@@ -234,7 +234,7 @@
 
                       @if(AIMatchFields.includes(detailedData[i].col_name)) {
                         <div class="ai-match-card" [ngClass]="{'ai-match-true': detailedData[i].ai_matching === 'Match', 'ai-match-false': detailedData[i].ai_matching === 'Mismatch', 'ai-match-null': !detailedData[i].ai_matching }"
-                        [pTooltip]="tooltipContent" tooltipPosition="top" [tooltipStyleClass]="'ai-match-tooltip'" [autoHide]="false">
+                        [pTooltip]="detailedData[i].ai_description ? tooltipContent : null" tooltipPosition="top" [tooltipStyleClass]="'ai-match-tooltip'" [autoHide]="false">
                           @if(detailedData[i].ai_matching) {
 
                             <span class="material-icons-round ai-match-icon" [ngStyle]="{'color': detailedData[i].ai_matching === 'Match' ? '#4caf50' : '#F44336'}">auto_awesome</span>
