@@ -199,7 +199,7 @@
                         </div>
                       }
 
-                      @if (detailedData[i]?.hasChanged || detailedData[i]?.hasChangePrevious) {
+                      @if ((detailedData[i]?.hasChanged || detailedData[i]?.hasChangePrevious) && currentUser.cycle?.cycle_stage == '2') {
                         <div class="changed-previous-field">
                           <button class="custom-button" (click)="showDialog(detailedData[i])">See updates</button>
                         </div>
