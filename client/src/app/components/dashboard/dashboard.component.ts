@@ -1,11 +1,10 @@
-import { Component, effect, inject, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, effect, inject, Input } from '@angular/core';
 import { ChartModule } from 'primeng/chart';
-import { JsonPipe } from '@angular/common';
 import { DashboardCacheService } from './dashboard-cache.service';
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [ChartModule, JsonPipe],
+  imports: [ChartModule],
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
 })
@@ -13,6 +12,7 @@ export class DashboardComponent {
   dashboardCacheService = inject(DashboardCacheService);
   @Input() cycle_stage: string;
   @Input() dataCharts: any;
+  @Input() isAdmin: boolean = false;
 
   dataGeneralStatus: any;
   optionGeneralStatus: any;

@@ -7,7 +7,7 @@
     <h3>Assessors Interactions</h3>
     <p-chart type="bar" height="300px" width="300px" [data]="dataAssessorInteractions" [options]="optionAssessorInteractions" />
   </div>
-  @if (cycle_stage == '1') {
+  @if (isAdmin || cycle_stage == '1') {
     <div class="chart-3">
       <h3>Response to comments</h3>
       <p-chart type="pie" height="300px" width="300px" [data]="dataResponseToComments" [options]="optionResponseToComments" />
@@ -23,7 +23,7 @@
   @if (cycle_stage == '2') {
     <div class="chart-5">
       <h3>Highlighted comments</h3>
-      @if (allAreZero(this.dataCharts.highlitedPendingComments.dataset || [])) {
+      @if (allAreZero(this.dataCharts?.highlitedPendingComments?.dataset || [])) {
         <div class="no-data">You don't have any highlighted comments.</div>
       } @else {
         <p-chart type="doughnut" height="300px" width="300px" [data]="dataHighlightComment" [options]="optionHighlightComment" />

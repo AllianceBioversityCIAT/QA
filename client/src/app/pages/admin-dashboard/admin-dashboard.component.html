@@ -164,7 +164,7 @@
                 this.dataCharts.assessmentByField) &&
               !isDataNull
             ) {
-              <app-dashboard [dataCharts]="this.dataCharts"></app-dashboard>
+              <app-dashboard [dataCharts]="this.dataCharts" [isAdmin]="true"></app-dashboard>
             }
 
             <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
