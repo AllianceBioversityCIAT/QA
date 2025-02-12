@@ -67,7 +67,17 @@ export class DashboardComponent {
     });
 
     if (this.dataCharts.generalStatus) {
-      this.dataGeneralStatus = createChartData(this.dataCharts.generalStatus.dataset, ['--blue-500', '--yellow-500', '--green-500']);
+      const qualityAssessedIndex = this.dataCharts.generalStatus.dataset.findIndex(item => item.name === 'Quality Assessed');
+      if (qualityAssessedIndex !== -1) {
+        const qualityAssessed = this.dataCharts.generalStatus.dataset.splice(qualityAssessedIndex, 1)[0];
+        this.dataCharts.generalStatus.dataset.unshift(qualityAssessed);
+      }
+
+
+      this.dataGeneralStatus = createChartData(
+        this.dataCharts.generalStatus.dataset,
+        ['--blue-500', '--yellow-500'],
+      );
       this.optionGeneralStatus = createChartOptions();
     }
 
@@ -77,7 +87,22 @@ export class DashboardComponent {
     }
 
     if (this.dataCharts.responseToComments) {
-      this.dataResponseToComments = createChartData(this.dataCharts.responseToComments.dataset, ['--blue-500', '--yellow-500', '--green-500']);
+      const dataset = this.dataCharts.responseToComments.dataset;
+      const moveAcceptedWithCommentsToFront = (data: any[]) => {
+        const index = data.findIndex(item => item.name === 'Accepted with comments');
+        if (index !== -1) {
+          const [acceptedWithComments] = data.splice(index, 1);
+          data.unshift(acceptedWithComments);
+        }
+        return data;
+      };
+
+      const sortedDataset = moveAcceptedWithCommentsToFront(dataset);
+
+      this.dataResponseToComments = createChartData(
+        sortedDataset,
+        ['--blue-500', '--green-500', '--red-500', '--yellow-500'],
+      );
       this.optionResponseToComments = createChartOptions();
     }
 
