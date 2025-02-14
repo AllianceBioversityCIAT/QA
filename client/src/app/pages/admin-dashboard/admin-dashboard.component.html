@@ -150,8 +150,9 @@
                 [options]="indicatorsAvailable"
                 [(ngModel)]="selectedIndicator"
                 optionLabel="name"
+                optionValue="viewname"
                 [placeholder]="getIndicatorName(selectedIndicator)"
-                (ngModelChange)="actualIndicator($event)" />
+                (ngModelChange)="actualIndicator()" />
             </div>
             <div *ngIf="isDataNull" class="no-data-container">
               <div class="no-data-message">No results available at the moment.</div>

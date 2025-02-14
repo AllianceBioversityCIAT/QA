@@ -76,7 +76,9 @@ export class DashboardComponent {
 
       this.dataGeneralStatus = createChartData(
         this.dataCharts.generalStatus.dataset,
-        ['--blue-500', '--yellow-500'],
+        this.dataCharts.generalStatus.dataset.some(item => item.name === "Automatically validated") 
+          ? ['--blue-500', '--purple-500']
+          : ['--blue-500', '--yellow-500']
       );
       this.optionGeneralStatus = createChartOptions();
     }

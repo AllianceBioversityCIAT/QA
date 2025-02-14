@@ -216,12 +216,7 @@ export default class AdminDashboardComponent implements OnInit {
     return this.indicatorsName[indicator];
   }
 
-  actualIndicator(indicator: string) {
-    const { viewname } = indicator as any;
-    indicator = viewname;
-    console.log('actual indicator', indicator);
-    this.selectedIndicator = indicator;
-    console.log(this.dashboardData);
+  actualIndicator() {
     this.dataSelected = this.dashboardData[this.selectedIndicator];
     let crp_id = this.selectedProg.crp_id ? this.selectedProg.crp_id : undefined;
     this.showSpinner();
@@ -277,7 +272,6 @@ export default class AdminDashboardComponent implements OnInit {
   }
 
   getItemStatusByIndicatorService(indicator: string, crp_id?: string): Observable<any> {
-    console.log('getItemStatusByIndicatorService');
     return this.indicatorService.getItemStatusByIndicator(indicator, crp_id).pipe();
   }
 
