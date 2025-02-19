@@ -38,12 +38,7 @@ export default class LoginComponent implements OnInit {
     private alertService: AlertService,
     private clarity: ClarityService
   ) {
-    /** set page title */
     this.titleService.setTitle(`Login`);
-    // redirect to home if already logged in
-    if (this.authenticationService.currentUserValue) {
-      this.router.navigate(['/dashboard']);
-    }
   }
 
   ngOnInit() {
@@ -54,6 +49,10 @@ export default class LoginComponent implements OnInit {
 
     // get return url from route parameters or default to '/'
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
+
+    if (this.authenticationService.currentUserValue) {
+      this.router.navigate(['/dashboard']);
+    }
   }
 
   // convenience getter for easy access to form fields
@@ -77,8 +76,7 @@ export default class LoginComponent implements OnInit {
         data => {
           console.log(data);
           this.handleLoginSuccess(data);
-        this.clarity.updateUserInfo();
-
+          this.clarity.updateUserInfo();
         },
         error => {
           this.handleLoginError(error);
@@ -93,14 +91,13 @@ export default class LoginComponent implements OnInit {
       detail: 'Login successful'
     });
     if (data?.config?.length && data.config[0].status === GeneralStatus.Open) {
-      this.router.navigate([`dashboard`]);
+      window.location.reload();
     } else {
       this.router.navigate(['qa-close']);
     }
   }
 
   private handleLoginError(HttpError: any) {
-    // this.alertService.error('Something went wrong, please validate your credentials or contact technical support.');
     const { errors, status } = HttpError.error;
     console.log(HttpError.error);
 

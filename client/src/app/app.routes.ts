@@ -7,19 +7,25 @@ import { AvailableGuard } from './_helpers/available.guard';
 export const routes: Routes = [
   {
     path: 'dashboard',
-    loadComponent: () => import('./pages/assesor-dashboard/assessor-dashboard.component'),
-    canMatch: [rolesGuard],
-    data: {
-      roles: [2]
-    }
-  },
-  {
-    path: 'dashboard',
-    loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component'),
-    canMatch: [rolesGuard],
-    data: {
-      roles: [1]
-    }
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./pages/assesor-dashboard/assessor-dashboard.component'),
+        canMatch: [rolesGuard],
+        data: {
+          roles: [2] // Assessor role
+        }
+      },
+      {
+        path: '',
+        loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component'), 
+        canMatch: [rolesGuard],
+        data: {
+          roles: [1] // Admin role
+        }
+      },
+      { path: '**', redirectTo: '/', data: { roles: [null] } }
+    ]
   },
   {
     path: 'crp',

@@ -4,6 +4,6 @@ import { Injectable } from '@angular/core';
   providedIn: 'root'
 })
 export class CacheService {
-  currentRole = JSON.parse(localStorage.getItem('currentUser') || '{}').roles[0]?.id || null;
+  currentRole = JSON.parse(localStorage.getItem('currentUser') || '{}')?.roles?.[0]?.id || null;
   constructor() {}
 }
