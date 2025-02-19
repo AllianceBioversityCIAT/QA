@@ -12,6 +12,7 @@ import { Title } from '@angular/platform-browser';
 import { CommonModule } from '@angular/common';
 import { environment } from '../../../environments/environment';
 import { ActionsService } from '../../services/actions.service';
+import { ClarityService } from '../../services/clarity.service';
 
 @Component({
   selector: 'app-login',
@@ -34,7 +35,8 @@ export default class LoginComponent implements OnInit {
     private router: Router,
     private authenticationService: AuthenticationService,
     private titleService: Title,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private clarity: ClarityService
   ) {
     /** set page title */
     this.titleService.setTitle(`Login`);
@@ -75,6 +77,8 @@ export default class LoginComponent implements OnInit {
         data => {
           console.log(data);
           this.handleLoginSuccess(data);
+        this.clarity.updateUserInfo();
+
         },
         error => {
           this.handleLoginError(error);
