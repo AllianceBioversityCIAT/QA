@@ -73,12 +73,18 @@ export class DashboardComponent {
         this.dataCharts.generalStatus.dataset.unshift(qualityAssessed);
       }
 
+      let backgroundColors;
+      if (this.dataCharts.generalStatus.dataset.length === 3) {
+        backgroundColors = ['--blue-500', '--yellow-500', '--purple-500'];
+      } else if (this.dataCharts.generalStatus.dataset.some(item => item.name === "Automatically validated")) {
+        backgroundColors = ['--blue-500', '--purple-500'];
+      } else {
+        backgroundColors = ['--blue-500', '--yellow-500'];
+      }
 
       this.dataGeneralStatus = createChartData(
         this.dataCharts.generalStatus.dataset,
-        this.dataCharts.generalStatus.dataset.some(item => item.name === "Automatically validated") 
-          ? ['--blue-500', '--purple-500']
-          : ['--blue-500', '--yellow-500']
+        backgroundColors
       );
       this.optionGeneralStatus = createChartOptions();
     }
