@@ -35,7 +35,7 @@
     <p-button label="Added items" [outlined]="evalStatusFilter !== 'Added'" (click)="handleFilterChange('Added')" severity="warning" />
     <p-button label="Removed items" [outlined]="evalStatusFilter !== 'Removed'" (click)="handleFilterChange('Removed')" severity="danger" />
     <p-button label="Updated items" [outlined]="evalStatusFilter !== 'Updated'" (click)="handleFilterChange('Updated')" />
-    <p-button label="Type Changed" [outlined]="evalStatusFilter !== 'Changed'" (click)="handleFilterChange('Changed')" severity="secondary" />
+    <p-button label="Type Changed" [outlined]="evalStatusFilter !== 'Type Changed'" (click)="handleFilterChange('Type Changed')" severity="secondary" />
   </div>
 
   <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search here" style="width: 100%" />
