@@ -204,14 +204,14 @@
                           <button class="custom-button" (click)="showDialog(detailedData[i])">See updates</button>
                         </div>
 
-                        <p-dialog header="Data updates" [modal]="true" [(visible)]="visible" [style]="{ width: '25rem' }">
+                        <p-dialog header="Data updates" [modal]="true" [draggable]="false" [(visible)]="visible" [style]="{ width: '75%' }">
                           <div class="flex align-items-center gap-3 mb-3">
                             @if (detailedData[i]?.changes_updated && detailedData[i]?.hasChangePrevious) {
                               <label for="old-data" class="font-semibold w-6rem">Previous Year:</label>
                               <div id="old-data" class="flex-auto" [innerHTML]="sanitizedOldValue"></div>
                             }
 
-                            @if (detailedData[i]?.is_core && this.currentUser.cycle?.id == 2 && detailedData[i]?.hasChanged) {
+                            @if (detailedData[i]?.hasChanged) {
                               <label for="on-initial" class="font-semibold w-6rem">On Initial QA Submission:</label>
                               <div id="on-initial" class="flex-auto" [innerHTML]="sanitizedInitialValue"></div>
                             }
