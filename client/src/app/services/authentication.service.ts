@@ -104,6 +104,28 @@ export class AuthenticationService {
     }
   }
 
+  getActualCycles() {
+    return this.http.get<any>(`${environment.apiBaseUrl}comment/actual-cycle`)
+  }
+
+  updateLocalStorageUserCycle() {
+    const currentUser = JSON.parse(localStorage.getItem(this.usrCookie));
+
+    this.getActualCycles().subscribe({
+      next: ({data}) => {        
+        localStorage.setItem(this.usrCookie, JSON.stringify({
+          ...currentUser,
+          cycle: {
+            ...data,
+          }
+        }));
+      },
+      error: (error) => {
+        console.log(error)
+      }
+    })
+  }
+
   logout() {
     this.logOutTawtkTo();
 
