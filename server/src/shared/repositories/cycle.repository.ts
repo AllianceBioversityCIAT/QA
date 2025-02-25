@@ -19,6 +19,16 @@ export class CycleRepository extends Repository<Cycle> {
     return this.createQueryBuilder('cycle').getMany();
   }
 
+  async getActualCycle() {
+    try {
+      const query = 'SELECT actual_batch_date()';
+      const result = await this.query(query);
+      return result[0]['actual_batch_date()'];
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
   async findCycleById(id: number) {
     return this.createQueryBuilder('cycle')
       .where('cycle.id = :id', { id })
