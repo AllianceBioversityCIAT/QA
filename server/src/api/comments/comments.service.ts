@@ -421,7 +421,7 @@ export class CommentsService {
 
   async getActualCycle() {
     try {
-      const cycles = await this._cycleRepository.getActualCycle();
+      const cycles = await this._cycleRepository.getCurrentCycle();
       return ResponseUtils.format({
         data: cycles,
         description: 'Cycles data retrieved successfully',
