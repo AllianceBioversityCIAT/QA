@@ -419,6 +419,23 @@ export class CommentsService {
     }
   }
 
+  async getActualCycle() {
+    try {
+      const cycles = await this._cycleRepository.getActualCycle();
+      return ResponseUtils.format({
+        data: cycles,
+        description: 'Cycles data retrieved successfully',
+        status: HttpStatus.OK,
+      });
+    } catch (error) {
+      throw ResponseUtils.format({
+        description: 'Could not retrieve cycles',
+        status: HttpStatus.NOT_FOUND,
+        data: error.message,
+      });
+    }
+  }
+
   async updateCycle(id: number, start_date: Date, end_date: Date) {
     try {
       const cycle = await this._cycleRepository.findCycleById(id);

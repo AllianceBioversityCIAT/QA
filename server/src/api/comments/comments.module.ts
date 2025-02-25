@@ -60,6 +60,6 @@ export class CommentsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {
     consumer
       .apply(JwtMiddleware)
-      .forRoutes({ path: 'indicators', method: RequestMethod.ALL });
+      .forRoutes({ path: 'comments', method: RequestMethod.ALL });
   }
 }

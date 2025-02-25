@@ -98,10 +98,7 @@ export class CommentsController {
       indicatorName: string;
     },
   ) {
-    return await this.commentsService.getCommentsExcel(
-      evaluationId,
-      query,
-    );
+    return await this.commentsService.getCommentsExcel(evaluationId, query);
   }
 
   @UseGuards(RolesGuard)
@@ -190,7 +187,6 @@ export class CommentsController {
   }
 
   @UseGuards(RolesGuard)
-  @Roles([RolesHandler.admin])
   @Get('/cycles')
   @ApiOperation({ summary: 'Retrieve all cycles' })
   @ApiResponse({
@@ -198,16 +194,20 @@ export class CommentsController {
     description: 'Cycles data retrieved successfully',
   })
   @ApiResponse({ status: 404, description: 'Could not retrieve cycles' })
-  async getCycles(@Res() res: Response) {
-    try {
-      const result = await this.commentsService.getCycles();
-      res.status(HttpStatus.OK).send(result);
-    } catch (error) {
-      res.status(error.status || HttpStatus.INTERNAL_SERVER_ERROR).json({
-        message: error.message || 'An error occurred',
-        data: error.data || {},
-      });
-    }
+  async getCycles() {
+    return await this.commentsService.getCycles();
+  }
+
+  @UseGuards(RolesGuard)
+  @Get('/actual-cycle')
+  @ApiOperation({ summary: 'Retrieve all cycles' })
+  @ApiResponse({
+    status: 200,
+    description: 'Cycles data retrieved successfully',
+  })
+  @ApiResponse({ status: 404, description: 'Could not retrieve cycles' })
+  async getActualCycle() {
+    return await this.commentsService.getActualCycle();
   }
 
   @UseGuards(RolesGuard)
@@ -230,9 +230,7 @@ export class CommentsController {
     status: 400,
     description: 'Error occurred while marking PPU changes',
   })
-  async patchPpuChanges(
-    @Body() patchPpuChangesDto: PatchPpuDto,
-  ) {
+  async patchPpuChanges(@Body() patchPpuChangesDto: PatchPpuDto) {
     const { ppu, commentReplyId } = patchPpuChangesDto;
     return await this.commentsService.patchPpuChanges(ppu, commentReplyId);
   }
@@ -279,9 +277,7 @@ export class CommentsController {
     status: 404,
     description: 'Could not retrieve excel comments',
   })
-  async getExcelComments(
-    @Param('crp_id') crp_id: string,
-  ) {
+  async getExcelComments(@Param('crp_id') crp_id: string) {
     return await this.commentsService.getExcelComments(crp_id);
   }
 }
