@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { BehaviorSubject, Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { BehaviorSubject, Observable, of } from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 
@@ -107,23 +107,57 @@ export class AuthenticationService {
   getActualCycles() {
     return this.http.get<any>(`${environment.apiBaseUrl}comment/actual-cycle`)
   }
+  
+  getCycles() {
+    return this.http.get<any>(`${environment.apiBaseUrl}comment/cycles`)
+  }
 
-  updateLocalStorageUserCycle() {
+  updateLocalStorageUserCycle(): void {
     const currentUser = JSON.parse(localStorage.getItem(this.usrCookie));
+    
+    if (!currentUser) return;
 
-    this.getActualCycles().subscribe({
-      next: ({data}) => {        
-        localStorage.setItem(this.usrCookie, JSON.stringify({
-          ...currentUser,
-          cycle: {
-            ...data,
-          }
-        }));
-      },
-      error: (error) => {
-        console.log(error)
+    this.getActualCycles().pipe(
+      catchError(error => {
+        console.error('Error fetching actual cycles:', error);
+        return of({ data: null });
+      })
+    ).subscribe(({ data }) => {
+      if (data) {
+        this.updateUserWithCycle(currentUser, data);
+      } else {
+        this.findAndUpdateCurrentCycle(currentUser);
       }
-    })
+    });
+  }
+
+  private updateUserWithCycle(user: any, cycleData: any): void {
+    localStorage.setItem(this.usrCookie, JSON.stringify({
+      ...user,
+      cycle: { ...cycleData }
+    }));
+  }
+
+  private findAndUpdateCurrentCycle(user: any): void {
+    this.getCycles().pipe(
+      catchError(error => {
+        console.error('Error fetching cycles:', error);
+        return of({ data: [] });
+      })
+    ).subscribe(({ data }) => {
+      if (!data) return;
+      
+      const currentDate = new Date();
+      const currentCycle = data.find(cycle => {
+        const startDate = new Date(cycle.start_date);
+        const endDate = new Date(cycle.end_date);
+        return currentDate >= startDate && currentDate <= endDate;
+      });
+      
+      if (currentCycle) {
+        this.updateUserWithCycle(user, currentCycle);
+      }
+    });
   }
 
   logout() {
