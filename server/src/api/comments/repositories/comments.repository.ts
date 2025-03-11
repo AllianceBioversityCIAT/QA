@@ -738,11 +738,11 @@ export class CommentsRepository extends Repository<Comments> {
             ) AS 'Reply status',
             IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highligth comment',
             CASE
-                WHEN require_changes_comments.id IS NULL THEN 'No'
+                WHEN require_changes_comments.require_changes = 0 THEN 'Not applicable'
                 ELSE 'Yes'
             END AS 'Require changes comment',
             CASE
-                WHEN tpb_comments.id IS NULL THEN 'No'
+                WHEN tpb_comments.tpb = 0 THEN 'Not applicable'
                 ELSE 'Yes'
             END AS 'TPB Instruction',
             IF(comments.ppu = 1, 'Yes', 'No') AS 'Implemented changes',
@@ -778,11 +778,9 @@ export class CommentsRepository extends Repository<Comments> {
             LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
             LEFT JOIN qa_comments tpb_comments ON tpb_comments.evaluationId = comments.evaluationId
             AND tpb_comments.metaId = comments.metaId
-            AND tpb_comments.tpb = 1
             AND tpb_comments.is_deleted = 0
             LEFT JOIN qa_comments require_changes_comments ON require_changes_comments.evaluationId = comments.evaluationId
             AND require_changes_comments.metaId = comments.metaId
-            AND require_changes_comments.require_changes = 1
             AND require_changes_comments.is_deleted = 0
         WHERE
             comments.is_deleted = 0
@@ -790,6 +788,7 @@ export class CommentsRepository extends Repository<Comments> {
             AND evaluations.phase_year = actual_phase_year()
             AND evaluations.batchDate >= actual_batch_date()
             AND evaluations.crp_id = '${crp_id}'
+            AND evaluations.id = 26272
         GROUP BY
             evaluations.crp_id,
             'display_name',
@@ -999,11 +998,11 @@ export class CommentsRepository extends Repository<Comments> {
             ) AS 'Reply status',
             IF(comments.highlight_comment = 1, 'Yes', 'No') AS 'Highligth comment',
             CASE
-                WHEN require_changes_comments.id IS NULL THEN 'No'
+                WHEN require_changes_comments.require_changes = 0 THEN 'Not applicable'
                 ELSE 'Yes'
             END AS 'Require changes comment',
             CASE
-                WHEN tpb_comments.id IS NULL THEN 'No'
+                WHEN tpb_comments.tpb = 0 THEN 'Not applicable'
                 ELSE 'Yes'
             END AS 'TPB Instruction',
             IF(comments.ppu = 1, 'Yes', 'No') AS 'Implemented changes',
@@ -1039,11 +1038,9 @@ export class CommentsRepository extends Repository<Comments> {
             LEFT JOIN qa_innovation_use_ipsr_data qiuid ON qiuid.id = evaluations.indicator_view_id
             LEFT JOIN qa_comments tpb_comments ON tpb_comments.evaluationId = comments.evaluationId
             AND tpb_comments.metaId = comments.metaId
-            AND tpb_comments.tpb = 1
             AND tpb_comments.is_deleted = 0
             LEFT JOIN qa_comments require_changes_comments ON require_changes_comments.evaluationId = comments.evaluationId
             AND require_changes_comments.metaId = comments.metaId
-            AND require_changes_comments.require_changes = 1
             AND require_changes_comments.is_deleted = 0
         WHERE
             comments.is_deleted = 0
