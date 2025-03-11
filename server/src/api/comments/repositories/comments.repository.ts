@@ -788,7 +788,6 @@ export class CommentsRepository extends Repository<Comments> {
             AND evaluations.phase_year = actual_phase_year()
             AND evaluations.batchDate >= actual_batch_date()
             AND evaluations.crp_id = '${crp_id}'
-            AND evaluations.id = 26272
         GROUP BY
             evaluations.crp_id,
             'display_name',
