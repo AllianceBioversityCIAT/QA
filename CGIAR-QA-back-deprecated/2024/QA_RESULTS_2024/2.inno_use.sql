@@ -723,18 +723,11 @@ SELECT
                                 WHERE
                                     es.evidence_id = e.id
                                     AND es.is_active = 1
-                            ),
-                            '<br>'
-                        ),
-                        ''
-                    ),
-                    '<br>',
-                    '<a href="',
-                    e.link,
-                    '" target="_blank">',
-                    e.link,
-                    '</a>',
-                    '</li>' SEPARATOR '<br>'
+                                LIMIT
+                                    1
+                            ), '<br>'
+                        ), ''
+                    ), '<br>', '<a href="', e.link, '" target="_blank">', e.link, '</a>', '</li>' SEPARATOR '<br>'
                 )
             FROM
                 prdb.evidence e
@@ -766,26 +759,26 @@ SELECT
                         CONCAT(
                             '<br>',
                             'Women: ',
-                            ra.women,
+                            IFNULL(ra.women, 0),
                             ' - ',
                             'Women youth: ',
-                            ra.women_youth,
+                            IFNULL(ra.women_youth, 0),
                             '<br>',
                             'Men: ',
-                            ra.men,
+                            IFNULL(ra.men, 0),
                             ' - ',
                             'Men youth: ',
-                            ra.men_youth,
+                            IFNULL(ra.men_youth, 0),
                             '<br>',
                             'How many: ',
-                            ra.how_many
+                            IFNULL(ra.how_many, 0)
                         ),
                         CONCAT(
                             '<br>',
                             'Sex and age disaggregation does not apply',
                             '<br>',
                             'How many: ',
-                            ra.how_many
+                            IFNULL(ra.how_many, 0)
                         )
                     ),
                     '</li>' SEPARATOR '<br>'
