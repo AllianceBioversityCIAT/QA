@@ -6,7 +6,7 @@ SET
 
 -- POLICY CHANGE
 UPDATE
-    qa_policy_change_data qa
+    qa_policy_change_data_initial qa
     JOIN qa_policy_change_view cc ON qa.id = cc.id
 SET
     qa.crp_id = cc.crp_id,
@@ -54,7 +54,7 @@ WHERE
 
 -- INNO USE
 UPDATE
-    qa_innovation_use_data qa
+    qa_innovation_use_data_initial qa
     JOIN qa_innovation_use_view cc ON qa.id = cc.id
 SET
     qa.crp_id = cc.crp_id,
@@ -98,7 +98,7 @@ WHERE
 
 -- CAP DEV
 UPDATE
-    qa_capdev_data qa
+    qa_capdev_data_initial qa
     JOIN qa_capdev_view cc ON qa.id = cc.id
 SET
     qa.crp_id = cc.crp_id,
@@ -144,7 +144,7 @@ WHERE
 
 -- INNO DEV
 UPDATE
-    qa_innovation_development_data qa
+    qa_innovation_development_data_initial qa
     JOIN qa_innovation_development_view cc ON qa.id = cc.id
 SET
     qa.crp_id = cc.crp_id,
@@ -202,7 +202,7 @@ WHERE
 
 -- OTHER OUTPUT
 UPDATE
-    qa_other_output_data qa
+    qa_other_output_data_initial qa
     JOIN qa_other_output_view cc ON qa.id = cc.id
 SET
     qa.crp_id = cc.crp_id,
@@ -244,7 +244,7 @@ WHERE
 
 -- OTHER OUTCOME
 UPDATE
-    qa_other_outcome_data qa
+    qa_other_outcome_data_initial qa
     JOIN qa_other_outcome_view cc ON qa.id = cc.id
 SET
     qa.crp_id = cc.crp_id,
@@ -286,7 +286,7 @@ WHERE
 
 -- IMPACT CONTRIBUTION
 UPDATE
-    qa_impact_contribution_data qa
+    qa_impact_contribution_data_initial qa
     JOIN qa_impact_contribution_view cc ON qa.id = cc.id
 SET
     qa.crp_id = cc.crp_id,
@@ -328,7 +328,7 @@ WHERE
 
 -- KNOWLEDGE PRODUCT
 UPDATE
-    qa_knowledge_product_data d
+    qa_knowledge_product_data_initial d
     JOIN qa_knowledge_product_view v ON d.id = v.id
 SET
     d.crp_id = v.crp_id,
@@ -387,7 +387,7 @@ WHERE
 
 -- IPSR
 UPDATE
-    qa_innovation_use_ipsr_data qa
+    qa_innovation_use_ipsr_data_initial qa
     JOIN qa_innovation_use_ipsr_view cc ON qa.id = cc.id
 SET
     qa.phase_name = cc.phase_name,

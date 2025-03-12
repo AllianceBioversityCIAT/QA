@@ -1,14 +1,14 @@
-import { Injectable, Logger } from '@nestjs/common';
-import { DataSource, Repository } from 'typeorm';
-import { Evaluations } from '../entities/evaluation.entity';
-import { StatusHandler } from '../enum/status-handler.enum';
-import { Users } from '../../users/entities/user.entity';
-import { DisplayTypeHandler } from '../enum/display-handler.enum';
-import * as moment from 'moment';
-import { Comments } from '../../comments/entities/comments.entity';
-import { IndicatorsMeta } from '../../indicators/entities/indicators-meta.entity';
-import { Cycle } from '../../../shared/entities/cycle.entity';
-import { CreateCommentDto } from '../dto/evaluation.dto';
+import { Injectable, Logger } from "@nestjs/common";
+import { DataSource, Repository } from "typeorm";
+import { Evaluations } from "../entities/evaluation.entity";
+import { StatusHandler } from "../enum/status-handler.enum";
+import { Users } from "../../users/entities/user.entity";
+import { DisplayTypeHandler } from "../enum/display-handler.enum";
+import * as moment from "moment";
+import { Comments } from "../../comments/entities/comments.entity";
+import { IndicatorsMeta } from "../../indicators/entities/indicators-meta.entity";
+import { Cycle } from "../../../shared/entities/cycle.entity";
+import { CreateCommentDto } from "../dto/evaluation.dto";
 
 @Injectable()
 export class EvaluationRepository extends Repository<Evaluations> {
@@ -183,6 +183,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
                 WHERE (evaluations.evaluation_status <> 'Deleted' OR evaluations.evaluation_status IS NULL)
                 AND evaluations.indicator_view_name = :view_name
                 AND evaluations.phase_year = actual_phase_year()
+                AND evaluations.batchDate >= actual_batch_date()
                 GROUP BY
                     crp.crp_id,
                     evaluations.id
@@ -192,14 +193,15 @@ export class EvaluationRepository extends Repository<Evaluations> {
       queryRunner.connection.driver.escapeQueryWithParameters(
         sqlQuery,
         { view_name: viewName },
-        {},
+        {}
       );
-    return await queryRunner.connection.query(query, parameters);
+    const data = await queryRunner.connection.query(query, parameters);
+    return data;
   }
 
   async getEvaluationsByCrpIdAndView(
     viewName: string,
-    crpId: string,
+    crpId: string
   ): Promise<any> {
     const sqlQuery = `
      SELECT
@@ -448,7 +450,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
       queryRunner.connection.driver.escapeQueryWithParameters(
         sqlQuery,
         { view_name: viewName, crp_id: crpId },
-        {},
+        {}
       );
     return await queryRunner.connection.query(query, parameters);
   }
@@ -575,6 +577,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
                     AND evaluations.indicator_view_name = :view_name
                     AND indicator_user.userId = :user_Id
                     AND evaluations.phase_year = actual_phase_year()
+                    AND evaluations.batchDate >= actual_batch_date()
                     GROUP BY
                         crp.crp_id,
                         evaluations.id,
@@ -585,7 +588,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
       queryRunner.connection.driver.escapeQueryWithParameters(
         sqlQuery,
         { user_Id: id, view_name: viewName },
-        {},
+        {}
       );
     return await queryRunner.connection.query(query, parameters);
   }
@@ -759,7 +762,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
     userId: number,
     viewName: string,
     viewNamePsdo: string,
-    indicatorId: number,
+    indicatorId: number
   ): Promise<any[]> {
     const sqlQuery = `
     SELECT
@@ -821,7 +824,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
     userId: number,
     viewName: string,
     viewNamePsdo: string,
-    indicatorId: number,
+    indicatorId: number
   ): Promise<any[]> {
     const sqlQuery = `
     SELECT
@@ -1151,7 +1154,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
     userId: number,
     viewName: string,
     viewNamePsdo: string,
-    indicatorId: number,
+    indicatorId: number
   ): Promise<any[]> {
     const sqlQuery = `
     SELECT
@@ -1435,7 +1438,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
       queryRunner.connection.driver.escapeQueryWithParameters(
         sqlQuery,
         { view_name: viewName },
-        {},
+        {}
       );
     const result = await queryRunner.connection.query(query, parameters);
     return result[0]?.id || null;
@@ -1470,7 +1473,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
   }
 
   async createComment(
-    createCommentDto: CreateCommentDto,
+    createCommentDto: CreateCommentDto
   ): Promise<Comments | null> {
     const {
       userId,
@@ -1500,13 +1503,13 @@ export class EvaluationRepository extends Repository<Evaluations> {
       });
 
       const currentCycle = await cycleRepository
-        .createQueryBuilder('qa_cycle')
-        .where('DATE(qa_cycle.start_date) <= CURDATE()')
-        .andWhere('DATE(qa_cycle.end_date) > CURDATE()')
+        .createQueryBuilder("qa_cycle")
+        .where("DATE(qa_cycle.start_date) <= CURDATE()")
+        .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
         .getRawOne();
 
       if (!currentCycle) {
-        throw new Error('Could not create comment: no active cycle found');
+        throw new Error("Could not create comment: no active cycle found");
       }
 
       let comment_ = new Comments();
@@ -1617,7 +1620,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
       queryRunner.connection.driver.escapeQueryWithParameters(
         sqlQuery,
         { resultId },
-        {},
+        {}
       );
 
     return await queryRunner.connection.query(query, parameters);
@@ -1644,7 +1647,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
       return changedFields;
     } catch (error) {
       this._logger.error(error);
-      throw new Error('Error comparing fields');
+      throw new Error("Error comparing fields");
     }
   }
 
@@ -1677,7 +1680,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
       return changedFields;
     } catch (error) {
       this._logger.error(error);
-      throw new Error('Error comparing fields');
+      throw new Error("Error comparing fields");
     }
   }
 
@@ -1706,23 +1709,23 @@ export class EvaluationRepository extends Repository<Evaluations> {
   groupBy(array: any[], key: string) {
     return array.reduce((result, currentValue) => {
       (result[currentValue[key]] = result[currentValue[key]] || []).push(
-        currentValue,
+        currentValue
       );
       return result;
     }, {});
   }
 
   getType(status: any, isCrp?: any) {
-    let res = '';
+    let res = "";
     switch (status) {
       case StatusHandler.Pending:
-        res = 'danger';
+        res = "danger";
         break;
       case StatusHandler.Complete:
-        res = 'success';
+        res = "success";
         break;
       case StatusHandler.Finalized:
-        res = 'info';
+        res = "info";
         break;
 
       default:
@@ -1745,150 +1748,150 @@ export class EvaluationRepository extends Repository<Evaluations> {
   }
 
   private formatResponse = (element: any, type: any) => {
-    let field = element['meta_col_name'];
-    let value = '';
+    let field = element["meta_col_name"];
+    let value = "";
     if (
-      element[`${field}`] == '<Not applicable>' &&
-      element['replies_count'] > 0
+      element[`${field}`] == "<Not applicable>" &&
+      element["replies_count"] > 0
     ) {
-      value = ' ';
+      value = " ";
     } else {
       value = element[`${field}`];
     }
     var response = {
-      comments_replies_count: element['comments_replies_count'],
-      comments_accepted_count: element['comments_accepted_count'],
+      comments_replies_count: element["comments_replies_count"],
+      comments_accepted_count: element["comments_accepted_count"],
       comments_accepted_with_comment_count:
-        element['comments_accepted_with_comment_count'],
-      comments_disagreed_count: element['comments_disagreed_count'],
-      comments_clarification_count: element['comments_clarification_count'],
-      comments_count: element['comments_count'],
-      evaluation_id: element['evaluation_id'],
-      is_core: element['is_core'],
-      changes_updated: element['changes_updated'],
-      indicator_slug: element['indicator_slug'],
-      status: element['evaluations_status'],
-      response_status: element['response_status'],
-      evaluation_status: element['evaluation_status'],
-      indicator_view_id: element['indicator_view_id'],
-      crp_name: element['crp_name'],
-      short_name: element['short_name'],
-      crp_accepted: element['crp_accepted'],
-      crp_rejected: element['crp_rejected'],
-      assessment_status: element['assessment_status'],
-      require_second_assessment: element['require_second_assessment'],
-      is_highlight: element['is_highlight'],
-      highligth_by: element['highligth_by'],
-      require_changes: element['require_changes'],
-      comments_highlight_count: element['comments_highlight_count'],
-      comments_tpb_count: element['comments_tpb_count'],
-      comments_ppu_count: element['comments_ppu_count'],
-      initiative: element['initiative'],
-      tpb_count: element['tpb_count'],
-      crp_acronym: element['crp_acronym'],
-      is_melia: element['is_melia'],
-      comments_highlight: element['comments_highlight'],
-      pending_highlight_comments: element['pending_highlight_comments'],
-      solved_with_require_request: element['solved_with_require_request'],
-      solved_without_require_request: element['solved_without_require_request'],
-      pending_tpb_decisions: element['pending_tpb_decisions'],
-      knowledge_product_type: element['knowledge_product_type'],
-      result_code: element['result_code'],
-      crp_action_area: element['crp_action_area'],
-      title: element['title'],
-      version: element['version'],
-      submission_date: moment(element['submission_date']).format('MMM D, YYYY'),
+        element["comments_accepted_with_comment_count"],
+      comments_disagreed_count: element["comments_disagreed_count"],
+      comments_clarification_count: element["comments_clarification_count"],
+      comments_count: element["comments_count"],
+      evaluation_id: element["evaluation_id"],
+      is_core: element["is_core"],
+      changes_updated: element["changes_updated"],
+      indicator_slug: element["indicator_slug"],
+      status: element["evaluations_status"],
+      response_status: element["response_status"],
+      evaluation_status: element["evaluation_status"],
+      indicator_view_id: element["indicator_view_id"],
+      crp_name: element["crp_name"],
+      short_name: element["short_name"],
+      crp_accepted: element["crp_accepted"],
+      crp_rejected: element["crp_rejected"],
+      assessment_status: element["assessment_status"],
+      require_second_assessment: element["require_second_assessment"],
+      is_highlight: element["is_highlight"],
+      highligth_by: element["highligth_by"],
+      require_changes: element["require_changes"],
+      comments_highlight_count: element["comments_highlight_count"],
+      comments_tpb_count: element["comments_tpb_count"],
+      comments_ppu_count: element["comments_ppu_count"],
+      initiative: element["initiative"],
+      tpb_count: element["tpb_count"],
+      crp_acronym: element["crp_acronym"],
+      is_melia: element["is_melia"],
+      comments_highlight: element["comments_highlight"],
+      pending_highlight_comments: element["pending_highlight_comments"],
+      solved_with_require_request: element["solved_with_require_request"],
+      solved_without_require_request: element["solved_without_require_request"],
+      pending_tpb_decisions: element["pending_tpb_decisions"],
+      knowledge_product_type: element["knowledge_product_type"],
+      result_code: element["result_code"],
+      crp_action_area: element["crp_action_area"],
+      title: element["title"],
+      version: element["version"],
+      submission_date: moment(element["submission_date"]).format("MMM D, YYYY"),
     };
     if (!type) {
       response = Object.assign(response, {
-        indicator_view_name: element['indicator_view_name'],
-        type: this.getType(element['evaluations_status']),
-        id: element['indicator_view_id'],
-        display_name: element['meta_display_name'],
-        title: element['title'],
-        version: element['version'],
-        comment_by: element['comment_by'],
-        assessed_r2: element['assessed_r2'],
-        stage: element.hasOwnProperty('stage') ? element['stage'] : undefined,
-        fp: element.hasOwnProperty('fp') ? element['fp'] : undefined,
-        is_highlight: element['is_highlight'],
-        highligth_by: element['highligth_by'],
-        require_changes: element['require_changes'],
-        comments_highlight_count: element['comments_highlight_count'],
-        comments_tpb_count: element['comments_tpb_count'],
-        comments_ppu_count: element['comments_ppu_count'],
-        comments_disagreed_count: element['comments_disagreed_count'],
-        initiative: element['initiative'],
-        short_name: element['short_name'],
-        crp_acronym: element['crp_acronym'],
-        is_melia: element['is_melia'],
-        comments_highlight: element['comments_highlight'],
-        pending_highlight_comments: element['pending_highlight_comments'],
-        solved_with_require_request: element['solved_with_require_request'],
+        indicator_view_name: element["indicator_view_name"],
+        type: this.getType(element["evaluations_status"]),
+        id: element["indicator_view_id"],
+        display_name: element["meta_display_name"],
+        title: element["title"],
+        version: element["version"],
+        comment_by: element["comment_by"],
+        assessed_r2: element["assessed_r2"],
+        stage: element.hasOwnProperty("stage") ? element["stage"] : undefined,
+        fp: element.hasOwnProperty("fp") ? element["fp"] : undefined,
+        is_highlight: element["is_highlight"],
+        highligth_by: element["highligth_by"],
+        require_changes: element["require_changes"],
+        comments_highlight_count: element["comments_highlight_count"],
+        comments_tpb_count: element["comments_tpb_count"],
+        comments_ppu_count: element["comments_ppu_count"],
+        comments_disagreed_count: element["comments_disagreed_count"],
+        initiative: element["initiative"],
+        short_name: element["short_name"],
+        crp_acronym: element["crp_acronym"],
+        is_melia: element["is_melia"],
+        comments_highlight: element["comments_highlight"],
+        pending_highlight_comments: element["pending_highlight_comments"],
+        solved_with_require_request: element["solved_with_require_request"],
         solved_without_require_request:
-          element['solved_without_require_request'],
-        pending_tpb_decisions: element['pending_tpb_decisions'],
-        knowledge_product_type: element['knowledge_product_type'],
-        indicator_slug: element['indicator_slug'],
-        result_code: element['result_code'],
-        indicator_view_id: element['indicator_view_id'],
-        crp_action_area: element['crp_action_area'],
-        submission_date: moment(element['submission_date']).format(
-          'MMM D, YYYY',
+          element["solved_without_require_request"],
+        pending_tpb_decisions: element["pending_tpb_decisions"],
+        knowledge_product_type: element["knowledge_product_type"],
+        indicator_slug: element["indicator_slug"],
+        result_code: element["result_code"],
+        indicator_view_id: element["indicator_view_id"],
+        crp_action_area: element["crp_action_area"],
+        submission_date: moment(element["submission_date"]).format(
+          "MMM D, YYYY"
         ),
       });
     } else {
       response = Object.assign(response, {
-        enable_comments: element['meta_enable_comments'] === 1 ? true : false,
-        col_name: element['meta_col_name'],
-        display_name: element['meta_display_name'],
+        enable_comments: element["meta_enable_comments"] === 1 ? true : false,
+        col_name: element["meta_col_name"],
+        display_name: element["meta_display_name"],
         display_type: DisplayTypeHandler.Paragraph,
         value: value,
-        field_id: element['meta_id'],
-        general_comment: element['general_comment'],
-        general_comment_id: element['general_comment_id'],
-        general_comment_user: element['general_comment_user'],
-        general_comment_updatedAt: element['general_comment_updatedAt'],
-        enable_assessor: element['enable_assessor'],
-        enable_crp: element['enable_crp'],
-        replies_count: element['replies_count'],
-        tpb_count: element['tpb_count'],
-        approved_no_comment: element['approved_no_comment'] || null,
+        field_id: element["meta_id"],
+        general_comment: element["general_comment"],
+        general_comment_id: element["general_comment_id"],
+        general_comment_user: element["general_comment_user"],
+        general_comment_updatedAt: element["general_comment_updatedAt"],
+        enable_assessor: element["enable_assessor"],
+        enable_crp: element["enable_crp"],
+        replies_count: element["replies_count"],
+        tpb_count: element["tpb_count"],
+        approved_no_comment: element["approved_no_comment"] || null,
         public_link: element[`public_link`],
         editable_link: element[`editable_link`],
-        meta_description: element['meta_description'],
-        comments_count: element['comments_count'],
-        count_accepted_comments: element['accepted_comments'],
-        count_disagree_comments: element['disagree_comments'],
-        count_clarification_comments: element['clarification_comments'],
-        count_accepted_with_comments: element['accepted_with_comments'],
-        original_field: element['original_field'],
+        meta_description: element["meta_description"],
+        comments_count: element["comments_count"],
+        count_accepted_comments: element["accepted_comments"],
+        count_disagree_comments: element["disagree_comments"],
+        count_clarification_comments: element["clarification_comments"],
+        count_accepted_with_comments: element["accepted_with_comments"],
+        original_field: element["original_field"],
         hide_original_field: true,
-        is_highlight: element['is_highlight'],
-        highligth_by: element['highligth_by'],
-        require_changes: element['require_changes'],
-        comments_highlight_count: element['comments_highlight_count'],
-        comments_tpb_count: element['comments_tpb_count'],
-        comments_ppu_count: element['comments_ppu_count'],
-        initiative: element['initiative'],
-        short_name: element['short_name'],
-        crp_acronym: element['crp_acronym'],
-        is_melia: element['is_melia'],
-        comments_highlight: element['comments_highlight'],
-        pending_highlight_comments: element['pending_highlight_comments'],
-        solved_with_require_request: element['solved_with_require_request'],
+        is_highlight: element["is_highlight"],
+        highligth_by: element["highligth_by"],
+        require_changes: element["require_changes"],
+        comments_highlight_count: element["comments_highlight_count"],
+        comments_tpb_count: element["comments_tpb_count"],
+        comments_ppu_count: element["comments_ppu_count"],
+        initiative: element["initiative"],
+        short_name: element["short_name"],
+        crp_acronym: element["crp_acronym"],
+        is_melia: element["is_melia"],
+        comments_highlight: element["comments_highlight"],
+        pending_highlight_comments: element["pending_highlight_comments"],
+        solved_with_require_request: element["solved_with_require_request"],
         solved_without_require_request:
-          element['solved_without_require_request'],
-        pending_tpb_decisions: element['pending_tpb_decisions'],
-        knowledge_product_type: element['knowledge_product_type'],
-        indicator_slug: element['indicator_slug'],
-        result_code: element['result_code'],
-        indicator_view_id: element['indicator_view_id'],
-        crp_action_area: element['crp_action_area'],
-        title: element['title'],
-        version: element['version'],
-        submission_date: moment(element['submission_date']).format(
-          'MMM D, YYYY',
+          element["solved_without_require_request"],
+        pending_tpb_decisions: element["pending_tpb_decisions"],
+        knowledge_product_type: element["knowledge_product_type"],
+        indicator_slug: element["indicator_slug"],
+        result_code: element["result_code"],
+        indicator_view_id: element["indicator_view_id"],
+        crp_action_area: element["crp_action_area"],
+        title: element["title"],
+        version: element["version"],
+        submission_date: moment(element["submission_date"]).format(
+          "MMM D, YYYY"
         ),
       });
     }
