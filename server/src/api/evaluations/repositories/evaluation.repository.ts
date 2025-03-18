@@ -446,7 +446,6 @@ export class EvaluationRepository extends Repository<Evaluations> {
             indicator_user.indicatorId;
     `;
     const queryRunner = this.dataSource.createQueryRunner();
-    console.log("🚀 ~ EvaluationRepository ~ sqlQuery:", sqlQuery);
     const [query, parameters] =
       queryRunner.connection.driver.escapeQueryWithParameters(
         sqlQuery,
