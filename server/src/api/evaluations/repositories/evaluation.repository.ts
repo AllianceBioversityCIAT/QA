@@ -557,13 +557,12 @@ export class EvaluationRepository extends Repository<Evaluations> {
                         ) comment_by,
                         (
                             SELECT
-                                group_concat(DISTINCT users2.username)
+                                group_concat(DISTINCT users.username)
                             FROM
-                                qa_users users2
-                                LEFT JOIN qa_comments comments2 ON evaluations.id = comments2.evaluationId
+                                qa_evaluations_assessed_by_second_round_qa_users qea
+                                LEFT JOIN qa_users users ON users.id = qea.qaUsersId
                             WHERE
-                                users2.id = comments2.highlightById
-                                AND comments2.cycleId = 2
+                                qea.qaEvaluationsId = evaluations.id
                         ) assessed_r2,
                         ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
                         ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type
