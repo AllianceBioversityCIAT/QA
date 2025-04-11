@@ -1,18 +1,18 @@
-import { Injectable, HttpStatus, Logger } from '@nestjs/common';
-import { ResponseUtils } from '../../utils/response.utils';
-import { CommentsRepository } from './repositories/comments.repository';
-import { IndicatorsRepository } from '../indicators/repositories/indicators.repository';
-import { CommentsMetaRepository } from './repositories/comments-meta.repository';
-import { UserRepository } from '../users/users.repository';
-import { TagsRepository } from './repositories/tags.repository';
-import { CycleRepository } from '../../shared/repositories/cycle.repository';
-import { EvaluationRepository } from '../evaluations/repositories/evaluation.repository';
-import { BatchesRepository } from '../../shared/repositories/batch.repository';
-import { QuickCommentsRepository } from './repositories/quick-comments.repository';
-import { TokenDto } from '../../shared/global-dto/token.dto';
-import { ToggleApprovedNoCommentsDto } from './dto/comment.dto';
-import { Comments } from './entities/comments.entity';
-import { IsNull, Not } from 'typeorm';
+import { Injectable, HttpStatus, Logger } from "@nestjs/common";
+import { ResponseUtils } from "../../utils/response.utils";
+import { CommentsRepository } from "./repositories/comments.repository";
+import { IndicatorsRepository } from "../indicators/repositories/indicators.repository";
+import { CommentsMetaRepository } from "./repositories/comments-meta.repository";
+import { UserRepository } from "../users/users.repository";
+import { TagsRepository } from "./repositories/tags.repository";
+import { CycleRepository } from "../../shared/repositories/cycle.repository";
+import { EvaluationRepository } from "../evaluations/repositories/evaluation.repository";
+import { BatchesRepository } from "../../shared/repositories/batch.repository";
+import { QuickCommentsRepository } from "./repositories/quick-comments.repository";
+import { TokenDto } from "../../shared/global-dto/token.dto";
+import { ToggleApprovedNoCommentsDto } from "./dto/comment.dto";
+import { Comments } from "./entities/comments.entity";
+import { IsNull, Not } from "typeorm";
 
 @Injectable()
 export class CommentsService {
@@ -27,14 +27,14 @@ export class CommentsService {
     private readonly _cycleRepository: CycleRepository,
     private readonly _evaluationsRepository: EvaluationRepository,
     private readonly _batchesRepository: BatchesRepository,
-    private readonly _quickCommentsRepository: QuickCommentsRepository,
+    private readonly _quickCommentsRepository: QuickCommentsRepository
   ) {}
 
   async getCommentsCount(crpId?: string): Promise<any> {
     try {
       let rawData;
 
-      if (!crpId || crpId === 'undefined' || crpId === 'null') {
+      if (!crpId || crpId === "undefined" || crpId === "null") {
         rawData = await this._commentsRepository.getAllComments();
       } else {
         rawData = await this._commentsRepository.getCommentsByCrpId(crpId);
@@ -42,23 +42,23 @@ export class CommentsService {
 
       const groupedData = this._evaluationsRepository.groupBy(
         rawData,
-        'indicator_view_name',
+        "indicator_view_name"
       );
 
       return ResponseUtils.format({
         data: groupedData,
-        description: 'Comments statistics',
+        description: "Comments statistics",
         status: HttpStatus.OK,
       });
     } catch (error) {
       this._logger.error(
-        'Error retrieving comments statistics:',
-        error.message,
+        "Error retrieving comments statistics:",
+        error.message
       );
 
       return ResponseUtils.format({
         data: {},
-        description: 'Comments statistics not found.',
+        description: "Comments statistics not found.",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -67,9 +67,9 @@ export class CommentsService {
   async createCommentsMeta() {
     try {
       const indicators = await this._indicatorsRepository
-        .createQueryBuilder('qa_indicators')
+        .createQueryBuilder("qa_indicators")
         .where(
-          'qa_indicators.id NOT IN (SELECT indicatorId FROM qa_comments_meta)',
+          "qa_indicators.id NOT IN (SELECT indicatorId FROM qa_comments_meta)"
         )
         .getMany();
 
@@ -86,14 +86,14 @@ export class CommentsService {
 
       return ResponseUtils.format({
         data: response,
-        description: 'Comments meta created successfully.',
+        description: "Comments meta created successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error creating comments meta:', error);
+      this._logger.error("Error creating comments meta:", error);
       return ResponseUtils.format({
         data: {},
-        description: 'Failed to create comments meta.',
+        description: "Failed to create comments meta.",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -104,30 +104,30 @@ export class CommentsService {
 
     try {
       let commentsData;
-      if (!evaluationId || evaluationId === 'undefined') {
-        this._logger.error('Evaluation ID is required.');
+      if (!evaluationId || evaluationId === "undefined") {
+        this._logger.error("Evaluation ID is required.");
         commentsData = await this._commentsRepository.fetchCommentsByCRP(
           crp_id,
-          indicatorName,
+          indicatorName
         );
       } else {
-        this
+        this;
         commentsData = await this._commentsRepository.fetchCommentsByEvaluation(
           evaluationId,
-          indicatorName,
+          indicatorName
         );
       }
 
       return ResponseUtils.format({
         data: commentsData,
-        description: 'Comments retrieved successfully.',
+        description: "Comments retrieved successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error fetching comments:', error);
+      this._logger.error("Error fetching comments:", error);
       throw ResponseUtils.format({
         data: {},
-        description: 'Comments not found.',
+        description: "Comments not found.",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -136,21 +136,21 @@ export class CommentsService {
   async getAllIndicatorTags(crp_id?: string): Promise<any> {
     try {
       let tagsByIndicators: any;
-      if (crp_id && crp_id !== 'undefined') {
+      if (crp_id && crp_id !== "undefined") {
         tagsByIndicators = await this._tagsRepository.fetchTagsByCRP(crp_id);
       } else {
         tagsByIndicators = await this._tagsRepository.fetchAllTags();
       }
       return ResponseUtils.format({
         data: tagsByIndicators,
-        description: 'Tags by indicators retrieved successfully.',
+        description: "Tags by indicators retrieved successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error retrieving tags:', error);
+      this._logger.error("Error retrieving tags:", error);
       throw ResponseUtils.format({
         data: {},
-        description: 'Tags by indicators cannot be retrieved.',
+        description: "Tags by indicators cannot be retrieved.",
         status: HttpStatus.NOT_FOUND,
         errors: error,
       });
@@ -159,38 +159,38 @@ export class CommentsService {
 
   async getFeedTags(
     indicator_view_name?: string,
-    tagTypeId?: string,
+    tagTypeId?: string
   ): Promise<any> {
     try {
       let feedTags;
-      if (indicator_view_name !== 'undefined' && tagTypeId !== 'undefined') {
+      if (indicator_view_name !== "undefined" && tagTypeId !== "undefined") {
         feedTags =
           await this._tagsRepository.fetchFeedTagsByIndicatorAndTagType(
             indicator_view_name,
-            tagTypeId,
+            tagTypeId
           );
       } else if (
-        indicator_view_name !== 'undefined' &&
-        tagTypeId === 'undefined'
+        indicator_view_name !== "undefined" &&
+        tagTypeId === "undefined"
       ) {
         feedTags =
           await this._tagsRepository.fetchFeedTagsByIndicator(
-            indicator_view_name,
+            indicator_view_name
           );
       } else {
         feedTags = await this._tagsRepository.fetchAllFeedTags();
       }
       return ResponseUtils.format({
         data: feedTags,
-        description: 'Feed tags retrieved successfully.',
+        description: "Feed tags retrieved successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error retrieving feed tags:', error);
+      this._logger.error("Error retrieving feed tags:", error);
       throw ResponseUtils.format({
         data: null,
-        errors: 'Feed tags cannot be retrieved.',
-        description: 'Feed tags cannot be retrieved.',
+        errors: "Feed tags cannot be retrieved.",
+        description: "Feed tags cannot be retrieved.",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -198,20 +198,20 @@ export class CommentsService {
 
   async toggleApprovedNoComments(
     evaluationId: number,
-    toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto,
+    toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto
   ) {
     const { meta_array, userId, noComment } = toggleApprovedNoCommentsDto;
     let comments;
     try {
       const query = `
-        SELECT * FROM qa_comments qc
-        LEFT JOIN qa_comments_meta qcm ON qc.metaId = qcm.id
-        WHERE qc.evaluationId = ? 
-          AND qc.metaId IN (?) 
-          AND qc.approved_no_comment IS NOT NULL 
-          AND qc.is_deleted = 0
-          AND qc.is_visible = 1
-      `;
+          SELECT * FROM qa_comments qc
+          LEFT JOIN qa_comments_meta qcm ON qc.metaId = qcm.id
+          WHERE qc.evaluationId = ? 
+            AND qc.metaId IN (?) 
+            AND qc.approved_no_comment IS NOT NULL 
+            AND qc.is_deleted = 0
+            AND qc.is_visible = 1
+        `;
       comments = await this._commentsRepository.query(query, [
         evaluationId,
         meta_array,
@@ -226,26 +226,35 @@ export class CommentsService {
       });
 
       let current_cycle = await this._cycleRepository
-        .createQueryBuilder('qa_cycle')
-        .select('*')
-        .where('DATE(qa_cycle.start_date) <= CURDATE()')
-        .andWhere('DATE(qa_cycle.end_date) > CURDATE()')
+        .createQueryBuilder("qa_cycle")
+        .select("*")
+        .where("DATE(qa_cycle.start_date) <= CURDATE()")
+        .andWhere("DATE(qa_cycle.end_date) > CURDATE()")
         .getRawOne();
 
+      this._logger.debug("Current cycle:", current_cycle);
+
+      const isFirstRound = current_cycle && current_cycle.id === 1;
+
+      const assessedTable = isFirstRound
+        ? "qa_evaluations_assessed_by_qa_users"
+        : "qa_evaluations_assessed_by_second_round_qa_users";
+
       const assessedQuery = `
-        SELECT * FROM qa_evaluations_assessed_by_qa_users
-        WHERE qaEvaluationsId = ? AND qaUsersId = ?
-        `;
+          SELECT * FROM ${assessedTable}
+          WHERE qaEvaluationsId = ? AND qaUsersId = ?
+          `;
+
       const assessed_by = await this._commentsRepository.query(assessedQuery, [
         evaluationId,
         userId,
       ]);
 
       if (assessed_by.length <= 0) {
-        const insertAssessedBy = await this._commentsRepository
+        await this._commentsRepository
           .createQueryBuilder()
           .insert()
-          .into('qa_evaluations_assessed_by_qa_users')
+          .into(assessedTable)
           .values({
             qaEvaluationsId: evaluationId,
             qaUsersId: userId,
@@ -261,6 +270,8 @@ export class CommentsService {
               meta: meta,
               evaluation: evaluation.id,
               approved_no_comment: Not(IsNull()),
+              // Also consider the cycle to update the correct round's comment
+              cycle: current_cycle ? current_cycle.id : null,
             },
             {
               approved: noComment,
@@ -271,7 +282,8 @@ export class CommentsService {
               userId: user.id,
               detail: null,
               meta: meta,
-            },
+              cycle: current_cycle ? current_cycle.id : null,
+            }
           );
         } else {
           await this._commentsRepository.save({
@@ -283,21 +295,21 @@ export class CommentsService {
             userId: user.id,
             detail: null,
             meta: meta,
-            cycle: current_cycle.id,
+            cycle: current_cycle ? current_cycle.id : null,
           });
         }
       }
 
       return ResponseUtils.format({
         data: {},
-        description: 'Comments toggled successfully.',
+        description: "Comments toggled successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error toggling approved comments:', error);
+      this._logger.error("Error toggling approved comments:", error);
       throw ResponseUtils.format({
         data: {},
-        description: 'Comments not set as approved.',
+        description: "Comments not set as approved.",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -305,7 +317,7 @@ export class CommentsService {
 
   async toggleApprovedNoComments2(
     evaluationId: number,
-    toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto,
+    toggleApprovedNoCommentsDto: ToggleApprovedNoCommentsDto
   ) {
     const { meta_array, userId, noComment } = toggleApprovedNoCommentsDto;
     try {
@@ -320,14 +332,14 @@ export class CommentsService {
       const existingComments =
         await this._commentsRepository.findCommentsWithMeta(
           evaluationId,
-          meta_array,
+          meta_array
         );
 
       const response = [];
 
       for (const metaId of meta_array) {
         let comment = existingComments.find(
-          (comment) => comment.meta === metaId,
+          (comment) => comment.meta === metaId
         );
 
         if (comment) {
@@ -342,7 +354,7 @@ export class CommentsService {
             evaluation,
             metaId,
             noComment,
-            currentCycle,
+            currentCycle
           );
         }
         response.push(comment);
@@ -352,14 +364,14 @@ export class CommentsService {
 
       return ResponseUtils.format({
         data: result,
-        description: 'Comments toggled successfully.',
+        description: "Comments toggled successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error toggling approved comments:', error);
+      this._logger.error("Error toggling approved comments:", error);
       throw ResponseUtils.format({
         data: {},
-        description: 'Comments not set as approved.',
+        description: "Comments not set as approved.",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -371,14 +383,14 @@ export class CommentsService {
 
       return ResponseUtils.format({
         data: data,
-        description: 'Raw comments excel data retrieved successfully',
+        description: "Raw comments excel data retrieved successfully",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error fetching raw comments excel data:', error);
+      this._logger.error("Error fetching raw comments excel data:", error);
       return ResponseUtils.format({
         data: {},
-        description: 'Could not retrieve raw comments excel data',
+        description: "Could not retrieve raw comments excel data",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -389,14 +401,14 @@ export class CommentsService {
       const rawData = await this._commentsRepository.getRawCommentsData(crp_id);
       return ResponseUtils.format({
         data: rawData,
-        description: 'Comments raw data',
+        description: "Comments raw data",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error fetching raw comments data:', error);
+      this._logger.error("Error fetching raw comments data:", error);
       return ResponseUtils.format({
         data: {},
-        description: 'Comments raw data error',
+        description: "Comments raw data error",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -407,12 +419,12 @@ export class CommentsService {
       const cycles = await this._cycleRepository.getAllCycles();
       return ResponseUtils.format({
         data: cycles,
-        description: 'Cycles data retrieved successfully',
+        description: "Cycles data retrieved successfully",
         status: HttpStatus.OK,
       });
     } catch (error) {
       throw ResponseUtils.format({
-        description: 'Could not retrieve cycles',
+        description: "Could not retrieve cycles",
         status: HttpStatus.NOT_FOUND,
         data: error.message,
       });
@@ -424,12 +436,12 @@ export class CommentsService {
       const cycles = await this._cycleRepository.getCurrentCycle();
       return ResponseUtils.format({
         data: cycles,
-        description: 'Cycles data retrieved successfully',
+        description: "Cycles data retrieved successfully",
         status: HttpStatus.OK,
       });
     } catch (error) {
       throw ResponseUtils.format({
-        description: 'Could not retrieve cycles',
+        description: "Could not retrieve cycles",
         status: HttpStatus.NOT_FOUND,
         data: error.message,
       });
@@ -452,12 +464,12 @@ export class CommentsService {
       const updatedCycle = await this._cycleRepository.updateCycle(cycle);
       return ResponseUtils.format({
         data: updatedCycle,
-        description: 'Cycle updated successfully',
+        description: "Cycle updated successfully",
         status: HttpStatus.OK,
       });
     } catch (error) {
       throw ResponseUtils.format({
-        description: 'Could not update cycle',
+        description: "Could not update cycle",
         status: HttpStatus.NOT_FOUND,
         data: error.message,
       });
@@ -474,8 +486,8 @@ export class CommentsService {
         await this._commentsRepository.saveComment(comment);
       const message =
         ppu !== 0
-          ? 'Require changes was marked done'
-          : 'Require changes was removed';
+          ? "Require changes was marked done"
+          : "Require changes was removed";
 
       return ResponseUtils.format({
         data: updatedComment,
@@ -484,7 +496,7 @@ export class CommentsService {
       });
     } catch (error) {
       throw ResponseUtils.format({
-        description: 'An error occurred when trying to mark require changes',
+        description: "An error occurred when trying to mark require changes",
         status: HttpStatus.BAD_REQUEST,
         data: error.message,
       });
@@ -497,13 +509,13 @@ export class CommentsService {
 
       return ResponseUtils.format({
         data: rawData,
-        description: 'Batches data retrieved successfully',
+        description: "Batches data retrieved successfully",
         status: HttpStatus.OK,
       });
     } catch (error) {
       return ResponseUtils.format({
         data: null,
-        description: 'Could not retrieve batches data',
+        description: "Could not retrieve batches data",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -515,13 +527,13 @@ export class CommentsService {
 
       return ResponseUtils.format({
         data: quickComments,
-        description: 'Quick comments retrieved successfully',
+        description: "Quick comments retrieved successfully",
         status: HttpStatus.OK,
       });
     } catch (error) {
       return ResponseUtils.format({
         data: null,
-        description: 'Could not retrieve quick comments',
+        description: "Could not retrieve quick comments",
         status: HttpStatus.NOT_FOUND,
       });
     }
@@ -532,14 +544,14 @@ export class CommentsService {
       const data = await this._commentsRepository.getExcelComments(crp_id);
       return ResponseUtils.format({
         data,
-        description: 'Excel comments retrieved successfully',
+        description: "Excel comments retrieved successfully",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('Error fetching excel comments:', error);
+      this._logger.error("Error fetching excel comments:", error);
       return ResponseUtils.format({
         data: {},
-        description: 'Could not retrieve excel comments',
+        description: "Could not retrieve excel comments",
         status: HttpStatus.NOT_FOUND,
       });
     }
