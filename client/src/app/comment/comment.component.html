@@ -25,7 +25,7 @@
                   <p>On {{ comment.createdAt | date: 'long' }}</p>
                 </div>
                 <!-- <br *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0"> -->
-                <div style="padding: 8px 0px" *ngIf="comment.cycle.cycle_stage == 2 && comment.replies.replies_count == 0 && comment.tpb != 1">
+                <div style="padding: 8px 0px" *ngIf="comment?.cycle?.cycle_stage == 2 && comment?.replies?.replies_count == 0 && comment?.tpb != 1">
                   <p>
                     Comment made in
                     <span style="font-weight: bold">2nd round</span>
@@ -91,9 +91,9 @@
             class="highlight-section">
             <button
               *ngIf="
-                comment.highlight_comment == false && currentUser.cycle.cycle_stage == 2 && !isCRP && dataFromItem.is_core == 1 && comment.tpb == 0
+                comment.highlight_comment == false && currentUser?.cycle?.cycle_stage == 2 && !isCRP && dataFromItem?.is_core == 1 && comment?.tpb == 0
               "
-              (click)="UpdateHighlightComment(comment.id, comment.highlight_comment, comment)"
+              (click)="UpdateHighlightComment(comment?.id, comment?.highlight_comment, comment)"
               class="highlight-icon">
               <img src="icons/bombillo.png" alt="" srcset="" />
               Mark as highlight
@@ -102,8 +102,8 @@
 
           <div *ngIf="!crpComment" class="btn-danger-section">
             <button
-              *ngIf="userIsLeader && comment.highlight_comment == true && currentUser.cycle.cycle_stage == 2"
-              (click)="UpdateHighlightComment(comment.id, comment.highlight_comment, comment)"
+              *ngIf="userIsLeader && comment?.highlight_comment == true && currentUser?.cycle?.cycle_stage == 2"
+              (click)="UpdateHighlightComment(comment?.id, comment?.highlight_comment, comment)"
               class="btn btn-danger btn-block">
               <img src="icons/apagado.png" />
               Remove highlight
@@ -112,7 +112,7 @@
 
           <!-- crpComment && comment.crp_approved === null && comment.tpb == 0 -->
           <div
-            *ngIf="crpComment && comment.crp_approved === null && comment.tpb == 0 && currentUser.cycle.cycle_stage == 1"
+            *ngIf="crpComment && comment?.crp_approved === null && comment?.tpb == 0 && currentUser?.cycle?.cycle_stage == 1"
             style="flex-direction: row"
             class="add-comment-container">
             <button type="button" class="btn accept" (click)="this.showDialog = true; this.is_approved = true">ACCEPT</button>
@@ -147,10 +147,10 @@
           <div
             class="done-button"
             *ngIf="
-              (comment.tpb == 1 && crpComment && comment.ppu == 0 && currentUser.cycle.cycle_stage == 2 && adminUser) ||
-              (comment.tpb == 1 && comment.ppu == 0 && currentUser.cycle.cycle_stage == 2 && istpbUser)
+              (comment?.tpb == 1 && crpComment && comment?.ppu == 0 && currentUser?.cycle?.cycle_stage == 2 && adminUser) ||
+              (comment?.tpb == 1 && comment?.ppu == 0 && currentUser?.cycle?.cycle_stage == 2 && istpbUser)
             ">
-            <button class="done-button" (click)="implementedChange(commentsByColSelected?.id, comment.ppu)" primary>
+            <button class="done-button" (click)="implementedChange(commentsByColSelected?.id, comment?.ppu)" primary>
               <!-- <span class="tooltiptext"
                 >make sure you have made the changes!
               </span> -->
@@ -161,11 +161,11 @@
 
           <div
             *ngIf="
-              (comment.tpb == 1 && crpComment && comment.ppu == 1 && adminUser && currentUser.cycle.cycle_stage == 2) ||
-              (comment.tpb == 1 && comment.ppu == 1 && istpbUser && currentUser.cycle.cycle_stage == 2)
+              (comment?.tpb == 1 && crpComment && comment?.ppu == 1 && adminUser && currentUser?.cycle?.cycle_stage == 2) ||
+              (comment?.tpb == 1 && comment?.ppu == 1 && istpbUser && currentUser?.cycle?.cycle_stage == 2)
             "
             class="remove-implemented-changes">
-            <button class="btn remove-implemented-changes btn-block" (click)="implementedChange(commentsByColSelected?.id, comment.ppu)">
+            <button class="btn remove-implemented-changes btn-block" (click)="implementedChange(commentsByColSelected?.id, comment?.ppu)">
               <span class="tooltiptext">Changes have not yet been implemented?</span>
               <img src="icons/marked-done.svg" />
               Changes implemented
@@ -173,26 +173,26 @@
           </div>
 
           <div
-            *ngIf="crpComment && comment.replies.replies_count == '0' && comment.replyTypeId != 1 && comment.replyTypeId != 4"
+            *ngIf="crpComment && comment?.replies?.replies_count == '0' && comment?.replyTypeId != 1 && comment?.replyTypeId != 4"
             class="add-comment-container reply-comment"
             [ngClass]="{
-              approved: comment.replyTypeId == 1,
-              declined: comment.replyTypeId == 2,
-              clarification: comment.replyTypeId == 3,
-              tpb_comment: comment.tpb == 1
+              approved: comment?.replyTypeId == 1,
+              declined: comment?.replyTypeId == 2,
+              clarification: comment?.replyTypeId == 3,
+              tpb_comment: comment?.tpb == 1
             }">
-            <h2 *ngIf="comment.replyTypeId != undefined && comment.replyTypeId == replyTypes.clarification">
-              REQUEST {{ replyTypes[comment.replyTypeId] }} ABOUT COMMENT
+            <h2 *ngIf="comment?.replyTypeId != undefined && comment?.replyTypeId == replyTypes.clarification">
+              REQUEST {{ replyTypes[comment?.replyTypeId] }} ABOUT COMMENT
             </h2>
 
-            <h2 *ngIf="comment.replyTypeId != undefined && comment.replyTypeId == replyTypes.disagree">
-              {{ replyTypes[comment.replyTypeId] }} COMMENT
+            <h2 *ngIf="comment?.replyTypeId != undefined && comment?.replyTypeId == replyTypes.disagree">
+              {{ replyTypes[comment?.replyTypeId] }} COMMENT
             </h2>
-            <p class="update-reminder" *ngIf="comment.replyTypeId === 3">
+            <p class="update-reminder" *ngIf="comment?.replyTypeId === 3">
               Be clear with any doubts you may have regarding the comment so that an assessor can help you
             </p>
 
-            <div *ngIf="comment.hasOwnProperty('crp_response')">
+            <div *ngIf="comment?.hasOwnProperty('crp_response')">
               <form [formGroup]="commentGroup">
                 <textarea maxlength="{{ totalChar }}" formControlName="comment"></textarea>
               </form>
@@ -221,8 +221,8 @@
                 <div>
                   <p>On {{ comment.updatedAt | date: 'long' }}</p>
                   <p *ngIf="comment.cycle">
-                    {{ comment.cycle.cycle_name }}:
-                    <strong>{{ comment.cycle.cycle_stage }} </strong>
+                    {{ comment?.cycle?.cycle_name }}:
+                    <strong>{{ comment?.cycle?.cycle_stage }} </strong>
                   </p>
                 </div>
               </div>
@@ -276,24 +276,24 @@
   <div class="main-required" *ngIf="currentUser.roles[0].description === allRoles.admin || tpbUser?.isTPB">
     <input
       *ngIf="
-        dataFromItem.require_changes != 1 &&
+        dataFromItem?.require_changes != 1 &&
         commentsByColSelected?.require_changes != 1 &&
         commentsByColSelected?.tpb != 1 &&
-        currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0 &&
-        dataFromItem.is_core == 1
+        currentUser?.cycle?.cycle_stage == 2 &&
+        commentsByCol?.length > 0 &&
+        dataFromItem?.is_core == 1
       "
       class="checkbox-style"
       type="checkbox"
       id="require_changes" />
     <label
       *ngIf="
-        dataFromItem.require_changes != 1 &&
+        dataFromItem?.require_changes != 1 &&
         commentsByColSelected?.require_changes != 1 &&
         commentsByColSelected?.tpb != 1 &&
-        currentUser.cycle.cycle_stage == 2 &&
-        commentsByCol.length > 0 &&
-        dataFromItem.is_core == 1
+        currentUser?.cycle?.cycle_stage == 2 &&
+        commentsByCol?.length > 0 &&
+        dataFromItem?.is_core == 1
       "
       class="checkbox-label"
       for="changes"

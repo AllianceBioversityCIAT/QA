@@ -20,6 +20,32 @@ import { FormBuilder, FormsModule } from '@angular/forms';
 import { EvaluationsService } from '@services/evaluations.service';
 import { CommonModule } from '@angular/common';
 import { ResultsTableComponent } from '../../../../components/results-table/results-table.component';
+
+interface CommentExcelResponse {
+  data: Array<{
+    "Init short name": string;
+    "Result code": string;
+    "Result title": string;
+    "Year": string;
+    "Evaluation ID": number;
+    "Field name": string;
+    "Field value 2023": string;
+    "Comment 2023": string;
+    "Created date": string;
+    "Assessor username": string;
+    "Assessor email": string;
+    "Init reply type": string;
+    "Init reply": string;
+    "Reply created date": string;
+    "Init user": string;
+    "Round": string;
+  }>;
+  status: number;
+  description: string;
+  timestamp: string;
+  path: string;
+}
+
 @Component({
   selector: 'app-indicators',
   standalone: true,
@@ -179,8 +205,8 @@ export default class IndicatorsComponent implements OnInit {
         indicatorName: `qa_${this.indicatorType}`
       })
       .subscribe({
-        next: res => {
-          this._exportTableSE.exportExcel(res, filename);
+        next: (res: CommentExcelResponse) => {
+          this._exportTableSE.exportExcel(res.data, filename);
           this.hideSpinner();
         },
         error: error => {

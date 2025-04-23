@@ -186,7 +186,7 @@ export class CommentComponent implements OnInit {
       highlight_comment: !isHighlighted
     };
 
-    this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment.id);
+    this.detailItemFounded = this.detailedData.find(detailItem => detailItem.general_comment_id == comment?.id);
     if (!this.detailItemFounded) {
       this.detailItemFounded = this.commentsByColSelected;
       this.detailItemFounded.highlight_comment = !isHighlighted;
@@ -277,7 +277,7 @@ export class CommentComponent implements OnInit {
   addTag(commentId, tagTypeId) {
     this.showSpinner(this.spinner_comment);
 
-    this.commentService.createTag({ userId: this.currentUser.id, tagTypeId, commentId }).subscribe(
+    this.commentService.createTag({ userId: this.currentUser?.id, tagTypeId, commentId }).subscribe(
       res => {
         this.getItemCommentData();
         console.log(res.message);
@@ -294,7 +294,7 @@ export class CommentComponent implements OnInit {
     this.showSpinner(this.spinner_comment);
 
     this.commentService
-      .getTagId({ commentId, tagTypeId, userId: this.currentUser.id })
+      .getTagId({ commentId, tagTypeId, userId: this.currentUser?.id })
       .pipe(mergeMap(res => this.commentService.deleteTag(res.data[0].tagId)))
       .subscribe(
         res => {
@@ -358,7 +358,7 @@ export class CommentComponent implements OnInit {
     this.commentService
       .createDataComment({
         detail: this.formData['comment'].value,
-        userId: this.currentUser.id,
+        userId: this.currentUser?.id,
         evaluationId: this.dataFromItem.evaluation_id,
         metaId: this.dataFromItem.field_id,
         approved: true,
@@ -370,7 +370,7 @@ export class CommentComponent implements OnInit {
       .subscribe(
         res => {
           console.log('COMMENT ADDED');
-          this.commentByTpb = res.data.id;
+          this.commentByTpb = res?.data?.id;
           this.getItemCommentData(true);
           this.formData['comment'].reset();
           this.validateAllFieldsAssessed.emit();
@@ -400,7 +400,7 @@ export class CommentComponent implements OnInit {
       approved: data.approved,
       is_visible: data.is_visible,
       is_deleted: data.is_deleted,
-      id: data.id,
+      id: data?.id,
       detail: data.detail,
       userId: data?.obj_user?.id,
       require_changes: false
@@ -518,8 +518,8 @@ export class CommentComponent implements OnInit {
   getCommentReplies(comment) {
     if (comment.isCollapsed) {
       let params = {
-        commentId: comment.id,
-        evaluationId: this.dataFromItem.evaluation_id
+        commentId: comment?.id,
+        evaluationId: this.dataFromItem?.evaluation_id
       };
       this.commentService.getDataCommentReply(params).subscribe(
         res => {
@@ -564,10 +564,10 @@ export class CommentComponent implements OnInit {
     this.commentService
       .createDataCommentReply({
         detail: this.formData['comment'].value || '',
-        userId: this.currentUser.id,
-        commentId: currentComment ? currentComment.id : this.currentComment.id,
-        crp_approved: this.crpComment ? currentComment.crp_response : undefined,
-        replyTypeId: currentComment ? currentComment.replyTypeId : undefined
+        userId: this.currentUser?.id,
+        commentId: currentComment ? currentComment?.id : this.currentComment?.id,
+        crp_approved: this.crpComment ? currentComment?.crp_response : undefined,
+        replyTypeId: currentComment ? currentComment?.replyTypeId : undefined
       })
       .subscribe(
         res => {
@@ -633,8 +633,8 @@ export class CommentComponent implements OnInit {
 
   isCommentAvailable(): boolean {
     let batchValidation: boolean;
-    if (this.currentUser.cycle.id === 2) {
-      const commentCore = this.dataFromItem.is_core;
+    if (this.currentUser?.cycle?.id === 2) {
+      const commentCore = this.dataFromItem?.is_core;
       if (commentCore) batchValidation = true;
       else batchValidation = false;
     } else {
