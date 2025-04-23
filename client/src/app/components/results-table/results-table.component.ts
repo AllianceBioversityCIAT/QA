@@ -115,7 +115,7 @@ export class ResultsTableComponent {
     {
       name: 'Accepted w. comment',
       attr: 'comments_accepted_with_comment_count',
-      showIf: () => this.returnedArray?.[0]?.comments_accepted_with_comment_count && this.currentUser.cycle.cycle_stage == 2
+      showIf: () => this.returnedArray?.[0]?.comments_accepted_with_comment_count && this.currentUser?.cycle?.cycle_stage == 2
     },
     {
       name: 'Disagreed comments',
@@ -145,12 +145,12 @@ export class ResultsTableComponent {
     {
       name: 'Assessed By',
       attr: 'comment_by',
-      showIf: () => this.currentUser.cycle.cycle_stage != 2 && !this.isCRP
+      showIf: () => this.currentUser?.cycle?.cycle_stage != 2 && !this.isCRP
     },
     {
       name: 'Assessed By (2nd round)',
       attr: 'assessed_r2',
-      showIf: () => this.currentUser.cycle.cycle_stage == 2
+      showIf: () => this.currentUser?.cycle?.cycle_stage == 2
     },
     {
       name: 'QA Status',
@@ -189,7 +189,7 @@ export class ResultsTableComponent {
   }
 
   showhighlightColumn() {
-    if (this.currentUser?.cycle.cycle_stage == 2) {
+    if (this.currentUser?.cycle?.cycle_stage == 2) {
       this.selectedFilters.push({
         label: 'Highlighted Comments',
         key: 'showHighlightedComments'
