@@ -10,30 +10,6 @@ FROM base AS development
 RUN npm install && npm install --save-dev @types/node
 
 COPY . .
-
-RUN echo "{\"compilerOptions\": {\
-    \"module\": \"commonjs\",\
-    \"declaration\": true,\
-    \"removeComments\": true,\
-    \"emitDecoratorMetadata\": true,\
-    \"experimentalDecorators\": true,\
-    \"allowSyntheticDefaultImports\": true,\
-    \"target\": \"es2017\",\
-    \"sourceMap\": true,\
-    \"outDir\": \"./dist\",\
-    \"baseUrl\": \"./\",\
-    \"incremental\": true,\
-    \"skipLibCheck\": true,\
-    \"strictNullChecks\": false,\
-    \"noImplicitAny\": false,\
-    \"strictBindCallApply\": false,\
-    \"forceConsistentCasingInFileNames\": false,\
-    \"noFallthroughCasesInSwitch\": false,\
-    \"esModuleInterop\": true,\
-    \"types\": [\"node\", \"@nestjs/schedule\", \"jest\"]\
-    }}" > tsconfig.json
-
-
 # RUN npm run migration:run
 
 RUN npm run build
