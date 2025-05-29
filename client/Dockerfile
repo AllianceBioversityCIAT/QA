@@ -9,7 +9,7 @@ RUN npm ci
 COPY . .
 
 # Build in dev mode as per team requirement
-RUN npm run build:dev
+RUN npm run build
 
 #################### TESTING STAGE ####################
 FROM node:20-alpine AS test
