@@ -7,7 +7,7 @@ COPY package*.json ./
 #################### DEVELOPMENT STAGE ####################
 FROM base AS development
 
-RUN npm install && npm install --save-dev @types/node
+RUN npm install --ignore-scripts && npm install --save-dev @types/node
 
 COPY src ./src
 COPY tsconfig*.json ./
@@ -21,7 +21,7 @@ CMD ["npm", "run", "start"]
 
 #################### BUILD STAGE ####################
 FROM base AS build
-RUN npm ci --only=production
+RUN npm ci --only=production --ignore-scripts
 
 COPY src ./src
 COPY tsconfig*.json ./
