@@ -7,7 +7,7 @@ COPY package*.json ./
 #################### DEVELOPMENT STAGE ####################
 FROM base AS development
 
-RUN npm install --ignore-scripts && npm install --save-dev @types/node
+RUN npm install --ignore-scripts && npm install --ignore-scripts --save-dev @types/node
 
 COPY src ./src
 COPY tsconfig*.json ./
