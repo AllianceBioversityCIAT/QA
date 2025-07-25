@@ -283,14 +283,32 @@ export class AuthService {
         }),
       ]);
 
+      const token = jwt.sign(
+        { userId: user.id, username: user.username, role: user.roles },
+        config.jwtSecret,
+        { expiresIn: config.jwtTime },
+      );
+
+      const formattedUser = {
+        ...user,
+        roles: user.roles.map((userRole) => ({
+          id: userRole.role.id,
+          description: userRole.role.description,
+          createdAt: userRole.role.createdAt,
+          updatedAt: userRole.role.updatedAt,
+          acronym: userRole.role.acronym,
+          is_active: userRole.role.is_active,
+          permissions: userRole.role.permissions,
+        })),
+        token,
+        config: generalConfig,
+        cycle: currentCycle[0],
+      };
+
+      delete formattedUser.password;
+
       return ResponseUtils.format({
-        data: {
-          ...user,
-          token: authResponse.tokens.accessToken,
-          tokens: authResponse.tokens,
-          config: generalConfig,
-          cycle: currentCycle[0],
-        },
+        data: formattedUser,
         description: 'User logged.',
         status: HttpStatus.OK,
       });
