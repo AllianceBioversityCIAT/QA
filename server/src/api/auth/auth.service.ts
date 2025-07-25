@@ -28,6 +28,7 @@ import { ResponseUtils } from '../../utils/response.utils';
 import { CreateGeneralConfigDto } from './dto/create-general-config.dto';
 import { GeneralConfiguration } from '../../shared/entities/general-config.entity';
 import { TokenAuth } from './entities/token-auth.entity';
+import { AuthMicroserviceService } from '../../shared/microservice/auth-microservice/auth-microservice.service';
 
 @Injectable()
 export class AuthService {
@@ -39,7 +40,156 @@ export class AuthService {
     private readonly _bcryptPasswordEncoder: BcryptPasswordEncoder,
     private readonly _tokenAuthRepository: TokenAuthRepository,
     private readonly _crpRepository: CrpRepository,
+    private readonly _authMicroservice: AuthMicroserviceService,
   ) {}
+
+  // async loginService(loginDto: LoginDto): Promise<any> {
+  //   const { username, password } = loginDto;
+  //   if (!(username && password)) {
+  //     return ResponseUtils.format({
+  //       data: null,
+  //       description: 'Username and password are required.',
+  //       status: HttpStatus.BAD_REQUEST,
+  //     });
+  //   }
+
+  //   try {
+  //     let user: Users;
+  //     const marloUser = await this._userRepository.findOne({
+  //       where: [
+  //         { email: username.trim().toLowerCase(), is_marlo: true },
+  //         { username: username.trim().toLowerCase(), is_marlo: true },
+  //       ],
+  //       relations: {
+  //         roles: {
+  //           role: true,
+  //         },
+  //         crp: true,
+  //         crps: true,
+  //         indicators: {
+  //           indicator: {
+  //             comment_meta: true,
+  //           },
+  //         },
+  //       },
+  //     });
+
+  //     if (marloUser) {
+  //       const isMarlo = await this.validateAD(marloUser, password);
+  //       this._logger.log('Is Marlo: ' + isMarlo);
+  //       if (isMarlo) {
+  //         user = marloUser;
+  //       } else {
+  //         return ResponseUtils.format({
+  //           data: null,
+  //           description: 'User not found or password incorrect.',
+  //           status: HttpStatus.UNAUTHORIZED,
+  //           errors: 'User not found or password incorrect.',
+  //         });
+  //       }
+  //     } else {
+  //       user = await this._userRepository.findOne({
+  //         where: [
+  //           { username: username.trim().toLowerCase() },
+  //           { email: username.trim().toLowerCase() },
+  //         ],
+  //         relations: {
+  //           roles: {
+  //             role: true,
+  //           },
+  //           crp: true,
+  //           crps: true,
+  //           indicators: {
+  //             indicator: {
+  //               comment_meta: true,
+  //             },
+  //           },
+  //         },
+  //       });
+  //       if (
+  //         !user ||
+  //         !this._bcryptPasswordEncoder.matches(password, user.password)
+  //       ) {
+  //         this._logger.error('User not found or password incorrect.');
+  //         return ResponseUtils.format({
+  //           data: null,
+  //           description: 'User not found or password incorrect.',
+  //           status: HttpStatus.UNAUTHORIZED,
+  //           errors: 'User not found or password incorrect.',
+  //         });
+  //       }
+  //     }
+
+  //     this._logger.log('User found: ' + user.username);
+
+  //     const userRoles = user.roles.map((userRole) => userRole.role.description);
+  //     if (
+  //       userRoles.includes(RolesHandler.crp) &&
+  //       userRoles.includes(RolesHandler.assesor)
+  //     ) {
+  //       this._logger.log('User is CRP and Assessor');
+  //       return ResponseUtils.format({
+  //         data: null,
+  //         description:
+  //           'User is CRP and Assessor, please contact the Technical Team.',
+  //         status: HttpStatus.UNAUTHORIZED,
+  //       });
+  //     }
+
+  //     const [generalConfig, currentCycle] = await Promise.all([
+  //       this._generalConfigRepository.find({
+  //         where: {
+  //           roleId: In(user.roles.map((userRole) => userRole.role.id)),
+  //           start_date: LessThanOrEqual(new Date()),
+  //           end_date: MoreThan(new Date()),
+  //         },
+  //       }),
+
+  //       this._cycleRepository.find({
+  //         where: {
+  //           start_date: LessThanOrEqual(new Date()),
+  //           end_date: MoreThan(new Date()),
+  //         },
+  //       }),
+  //     ]);
+
+  //     const token = jwt.sign(
+  //       { userId: user.id, username: user.username, role: user.roles },
+  //       config.jwtSecret,
+  //       { expiresIn: config.jwtTime },
+  //     );
+  //     const formattedUser = {
+  //       ...user,
+  //       roles: user.roles.map((userRole) => ({
+  //         id: userRole.role.id,
+  //         description: userRole.role.description,
+  //         createdAt: userRole.role.createdAt,
+  //         updatedAt: userRole.role.updatedAt,
+  //         acronym: userRole.role.acronym,
+  //         is_active: userRole.role.is_active,
+  //         permissions: userRole.role.permissions,
+  //       })),
+  //       token,
+  //       config: generalConfig,
+  //       cycle: currentCycle[0],
+  //     };
+
+  //     delete formattedUser.password;
+
+  //     return ResponseUtils.format({
+  //       data: formattedUser,
+  //       description: 'User logged.',
+  //       status: HttpStatus.OK,
+  //     });
+  //   } catch (error) {
+  //     this._logger.error(error);
+  //     return ResponseUtils.format({
+  //       data: null,
+  //       description: 'An error occurred while logging in, please try again.',
+  //       status: HttpStatus.INTERNAL_SERVER_ERROR,
+  //     });
+  //   }
+  // }
 
   async loginService(loginDto: LoginDto): Promise<any> {
     const { username, password } = loginDto;
@@ -52,86 +202,69 @@ export class AuthService {
     }
 
     try {
-      let user: Users;
-      const marloUser = await this._userRepository.findOne({
+      const user = await this._userRepository.findOne({
         where: [
-          { email: username.trim().toLowerCase(), is_marlo: true },
-          { username: username.trim().toLowerCase(), is_marlo: true },
+          { email: username.trim().toLowerCase(), is_active: true },
+          { username: username.trim().toLowerCase(), is_active: true },
         ],
         relations: {
-          roles: {
-            role: true,
-          },
+          roles: { role: true },
           crp: true,
           crps: true,
-          indicators: {
-            indicator: {
-              comment_meta: true,
-            },
-          },
+          indicators: { indicator: { comment_meta: true } },
         },
       });
 
-      if (marloUser) {
-        const isMarlo = await this.validateAD(marloUser, password);
-        this._logger.log('Is Marlo: ' + isMarlo);
-        if (isMarlo) {
-          user = marloUser;
-        } else {
-          return ResponseUtils.format({
-            data: null,
-            description: 'User not found or password incorrect.',
-            status: HttpStatus.UNAUTHORIZED,
-            errors: 'User not found or password incorrect.',
-          });
-        }
-      } else {
-        user = await this._userRepository.findOne({
-          where: [
-            { username: username.trim().toLowerCase() },
-            { email: username.trim().toLowerCase() },
-          ],
-          relations: {
-            roles: {
-              role: true,
-            },
-            crp: true,
-            crps: true,
-            indicators: {
-              indicator: {
-                comment_meta: true,
-              },
-            },
-          },
-        });
-        if (
-          !user ||
-          !this._bcryptPasswordEncoder.matches(password, user.password)
-        ) {
-          this._logger.error('User not found or password incorrect.');
-          return ResponseUtils.format({
-            data: null,
-            description: 'User not found or password incorrect.',
-            status: HttpStatus.UNAUTHORIZED,
-            errors: 'User not found or password incorrect.',
-          });
-        }
-      }
-
-      this._logger.log('User found: ' + user.username);
-
-      const userRoles = user.roles.map((userRole) => userRole.role.description);
-      if (
-        userRoles.includes(RolesHandler.crp) &&
-        userRoles.includes(RolesHandler.assesor)
-      ) {
-        this._logger.log('User is CRP and Assessor');
+      if (!user) {
         return ResponseUtils.format({
           data: null,
           description:
-            'User is CRP and Assessor, please contact the Technical Team.',
-          status: HttpStatus.UNAUTHORIZED,
+            'User not found in local database. Please contact support.',
+          status: HttpStatus.NOT_FOUND,
         });
+      }
+
+      const userMetadata = {
+        firstName: user.name,
+        lastName: user.username,
+        email: user.email,
+      };
+
+      const authResponse =
+        await this._authMicroservice.authenticateWithCustomCredentials(
+          user.email,
+          password,
+          userMetadata,
+        );
+
+      if (authResponse?.challengeName === 'NEW_PASSWORD_REQUIRED') {
+        this._logger.log(
+          `User ${user.email} needs to set a new password (first login)`,
+        );
+        return {
+          message: 'Password change required. Please set a new password.',
+          response: {
+            valid: false,
+            challengeRequired: true,
+            challengeName: 'NEW_PASSWORD_REQUIRED',
+            session: authResponse.session,
+            userAttributes: authResponse.userAttributes,
+            userId: authResponse.userId,
+            localUser: {
+              id: user.id,
+              email: user.email,
+              firstName: user.name,
+              username: user.username,
+            },
+          },
+          status: HttpStatus.ACCEPTED,
+        };
+      }
+
+      if (!authResponse.tokens) {
+        throw new Error(
+          'Invalid authentication response from Auth Microservice',
+        );
       }
 
       const [generalConfig, currentCycle] = await Promise.all([
@@ -142,7 +275,6 @@ export class AuthService {
             end_date: MoreThan(new Date()),
           },
         }),
-
         this._cycleRepository.find({
           where: {
             start_date: LessThanOrEqual(new Date()),
@@ -151,40 +283,26 @@ export class AuthService {
         }),
       ]);
 
-      const token = jwt.sign(
-        { userId: user.id, username: user.username, role: user.roles },
-        config.jwtSecret,
-        { expiresIn: config.jwtTime },
-      );
-      const formattedUser = {
-        ...user,
-        roles: user.roles.map((userRole) => ({
-          id: userRole.role.id,
-          description: userRole.role.description,
-          createdAt: userRole.role.createdAt,
-          updatedAt: userRole.role.updatedAt,
-          acronym: userRole.role.acronym,
-          is_active: userRole.role.is_active,
-          permissions: userRole.role.permissions,
-        })),
-        token,
-        config: generalConfig,
-        cycle: currentCycle[0],
-      };
-
-      delete formattedUser.password;
-
       return ResponseUtils.format({
-        data: formattedUser,
+        data: {
+          ...user,
+          token: authResponse.tokens.accessToken,
+          tokens: authResponse.tokens,
+          config: generalConfig,
+          cycle: currentCycle[0],
+        },
         description: 'User logged.',
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error(error);
+      this._logger.error(
+        `Authentication error for ${username}: ${error.message}`,
+        error.stack,
+      );
       return ResponseUtils.format({
         data: null,
-        description: 'An error occurred while logging in, please try again.',
-        status: HttpStatus.INTERNAL_SERVER_ERROR,
+        description: error.message ?? 'Authentication failed',
+        status: error.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
   }

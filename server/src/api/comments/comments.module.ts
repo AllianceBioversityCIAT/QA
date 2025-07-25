@@ -28,6 +28,7 @@ import { BatchesRepository } from '../../shared/repositories/batch.repository';
 import { EvaluationRepository } from '../evaluations/repositories/evaluation.repository';
 import { QuickCommentsRepository } from './repositories/quick-comments.repository';
 import { UserRoleRepository } from '../users/user-role.repository';
+import { AuthMicroserviceModule } from '../../shared/microservice/auth-microservice/auth-microservice.module';
 
 @Module({
   controllers: [CommentsController],
@@ -52,9 +53,9 @@ import { UserRoleRepository } from '../users/user-role.repository';
     AuthService,
     BcryptPasswordEncoder,
     TokenAuthRepository,
-    UserRoleRepository
+    UserRoleRepository,
   ],
-  imports: [AuthModule],
+  imports: [AuthModule, AuthMicroserviceModule],
 })
 export class CommentsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

@@ -18,6 +18,7 @@ import { JwtModule, JwtService } from '@nestjs/jwt';
 import constConfig from '../../config/const.config';
 import { PermissionRepository } from './repositories/permission.repository';
 import { UserRoleRepository } from '../users/user-role.repository';
+import { AuthMicroserviceModule } from '../../shared/microservice/auth-microservice/auth-microservice.module';
 
 @Module({
   controllers: [AuthController],
@@ -32,7 +33,7 @@ import { UserRoleRepository } from '../users/user-role.repository';
     RoleRepository,
     PermissionRepository,
     JwtService,
-    UserRoleRepository
+    UserRoleRepository,
   ],
   exports: [AuthService, RoleRepository, PermissionRepository],
   imports: [
@@ -40,6 +41,7 @@ import { UserRoleRepository } from '../users/user-role.repository';
       secret: constConfig.jwtSecret,
       signOptions: { expiresIn: constConfig.jwtTime },
     }),
+    AuthMicroserviceModule
   ],
 })
 export class AuthModule implements NestModule {
