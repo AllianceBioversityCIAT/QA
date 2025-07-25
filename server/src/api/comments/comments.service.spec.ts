@@ -161,4 +161,76 @@ describe('CommentsService', () => {
     expect(result.status).toBe(200);
     expect(result.data.id).toBe(1);
   });
+
+  it('createCommentsMeta should handle error', async () => {
+    mockIndicatorsRepository.createQueryBuilder.mockReturnValue({
+      where: jest.fn().mockReturnThis(),
+      getMany: jest.fn().mockRejectedValue(new Error('fail')),
+    });
+    const result = await service.createCommentsMeta();
+    expect(result.status).toBe(404);
+    expect(result.data).toEqual({});
+  });
+
+  it('getFeedTags should handle error', async () => {
+    mockTagsRepository.fetchAllFeedTags.mockRejectedValue(new Error('fail'));
+    await expect(
+      service.getFeedTags('undefined', 'undefined'),
+    ).rejects.toMatchObject({
+      status: 404,
+      data: null,
+    });
+  });
+
+  it('toggleApprovedNoComments should handle error', async () => {
+    mockCommentsRepository.query.mockRejectedValue(new Error('fail'));
+    await expect(
+      service.toggleApprovedNoComments(1, {
+        meta_array: [1],
+        userId: 1,
+        noComment: true,
+      }),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('toggleApprovedNoComments2 should handle error', async () => {
+    mockUsersRepository.findOneOrFail.mockRejectedValue(new Error('fail'));
+    await expect(
+      service.toggleApprovedNoComments2(1, {
+        meta_array: [1],
+        userId: 1,
+        noComment: true,
+      }),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('getRawCommentsExcel should handle error', async () => {
+    mockCommentsRepository.getRawCommentsExcel.mockRejectedValue(
+      new Error('fail'),
+    );
+    const result = await service.getRawCommentsExcel('crp1');
+    expect(result.status).toBe(404);
+    expect(result.data).toEqual({});
+  });
+
+  it('updateCycle should handle not found', async () => {
+    mockCycleRepository.findCycleById.mockResolvedValue(null);
+    await expect(
+      service.updateCycle(1, new Date(), new Date()),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('updateCycle should handle error', async () => {
+    mockCycleRepository.findCycleById.mockRejectedValue(new Error('fail'));
+    await expect(
+      service.updateCycle(1, new Date(), new Date()),
+    ).rejects.toMatchObject({ status: 404 });
+  });
+
+  it('patchPpuChanges should handle error', async () => {
+    mockCommentsRepository.findCommentById.mockRejectedValue(new Error('fail'));
+    await expect(service.patchPpuChanges(1, 1)).rejects.toMatchObject({
+      status: 400,
+    });
+  });
 });
