@@ -1,6 +1,6 @@
-import { Injectable, HttpException, Logger } from '@nestjs/common';
-import { HttpService } from '@nestjs/axios';
-import { firstValueFrom } from 'rxjs';
+import { Injectable, HttpException, Logger } from "@nestjs/common";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
 
 @Injectable()
 export class AuthMicroserviceService {
@@ -15,7 +15,7 @@ export class AuthMicroserviceService {
     this.misId = process.env.MS_AUTH_USER;
     this.misSecret = process.env.MS_AUTH_PASSWORD;
 
-    this.logger.log('Auth Microservice initialized');
+    this.logger.log("Auth Microservice initialized");
     this.logger.log(`Auth Microservice URL: ${this.authMicroserviceUrl}`);
   }
 
@@ -34,25 +34,25 @@ export class AuthMicroserviceService {
           { provider },
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               auth: JSON.stringify({
                 username: this.misId,
                 password: this.misSecret,
               }),
             },
-          },
-        ),
+          }
+        )
       );
 
-      return response.data;
+      return response?.data;
     } catch (error) {
       this.logger.error(
         `Error getting authentication URL: ${error.message}`,
-        error.stack,
+        error.stack
       );
       throw new HttpException(
-        error.response?.data?.message ?? 'Failed to get authentication URL',
-        error.response?.status ?? 500,
+        error.response?.data?.message ?? "Failed to get authentication URL",
+        error.response?.status ?? 500
       );
     }
   }
@@ -64,7 +64,7 @@ export class AuthMicroserviceService {
    */
   async validateAuthorizationCode(code: string): Promise<any> {
     try {
-      this.logger.log('Validating authorization code');
+      this.logger.log("Validating authorization code");
 
       const response = await firstValueFrom(
         this.httpService.post(
@@ -72,26 +72,26 @@ export class AuthMicroserviceService {
           { code },
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               auth: JSON.stringify({
                 username: this.misId,
                 password: this.misSecret,
               }),
             },
-          },
-        ),
+          }
+        )
       );
 
       return response.data;
     } catch (error) {
       this.logger.error(
         `Error validating authorization code: ${error.message}`,
-        error.stack,
+        error.stack
       );
       throw new HttpException(
         error.response?.data?.message ??
-          'Failed to validate authorization code',
-        error.response?.status ?? 500,
+          "Failed to validate authorization code",
+        error.response?.status ?? 500
       );
     }
   }
@@ -103,7 +103,7 @@ export class AuthMicroserviceService {
    */
   async getUserInfo(accessToken: string): Promise<any> {
     try {
-      this.logger.log('Getting user information');
+      this.logger.log("Getting user information");
 
       const response = await firstValueFrom(
         this.httpService.post(
@@ -111,25 +111,25 @@ export class AuthMicroserviceService {
           { accessToken },
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               auth: JSON.stringify({
                 username: this.misId,
                 password: this.misSecret,
               }),
             },
-          },
-        ),
+          }
+        )
       );
 
       return response.data;
     } catch (error) {
       this.logger.error(
         `Error getting user information: ${error.message}`,
-        error.stack,
+        error.stack
       );
       throw new HttpException(
-        error.response?.data?.message ?? 'Failed to get user information',
-        error.response?.status ?? 500,
+        error.response?.data?.message ?? "Failed to get user information",
+        error.response?.status ?? 500
       );
     }
   }
@@ -147,7 +147,7 @@ export class AuthMicroserviceService {
       firstName?: string;
       lastName?: string;
       email?: string;
-    },
+    }
   ): Promise<any> {
     try {
       this.logger.log(`Authenticating user: ${username}`);
@@ -164,25 +164,25 @@ export class AuthMicroserviceService {
           requestBody,
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               auth: JSON.stringify({
                 username: this.misId,
                 password: this.misSecret,
               }),
             },
-          },
-        ),
+          }
+        )
       );
 
       return response.data;
     } catch (error) {
       this.logger.error(
         `Error authenticating user: ${error.message}`,
-        error.stack,
+        error.stack
       );
       throw new HttpException(
-        error.response?.data?.message ?? 'Authentication failed',
-        error.response?.status ?? 500,
+        error.response?.data?.message ?? "Authentication failed",
+        error.response?.status ?? 500
       );
     }
   }
@@ -199,7 +199,7 @@ export class AuthMicroserviceService {
   }): Promise<any> {
     try {
       this.logger.log(
-        `Completing new password challenge for user: ${challengeData.username}`,
+        `Completing new password challenge for user: ${challengeData.username}`
       );
 
       const response = await firstValueFrom(
@@ -208,26 +208,26 @@ export class AuthMicroserviceService {
           challengeData,
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               auth: JSON.stringify({
                 username: this.misId,
                 password: this.misSecret,
               }),
             },
-          },
-        ),
+          }
+        )
       );
 
       return response.data;
     } catch (error) {
       this.logger.error(
         `Error completing new password challenge: ${error.message}`,
-        error.stack,
+        error.stack
       );
       throw new HttpException(
         error.response?.data?.message ??
-          'Failed to complete password challenge',
-        error.response?.status ?? 500,
+          "Failed to complete password challenge",
+        error.response?.status ?? 500
       );
     }
   }
@@ -262,22 +262,22 @@ export class AuthMicroserviceService {
           userData,
           {
             headers: {
-              'Content-Type': 'application/json',
+              "Content-Type": "application/json",
               auth: JSON.stringify({
                 username: this.misId,
                 password: this.misSecret,
               }),
             },
-          },
-        ),
+          }
+        )
       );
 
       return response.data;
     } catch (error) {
       this.logger.error(`Error creating user: ${error.message}`, error.stack);
       throw new HttpException(
-        error.response?.data?.message ?? 'User creation failed',
-        error.response?.status ?? 500,
+        error.response?.data?.message ?? "User creation failed",
+        error.response?.status ?? 500
       );
     }
   }

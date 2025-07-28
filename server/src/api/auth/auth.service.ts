@@ -6,29 +6,29 @@ import {
   Logger,
   NotFoundException,
   UnauthorizedException,
-} from '@nestjs/common';
-import { LoginDto } from './dto/login.dto';
-import { UserRepository } from '../users/users.repository';
-import { GeneralConfigurationRepository } from '../../shared/repositories/general-config.repository';
-import { CycleRepository } from '../../shared/repositories/cycle.repository';
-import * as ActiveDirectory from 'activedirectory';
-import config from '../../config/const.config';
-import { Users } from '../users/entities/user.entity';
-import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
-import { RolesHandler } from '../../shared/enum/roles-handler.enum';
-import { In, LessThanOrEqual, MoreThan, MoreThanOrEqual } from 'typeorm';
-import * as jwt from 'jsonwebtoken';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { EmbedTokenDto } from './dto/embed-token.dto';
-import { TokenLoginDto } from './dto/token-login.dto';
-import { TokenAuthRepository } from './repositories/token-auth.repository';
-import { CrpRepository } from '../../shared/repositories/crp.repository';
-import { TokenDto } from '../../shared/global-dto/token.dto';
-import { ResponseUtils } from '../../utils/response.utils';
-import { CreateGeneralConfigDto } from './dto/create-general-config.dto';
-import { GeneralConfiguration } from '../../shared/entities/general-config.entity';
-import { TokenAuth } from './entities/token-auth.entity';
-import { AuthMicroserviceService } from '../../shared/microservice/auth-microservice/auth-microservice.service';
+} from "@nestjs/common";
+import { LoginDto } from "./dto/login.dto";
+import { UserRepository } from "../users/users.repository";
+import { GeneralConfigurationRepository } from "../../shared/repositories/general-config.repository";
+import { CycleRepository } from "../../shared/repositories/cycle.repository";
+import * as ActiveDirectory from "activedirectory";
+import config from "../../config/const.config";
+import { Users } from "../users/entities/user.entity";
+import { BcryptPasswordEncoder } from "../../utils/bcrypt.utils";
+import { RolesHandler } from "../../shared/enum/roles-handler.enum";
+import { In, LessThanOrEqual, MoreThan, MoreThanOrEqual } from "typeorm";
+import * as jwt from "jsonwebtoken";
+import { ChangePasswordDto } from "./dto/change-password.dto";
+import { EmbedTokenDto } from "./dto/embed-token.dto";
+import { TokenLoginDto } from "./dto/token-login.dto";
+import { TokenAuthRepository } from "./repositories/token-auth.repository";
+import { CrpRepository } from "../../shared/repositories/crp.repository";
+import { TokenDto } from "../../shared/global-dto/token.dto";
+import { ResponseUtils } from "../../utils/response.utils";
+import { CreateGeneralConfigDto } from "./dto/create-general-config.dto";
+import { GeneralConfiguration } from "../../shared/entities/general-config.entity";
+import { TokenAuth } from "./entities/token-auth.entity";
+import { AuthMicroserviceService } from "../../shared/microservice/auth-microservice/auth-microservice.service";
 
 @Injectable()
 export class AuthService {
@@ -40,7 +40,7 @@ export class AuthService {
     private readonly _bcryptPasswordEncoder: BcryptPasswordEncoder,
     private readonly _tokenAuthRepository: TokenAuthRepository,
     private readonly _crpRepository: CrpRepository,
-    private readonly _authMicroservice: AuthMicroserviceService,
+    private readonly _authMicroservice: AuthMicroserviceService
   ) {}
 
   // async loginService(loginDto: LoginDto): Promise<any> {
@@ -202,7 +202,7 @@ export class AuthService {
     if (!(username && password)) {
       return ResponseUtils.format({
         data: null,
-        description: 'Username and password are required.',
+        description: "Username and password are required.",
         status: HttpStatus.BAD_REQUEST,
       });
     }
@@ -225,7 +225,7 @@ export class AuthService {
         return ResponseUtils.format({
           data: null,
           description:
-            'User not found in local database. Please contact support.',
+            "User not found in local database. Please contact support.",
           status: HttpStatus.NOT_FOUND,
         });
       }
@@ -240,19 +240,19 @@ export class AuthService {
         await this._authMicroservice.authenticateWithCustomCredentials(
           user.email,
           password,
-          userMetadata,
+          userMetadata
         );
 
-      if (authResponse?.challengeName === 'NEW_PASSWORD_REQUIRED') {
+      if (authResponse?.challengeName === "NEW_PASSWORD_REQUIRED") {
         this._logger.log(
-          `User ${user.email} needs to set a new password (first login)`,
+          `User ${user.email} needs to set a new password (first login)`
         );
         return {
-          message: 'Password change required. Please set a new password.',
+          message: "Password change required. Please set a new password.",
           response: {
             valid: false,
             challengeRequired: true,
-            challengeName: 'NEW_PASSWORD_REQUIRED',
+            challengeName: "NEW_PASSWORD_REQUIRED",
             session: authResponse.session,
             userAttributes: authResponse.userAttributes,
             userId: authResponse.userId,
@@ -269,7 +269,7 @@ export class AuthService {
 
       if (!authResponse.tokens) {
         throw new Error(
-          'Invalid authentication response from Auth Microservice',
+          "Invalid authentication response from Auth Microservice"
         );
       }
 
@@ -277,11 +277,11 @@ export class AuthService {
     } catch (error) {
       this._logger.error(
         `Authentication error for ${username}: ${error.message}`,
-        error.stack,
+        error.stack
       );
       return ResponseUtils.format({
         data: null,
-        description: error.message ?? 'Authentication failed',
+        description: error.message ?? "Authentication failed",
         status: error.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -299,20 +299,21 @@ export class AuthService {
 
       const response =
         await this._authMicroservice.getAuthenticationUrl(provider);
+      console.log("🚀 ~ AuthService ~ getAuthURL ~ response:", response);
 
       return {
-        message: 'Authentication URL generated successfully',
-        response: response,
+        description: "Authentication URL generated successfully",
+        data: response,
         status: HttpStatus.OK,
       };
     } catch (error) {
       this._logger.error(
         `Error getting authentication URL: ${error.message}`,
-        error.stack,
+        error.stack
       );
       return ResponseUtils.format({
         data: null,
-        description: error.message ?? 'Failed to get authentication URL',
+        description: error.message ?? "Failed to get authentication URL",
         status: error.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -326,11 +327,11 @@ export class AuthService {
    */
   async validateAuthCode(authCodeDto: { code: string }): Promise<any> {
     try {
-      this._logger.log('Validando código de autorización');
+      this._logger.log("Validando código de autorización");
 
       const authResponse =
         await this._authMicroservice.validateAuthorizationCode(
-          authCodeDto.code,
+          authCodeDto.code
         );
 
       const userInfo = authResponse.userInfo;
@@ -338,7 +339,7 @@ export class AuthService {
       if (!userInfo?.email) {
         return ResponseUtils.format({
           data: null,
-          description: 'The user does not have an email address.',
+          description: "The user does not have an email address.",
           status: HttpStatus.BAD_REQUEST,
         });
       }
@@ -357,7 +358,7 @@ export class AuthService {
         return ResponseUtils.format({
           data: null,
           description:
-            'User not found in local database. Please contact support.',
+            "User not found in local database. Please contact support.",
           status: HttpStatus.NOT_FOUND,
         });
       }
@@ -366,11 +367,11 @@ export class AuthService {
     } catch (error) {
       this._logger.error(
         `Error validating auth code: ${error.message}`,
-        error.stack,
+        error.stack
       );
       return ResponseUtils.format({
         data: null,
-        description: error.message ?? 'Authentication failed',
+        description: error.message ?? "Authentication failed",
         status: error.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -388,7 +389,7 @@ export class AuthService {
   }): Promise<any> {
     try {
       this._logger.log(
-        `Completing password challenge for user: ${challengeDto.username}`,
+        `Completing password challenge for user: ${challengeDto.username}`
       );
 
       const user = await this._userRepository.findOne({
@@ -407,7 +408,7 @@ export class AuthService {
       if (!user) {
         return ResponseUtils.format({
           data: null,
-          description: 'User not found in local database',
+          description: "User not found in local database",
           status: HttpStatus.NOT_FOUND,
         });
       }
@@ -421,7 +422,7 @@ export class AuthService {
 
       if (!authResponse.tokens) {
         throw new Error(
-          'Invalid response from Auth Microservice - no tokens received',
+          "Invalid response from Auth Microservice - no tokens received"
         );
       }
 
@@ -429,11 +430,11 @@ export class AuthService {
     } catch (error) {
       this._logger.error(
         `Error completing password challenge: ${error.message}`,
-        error.stack,
+        error.stack
       );
       return ResponseUtils.format({
         data: null,
-        description: error.message ?? 'Failed to complete password challenge',
+        description: error.message ?? "Failed to complete password challenge",
         status: error.status ?? HttpStatus.INTERNAL_SERVER_ERROR,
       });
     }
@@ -449,7 +450,7 @@ export class AuthService {
   private async buildUserAuthResponse(
     user: Users,
     tokens?: any,
-    description = 'User logged.',
+    description = "User logged."
   ): Promise<any> {
     const [generalConfig, currentCycle] = await Promise.all([
       this._generalConfigRepository.find({
@@ -470,7 +471,7 @@ export class AuthService {
     const token = jwt.sign(
       { userId: user.id, username: user.username, role: user.roles },
       config.jwtSecret,
-      { expiresIn: config.jwtTime },
+      { expiresIn: config.jwtTime }
     );
 
     const formattedUser: any = {
@@ -509,19 +510,19 @@ export class AuthService {
 
   async validateAD(user: any, password: string): Promise<boolean> {
     const ad = new ActiveDirectory(config.active_directory);
-    this._logger.log('Validating user in AD', ad);
+    this._logger.log("Validating user in AD", ad);
     const adUser = user.email;
 
     try {
       const valid = await new Promise<boolean>((resolve, reject) => {
         ad.authenticate(adUser, password, (err, auth) => {
           if (auth) {
-            this._logger.log('User authenticated');
+            this._logger.log("User authenticated");
             resolve(true);
           } else if (err) {
             this._logger.error(err);
             if (err.errno) {
-              this._logger.error('Domain Controller Server not found');
+              this._logger.error("Domain Controller Server not found");
               reject();
             } else {
               reject();
@@ -543,7 +544,7 @@ export class AuthService {
       if (!(crp_id && token)) {
         return ResponseUtils.format({
           data: null,
-          description: 'CRP ID and token are required.',
+          description: "CRP ID and token are required.",
           status: HttpStatus.BAD_REQUEST,
         });
       }
@@ -552,7 +553,7 @@ export class AuthService {
       if (!crp) {
         return ResponseUtils.format({
           data: null,
-          description: 'CRP not found.',
+          description: "CRP not found.",
           status: HttpStatus.NOT_FOUND,
         });
       }
@@ -563,7 +564,7 @@ export class AuthService {
       if (!authToken) {
         return ResponseUtils.format({
           data: null,
-          description: 'Token not found.',
+          description: "Token not found.",
           status: HttpStatus.NOT_FOUND,
         });
       }
@@ -573,7 +574,7 @@ export class AuthService {
 
       return ResponseUtils.format({
         data: user,
-        description: 'CRP Logged',
+        description: "CRP Logged",
         status: HttpStatus.OK,
       });
     } catch (error) {
@@ -591,7 +592,7 @@ export class AuthService {
     const { oldPassword, newPassword } = changePasswordDto;
     if (!(oldPassword && newPassword)) {
       throw new BadRequestException(
-        'Old password and new password are required.',
+        "Old password and new password are required."
       );
     }
 
@@ -599,15 +600,15 @@ export class AuthService {
       where: { id: user.userId },
     });
     if (!userExist) {
-      throw new NotFoundException('User not found.');
+      throw new NotFoundException("User not found.");
     }
 
     const isPasswordValid = this._bcryptPasswordEncoder.matches(
       oldPassword,
-      userExist.password,
+      userExist.password
     );
     if (!isPasswordValid) {
-      throw new UnauthorizedException('Old password does not match.');
+      throw new UnauthorizedException("Old password does not match.");
     }
 
     userExist.password = newPassword;
@@ -619,7 +620,7 @@ export class AuthService {
 
     return ResponseUtils.format({
       data: user,
-      description: 'Password changed successfully.',
+      description: "Password changed successfully.",
       status: HttpStatus.OK,
     });
   }
@@ -645,7 +646,7 @@ export class AuthService {
 
       return ResponseUtils.format({
         data: generalConfig,
-        description: 'Configuration successfully created.',
+        description: "Configuration successfully created.",
         status: HttpStatus.OK,
       });
     } catch (error) {
@@ -677,11 +678,11 @@ export class AuthService {
 
       return ResponseUtils.format({
         data: tokenEmbed,
-        description: 'Token saved successfully.',
+        description: "Token saved successfully.",
         status: HttpStatus.OK,
       });
     } catch (error) {
-      this._logger.error('An error occurred while saving the token', error);
+      this._logger.error("An error occurred while saving the token", error);
       return ResponseUtils.format({
         data: null,
         description: error,
