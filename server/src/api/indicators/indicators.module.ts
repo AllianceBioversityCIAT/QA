@@ -23,6 +23,7 @@ import { BcryptPasswordEncoder } from '../../utils/bcrypt.utils';
 import { TokenAuthRepository } from '../auth/repositories/token-auth.repository';
 import { UserRoleRepository } from '../users/user-role.repository';
 import { CommentsMetaRepository } from '../comments/repositories/comments-meta.repository';
+import { AuthMicroserviceModule } from '../../shared/microservice/auth-microservice/auth-microservice.module';
 
 @Module({
   controllers: [IndicatorsController],
@@ -42,9 +43,9 @@ import { CommentsMetaRepository } from '../comments/repositories/comments-meta.r
     BcryptPasswordEncoder,
     TokenAuthRepository,
     UserRoleRepository,
-    CommentsMetaRepository
+    CommentsMetaRepository,
   ],
-  imports: [AuthModule],
+  imports: [AuthModule, AuthMicroserviceModule],
   exports: [IndicatorsService, IndicatorsRepository],
 })
 export class IndicatorsModule implements NestModule {

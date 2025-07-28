@@ -25,6 +25,31 @@ export class AuthController {
     return await this.authService.loginService(loginDto);
   }
 
+  @Post('validate-auth-code')
+  @ApiOperation({ summary: 'Validate OAuth authorization code' })
+  @ApiResponse({ status: 200, description: 'User authenticated with code.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  async validateAuthCode(@Body() authCodeDto: { code: string }) {
+    return await this.authService.validateAuthCode(authCodeDto);
+  }
+
+  @Post('complete-password-challenge')
+  @ApiOperation({ summary: 'Complete password challenge (first login)' })
+  @ApiResponse({ status: 200, description: 'Password set and user logged in.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 404, description: 'User not found.' })
+  async completePasswordChallenge(
+    @Body()
+    challengeDto: {
+      username: string;
+      newPassword: string;
+      session: string;
+    },
+  ) {
+    return await this.authService.completePasswordChallenge(challengeDto);
+  }
+
   @Post('token/login')
   @ApiOperation({ summary: 'Login with token' })
   @ApiResponse({

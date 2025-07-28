@@ -25,6 +25,7 @@ import { IndicatorsRepository } from "../indicators/repositories/indicators.repo
 import { BatchesRepository } from "../../shared/repositories/batch.repository";
 import { UserRoleRepository } from "../users/user-role.repository";
 import { AiHelperRepository } from "../ai-helper/ai-helper.repository";
+import { AuthMicroserviceModule } from "../../shared/microservice/auth-microservice/auth-microservice.module";
 
 @Module({
   controllers: [EvaluationsController],
@@ -49,6 +50,9 @@ import { AiHelperRepository } from "../ai-helper/ai-helper.repository";
     UserRoleRepository,
     AiHelperRepository,
   ],
+  imports: [
+    AuthMicroserviceModule
+  ]
 })
 export class EvaluationsModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

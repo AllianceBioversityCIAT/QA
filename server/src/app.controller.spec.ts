@@ -15,8 +15,11 @@ describe('AppController', () => {
   });
 
   describe('root', () => {
-    it('should return "Hello World!"', () => {
-      expect(appController.getHello()).toBe('Hello World!');
+    it('should return HTML with QA API info', () => {
+      const result = appController.getHello();
+      expect(result).toContain('QA API');
+      expect(result).toContain('Quality Assessment API for CGIAR');
+      expect(result).toContain('Version: 2.0');
     });
   });
 });
