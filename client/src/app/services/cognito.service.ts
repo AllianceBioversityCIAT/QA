@@ -60,7 +60,6 @@ export class CognitoService {
 
     try {
       const res = await this.api.POST_validateCognitoCode(code);
-      console.log('validateCognitoCode', res);
       this.updateCacheService(res);
       this.redirectToHome();
       this.isLoadingAzureAd.set(false);
@@ -76,15 +75,12 @@ export class CognitoService {
   }
 
   async loginWithCredentials(body: { username: string; password: string; confirmPassword: string }) {
-    console.log('body', body);
     if (this.isLoadingCredentials() || body.username == '' || body.password == '') return;
 
     this.isLoadingCredentials.set(true);
 
     try {
       const res = await this.api.POST_cognitoAuth(body);
-      console.log('res', res?.data?.challengeName);
-      console.log(res?.data?.challengeName == 'NEW_PASSWORD_REQUIRED');
       if (res?.data?.challengeName && res?.data?.challengeName == 'NEW_PASSWORD_REQUIRED') {
         this.requiredChangePassword.set(true);
         this.isLoadingCredentials.set(false);
@@ -102,6 +98,7 @@ export class CognitoService {
           summary: 'Warning',
           detail: 'Invalid credentials'
         });
+        this.isLoadingCredentials.set(false);
         return;
       }
 
@@ -172,6 +169,8 @@ export class CognitoService {
   }
 
   redirectToHome() {
-    this.router.navigate(['/dashboard']);
+    setTimeout(() => {
+      this.router.navigate(['/dashboard']);
+    }, 300);
   }
 }
