@@ -6,6 +6,7 @@ import { InputTextModule } from 'primeng/inputtext';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthenticationService } from '../../services/authentication.service';
 import { CognitoService } from '../../services/cognito.service';
+import { Title } from '@angular/platform-browser';
 
 @Component({
   selector: 'app-login',
@@ -20,7 +21,7 @@ export default class LoginComponent implements OnInit {
   router = inject(Router);
   authenticationService = inject(AuthenticationService);
   route = inject(ActivatedRoute);
-
+  titleService = inject(Title);
   showLoginForm = signal(false);
   returnUrl: string;
 
@@ -29,6 +30,8 @@ export default class LoginComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    this.titleService.setTitle(`Login`);
+
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
     if (this.authenticationService.currentUserValue) {
