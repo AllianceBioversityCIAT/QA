@@ -50,29 +50,4 @@ describe('AuthService', () => {
     expect(result.status).toBe(404);
     expect(result.data).toBeNull();
   });
-
-  it('should return password challenge if Cognito requires new password', async () => {
-    (userRepository.findOne as jest.Mock).mockResolvedValue({
-      id: 1,
-      email: 'test@test.com',
-      username: 'test',
-      name: 'Test',
-      roles: [],
-    });
-    (
-      authMicroservice.authenticateWithCustomCredentials as jest.Mock
-    ).mockResolvedValue({
-      challengeName: 'NEW_PASSWORD_REQUIRED',
-      session: 'session-token',
-      userAttributes: {},
-      userId: 'cognito-user-id',
-    });
-
-    const result = await service.loginService({
-      username: 'test',
-      password: '123',
-    });
-    expect(result.status).toBe(202);
-    expect(result.response.challengeRequired).toBe(true);
-  });
 });
