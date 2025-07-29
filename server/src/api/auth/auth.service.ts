@@ -247,9 +247,9 @@ export class AuthService {
         this._logger.log(
           `User ${user.email} needs to set a new password (first login)`
         );
-        return {
-          message: "Password change required. Please set a new password.",
-          response: {
+        return ResponseUtils.format({
+          description: "Password change required. Please set a new password.",
+          data: {
             valid: false,
             challengeRequired: true,
             challengeName: "NEW_PASSWORD_REQUIRED",
@@ -264,7 +264,7 @@ export class AuthService {
             },
           },
           status: HttpStatus.ACCEPTED,
-        };
+        });
       }
 
       if (!authResponse.tokens) {
@@ -299,7 +299,6 @@ export class AuthService {
 
       const response =
         await this._authMicroservice.getAuthenticationUrl(provider);
-      console.log("🚀 ~ AuthService ~ getAuthURL ~ response:", response);
 
       return {
         description: "Authentication URL generated successfully",
