@@ -1,113 +1,110 @@
-import { Component, OnInit, inject } from '@angular/core';
-import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { first } from 'rxjs/operators';
-
-import { AuthenticationService } from '../../services/authentication.service';
-import { AlertService } from '../../services/alert.service';
-
-import { GeneralStatus } from '../../_models/general-status.model';
-
-import { Title } from '@angular/platform-browser';
+import { ChangeDetectionStrategy, Component, inject, OnInit, signal } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { environment } from '../../../environments/environment';
-import { ActionsService } from '../../services/actions.service';
-import { ClarityService } from '../../services/clarity.service';
+import { FormsModule } from '@angular/forms';
+import { PasswordModule } from 'primeng/password';
+import { InputTextModule } from 'primeng/inputtext';
+import { ActivatedRoute, Router } from '@angular/router';
+import { AuthenticationService } from '../../services/authentication.service';
+import { CognitoService } from '../../services/cognito.service';
 
 @Component({
   selector: 'app-login',
-  templateUrl: './login.component.html',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
-  styleUrls: ['./login.component.scss']
+  imports: [CommonModule, FormsModule, PasswordModule, InputTextModule],
+  templateUrl: './login.component.html',
+  styleUrls: ['./login.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export default class LoginComponent implements OnInit {
-  actions = inject(ActionsService);
-  loginForm: FormGroup;
-  loading = false;
-  submitted = false;
-  returnUrl: string;
-  env = environment;
+  cognito = inject(CognitoService);
+  router = inject(Router);
+  authenticationService = inject(AuthenticationService);
+  route = inject(ActivatedRoute);
 
-  constructor(
-    private formBuilder: FormBuilder,
-    private route: ActivatedRoute,
-    private router: Router,
-    private authenticationService: AuthenticationService,
-    private titleService: Title,
-    private alertService: AlertService,
-    private clarity: ClarityService
-  ) {
-    this.titleService.setTitle(`Login`);
+  showLoginForm = signal(false);
+  returnUrl: string;
+
+  toggleLoginForm(): void {
+    this.showLoginForm.set(!this.showLoginForm());
   }
 
-  ngOnInit() {
-    this.loginForm = this.formBuilder.group({
-      username: ['', Validators.required],
-      password: ['', Validators.required]
-    });
-
-    // get return url from route parameters or default to '/'
+  ngOnInit(): void {
     this.returnUrl = this.route.snapshot.queryParams['returnUrl'] || '/';
 
     if (this.authenticationService.currentUserValue) {
       this.router.navigate(['/dashboard']);
     }
+    this.authenticationService.inLogin.set(true);
   }
 
-  // convenience getter for easy access to form fields
-  get f() {
-    return this.loginForm.controls;
-  }
-
-  onSubmit() {
-    this.submitted = true;
-    this.alertService.clear();
-
-    if (this.loginForm.invalid) {
-      return;
-    }
-
-    this.loading = true;
-    this.authenticationService
-      .login(this.f['username'].value, this.f['password'].value)
-      .pipe(first())
-      .subscribe(
-        data => {
-          console.log(data);
-          this.handleLoginSuccess(data);
-          this.clarity.updateUserInfo();
-        },
-        error => {
-          this.handleLoginError(error);
-        }
+  validateBody(): boolean {
+    if (this.cognito.requiredChangePassword()) {
+      return (
+        !this.cognito.body().username ||
+        !this.cognito.body().password ||
+        !this.cognito.body().confirmPassword ||
+        !this.isPasswordValid() ||
+        !this.doPasswordsMatch()
       );
+    }
+    return !this.cognito.body().username || !this.cognito.body().password;
   }
 
-  private handleLoginSuccess(data: any) {
-    this.actions.showToast({
-      severity: 'success',
-      summary: 'Success',
-      detail: 'Login successful'
-    });
-    if (data?.config?.length && data.config[0].status === GeneralStatus.Open) {
-      window.location.reload();
-    } else {
-      this.router.navigate(['qa-close']);
+  // Password validation based on requirements
+  isPasswordValid(): boolean {
+    const password = this.cognito.body().password;
+
+    if (this.cognito.requiredChangePassword() && !password) {
+      return true;
+    }
+
+    return (
+      this.hasLowerCase(password) &&
+      this.hasUpperCase(password) &&
+      this.hasMinLength(password) &&
+      this.hasSpecialCharacter(password) &&
+      this.hasNoLeadingTrailingSpaces(password)
+    );
+  }
+
+  // Check if passwords match
+  doPasswordsMatch(): boolean {
+    return this.cognito.body().password === this.cognito.body().confirmPassword;
+  }
+
+  // Individual validation methods
+  hasLowerCase(password: string): boolean {
+    return /[a-z]/.test(password);
+  }
+
+  hasUpperCase(password: string): boolean {
+    return /[A-Z]/.test(password);
+  }
+
+  hasMinLength(password: string): boolean {
+    return password.length >= 8;
+  }
+
+  hasSpecialCharacter(password: string): boolean {
+    return /[^a-zA-Z0-9]/.test(password);
+  }
+
+  hasNoLeadingTrailingSpaces(password: string): boolean {
+    return password === password.trim();
+  }
+
+  // Handle keydown events to support Enter key submissions
+  handleKeyDown(event: KeyboardEvent): void {
+    if (event.key === 'Enter' && !this.validateBody()) {
+      if (this.cognito.requiredChangePassword()) {
+        this.cognito.changePassword();
+      } else {
+        this.cognito.loginWithCredentials(this.cognito.body());
+      }
     }
   }
 
-  private handleLoginError(HttpError: any) {
-    const { errors, status } = HttpError.error;
-    console.log(HttpError.error);
-
-    if (status === 401) {
-      this.actions.showGlobalAlert({
-        severity: 'warning',
-        summary: 'Warning',
-        detail: errors
-      });
-    }
-    this.loading = false;
+  ngOnDestroy(): void {
+    this.authenticationService.inLogin.set(false);
   }
 }

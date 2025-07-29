@@ -1,10 +1,10 @@
 <header-bar></header-bar>
 <alert></alert>
 
-<div class="jumbotron">
+<div class="jumbotron" [ngStyle]="{ padding: authenticationService.inLogin() && '0px', margin: authenticationService.inLogin() && '0px' }">
   <div class="container-fluid">
     <div class="row">
-      <div class="col">
+      <div class="col" [ngStyle]="{ padding: authenticationService.inLogin() && '0px' }">
         <router-outlet></router-outlet>
       </div>
     </div>
