@@ -1,5 +1,6 @@
 export interface MainResponse<T> {
   data: T;
+  error: T;
   status: number;
   description: string;
   timestamp: string;
@@ -25,4 +26,12 @@ export interface DecodedUserData {
   exp?: number;
   letter?: string;
   isLogged: boolean;
+}
+
+export interface LoginWithAzureAdRes {
+  authUrl: string;
+  statusCode: number;
+  message: string;
+  timestamp: string;
+  path: string;
 }

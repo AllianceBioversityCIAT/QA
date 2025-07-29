@@ -6,18 +6,19 @@ import { AlertComponent } from './_shared/alert/alert.component';
 import { GlobalAlertComponent } from './_shared/global-alert/global-alert.component';
 import { GlobalToastComponent } from './_shared/global-toast/global-toast.component';
 import { AuthenticationService } from './services/authentication.service';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, ButtonModule, HeaderBarComponent, AlertComponent, GlobalAlertComponent, GlobalToastComponent],
+  imports: [RouterOutlet, ButtonModule, HeaderBarComponent, AlertComponent, GlobalAlertComponent, GlobalToastComponent, CommonModule],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
 export class AppComponent implements OnInit {
   title = 'CGIAR-QA-front-ng-18';
 
-  constructor(private readonly authenticationService: AuthenticationService) {}
+  constructor(public authenticationService: AuthenticationService) {}
 
   ngOnInit() {
     this.authenticationService.updateLocalStorageUserCycle();

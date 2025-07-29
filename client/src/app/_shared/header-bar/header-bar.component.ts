@@ -162,6 +162,9 @@ export class HeaderBarComponent implements OnInit {
       case urlAdd.indexOf('login') != -1:
         r = false;
         break;
+      case urlAdd.indexOf('auth') != -1:
+        r = false;
+        break;
       case urlAdd.indexOf('crp') != -1:
         r = false;
         break;

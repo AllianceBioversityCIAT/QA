@@ -1,3 +1,4 @@
+import { CommonModule } from '@angular/common';
 import { Component, Input, OnInit } from '@angular/core';
 import { DomSanitizer } from '@angular/platform-browser';
 import { ActivatedRoute } from '@angular/router';
@@ -6,7 +7,9 @@ import { AuthenticationService } from 'src/app/services/authentication.service';
 @Component({
   selector: 'app-assessors-chat-window',
   templateUrl: './assessors-chat-window.component.html',
-  styleUrls: ['./assessors-chat-window.component.scss']
+  styleUrls: ['./assessors-chat-window.component.scss'],
+  standalone: true,
+  imports: [CommonModule]
 })
 export class AssessorsChatWindowComponent implements OnInit {
   // @Input() currentUser;
