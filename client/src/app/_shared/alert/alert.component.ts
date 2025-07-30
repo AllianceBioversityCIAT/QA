@@ -14,12 +14,11 @@ export class AlertComponent implements OnInit, OnDestroy {
   subscription: Subscription;
   message: any;
 
-  constructor(private alertService: AlertService) {}
+  constructor(private readonly alertService: AlertService) {}
 
   ngOnInit() {
     this.subscription = this.alertService.getAlert().subscribe(message => {
-      // console.log(message)
-      switch (message && message.type) {
+      switch (message?.type) {
         case 'success':
           message.cssClass = 'alert sticky alert-success';
           break;

@@ -18,7 +18,7 @@ export const routes: Routes = [
       },
       {
         path: '',
-        loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component'), 
+        loadComponent: () => import('./pages/admin-dashboard/admin-dashboard.component'),
         canMatch: [rolesGuard],
         data: {
           roles: [1] // Admin role
@@ -70,6 +70,7 @@ export const routes: Routes = [
   },
   { path: 'qa-close', loadComponent: () => import('./pages/qa-close/qa-close.component') },
   { path: 'login', loadComponent: () => import('./pages/login/login.component') },
+  { path: 'auth', loadComponent: () => import('./pages/auth-cognito/auth-cognito.component') },
   {
     path: 'assessors-chat',
     loadComponent: () => import('./pages/assessors-chat/assessors-chat.component')

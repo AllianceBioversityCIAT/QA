@@ -1,79 +1,120 @@
-import { Controller, Post, Body, SetMetadata, UseGuards } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { LoginDto } from './dto/login.dto';
-import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from '@nestjs/swagger';
-import { ChangePasswordDto } from './dto/change-password.dto';
-import { EmbedTokenDto } from './dto/embed-token.dto';
-import { CreateGeneralConfigDto } from './dto/create-general-config.dto';
-import { TokenLoginDto } from './dto/token-login.dto';
-import { TokenDto } from '../../shared/global-dto/token.dto';
-import { UserToken } from '../../shared/decorators/user.decorator';
-import { RolesHandler } from '../../shared/enum/roles-handler.enum';
-import { RolesGuard } from '../../shared/guards/role.guard';
-import { Roles } from '../../shared/decorators/roles.decorator';
+import {
+  Controller,
+  Post,
+  Body,
+  SetMetadata,
+  UseGuards,
+  Get,
+  Param,
+} from "@nestjs/common";
+import { AuthService } from "./auth.service";
+import { LoginDto } from "./dto/login.dto";
+import { ApiTags, ApiOperation, ApiResponse, ApiHeader } from "@nestjs/swagger";
+import { ChangePasswordDto } from "./dto/change-password.dto";
+import { EmbedTokenDto } from "./dto/embed-token.dto";
+import { CreateGeneralConfigDto } from "./dto/create-general-config.dto";
+import { TokenLoginDto } from "./dto/token-login.dto";
+import { TokenDto } from "../../shared/global-dto/token.dto";
+import { UserToken } from "../../shared/decorators/user.decorator";
+import { RolesHandler } from "../../shared/enum/roles-handler.enum";
+import { RolesGuard } from "../../shared/guards/role.guard";
+import { Roles } from "../../shared/decorators/roles.decorator";
 
-@ApiTags('Auth')
+@ApiTags("Auth")
 @Controller()
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
-  @Post('login')
-  @ApiOperation({ summary: 'User login' })
-  @ApiResponse({ status: 200, description: 'User successfully logged in.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @Post("login")
+  @ApiOperation({ summary: "User login" })
+  @ApiResponse({ status: 200, description: "User successfully logged in." })
+  @ApiResponse({ status: 400, description: "Bad Request." })
   async login(@Body() loginDto: LoginDto) {
     return await this.authService.loginService(loginDto);
   }
 
-  @Post('token/login')
-  @ApiOperation({ summary: 'Login with token' })
+  @Get("auth-url/:provider")
+  @ApiOperation({ summary: "Get authentication URL for OAuth provider" })
+  @ApiResponse({ status: 200, description: "Authentication URL retrieved." })
+  @ApiResponse({ status: 400, description: "Bad Request." })
+  async getAuthUrl(@Param("provider") provider: string) {
+    return await this.authService.getAuthURL(provider);
+  }
+
+  @Post("validate-auth-code")
+  @ApiOperation({ summary: "Validate OAuth authorization code" })
+  @ApiResponse({ status: 200, description: "User authenticated with code." })
+  @ApiResponse({ status: 400, description: "Bad Request." })
+  @ApiResponse({ status: 404, description: "User not found." })
+  async validateAuthCode(@Body() authCodeDto: { code: string }) {
+    return await this.authService.validateAuthCode(authCodeDto);
+  }
+
+  @Post("complete-password-challenge")
+  @ApiOperation({ summary: "Complete password challenge (first login)" })
+  @ApiResponse({ status: 200, description: "Password set and user logged in." })
+  @ApiResponse({ status: 400, description: "Bad Request." })
+  @ApiResponse({ status: 404, description: "User not found." })
+  async completePasswordChallenge(
+    @Body()
+    challengeDto: {
+      username: string;
+      newPassword: string;
+      session: string;
+    }
+  ) {
+    return await this.authService.completePasswordChallenge(challengeDto);
+  }
+
+  @Post("token/login")
+  @ApiOperation({ summary: "Login with token" })
   @ApiResponse({
     status: 200,
-    description: 'User successfully logged in with token.',
+    description: "User successfully logged in with token.",
   })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 400, description: "Bad Request." })
   async tokenLogin(@Body() tokenLoginDto: TokenLoginDto) {
     return await this.authService.tokenLoginService(tokenLoginDto);
   }
 
-  @Post('change-password')
-  @ApiOperation({ summary: 'Change user password' })
+  @Post("change-password")
+  @ApiOperation({ summary: "Change user password" })
   @ApiHeader({
-    name: 'authorization',
-    description: 'Bearer token',
+    name: "authorization",
+    description: "Bearer token",
   })
-  @ApiResponse({ status: 200, description: 'Password successfully changed.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 200, description: "Password successfully changed." })
+  @ApiResponse({ status: 400, description: "Bad Request." })
+  @ApiResponse({ status: 401, description: "Unauthorized." })
   async changePassword(
     @Body() changePasswordDto: ChangePasswordDto,
-    @UserToken() user: TokenDto,
+    @UserToken() user: TokenDto
   ) {
     return await this.authService.changePassword(changePasswordDto, user);
   }
 
-  @Post('create-config')
+  @Post("create-config")
   @UseGuards(RolesGuard)
   @Roles([RolesHandler.admin])
-  @ApiOperation({ summary: 'Create general configuration' })
+  @ApiOperation({ summary: "Create general configuration" })
   @ApiHeader({
-    name: 'authorization',
-    description: 'Bearer token',
+    name: "authorization",
+    description: "Bearer token",
   })
   @ApiResponse({
     status: 200,
-    description: 'Configuration successfully created.',
+    description: "Configuration successfully created.",
   })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 400, description: "Bad Request." })
+  @ApiResponse({ status: 401, description: "Unauthorized." })
   async createConfig(@Body() createConfigDto: CreateGeneralConfigDto) {
     return await this.authService.createGeneralConfig(createConfigDto);
   }
 
-  @Post('token-embed')
-  @ApiOperation({ summary: 'Get embed token' })
-  @ApiResponse({ status: 200, description: 'Token successfully generated.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @Post("token-embed")
+  @ApiOperation({ summary: "Get embed token" })
+  @ApiResponse({ status: 200, description: "Token successfully generated." })
+  @ApiResponse({ status: 400, description: "Bad Request." })
   async embedToken(@Body() embedTokenDto: EmbedTokenDto) {
     return await this.authService.embedToken(embedTokenDto);
   }
