@@ -43,10 +43,9 @@ export class ApiService {
     return this.TP.get(url());
   };
 
-  POST_validateCognitoCode = (code: string): Promise<MainResponse<any>> => {
-    const url = () => `auth/validate-auth-code`;
-    return this.TP.post(url(), { code });
-  };
+  POST_validateCognitoCode(code: string) {
+    return this.http.post<any>(`${environment.apiBaseUrl}auth/validate-auth-code`, { code });
+  }
 
   POST_cognitoAuth(body: { username: string; password: string; confirmPassword: string }) {
     return this.http.post<any>(`${environment.apiBaseUrl}auth/login`, body);

@@ -58,20 +58,28 @@ export class CognitoService {
       return;
     }
 
-    try {
-      const res = await this.api.POST_validateCognitoCode(code);
-      this.updateCacheService(res);
-      this.redirectToHome();
-      this.isLoadingAzureAd.set(false);
-    } catch (err) {
-      console.error(err);
-      this.isLoadingAzureAd.set(false);
-      this.actions.showGlobalAlert({
-        severity: 'warning',
-        summary: 'Warning',
-        detail: 'Error while trying to validate Cognito code'
-      });
-    }
+    this.api.POST_validateCognitoCode(code).subscribe({
+      next: res => {
+        this.updateCacheService(res);
+        this.redirectToHome();
+        this.isLoadingAzureAd.set(false);
+      },
+      error: err => {
+        console.error(err);
+        this.isLoadingAzureAd.set(false);
+        const statusCode = err?.error?.status;
+        this.actions.showGlobalAlert({
+          severity: 'warning',
+          summary: 'Warning',
+          detail: statusCode == 401 ? 'Error while trying to validate Cognito code' : err?.error?.description,
+          callback: {
+            onClose: () => {
+              this.router.navigate(['/login']);
+            }
+          }
+        });
+      }
+    });
   }
 
   async loginWithCredentials(body: { username: string; password: string; confirmPassword: string }) {
