@@ -79,56 +79,60 @@ export class CognitoService {
 
     this.isLoadingCredentials.set(true);
 
-    try {
-      const res = await this.api.POST_cognitoAuth(body);
-      if (res?.data?.challengeName && res?.data?.challengeName == 'NEW_PASSWORD_REQUIRED') {
-        this.requiredChangePassword.set(true);
+    this.api.POST_cognitoAuth(body).subscribe({
+      next: res => {
+        if (res?.data?.challengeName && res?.data?.challengeName == 'NEW_PASSWORD_REQUIRED') {
+          this.requiredChangePassword.set(true);
+          this.isLoadingCredentials.set(false);
+          this.body.set({
+            username: body.username,
+            password: '',
+            confirmPassword: ''
+          });
+          this.chagePasswordSession.set(res?.data?.session);
+          return;
+        }
+
+        this.updateCacheService(res);
+        this.redirectToHome();
         this.isLoadingCredentials.set(false);
+        this.requiredChangePassword.set(false);
         this.body.set({
-          username: body.username,
+          username: '',
           password: '',
           confirmPassword: ''
         });
-        this.chagePasswordSession.set(res?.data?.session);
-        return;
-      }
-      if (res?.error?.status == 401) {
+      },
+      error: err => {
+        console.error('err', err);
+        this.isLoadingCredentials.set(false);
+        this.requiredChangePassword.set(false);
+        const statusCode = err?.error?.status;
+        if (statusCode == 404) {
+          this.actions.showGlobalAlert({
+            severity: 'warning',
+            summary: 'Warning',
+            detail: 'This user is not registered. <br> Please contact the support team.'
+          });
+          return;
+        }
+
+        if (statusCode == 401) {
+          this.actions.showGlobalAlert({
+            severity: 'warning',
+            summary: 'Warning',
+            detail: 'Invalid credentials'
+          });
+          return;
+        }
+
         this.actions.showGlobalAlert({
           severity: 'warning',
           summary: 'Warning',
-          detail: 'Invalid credentials'
-        });
-        this.isLoadingCredentials.set(false);
-        return;
-      }
-
-      this.updateCacheService(res);
-      this.isLoadingCredentials.set(false);
-      this.requiredChangePassword.set(false);
-      this.body.set({
-        username: '',
-        password: '',
-        confirmPassword: ''
-      });
-      this.redirectToHome();
-    } catch (err) {
-      console.error('err', err);
-      this.isLoadingCredentials.set(false);
-      this.requiredChangePassword.set(false);
-      const statusCode = err?.error?.statusCode;
-      if (statusCode == 404) {
-        return this.actions.showGlobalAlert({
-          severity: 'warning',
-          summary: 'Warning',
-          detail: 'This user is not registered. <br> Please contact the support team.'
+          detail: err?.error?.description
         });
       }
-      this.actions.showGlobalAlert({
-        severity: 'warning',
-        summary: 'Warning',
-        detail: err?.error?.message
-      });
-    }
+    });
   }
 
   async changePassword() {
