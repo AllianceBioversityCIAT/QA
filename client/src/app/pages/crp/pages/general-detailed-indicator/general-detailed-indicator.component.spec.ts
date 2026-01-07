@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { NO_ERRORS_SCHEMA } from '@angular/core';
 
-import { GeneralDetailedIndicatorComponent } from './general-detailed-indicator.component';
+import GeneralDetailedIndicatorComponent from './general-detailed-indicator.component';
 
 describe('GeneralDetailedIndicatorComponent', () => {
   let component: GeneralDetailedIndicatorComponent;
@@ -8,7 +9,11 @@ describe('GeneralDetailedIndicatorComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GeneralDetailedIndicatorComponent ]
+      declarations: [ GeneralDetailedIndicatorComponent ],
+      schemas: [ NO_ERRORS_SCHEMA ]
+    })
+    .overrideComponent(GeneralDetailedIndicatorComponent, {
+      set: { styleUrls: [] }
     })
     .compileComponents();
   }));

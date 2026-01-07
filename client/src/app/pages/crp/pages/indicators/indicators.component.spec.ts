@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { IndicatorsComponent } from './indicators.component';
+import IndicatorsComponent from './indicators.component';
 
 describe('IndicatorsComponent', () => {
   let component: IndicatorsComponent;

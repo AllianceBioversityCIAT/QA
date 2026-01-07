@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { AdminDashboardComponent } from './admin-dashboard.component';
+import AdminDashboardComponent from './admin-dashboard.component';
 
 describe('AdminDashboardComponent', () => {
   let component: AdminDashboardComponent;

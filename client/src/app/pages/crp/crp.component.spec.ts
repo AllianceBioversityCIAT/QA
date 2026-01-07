@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { CrpComponent } from './crp.component';
+import CrpComponent from './crp.component';
 
 describe('CrpComponent', () => {
   let component: CrpComponent;

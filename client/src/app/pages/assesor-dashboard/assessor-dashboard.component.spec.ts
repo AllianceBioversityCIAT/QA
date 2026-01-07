@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
-import { AssessorDashboardComponent } from './assessor-dashboard.component';
+import AssessorDashboardComponent from './assessor-dashboard.component';
 
 describe('AssessorDashboardComponent', () => {
   let component: AssessorDashboardComponent;

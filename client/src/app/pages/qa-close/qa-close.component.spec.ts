@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { QaCloseComponent } from './qa-close.component';
+import QaCloseComponent from './qa-close.component';
 
 describe('QaCloseComponent', () => {
   let component: QaCloseComponent;
