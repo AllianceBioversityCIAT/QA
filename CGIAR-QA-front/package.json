@@ -8,6 +8,7 @@
     "start-local": "ng serve -c=es5 --disable-host-check --port=4100",
     "build": "node --max_old_space_size=4096 node_modules/@angular/cli/bin/ng build",
     "test": "ng test",
+    "test:ci": "NODE_OPTIONS=--openssl-legacy-provider ng test --browsers=ChromeHeadless --watch=false",
     "lint": "ng lint",
     "e2e": "ng e2e",
     "docker:build": "docker build -t qacgiarfront .",
