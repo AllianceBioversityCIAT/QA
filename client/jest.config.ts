@@ -32,9 +32,10 @@ const config: Config = {
     '@interfaces/(.*)': '<rootDir>/src/app/_interfaces/$1',
     '@enums/(.*)': '<rootDir>/src/app/_enums/$1',
     '@helpers/(.*)': '<rootDir>/src/app/_helpers/$1',
-    '@pages/(.*)': '<rootDir>/src/app/pages/$1'
+    '@pages/(.*)': '<rootDir>/src/app/pages/$1',
+    '@microsoft/clarity': '<rootDir>/src/__mocks__/clarity.mock.ts'
   },
-  transformIgnorePatterns: ['node_modules/(?!.*\\.mjs$)'],
+  transformIgnorePatterns: ['node_modules/(?!(@microsoft/clarity|.*\\.mjs$))'],
   testMatch: [
     '<rootDir>/src/**/*.spec.ts'
   ]
