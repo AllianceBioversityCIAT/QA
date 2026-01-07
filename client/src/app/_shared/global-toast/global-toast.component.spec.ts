@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { MessageService } from 'primeng/api';
 import { GlobalToastComponent } from './global-toast.component';
+import { ActionsService } from '../../services/actions.service';
 
 describe('GlobalToastComponent', () => {
   let component: GlobalToastComponent;
@@ -8,7 +10,7 @@ describe('GlobalToastComponent', () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [GlobalToastComponent]
+      imports: [GlobalToastComponent, BrowserAnimationsModule]
     })
     .compileComponents();
 
@@ -19,5 +21,9 @@ describe('GlobalToastComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should have ActionsService injected', () => {
+    expect(component.actions).toBeDefined();
   });
 });
