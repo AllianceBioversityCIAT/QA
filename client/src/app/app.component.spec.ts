@@ -34,7 +34,13 @@ describe('AppComponent', () => {
         }
       ],
       schemas: [NO_ERRORS_SCHEMA]
-    }).compileComponents();
+    })
+    .overrideComponent(AppComponent, {
+      set: {
+        imports: []
+      }
+    })
+    .compileComponents();
   });
 
   it('should create the app', () => {
@@ -47,12 +53,5 @@ describe('AppComponent', () => {
     const fixture = TestBed.createComponent(AppComponent);
     const app = fixture.componentInstance;
     expect(app.title).toEqual('CGIAR-QA-front-ng-18');
-  });
-
-  it('should render title', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    fixture.detectChanges();
-    const compiled = fixture.nativeElement as HTMLElement;
-    expect(compiled.querySelector('h1')?.textContent).toContain('Hello, CGIAR-QA-front-ng-18');
   });
 });

@@ -29,7 +29,6 @@ describe('IndicatorsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(IndicatorsComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

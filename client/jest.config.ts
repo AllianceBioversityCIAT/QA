@@ -33,9 +33,12 @@ const config: Config = {
     '@enums/(.*)': '<rootDir>/src/app/_enums/$1',
     '@helpers/(.*)': '<rootDir>/src/app/_helpers/$1',
     '@pages/(.*)': '<rootDir>/src/app/pages/$1',
-    '@microsoft/clarity': '<rootDir>/src/__mocks__/clarity.mock.ts'
+    '@microsoft/clarity': '<rootDir>/src/__mocks__/clarity.mock.ts',
+    '@swimlane/ngx-charts': '<rootDir>/src/__mocks__/ngx-charts.mock.ts'
   },
-  transformIgnorePatterns: ['node_modules/(?!(@microsoft/clarity|.*\\.mjs$))'],
+  transformIgnorePatterns: [
+    'node_modules/(?!(@microsoft/clarity|@swimlane/ngx-charts|ng2-charts|lodash-es|d3-array|d3-scale|d3-selection|d3-shape|d3-time|d3-.*|.*\\.mjs$))'
+  ],
   testMatch: [
     '<rootDir>/src/**/*.spec.ts'
   ]

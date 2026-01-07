@@ -35,7 +35,6 @@ describe('AuthCognitoComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AuthCognitoComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

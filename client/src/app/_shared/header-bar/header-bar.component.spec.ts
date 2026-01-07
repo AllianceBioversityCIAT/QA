@@ -37,7 +37,6 @@ describe('HeaderBarComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HeaderBarComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

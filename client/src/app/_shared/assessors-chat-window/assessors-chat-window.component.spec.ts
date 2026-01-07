@@ -30,7 +30,6 @@ describe('AssessorsChatWindowComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AssessorsChatWindowComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

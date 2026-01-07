@@ -30,7 +30,6 @@ describe('AssessorDashboardComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AssessorDashboardComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

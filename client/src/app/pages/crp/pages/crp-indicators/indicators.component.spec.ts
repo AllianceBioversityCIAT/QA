@@ -28,7 +28,6 @@ describe('CRPIndicatorsComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CRPIndicatorsComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

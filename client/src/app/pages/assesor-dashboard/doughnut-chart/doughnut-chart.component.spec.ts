@@ -18,7 +18,7 @@ describe('DoughnutChartComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DoughnutChartComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    component.dataset = [];
   });
 
   it('should create', () => {

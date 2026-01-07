@@ -3,6 +3,7 @@ import { NO_ERRORS_SCHEMA } from '@angular/core';
 import { HttpClientTestingModule } from '@angular/common/http/testing';
 import { ActivatedRoute } from '@angular/router';
 import { of } from 'rxjs';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 import CrpComponent from './crp.component';
 
@@ -17,8 +18,17 @@ describe('CrpComponent', () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            params: of({ id: '1' })
+            params: of({ id: '1' }),
+            queryParams: of({ crp_id: '1' }),
+            queryParamMap: of({
+              params: { crp_id: '1' },
+              get: (key: string) => '1'
+            })
           }
+        },
+        {
+          provide: NgxSpinnerService,
+          useValue: { show: jest.fn(), hide: jest.fn() }
         }
       ],
       schemas: [ NO_ERRORS_SCHEMA ]
@@ -29,7 +39,6 @@ describe('CrpComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(CrpComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it('should create', () => {

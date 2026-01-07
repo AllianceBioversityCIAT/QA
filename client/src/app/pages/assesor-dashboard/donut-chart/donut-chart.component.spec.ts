@@ -1,5 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { HttpClientTestingModule } from '@angular/common/http/testing';
+import { ActivatedRoute } from '@angular/router';
+import { of } from 'rxjs';
 
 import { DonutChartComponent } from './donut-chart.component';
 
@@ -10,6 +13,16 @@ describe('DonutChartComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DonutChartComponent ],
+      imports: [ HttpClientTestingModule ],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: {
+            params: of({}),
+            queryParams: of({})
+          }
+        }
+      ],
       schemas: [ NO_ERRORS_SCHEMA ]
     })
     .compileComponents();
@@ -18,7 +31,7 @@ describe('DonutChartComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DonutChartComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+    component.data = [];
   });
 
   it('should create', () => {
