@@ -11,7 +11,7 @@ import { orderBy, sortBy } from 'lodash';
   standalone: true
 })
 export class SortByPipe implements PipeTransform {
-  transform(value: any[], order = '', column: string = ''): any[] {
+  transform(value: any[], order: 'asc' | 'desc' | '' = '', column: string = ''): any[] {
     if (!value || order === '' || !order) {
       return value;
     }
@@ -21,6 +21,6 @@ export class SortByPipe implements PipeTransform {
     if (value.length <= 1) {
       return value;
     }
-    return orderBy(value, [column, 'id'], [order]);
+    return orderBy(value, [column, 'id'], [order as 'asc' | 'desc']);
   }
 }
