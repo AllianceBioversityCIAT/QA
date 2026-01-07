@@ -24,3 +24,4 @@ Thumbs.db
 # Prettier
 .prettierignore
 .prettierrc
+CGIAR-QA-front/coverage/*
