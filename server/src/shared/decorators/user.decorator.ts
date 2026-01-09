@@ -23,7 +23,7 @@ export const UserToken = createParamDecorator(
   },
 );
 
-function processUserToken(headerValue: string): TokenDto {
+export function processUserToken(headerValue: string): TokenDto {
   const token: TokenDto = <TokenDto>(
     JSON.parse(Buffer.from(headerValue.split('.')[1], 'base64').toString())
   );
