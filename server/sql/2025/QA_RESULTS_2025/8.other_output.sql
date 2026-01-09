@@ -345,55 +345,26 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '<li>',
-                    'Founder name: ',
-                    (
-                        SELECT
-                            CONCAT(
-                                '<b>',
-                                ci.acronym,
-                                ' - ',
-                                ci.name,
-                                '</b>'
-                            )
-                        FROM
-                            prdb.clarisa_institutions ci
-                        WHERE
-                            ci.id = npp.funder_institution_id
-                    ),
-                    '<br>',
-                    'Title: ',
                     '<b>',
-                    npp.grant_title,
+                    TRIM(cp.short_name),
                     '</b>',
                     '<br>',
-                    'Center grant ID: ',
-                    '<b>',
-                    npp.center_grant_id,
-                    '</b>',
-                    '<br>',
-                    'Lead/Contract center: ',
-                    (
-                        SELECT
-                            CONCAT(
-                                '<b>',
-                                ci3.acronym,
-                                ' - ',
-                                ci3.name,
-                                '</b>'
-                            )
-                        FROM
-                            prdb.clarisa_center cc
-                            LEFT JOIN prdb.clarisa_institutions ci3 ON ci3.id = cc.institutionId
-                        WHERE
-                            cc.code = npp.lead_center_id
+                    '<span>',
+                    IFNULL(
+                        NULLIF(TRIM(cp.description), ''),
+                        'Data not provided.'
                     ),
+                    '</span>',
                     '</li>' SEPARATOR '<br>'
                 )
             FROM
-                prdb.non_pooled_project npp
+                prdb.results_by_projects rbp
+                INNER JOIN prdb.clarisa_projects cp ON cp.id = rbp.project_id
             WHERE
-                npp.results_id = r.id
-                AND npp.is_active = 1
+                rbp.result_id = r.id
+                AND rbp.is_active = 1
+            ORDER BY
+                TRIM(cp.short_name)
         ),
         '<Not applicable>'
     ) AS contributing_non_pooled_project,
