@@ -424,46 +424,76 @@ SELECT
             gtl.id = r.poverty_tag_level_id
     ) AS poverty_tag_level,
     IF ((r.is_krs = 1), 'Yes', 'No') AS is_krs,
-    IFNULL (
-        (
-            SELECT
-                GROUP_CONCAT(
-                    CONCAT(
-                        '<b><a href="https://toc.mel.cgiar.org/toc/',
-                        (
-                            SELECT
-                                i.toc_id
-                            FROM
-                                prdb.clarisa_initiatives i
-                            WHERE
-                                i.id = rbi.inititiative_id
-                                AND active = 1
+    IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        IF(
+                            rtr.planned_result = 0,
+                            CONCAT(
+                                '<b>Unplanned</b><br>',
+                                '<b>Why is the result being reported?:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
+                                    'N/A'
+                                )
+                            ),
+                            CONCAT(
+                                '<b>Planned</b><br>',
+                                '<b>WP:</b> ',
+                                IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
+                                '<br>',
+                                '<b>ToC title:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(tr.result_title), ''),
+                                    'N/A'
+                                ),
+                                '<br>',
+                                '<b>Indicator:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(tri.indicator_description), ''),
+                                    'N/A'
+                                ),
+                                '<br>',
+                                '<b>Contribution:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(rit.contributing_indicator), ''),
+                                    'N/A'
+                                ),
+                                '<br>',
+                                '<b>Why is the result being reported?:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
+                                    'N/A'
+                                )
+                            )
                         ),
-                        '" target="_blank">',
-                        'See ToC',
-                        '</a></b>'
-                    ),
-                    '<br>',
-                    '<b>Title: </b>',
-                    tr.result_title,
-                    '<br>',
-                    IF(
-                        (
-                            tr.result_description IS NULL
-                            OR tr.result_description = ''
-                        ),
-                        '',
-                        CONCAT('<b>Description: </b>', tr.result_description)
-                    ) SEPARATOR '<br><br>'
-                )
-            FROM
-                prdb.results_toc_result rtr
-                LEFT JOIN Integration_information.toc_results tr ON tr.id = rtr.toc_result_id
-            WHERE
-                rtr.results_id = r.id
-                AND rtr.initiative_id = rbi.inititiative_id
-        ),
-        'Data not provided.'
+                        '</li>' SEPARATOR '<br>'
+                    )
+                FROM
+                    prdb.results_toc_result rtr
+                    INNER JOIN prdb.clarisa_initiatives ci ON ci.id = rtr.initiative_id
+                    AND ci.active > 0
+                    LEFT JOIN Integration_information.toc_results tr ON tr.id = rtr.toc_result_id
+                    AND tr.is_active > 0
+                    LEFT JOIN Integration_information.toc_work_packages wp ON wp.toc_id = tr.wp_id
+                    LEFT JOIN prdb.results_toc_result_indicators rtri ON rtri.results_toc_results_id = rtr.result_toc_result_id
+                    AND rtri.is_active = 1
+                    AND rtri.is_not_aplicable = 0
+                    LEFT JOIN Integration_information.toc_results_indicators tri ON tri.related_node_id = rtri.toc_results_indicator_id
+                    AND tri.is_active = 1
+                    LEFT JOIN prdb.result_indicators_targets rit ON rit.result_toc_result_indicator_id = rtri.result_toc_result_indicator_id
+                    AND rit.is_active = 1
+                WHERE
+                    rtr.results_id = r.id
+                    AND rtr.is_active = 1
+                ORDER BY
+                    rtr.initiative_id,
+                    rtr.result_toc_result_id,
+                    rtri.result_toc_result_indicator_id
+            ),
+            '<Not applicable>'
     ) AS lead_initiative_toc,
     IFNULL (
         (
@@ -572,97 +602,6 @@ SELECT
         ),
         'Data not provided.'
     ) AS contributing_centers,
-    IFNULL (
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '• ',
-                    tr3.result_title,
-                    IF(
-                        (rieo.contributing_toc = 1),
-                        ' <b>CONTRIBUTING EoI</b>',
-                        ''
-                    ) SEPARATOR '<br><br>'
-                )
-            FROM
-                prdb.result_ip_eoi_outcomes rieo
-                JOIN Integration_information.toc_results tr3 ON tr3.id = rieo.toc_result_id
-            WHERE
-                rieo.result_by_innovation_package_id = rbip.result_by_innovation_package_id
-                AND rieo.is_active = 1
-        ),
-        'Data not provided.'
-    ) AS eoi_outcomes,
-    IFNULL (
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '• ',
-                    '<b>',
-                    caa.name,
-                    '</b>',
-                    ':  ',
-                    caao.outcomeSMOcode,
-                    ' - ',
-                    caao.outcomeStatement SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_ip_action_area_outcome ripa
-                JOIN prdb.clarisa_action_area_outcome caao ON caao.id = ripa.action_area_outcome_id
-                JOIN prdb.clarisa_action_area caa ON caa.id = caao.actionAreaId
-            WHERE
-                ripa.result_by_innovation_package_id = rbip.result_by_innovation_package_id
-                AND ripa.is_active = 1
-            ORDER BY
-                caa.id
-        ),
-        'Data not provided.'
-    ) AS aa_outcomes,
-    IFNULL (
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '• ',
-                    '<b>',
-                    cia.name,
-                    '</b>',
-                    ' - ',
-                    cgt.target SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_ip_impact_area_target riia
-                JOIN prdb.clarisa_global_targets cgt ON cgt.targetId = riia.impact_area_indicator_id
-                JOIN prdb.clarisa_impact_areas cia ON cia.id = cgt.impactAreaId
-            WHERE
-                riia.result_by_innovation_package_id = rbip.result_by_innovation_package_id
-                AND riia.is_active = 1
-            ORDER BY
-                cgt.impactAreaId
-        ),
-        'Data not provided.'
-    ) AS ia_outcomes,
-    IFNULL (
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '• ',
-                    '<b>',
-                    cst.sdg_target_code,
-                    '</b>',
-                    ' - ',
-                    cst.sdg_target SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_ip_sdg_targets rist
-                JOIN prdb.clarisa_sdgs_targets cst ON cst.id = rist.clarisa_sdg_target_id
-            WHERE
-                rist.result_by_innovation_package_id = rbip.result_by_innovation_package_id
-                AND rist.is_active = 1
-            ORDER BY
-                cst.sdg_target_code ASC
-        ),
-        'Data not provided.'
-    ) AS sdgs,
     IFNULL(
         (
             SELECT

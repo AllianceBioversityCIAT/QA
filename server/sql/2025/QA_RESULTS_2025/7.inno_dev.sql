@@ -390,74 +390,76 @@ SELECT
         ),
         'Data not provided.'
     ) AS contributing_centers,
-    IF (
-        r.result_level_id = 1
-        OR r.result_level_id = 2,
-        '<Not applicable>',
-        (
-            SELECT
-                CONCAT(
-                    IF(
-                        (
-                            SELECT
-                                COUNT(1)
-                            FROM
-                                `Integration_information`.toc_results tr
-                                LEFT JOIN prdb.results_toc_result rtr ON rtr.toc_result_id = tr.id
-                            WHERE
-                                rtr.results_id = r.id
-                                AND rtr.is_active = 1
-                                AND tr.result_type = 3
-                        ) > 0,
-                        CONCAT(
-                            '<div style="background-color: #3AABA0; color: #ffffff; ',
-                            'border: 1px solid #c8e6c9; padding: 10px; margin-bottom: 15px; ',
-                            'border-radius: 5px; font-family: Arial, sans-serif; font-size: 16px; ',
-                            'font-weight: bold; display: inline-block;">',
-                            'EOI Outcome map</div><br>'
-                        ),
-                        ''
-                    ),
+    IFNULL(
+            (
+                SELECT
                     GROUP_CONCAT(
                         '<li>',
-                        ci9.official_code,
-                        ' - ',
-                        ci9.name,
-                        '<br>',
-                        '<b><a href="https://toc.mel.cgiar.org/toc/',
-                        ci9.toc_id,
-                        '" target="_blank" style="text-decoration: none; color: #1976d2;">See ToC</a></b><br>',
-                        IFNULL(
-                            (
-                                SELECT
-                                    CONCAT('<b>', wp.acronym, '</b> - ', wp.name)
-                                FROM
-                                    Integration_information.work_packages wp
-                                WHERE
-                                    wp.id = tr.work_packages_id
-                            ),
-                            ''
-                        ),
-                        '<br><b>Title: </b>',
-                        tr.result_title,
-                        '<br>',
                         IF(
-                            tr.result_description IS NULL
-                            OR tr.result_description = '',
-                            '',
-                            CONCAT('<b>Description: </b>', tr.result_description)
+                            rtr.planned_result = 0,
+                            CONCAT(
+                                '<b>Unplanned</b><br>',
+                                '<b>Why is the result being reported?:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
+                                    'N/A'
+                                )
+                            ),
+                            CONCAT(
+                                '<b>Planned</b><br>',
+                                '<b>WP:</b> ',
+                                IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
+                                '<br>',
+                                '<b>ToC title:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(tr.result_title), ''),
+                                    'N/A'
+                                ),
+                                '<br>',
+                                '<b>Indicator:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(tri.indicator_description), ''),
+                                    'N/A'
+                                ),
+                                '<br>',
+                                '<b>Contribution:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(rit.contributing_indicator), ''),
+                                    'N/A'
+                                ),
+                                '<br>',
+                                '<b>Why is the result being reported?:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
+                                    'N/A'
+                                )
+                            )
                         ),
                         '</li>' SEPARATOR '<br>'
                     )
-                )
-            FROM
-                `Integration_information`.toc_results tr
-                LEFT JOIN prdb.results_toc_result rtr ON rtr.toc_result_id = tr.id
-                AND rtr.is_active = 1
-                LEFT JOIN prdb.clarisa_initiatives ci9 ON ci9.id = rtr.initiative_id
-            WHERE
-                rtr.results_id = r.id
-        )
+                FROM
+                    prdb.results_toc_result rtr
+                    INNER JOIN prdb.clarisa_initiatives ci ON ci.id = rtr.initiative_id
+                    AND ci.active > 0
+                    LEFT JOIN Integration_information.toc_results tr ON tr.id = rtr.toc_result_id
+                    AND tr.is_active > 0
+                    LEFT JOIN Integration_information.toc_work_packages wp ON wp.toc_id = tr.wp_id
+                    LEFT JOIN prdb.results_toc_result_indicators rtri ON rtri.results_toc_results_id = rtr.result_toc_result_id
+                    AND rtri.is_active = 1
+                    AND rtri.is_not_aplicable = 0
+                    LEFT JOIN Integration_information.toc_results_indicators tri ON tri.related_node_id = rtri.toc_results_indicator_id
+                    AND tri.is_active = 1
+                    LEFT JOIN prdb.result_indicators_targets rit ON rit.result_toc_result_indicator_id = rtri.result_toc_result_indicator_id
+                    AND rit.is_active = 1
+                WHERE
+                    rtr.results_id = r.id
+                    AND rtr.is_active = 1
+                ORDER BY
+                    rtr.initiative_id,
+                    rtr.result_toc_result_id,
+                    rtri.result_toc_result_indicator_id
+            ),
+            '<Not applicable>'
     ) AS toc_planned,
     IFNULL(
         IF(

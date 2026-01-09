@@ -370,11 +370,7 @@ SELECT
         ),
         'Data not provided.'
     ) AS contributing_centers,
-    IF (
-        r.result_level_id = 1
-        OR r.result_level_id = 2,
-        '<Not applicable>',
-        IFNULL(
+    IFNULL(
             (
                 SELECT
                     GROUP_CONCAT(
@@ -386,36 +382,36 @@ SELECT
                                 '<b>Why is the result being reported?:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    '<Not applicable>'
+                                    'N/A'
                                 )
                             ),
                             CONCAT(
                                 '<b>Planned</b><br>',
                                 '<b>WP:</b> ',
-                                IFNULL(NULLIF(TRIM(wp.acronym), ''), '<Not applicable>'),
+                                IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
                                 '<br>',
                                 '<b>ToC title:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(tr.result_title), ''),
-                                    '<Not applicable>'
+                                    'N/A'
                                 ),
                                 '<br>',
                                 '<b>Indicator:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(tri.indicator_description), ''),
-                                    '<Not applicable>'
+                                    'N/A'
                                 ),
                                 '<br>',
                                 '<b>Contribution:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(rit.contributing_indicator), ''),
-                                    '<Not applicable>'
+                                    'N/A'
                                 ),
                                 '<br>',
                                 '<b>Why is the result being reported?:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    '<Not applicable>'
+                                    'N/A'
                                 )
                             )
                         ),
@@ -444,7 +440,6 @@ SELECT
                     rtri.result_toc_result_indicator_id
             ),
             '<Not applicable>'
-        )
     ) AS toc_planned,
     IF (
         r.no_applicable_partner = 1,
