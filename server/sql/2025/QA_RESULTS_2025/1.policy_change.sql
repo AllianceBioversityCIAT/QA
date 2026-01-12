@@ -11,12 +11,29 @@ WITH phase_versions AS (
 ),
 valid_results AS (
     SELECT
-        r.id
+        DISTINCT r.id
     FROM
         prdb.result r
-        INNER JOIN phase_versions pv ON r.version_id IN (pv.current_phase_id, pv.previous_phase)
+        INNER JOIN phase_versions pv ON (
+            r.version_id = pv.current_phase_id
+            OR (
+                r.version_id = pv.previous_phase
+                AND EXISTS (
+                    SELECT
+                        1
+                    FROM
+                        prdb.result r2
+                    WHERE
+                        r2.result_code = r.result_code
+                        AND r2.version_id = pv.current_phase_id
+                        AND r2.is_replicated = 1
+                        AND r2.is_active = 1
+                )
+            )
+        )
     WHERE
         r.result_type_id = 1
+        AND r.is_active = 1
 )
 SELECT
     DISTINCT r.id AS id,
@@ -67,6 +84,7 @@ SELECT
     ) AS new_or_updated_result,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
+    r.lead_contact_person AS lead_contact_person,
     (
         SELECT
             CONCAT(
@@ -345,6 +363,77 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '<li>',
+                    IF(
+                        rtr.planned_result = 0,
+                        CONCAT(
+                            '<b>Unplanned</b><br>',
+                            '<b>Why is the result being reported?:</b> ',
+                            IFNULL(
+                                NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
+                                'N/A'
+                            )
+                        ),
+                        CONCAT(
+                            '<b>Planned</b><br>',
+                            '<b>WP:</b> ',
+                            IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
+                            '<br>',
+                            '<b>ToC title:</b> ',
+                            IFNULL(
+                                NULLIF(TRIM(tr.result_title), ''),
+                                'N/A'
+                            ),
+                            '<br>',
+                            '<b>Indicator:</b> ',
+                            IFNULL(
+                                NULLIF(TRIM(tri.indicator_description), ''),
+                                'N/A'
+                            ),
+                            '<br>',
+                            '<b>Contribution:</b> ',
+                            IFNULL(
+                                NULLIF(TRIM(rit.contributing_indicator), ''),
+                                'N/A'
+                            ),
+                            '<br>',
+                            '<b>Why is the result being reported?:</b> ',
+                            IFNULL(
+                                NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
+                                'N/A'
+                            )
+                        )
+                    ),
+                    '</li>' SEPARATOR '<br>'
+                )
+            FROM
+                prdb.results_toc_result rtr
+                INNER JOIN prdb.clarisa_initiatives ci ON ci.id = rtr.initiative_id
+                AND ci.active > 0
+                LEFT JOIN Integration_information.toc_results tr ON tr.id = rtr.toc_result_id
+                AND tr.is_active > 0
+                LEFT JOIN Integration_information.toc_work_packages wp ON wp.toc_id = tr.wp_id
+                LEFT JOIN prdb.results_toc_result_indicators rtri ON rtri.results_toc_results_id = rtr.result_toc_result_id
+                AND rtri.is_active = 1
+                AND rtri.is_not_aplicable = 0
+                LEFT JOIN Integration_information.toc_results_indicators tri ON tri.related_node_id = rtri.toc_results_indicator_id
+                AND tri.is_active = 1
+                LEFT JOIN prdb.result_indicators_targets rit ON rit.result_toc_result_indicator_id = rtri.result_toc_result_indicator_id
+                AND rit.is_active = 1
+            WHERE
+                rtr.results_id = r.id
+                AND rtr.is_active = 1
+            ORDER BY
+                rtr.initiative_id,
+                rtr.result_toc_result_id,
+                rtri.result_toc_result_indicator_id
+        ),
+        '<Not applicable>'
+    ) AS toc_planned,
+    IFNULL(
+        (
+            SELECT
+                GROUP_CONCAT(
+                    '<li>',
                     '<b>',
                     TRIM(cp.short_name),
                     '</b>',
@@ -390,77 +479,6 @@ SELECT
         ),
         'Data not provided.'
     ) AS contributing_centers,
-    IFNULL(
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        IF(
-                            rtr.planned_result = 0,
-                            CONCAT(
-                                '<b>Unplanned</b><br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    'N/A'
-                                )
-                            ),
-                            CONCAT(
-                                '<b>Planned</b><br>',
-                                '<b>WP:</b> ',
-                                IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
-                                '<br>',
-                                '<b>ToC title:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(tr.result_title), ''),
-                                    'N/A'
-                                ),
-                                '<br>',
-                                '<b>Indicator:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(tri.indicator_description), ''),
-                                    'N/A'
-                                ),
-                                '<br>',
-                                '<b>Contribution:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rit.contributing_indicator), ''),
-                                    'N/A'
-                                ),
-                                '<br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    'N/A'
-                                )
-                            )
-                        ),
-                        '</li>' SEPARATOR '<br>'
-                    )
-                FROM
-                    prdb.results_toc_result rtr
-                    INNER JOIN prdb.clarisa_initiatives ci ON ci.id = rtr.initiative_id
-                    AND ci.active > 0
-                    LEFT JOIN Integration_information.toc_results tr ON tr.id = rtr.toc_result_id
-                    AND tr.is_active > 0
-                    LEFT JOIN Integration_information.toc_work_packages wp ON wp.toc_id = tr.wp_id
-                    LEFT JOIN prdb.results_toc_result_indicators rtri ON rtri.results_toc_results_id = rtr.result_toc_result_id
-                    AND rtri.is_active = 1
-                    AND rtri.is_not_aplicable = 0
-                    LEFT JOIN Integration_information.toc_results_indicators tri ON tri.related_node_id = rtri.toc_results_indicator_id
-                    AND tri.is_active = 1
-                    LEFT JOIN prdb.result_indicators_targets rit ON rit.result_toc_result_indicator_id = rtri.result_toc_result_indicator_id
-                    AND rit.is_active = 1
-                WHERE
-                    rtr.results_id = r.id
-                    AND rtr.is_active = 1
-                ORDER BY
-                    rtr.initiative_id,
-                    rtr.result_toc_result_id,
-                    rtri.result_toc_result_indicator_id
-            ),
-            '<Not applicable>'
-    ) AS toc_planned,
     IF (
         r.no_applicable_partner = 1,
         '<Not applicable>',
@@ -498,6 +516,71 @@ SELECT
                 AND rbi3.institution_roles_id = 2
         )
     ) AS partners,
+    IFNULL(
+        IF(
+            r.is_lead_by_partner = 1,
+            (
+                SELECT
+                    CONCAT(
+                        '<b>Lead by Partner:</b><br>',
+                        '<b>',
+                        ci.name,
+                        '</b>',
+                        '<br>',
+                        '<b>Institution type: </b>',
+                        cit.name,
+                        '<br>',
+                        '<b>Role: </b>',
+                        IFNULL(
+                            (
+                                SELECT
+                                    GROUP_CONCAT(
+                                        pdt.name SEPARATOR '; '
+                                    )
+                                FROM
+                                    prdb.result_by_institutions_by_deliveries_type rbibd
+                                    LEFT JOIN prdb.partner_delivery_type pdt ON pdt.id = rbibd.partner_delivery_type_id
+                                WHERE
+                                    rbibd.result_by_institution_id = rbi_lead.id
+                                    AND rbibd.is_active = 1
+                            ),
+                            '<Not applicable>'
+                        )
+                    )
+                FROM
+                    prdb.results_by_institution rbi_lead
+                    LEFT JOIN prdb.clarisa_institutions ci ON rbi_lead.institutions_id = ci.id
+                    INNER JOIN prdb.clarisa_institution_types cit ON ci.institution_type_code = cit.code
+                WHERE
+                    rbi_lead.result_id = r.id
+                    AND rbi_lead.is_active = 1
+                    AND rbi_lead.institution_roles_id = 2
+                    AND rbi_lead.is_leading_result = 1
+                LIMIT
+                    1
+            ), (
+                SELECT
+                    CONCAT(
+                        '<b>Lead by Center:</b><br>',
+                        '<b>',
+                        ci9.acronym,
+                        '</b>',
+                        ' - ',
+                        ci9.name
+                    )
+                FROM
+                    prdb.results_center rc9
+                    LEFT JOIN prdb.clarisa_center cc9 ON rc9.center_id = cc9.code
+                    LEFT JOIN prdb.clarisa_institutions ci9 ON ci9.id = cc9.institutionId
+                WHERE
+                    rc9.result_id = r.id
+                    AND rc9.is_active = 1
+                    AND rc9.is_leading_result = 1
+                LIMIT
+                    1
+            )
+        ), '<Not applicable>'
+    ) AS lead_center_or_partner,
     (
         SELECT
             cgs.name
@@ -557,6 +640,21 @@ SELECT
                     IF(
                         e.is_sharepoint = 1,
                         CONCAT(
+                            '<b>File name:</b> ',
+                            IFNULL(
+                                (
+                                    SELECT
+                                        es.file_name
+                                    FROM
+                                        prdb.evidence_sharepoint es
+                                    WHERE
+                                        es.evidence_id = e.id
+                                        AND es.is_active = 1
+                                    LIMIT 1
+                                ),
+                                '<Not applicable>'
+                            ),
+                            '<br>',
                             '<b>Is this a public file?: </b>',
                             (
                                 SELECT
@@ -570,6 +668,7 @@ SELECT
                                 WHERE
                                     es.evidence_id = e.id
                                     AND es.is_active = 1
+                                LIMIT 1
                             ),
                             '<br>'
                         ),
@@ -672,6 +771,7 @@ FROM
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_policy_changes rpc ON rpc.result_id = r.id
     AND rpc.is_active = 1
-    AND r.source = 'Result'
+WHERE
+    r.source = 'Result'
 ORDER BY
     r.result_code DESC;
