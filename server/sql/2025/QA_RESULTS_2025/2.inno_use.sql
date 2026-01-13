@@ -677,14 +677,37 @@ SELECT
         ),
         '<Not applicable>'
     ) AS evidence,
+    IF(
+        riu.innov_use_to_be_determined = 1,
+        'This is yet to be determined',
+        '<Not applicable>'
+    ) AS current_core_innovation_use,
     IFNULL(
         (
             SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    '<b>',
-                    at.name,
-                    '</b>',
+                CONCAT(
+                    ciul.level,
+                    ' - ',
+                    ciul.definition
+                )
+            FROM
+                prdb.clarisa_innovation_use_levels ciul
+            WHERE
+                ciul.id = riu.innovation_use_level_id
+        ),
+        '<Not applicable>'
+    ) AS current_use_level_of_the_innovation,
+    IF(
+        riu.innov_use_to_be_determined = 1,
+        '<Not applicable>',
+        IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        '<b>',
+                        at.name,
+                        '</b>',
                     IF(
                         ra.actor_type_id = 5,
                         CONCAT(
@@ -727,19 +750,23 @@ SELECT
                 prdb.result_actors ra
                 LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
             WHERE
-                ra.result_id = r.id
-                AND ra.is_active = 1
-        ),
-        '<Not applicable>'
+                    ra.result_id = r.id
+                    AND ra.is_active = 1
+            ),
+            '<Not applicable>'
+        )
     ) AS actors,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    '<b>',
-                    cit.name,
-                    '</b>',
+    IF(
+        riu.innov_use_to_be_determined = 1,
+        '<Not applicable>',
+        IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        '<b>',
+                        cit.name,
+                        '</b>',
                     IF(
                         rbit.institution_types_id = 78,
                         CONCAT(
@@ -774,16 +801,20 @@ SELECT
                 rbit.results_id = r.id
                 AND rbit.is_active = 1
                 AND rbit.institution_roles_id = 5
-        ),
-        '<Not applicable>'
+            ),
+            '<Not applicable>'
+        )
     ) AS organizations,
-    IFNULL(
-        (
-            SELECT
-                GROUP_CONCAT(
-                    '<li>',
-                    'Unit of measures: ',
-                    rim.unit_of_measure,
+    IF(
+        riu.innov_use_to_be_determined = 1,
+        '<Not applicable>',
+        IFNULL(
+            (
+                SELECT
+                    GROUP_CONCAT(
+                        '<li>',
+                        'Unit of measures: ',
+                        rim.unit_of_measure,
                     '<br>',
                     'Quantity: ',
                     rim.quantity,
@@ -794,9 +825,42 @@ SELECT
             WHERE
                 rim.result_id = r.id
                 AND rim.is_active = 1
-        ),
-        '<Not applicable>'
-    ) AS other_quantitative
+            ),
+            '<Not applicable>'
+        )
+    ) AS other_quantitative,
+    IF(
+        riu.has_innovation_link IS NULL OR riu.has_innovation_link = 0,
+        'No',
+        CONCAT(
+            'Yes',
+            IFNULL(
+                (
+                    SELECT
+                        CONCAT(
+                            '<br>',
+                            GROUP_CONCAT(
+                                CONCAT(
+                                    '<b>Result code:</b> ',
+                                    r_linked.result_code,
+                                    '<br>',
+                                    '<b>Title:</b> ',
+                                    IFNULL(r_linked.title, '<Not applicable>')
+                                )
+                                SEPARATOR '<br><br>'
+                            )
+                        )
+                    FROM
+                        prdb.linked_result lr
+                        INNER JOIN prdb.result r_linked ON r_linked.id = lr.linked_results_id
+                    WHERE
+                        lr.origin_result_id = r.id
+                        AND lr.is_active = 1
+                ),
+                ''
+            )
+        )
+    ) AS innovation_linked
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
