@@ -104,6 +104,7 @@
 
   .card-body {
     padding: 2rem;
+    margin: 0;
 
     @media (max-width: 768px) {
       padding: 1.5rem;
@@ -114,6 +115,13 @@
 .dashboard-container,
 .new-dashboard-container {
   position: relative;
+  margin-left: 0;
+  margin-right: 0;
+  
+  &.row {
+    margin-left: 0;
+    margin-right: 0;
+  }
 
   .card-title {
     font-weight: $light;
