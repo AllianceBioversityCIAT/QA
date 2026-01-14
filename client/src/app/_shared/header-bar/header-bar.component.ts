@@ -110,12 +110,6 @@ export class HeaderBarComponent implements OnInit {
       // this.currentUserID = this.currentUser.id;
       this.getHeaderLinks();
     }
-    
-    // If indicators are already loaded from authentication service, use them
-    if (this.authenticationService.userHeaders && this.authenticationService.userHeaders.length > 0) {
-      this.indicators = [...this.authenticationService.userHeaders];
-      this.groupIndicatorsByLevel();
-    }
     // console.log('NAV INDICATORS', this.indicators);
   }
 
@@ -151,12 +145,24 @@ export class HeaderBarComponent implements OnInit {
   getHeaderLinks() {
     // console.log('GET HEADER LINKS OUT');
 
-    if (this.indicators && !this.indicators.length && this.currentUser && !this.isCRP()) {
+    // If indicators are already loaded from authentication service, use them
+    if (this.authenticationService.userHeaders && this.authenticationService.userHeaders.length > 0) {
+      this.indicators = [...this.authenticationService.userHeaders];
+      // Save to localStorage for AvailableGuard
+      localStorage.setItem('indicators', JSON.stringify(this.indicators));
+      this.groupIndicatorsByLevel();
+      return;
+    }
+
+    // Load indicators if not already loaded and user is not CRP
+    if (this.currentUser && !this.isCRP() && (!this.indicators || !this.indicators.length)) {
       this.indicatorService.getIndicatorsByUser(this.currentUser.id).subscribe(
         res => {
           // console.log("getHeaderLinks", res);
           this.indicators = res.data.filter(indicator => (indicator.indicator.type = indicator.indicator.name.toLocaleLowerCase()));
           this.authenticationService.userHeaders = [...this.indicators];
+          // Save to localStorage for AvailableGuard
+          localStorage.setItem('indicators', JSON.stringify(this.indicators));
           this.groupIndicatorsByLevel();
 
           if (this.currentRole == 'admin') {
@@ -171,6 +177,8 @@ export class HeaderBarComponent implements OnInit {
         }
       );
     } else if (this.indicators && this.indicators.length) {
+      // Save to localStorage if indicators are already loaded
+      localStorage.setItem('indicators', JSON.stringify(this.indicators));
       this.groupIndicatorsByLevel();
     }
   }

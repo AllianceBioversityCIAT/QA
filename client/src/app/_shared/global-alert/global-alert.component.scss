@@ -9,6 +9,7 @@
   height: 100vh;
   background-color: rgb(2 0 23 / 63.7%);
   backdrop-filter: blur(10px);
+  z-index: 10000;
 
   .alert {
     text-align: center;
