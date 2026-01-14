@@ -53,9 +53,9 @@ export class AvailableGuard implements CanActivate {
       if (isAdmin === Role.admin) return true;
 
       if (isAssessor === Role.asesor) {
-        if (found && found.comment_meta && found.comment_meta.enable_assessor) {
+        if (found && found.comment_meta && (found.comment_meta.enable_assessor === true || found.comment_meta.enable_assessor === 1)) {
           return true;
-        } else if (found && found.comment_meta && !found.comment_meta.enable_assessor) {
+        } else if (found && found.comment_meta && (found.comment_meta.enable_assessor === false || found.comment_meta.enable_assessor === 0)) {
           // Show modal explaining that QA is enabled only for SP/A
           const indicatorName = found.name || 'this indicator';
           this.actionsService.showGlobalAlert({
