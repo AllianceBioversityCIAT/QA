@@ -7,8 +7,11 @@
   justify-content: space-between;
   border-bottom: 1px solid var(--gray-primary);
   transition: box-shadow var(--transition-base);
+  align-items: flex-end;
+  padding-bottom: 10px;
   .navbar-container {
     flex-direction: column;
+    align-items: flex-end;
     .upper-navbar {
       display: flex;
       justify-content: flex-end;
@@ -207,9 +210,34 @@
         }
       }
     }
+    .navbar-nav-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      -webkit-overflow-scrolling: touch;
+      scrollbar-width: thin;
+      scrollbar-color: var(--gray-primary) transparent;
+      
+      &::-webkit-scrollbar {
+        height: 4px;
+      }
+      
+      &::-webkit-scrollbar-track {
+        background: transparent;
+      }
+      
+      &::-webkit-scrollbar-thumb {
+        background-color: var(--gray-primary);
+        border-radius: 2px;
+      }
+    }
+    
     .navbar-nav {
       align-self: flex-end;
       margin: 10px;
+      display: flex;
+      flex-wrap: nowrap;
+      min-width: max-content;
       a {
         margin-left: 0.2em;
         padding: 0.5em 1em;
@@ -222,6 +250,8 @@
         transition: all var(--transition-base);
         box-sizing: border-box;
         position: relative;
+        white-space: nowrap;
+        flex-shrink: 0;
         &:hover {
           background-color: var(--white-gray);
           color: var(--green-primary);
@@ -261,17 +291,18 @@
     }
   }
   .logo-container {
-    height: 80px;
     display: flex;
-    align-items: center;
+    align-items: flex-end;
     margin-right: 50px;
+    padding-bottom: 10px;
     cursor: pointer;
     transition: opacity var(--transition-base);
+    height: auto;
     &:hover {
       opacity: 0.8;
     }
     .cgiar-logo-img {
-      height: 60px;
+      height: 40px;
       width: auto;
       object-fit: contain;
     }
