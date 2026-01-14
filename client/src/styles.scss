@@ -45,8 +45,15 @@ html {
 
 .open-url-button {
   cursor: pointer;
-  background-color: rgb(130, 130, 255);
+  background-color: var(--blue-secondary);
   color: white !important;
-  padding: 5px;
-  border-radius: 5px;
+  padding: 6px 12px;
+  border-radius: var(--border-radius-md);
+  transition: all var(--transition-base);
+  box-shadow: var(--shadow-sm);
+  &:hover {
+    background-color: var(--blue-primary);
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
 }

@@ -1450,7 +1450,8 @@ export class EvaluationRepository extends Repository<Evaluations> {
           meta.enable_assessor,
           meta.enable_crp,
           indicators.name AS indicator_view_name,
-          indicators.order AS indicator_order
+          indicators.order AS indicator_order,
+          indicators.indicator_level
       FROM
           qa_indicators indicators
       LEFT JOIN qa_comments_meta meta ON indicators.id = meta.indicatorId

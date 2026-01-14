@@ -30,7 +30,7 @@
               name="program"
               formControlName="program" />
             <label class="custom-control-label" for="program-{{ program.id }}">
-              {{ program.acronym === '' || program.acronym === ' ' ? program.name : program.acronym }}
+              {{ program.crp_id + ' - ' + program.name}}
               {{ getPendings(program) }}
             </label>
           </div>
@@ -126,36 +126,52 @@
     </div>
   </div>
   <div class="col col-progress">
-    <div class="row mini-header" style="padding: 0 15px">
-      <!-- <button class="css-button-3d--sand" (click)="goToPDF('AR')">
-        <span class="material-icons-round icon">description</span>Technical report guidance
-      </button> -->
-      <button class="css-button-3d--sand" (click)="goToPDF('ASSESSORS_GUIDANCE')">
-        <span class="material-icons-round icon">description</span>2024 Assessor Guidance
-      </button>
+    <div class="dashboard-top-section">
+      <div class="dashboard-top-content">
+        <div class="dashboard-title-section">
+          <h2 class="dashboard-main-title">Progress by Assessors</h2>
+        </div>
+        <div class="dashboard-actions-section">
+          <button class="btn-top-action" (click)="goToPDF('ASSESSORS_GUIDANCE')">
+            <span class="material-icons-round icon">description</span>
+            <span>2024 Assessor Guidance</span>
+          </button>
+          <button type="button" class="btn-download-primary" (click)="downloadRawComments()">
+            <span class="material-icons-round icon">download</span>
+            <span>Download Comments</span>
+          </button>
+        </div>
+      </div>
     </div>
-    <div class="row" style="padding: 0 15px">
-      <p class="card-title col-9">Progress by Assessors</p>
-
-      <button type="button" class="btn btn-success col-3" (click)="downloadRawComments()">Download comments and assessment status</button>
-    </div>
-    <div class="card">
+    <div class="card dashboard-card">
       <div class="card-body">
         <div class="dashboard-container row w-100">
           <div class="card-body dashboard-container-charts col" [ngClass]="{ 'col-sm-12': isRound2, 'col-sm-9': !isRound2 }">
-            <div class="w-100 dashboard-header mb-2">
-              <div class="h-100 title">Dashboard {{ getIndicatorName(selectedIndicator) }}</div>
-              <p-dropdown
-                [style]="{ width: '100%', backgroundColor: 'white' }"
-                [options]="indicatorsAvailable"
-                [(ngModel)]="selectedIndicator"
-                optionLabel="name"
-                optionValue="viewname"
-                [placeholder]="getIndicatorName(selectedIndicator)"
-                (ngModelChange)="actualIndicator()" />
+            <div class="w-100 dashboard-header mb-4">
+              <div class="dashboard-header-content">
+                <div class="dashboard-title-wrapper">
+                  <h2 class="dashboard-title">Dashboard</h2>
+                  <span class="dashboard-subtitle">{{ getIndicatorName(selectedIndicator) }}</span>
+                </div>
+                <div class="dashboard-selector-wrapper">
+                  <label class="selector-label">Select Indicator</label>
+                  <p-dropdown
+                    class="dashboard-dropdown"
+                    [options]="indicatorsAvailable"
+                    [(ngModel)]="selectedIndicator"
+                    optionLabel="name"
+                    optionValue="viewname"
+                    [placeholder]="getIndicatorName(selectedIndicator)"
+                    (ngModelChange)="actualIndicator()" />
+                </div>
+              </div>
             </div>
             <div *ngIf="isDataNull" class="no-data-container">
-              <div class="no-data-message">No results available at the moment.</div>
+              <div class="no-data-icon">
+                <span class="material-icons-round">bar_chart</span>
+              </div>
+              <div class="no-data-message">No results available at the moment</div>
+              <div class="no-data-description">Please check back later or select a different indicator</div>
             </div>
 
             @if (
@@ -165,11 +181,17 @@
                 this.dataCharts.assessmentByField) &&
               !isDataNull
             ) {
-              <app-dashboard [dataCharts]="this.dataCharts" [isAdmin]="true"></app-dashboard>
+              <div class="charts-wrapper">
+                <app-dashboard [dataCharts]="this.dataCharts" [isAdmin]="true"></app-dashboard>
+              </div>
             }
 
-            <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
-              You don't have any indicator assingned. Please contact your Administrator.
+            <div class="no-data no-indicator-assigned" *ngIf="(dashboardData | json) == ({} | json)">
+              <div class="no-data-icon">
+                <span class="material-icons-round">info</span>
+              </div>
+              <div class="no-data-message">You don't have any indicator assigned</div>
+              <div class="no-data-description">Please contact your Administrator</div>
             </div>
           </div>
           <div class="card-body feed col col-sm-3" *ngIf="!isRound2">

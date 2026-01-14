@@ -1,26 +1,12 @@
-<!-- <app-assessors-chat-window *ngIf="currentUser"></app-assessors-chat-window> -->
 <nav class="navbar navbar-expand header-bar" *ngIf="headerAvailable()">
+  <!-- Logo Section -->
   <div routerLink="/dashboard" class="logo-container">
-    <i class="cgiar-logo"></i>
-    <h3>QA PLATFORM</h3>
+    <img src="/img/logo.webp" alt="CGIAR Logo" class="cgiar-logo-img" />
   </div>
-  <div class="row navbar-container">
-    <div class="upper-navbar">
-      <!-- <div *ngIf="currentUser && currentUser.roles[0].id != 3" (click)="goToAssessorsChat()" class="assessors-chat">
-                Assessors chat
-            </div> -->
-      <div *ngIf="currentUser" (click)="getIndicators()" class="panel">
-        <p>{{ currentUser.name }}</p>
-        <p>{{ currentUser.email }}</p>
-      </div>
-      <div class="log-out-panel" (click)="logout()">
-        <span>
-          <p>Signout</p>
-        </span>
-        <i class="icon-log-out"></i>
-      </div>
-    </div>
-    <div class="nav navbar-nav" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
+
+  <!-- Navigation Section -->
+  <div class="nav navbar-nav-wrapper">
+    <div class="navbar-nav" routerLinkActive="active-link" [routerLinkActiveOptions]="{ exact: true }">
       <a
         class="nav-item nav-link"
         [routerLinkActive]="['active']"
@@ -29,18 +15,77 @@
         [routerLinkActiveOptions]="{ exact: true }"
         >Home</a
       >
-      <!-- <a class="nav-item nav-link" [routerLinkActive]="['active']"
-                routerLink="/indicator/{{indicator.viewname.split('qa_')[1]}}/id"
-                *ngFor="let indicator of indicatorsName; index as i">{{indicator.name}}</a> -->
-      <a
-        class="nav-item nav-link"
-        [routerLinkActive]="['active']"
-        [routerLinkActiveOptions]="{ exact: true }"
-        routerLink="/indicator/{{ indicator.indicator.view_name.split('qa_')[1] }}/{{ indicator.indicator.primary_field }}"
-        [ngClass]="{ active: getCurrentRouteIndicator(indicator.indicator.view_name.split('qa_')[1], indicator.indicator.primary_field) }"
-        *ngFor="let indicator of indicators; index as i"
-        >{{ indicator.indicator.name }} <i *ngIf="indicator.indicator.is_leader" class="icon-lead-assessor"></i
-      ></a>
+      <!-- Outputs Group -->
+      <div class="nav-dropdown-container" *ngIf="hasIndicatorsInLevel('Output')">
+        <a class="nav-item nav-link dropdown-trigger">Outputs</a>
+        <div class="nav-dropdown-menu">
+          <a
+            class="nav-dropdown-item"
+            [routerLinkActive]="['active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLink="/indicator/{{ indicator.indicator.view_name.split('qa_')[1] }}/{{ indicator.indicator.primary_field }}"
+            [ngClass]="{ active: getCurrentRouteIndicator(indicator.indicator.view_name.split('qa_')[1], indicator.indicator.primary_field) }"
+            *ngFor="let indicator of getIndicatorsByLevel('Output')"
+            >{{ indicator.indicator.name }} <i *ngIf="indicator.indicator.is_leader" class="icon-lead-assessor"></i
+          ></a>
+        </div>
+      </div>
+      <!-- Outcomes Group -->
+      <div class="nav-dropdown-container" *ngIf="hasIndicatorsInLevel('Outcome')">
+        <a class="nav-item nav-link dropdown-trigger">Outcomes</a>
+        <div class="nav-dropdown-menu">
+          <a
+            class="nav-dropdown-item"
+            [routerLinkActive]="['active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLink="/indicator/{{ indicator.indicator.view_name.split('qa_')[1] }}/{{ indicator.indicator.primary_field }}"
+            [ngClass]="{ active: getCurrentRouteIndicator(indicator.indicator.view_name.split('qa_')[1], indicator.indicator.primary_field) }"
+            *ngFor="let indicator of getIndicatorsByLevel('Outcome')"
+            >{{ indicator.indicator.name }} <i *ngIf="indicator.indicator.is_leader" class="icon-lead-assessor"></i
+          ></a>
+        </div>
+      </div>
+      <!-- Innovation Packages Group -->
+      <div class="nav-dropdown-container" *ngIf="hasIndicatorsInLevel('Innovation Packages')">
+        <a class="nav-item nav-link dropdown-trigger">Innovation Packages</a>
+        <div class="nav-dropdown-menu">
+          <a
+            class="nav-dropdown-item"
+            [routerLinkActive]="['active']"
+            [routerLinkActiveOptions]="{ exact: true }"
+            routerLink="/indicator/{{ indicator.indicator.view_name.split('qa_')[1] }}/{{ indicator.indicator.primary_field }}"
+            [ngClass]="{ active: getCurrentRouteIndicator(indicator.indicator.view_name.split('qa_')[1], indicator.indicator.primary_field) }"
+            *ngFor="let indicator of getIndicatorsByLevel('Innovation Packages')"
+            >{{ indicator.indicator.name }} <i *ngIf="indicator.indicator.is_leader" class="icon-lead-assessor"></i
+          ></a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- User Section -->
+  <div *ngIf="currentUser" class="user-menu-container">
+    <div class="user-menu-trigger" (click)="toggleUserMenu()">
+      <div class="user-avatar">{{ getInitials(currentUser.name) }}</div>
+      <div class="user-info">
+        <span class="user-name">{{ currentUser.name }}</span>
+        <span class="user-email">{{ currentUser.email }}</span>
+      </div>
+      <i class="icon-expand-right" [class.rotated]="userMenuOpen"></i>
+    </div>
+    <div class="user-menu-dropdown" *ngIf="userMenuOpen" (click)="$event.stopPropagation()">
+      <div class="user-menu-header">
+        <div class="user-avatar-large">{{ getInitials(currentUser.name) }}</div>
+        <div class="user-details">
+          <span class="user-name-full">{{ currentUser.name }}</span>
+          <span class="user-email-full">{{ currentUser.email }}</span>
+        </div>
+      </div>
+      <div class="user-menu-divider"></div>
+      <div class="user-menu-item" (click)="logout()">
+        <i class="icon-log-out"></i>
+        <span>Sign out</span>
+      </div>
     </div>
   </div>
 </nav>
