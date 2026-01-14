@@ -30,7 +30,7 @@
               name="program"
               formControlName="program" />
             <label class="custom-control-label" for="program-{{ program.id }}">
-              {{ program.acronym === '' || program.acronym === ' ' ? program.name : program.acronym }}
+              {{ program.crp_id + ' - ' + program.name}}
               {{ getPendings(program) }}
             </label>
           </div>
@@ -126,18 +126,22 @@
     </div>
   </div>
   <div class="col col-progress">
-    <div class="row mini-header" style="padding: 0 15px">
-      <!-- <button class="css-button-3d--sand" (click)="goToPDF('AR')">
-        <span class="material-icons-round icon">description</span>Technical report guidance
-      </button> -->
-      <button class="css-button-3d--sand" (click)="goToPDF('ASSESSORS_GUIDANCE')">
-        <span class="material-icons-round icon">description</span>2024 Assessor Guidance
-      </button>
-    </div>
-    <div class="row" style="padding: 0 15px">
-      <p class="card-title col-9">Progress by Assessors</p>
-
-      <button type="button" class="btn btn-success col-3" (click)="downloadRawComments()">Download comments and assessment status</button>
+    <div class="dashboard-top-section">
+      <div class="dashboard-top-content">
+        <div class="dashboard-title-section">
+          <h2 class="dashboard-main-title">Progress by Assessors</h2>
+        </div>
+        <div class="dashboard-actions-section">
+          <button class="btn-top-action" (click)="goToPDF('ASSESSORS_GUIDANCE')">
+            <span class="material-icons-round icon">description</span>
+            <span>2024 Assessor Guidance</span>
+          </button>
+          <button type="button" class="btn-download-primary" (click)="downloadRawComments()">
+            <span class="material-icons-round icon">download</span>
+            <span>Download Comments</span>
+          </button>
+        </div>
+      </div>
     </div>
     <div class="card">
       <div class="card-body">
