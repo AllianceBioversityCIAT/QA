@@ -6,8 +6,10 @@
   gap: 2rem;
   align-items: center;
   padding: 3rem 1.5rem 2rem 1.5rem;
-  background-color: #f2f2f2;
-  border-radius: 6px;
+  background-color: var(--white);
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-primary);
   margin-bottom: 1rem;
   position: relative;
   flex-wrap: wrap;
@@ -75,10 +77,22 @@ p {
 
 ::ng-deep .p-button {
   padding: 0.5rem 0.75rem;
-  border-radius: 6px;
-  box-shadow: none;
+  border-radius: var(--border-radius-md);
+  box-shadow: var(--shadow-sm);
+  transition: all var(--transition-base);
+  &:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-1px);
+  }
 }
 
 ::ng-deep .p-inputtext {
   padding: 0.5rem 0.75rem;
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--gray-primary);
+  transition: all var(--transition-base);
+  &:focus {
+    border-color: var(--blue-primary);
+    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+  }
 }

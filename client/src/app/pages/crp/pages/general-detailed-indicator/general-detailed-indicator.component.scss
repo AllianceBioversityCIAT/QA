@@ -756,11 +756,12 @@
   }
 }
 
-.cgiar-logo {
+.cgiar-logo-img {
   height: 30px;
-  width: 30px;
+  width: auto;
   display: flex;
   align-items: center;
+  object-fit: contain;
 }
 
 .dropdown-item {

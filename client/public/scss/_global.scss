@@ -124,9 +124,10 @@
   height: 1.1em;
   margin-left: 0.5em;
 }
-.cgiar-logo {
-  content: url('@public/icons/cgiar_logo.svg');
-}
+// Logo antiguo - ahora se usa logo.webp directamente en los componentes
+// .cgiar-logo {
+//   content: url('@public/icons/cgiar_logo.svg');
+// }
 
 .chat-icon {
   content: url('@public/icons/chat-icon.svg');

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthenticationService } from '../../services/authentication.service';
@@ -11,6 +11,7 @@ import { GeneralStatus } from '../../_models/general-status.model';
 import { filter, pairwise } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TawkToComponent } from '../../tawk-to/tawk-to.component';
+import { ButtonModule } from 'primeng/button';
 
 // import { filter, pairwise } from 'rxjs'
 
@@ -37,17 +38,25 @@ export class HeaderBarComponent implements OnInit {
     isOpen: false
   };
 
+  userMenuOpen = false;
+
   indicatorsName = [
-    { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
-    { name: 'Other Outcome', viewname: 'qa_other_outcome' },
-    { name: 'Other Output', viewname: 'qa_other_output' },
-    { name: 'Cap Sharing', viewname: 'qa_capdev' },
-    { name: 'Knowledge Product', viewname: 'qa_knowledge_product' },
-    { name: 'Innovation Development', viewname: 'qa_innovation_development' },
-    { name: 'Policy Change', viewname: 'qa_policy_change' },
-    { name: 'Innovation Use', viewname: 'qa_innovation_use' },
-    { name: 'Innovation Use (IPSR)', viewname: 'qa_innovation_use_ipsr' }
+    { name: 'Impact Contribution', viewname: 'qa_impact_contribution', level: '' },
+    { name: 'Other Outcome', viewname: 'qa_other_outcome', level: 'Outcome' },
+    { name: 'Other Output', viewname: 'qa_other_output', level: 'Output' },
+    { name: 'Cap Sharing', viewname: 'qa_capdev', level: 'Output' },
+    { name: 'Knowledge Product', viewname: 'qa_knowledge_product', level: 'Output' },
+    { name: 'Innovation Development', viewname: 'qa_innovation_development', level: 'Output' },
+    { name: 'Policy Change', viewname: 'qa_policy_change', level: 'Outcome' },
+    { name: 'Innovation Use', viewname: 'qa_innovation_use', level: 'Outcome' },
+    { name: 'Innovation Use (IPSR)', viewname: 'qa_innovation_use_ipsr', level: 'Innovation Packages' }
   ];
+
+  groupedIndicators = {
+    'Output': [],
+    'Outcome': [],
+    'Innovation Packages': []
+  };
 
   constructor(
     private activeRoute: ActivatedRoute,
@@ -101,12 +110,38 @@ export class HeaderBarComponent implements OnInit {
       // this.currentUserID = this.currentUser.id;
       this.getHeaderLinks();
     }
-    // this.indicators = this.authenticationService.userHeaders;
+    
+    // If indicators are already loaded from authentication service, use them
+    if (this.authenticationService.userHeaders && this.authenticationService.userHeaders.length > 0) {
+      this.indicators = [...this.authenticationService.userHeaders];
+      this.groupIndicatorsByLevel();
+    }
     // console.log('NAV INDICATORS', this.indicators);
   }
 
   getIndicators() {
     // console.log('NAV INDICATORS', this.indicators);
+  }
+
+  toggleUserMenu() {
+    this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-menu-container')) {
+      this.userMenuOpen = false;
+    }
   }
 
   goToAssessorsChat() {
@@ -122,6 +157,7 @@ export class HeaderBarComponent implements OnInit {
           // console.log("getHeaderLinks", res);
           this.indicators = res.data.filter(indicator => (indicator.indicator.type = indicator.indicator.name.toLocaleLowerCase()));
           this.authenticationService.userHeaders = [...this.indicators];
+          this.groupIndicatorsByLevel();
 
           if (this.currentRole == 'admin') {
             //Remove last indicator (AICCRA)
@@ -134,7 +170,41 @@ export class HeaderBarComponent implements OnInit {
           this.alertService.error(error);
         }
       );
+    } else if (this.indicators && this.indicators.length) {
+      this.groupIndicatorsByLevel();
     }
+  }
+
+  groupIndicatorsByLevel() {
+    // Reset grouped indicators
+    this.groupedIndicators = {
+      'Output': [],
+      'Outcome': [],
+      'Innovation Packages': []
+    };
+
+    // Group indicators by level
+    this.indicators.forEach(indicator => {
+      const indicatorName = indicator.indicator.name;
+      const indicatorMapping = this.indicatorsName.find(
+        item => item.name === indicatorName || item.viewname === indicator.indicator.view_name
+      );
+
+      if (indicatorMapping && indicatorMapping.level) {
+        const level = indicatorMapping.level;
+        if (this.groupedIndicators[level]) {
+          this.groupedIndicators[level].push(indicator);
+        }
+      }
+    });
+  }
+
+  getIndicatorsByLevel(level: string) {
+    return this.groupedIndicators[level] || [];
+  }
+
+  hasIndicatorsInLevel(level: string): boolean {
+    return this.getIndicatorsByLevel(level).length > 0;
   }
 
   isCRP() {
