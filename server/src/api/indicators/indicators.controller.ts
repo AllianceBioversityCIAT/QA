@@ -24,10 +24,6 @@ import { RolesHandler } from '../../shared/enum/roles-handler.enum';
 import { RolesGuard } from '../../shared/guards/role.guard';
 
 @ApiTags('Indicators')
-@ApiHeader({
-  name: 'authorization',
-  description: 'Bearer token',
-})
 @Controller()
 export class IndicatorsController {
   constructor(private readonly indicatorsService: IndicatorsService) {}

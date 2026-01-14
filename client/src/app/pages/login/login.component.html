@@ -2,7 +2,7 @@
   <div class="login-card">
     <div class="login-form">
       <div class="logo-section">
-        <img src="/img/logo.webp" alt="CGIAR and PRMS logo" width="100px" />
+        <img src="/icons/cgiar_logo.svg" alt="CGIAR and PRMS logo" width="100px" />
       </div>
 
       @if (!cognito.requiredChangePassword()) {
@@ -12,7 +12,7 @@
           class="signin-btn"
           (click)="this.cognito.loginWithAzureAd()"
           [disabled]="cognito.isLoadingAzureAd() || cognito.isLoadingCredentials()">
-          <img src="/img/logo.webp" alt="CGIAR" class="cgiar-icon" />
+          <img src="/icons/cgiar_logo.svg" alt="CGIAR" class="cgiar-icon" />
 
           Continue with your CGIAR account
 

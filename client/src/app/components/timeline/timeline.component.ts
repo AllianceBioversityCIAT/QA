@@ -50,7 +50,7 @@ export class TimelineComponent implements OnInit {
     if (batch.assessors_start_date && batch.assessors_end_date) {
       steps.push({
         id: 'assessors',
-        label: 'ROUND 1',
+        label: 'STEP 1',
         title: 'QA Platform opens for assessors',
         startDate: batch.assessors_start_date,
         endDate: batch.assessors_end_date,
@@ -62,7 +62,7 @@ export class TimelineComponent implements OnInit {
     if (batch.idts_start_date && batch.idts_end_date) {
       steps.push({
         id: 'idts',
-        label: 'ROUND 2',
+        label: 'STEP 2',
         title: 'QA Platform opens for SP/A',
         startDate: batch.idts_start_date,
         endDate: batch.idts_end_date,
@@ -74,7 +74,7 @@ export class TimelineComponent implements OnInit {
     if (batch.lead_assesor_start_date) {
       steps.push({
         id: 'lead-assessor',
-        label: 'ROUND 3',
+        label: 'STEP 3',
         title: 'QA Platform opens for Lead assessor',
         startDate: batch.lead_assesor_start_date,
         endDate: batch.lead_assesor_end_date || null,
@@ -86,7 +86,7 @@ export class TimelineComponent implements OnInit {
     if (batch.tpb_start_date && batch.tpb_end_date) {
       steps.push({
         id: 'tpb',
-        label: 'ROUND 4',
+        label: 'STEP 4',
         title: 'QA Platform opens for TP-Broker',
         startDate: batch.tpb_start_date,
         endDate: batch.tpb_end_date,
@@ -98,7 +98,7 @@ export class TimelineComponent implements OnInit {
     if (batch.ppu_start_date) {
       steps.push({
         id: 'ppu',
-        label: 'ROUND 5',
+        label: 'STEP 5',
         title: 'QA Platform opens for PPU',
         startDate: batch.ppu_start_date,
         endDate: batch.ppu_end_date || null,
