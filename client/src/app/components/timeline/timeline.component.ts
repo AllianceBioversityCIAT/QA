@@ -122,6 +122,20 @@ export class TimelineComponent implements OnInit {
     }
   }
 
+  getConnectorState(index: number): 'completed' | 'transition' | 'pending' {
+    if (index >= this.steps.length - 1) {
+      return 'pending';
+    }
+    const currentStep = this.steps[index];
+    if (currentStep.state === 'completed') {
+      return 'completed';
+    } else if (currentStep.state === 'in_progress') {
+      return 'transition';
+    } else {
+      return 'pending';
+    }
+  }
+
   formatDateRange(startDate: Date | string, endDate: Date | string | null): string {
     const start = moment.default(startDate).format('YYYY-MM-DD');
     if (endDate) {
@@ -142,5 +156,4 @@ export class TimelineComponent implements OnInit {
     const dateRange = this.formatDateRange(step.startDate, step.endDate);
     return `${step.label} - ${step.title} - ${step.state} - ${dateRange}`;
   }
-
 }

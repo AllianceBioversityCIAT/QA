@@ -39,75 +39,39 @@
     }
   }
 
-  .timeline-track-container {
+  .timeline-wrapper {
     position: relative;
     width: 100%;
   }
 
-  .timeline-track {
+  // Track base (pending background)
+  .track-base {
     position: absolute;
     top: 20px;
     left: 0;
     right: 0;
     height: 4px;
-    display: flex;
+    background-color: #e0e0e0;
     z-index: 1;
   }
 
-  .timeline-track-segment {
-    flex: 1;
-    height: 100%;
-    background-color: #e0e0e0;
-    transition: background-color 0.3s ease;
+  // Steps container
+  .timeline-steps-container {
     position: relative;
-
-    // Remove margin between segments for continuous line
-    &:not(:last-child) {
-      margin-right: 0;
-    }
-
-    &.completed {
-      background-color: #28a745;
-    }
-
-    &.in-progress {
-      background-color: #007bff;
-    }
-
-    &.upcoming {
-      background-color: #e0e0e0;
-    }
-
-    &.dashed {
-      background: repeating-linear-gradient(
-        to right,
-        #007bff 0,
-        #007bff 8px,
-        transparent 8px,
-        transparent 16px
-      ) !important;
-    }
-  }
-
-  .timeline-steps {
     display: flex;
-    justify-content: space-between;
     align-items: flex-start;
-    gap: 0.75rem;
-    position: relative;
+    width: 100%;
     z-index: 2;
-    flex-wrap: wrap;
   }
 
   .timeline-step {
     flex: 1;
-    min-width: 160px;
-    max-width: 200px;
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     position: relative;
-    padding-top: 0;
+    overflow: visible;
 
     &.clickable {
       cursor: pointer;
@@ -117,6 +81,8 @@
       position: relative;
       z-index: 3;
       margin-bottom: 0.75rem;
+      display: flex;
+      justify-content: flex-start;
     }
 
     .step-circle {
@@ -128,6 +94,9 @@
       justify-content: center;
       border: 3px solid white;
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+      background-color: white;
+      position: relative;
+      z-index: 4;
 
       &.completed {
         background-color: #28a745;
@@ -149,6 +118,34 @@
       }
     }
 
+    // Connector: connects from center of current circle to center of next circle
+    .connector {
+      position: absolute;
+      top: 20px;
+      left: 20px; // Start from center of current circle (20px = half of 40px)
+      right: -20px; // Extend to center of next circle (20px = half of 40px)
+      height: 4px;
+      z-index: 2;
+
+      &.completed {
+        background-color: #28a745;
+      }
+
+      &.transition {
+        background: repeating-linear-gradient(
+          to right,
+          #007bff 0,
+          #007bff 8px,
+          transparent 8px,
+          transparent 16px
+        );
+      }
+
+      &.pending {
+        background-color: transparent; // Shows track-base through
+      }
+    }
+
     .card-content {
       display: flex;
       flex-direction: column;
@@ -157,6 +154,7 @@
       gap: 0.5rem;
       width: 100%;
       padding-top: 0.5rem;
+      max-width: 200px;
     }
 
     .card-label {
@@ -241,38 +239,20 @@
       }
     }
 
-    .timeline-track-container {
+    .timeline-wrapper {
       padding-left: 20px;
     }
 
-    .timeline-track {
+    .track-base {
       left: 20px;
       top: 0;
       bottom: 0;
       width: 4px;
       height: auto;
-      flex-direction: column;
       right: auto;
     }
 
-    .timeline-track-segment {
-      width: 100%;
-      height: auto;
-      min-height: 60px;
-      flex: 1;
-
-      &.dashed {
-        background: repeating-linear-gradient(
-          to bottom,
-          #007bff 0,
-          #007bff 8px,
-          transparent 8px,
-          transparent 16px
-        );
-      }
-    }
-
-    .timeline-steps {
+    .timeline-steps-container {
       flex-direction: column;
       align-items: flex-start;
       gap: 1.5rem;
@@ -282,8 +262,6 @@
       flex-direction: row;
       align-items: flex-start;
       width: 100%;
-      min-width: 100%;
-      max-width: 100%;
       gap: 1rem;
 
       .step-indicator {
@@ -291,13 +269,34 @@
         flex-shrink: 0;
       }
 
+      .connector {
+        left: 20px;
+        top: 40px;
+        right: auto;
+        bottom: -1.5rem;
+        width: 4px;
+        height: auto;
+        min-height: 1.5rem;
+
+        &.transition {
+          background: repeating-linear-gradient(
+            to bottom,
+            #007bff 0,
+            #007bff 8px,
+            transparent 8px,
+            transparent 16px
+          );
+        }
+      }
+
       .card-content {
         flex: 1;
         min-width: 0;
-      }
+        max-width: none;
 
-      .card-title {
-        -webkit-line-clamp: 3;
+        .card-title {
+          -webkit-line-clamp: 3;
+        }
       }
     }
   }
@@ -306,8 +305,9 @@
 // Tablet adjustments
 @media (min-width: 768px) and (max-width: 1024px) {
   .timeline-step {
-    min-width: 160px;
-    max-width: 200px;
+    .card-content {
+      max-width: 180px;
+    }
   }
 }
 

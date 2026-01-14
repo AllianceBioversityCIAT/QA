@@ -7,61 +7,62 @@
     </h3>
   </header>
 
-  <div class="timeline-track-container">
-      <!-- Horizontal track line -->
-      <div class="timeline-track">
-        <div class="timeline-track-segment" 
-             *ngFor="let step of steps; let i = index"
-             [class.completed]="step.state === 'completed'"
-             [class.in-progress]="step.state === 'in_progress'"
-             [class.upcoming]="step.state === 'upcoming'"
-             [class.dashed]="step.state === 'in_progress' && i < steps.length - 1 && steps[i + 1]?.state !== 'in_progress'">
+  <div class="timeline-wrapper">
+    <!-- Track base (pending background) -->
+    <div class="track-base"></div>
+
+    <!-- Steps container with connectors -->
+    <div class="timeline-steps-container">
+      <div 
+        class="timeline-step"
+        *ngFor="let step of steps; let i = index"
+        [class.completed]="step.state === 'completed'"
+        [class.in-progress]="step.state === 'in_progress'"
+        [class.upcoming]="step.state === 'upcoming'"
+        [attr.aria-current]="step.state === 'in_progress' ? 'step' : null"
+        [attr.aria-label]="getAriaLabel(step)"
+        [class.clickable]="onStepClick"
+        (click)="onStepClick && handleStepClick(step)">
+        
+        <!-- Step circle -->
+        <div class="step-indicator">
+          <div class="step-circle completed" *ngIf="step.state === 'completed'">
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="step-circle in-progress" *ngIf="step.state === 'in_progress'">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
+              <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
+            </svg>
+          </div>
+          <div class="step-circle upcoming" *ngIf="step.state === 'upcoming'"></div>
         </div>
-      </div>
 
-      <!-- Steps container -->
-      <div class="timeline-steps">
+        <!-- Info card -->
+        <div class="card-content">
+          <div class="card-label">{{ step.label }}</div>
+          <h3 class="card-title" [title]="step.title">{{ step.title }}</h3>
+          <div class="card-date">{{ formatDateRange(step.startDate, step.endDate) }}</div>
+          <div class="card-status-pill" 
+               [class.completed]="step.state === 'completed'"
+               [class.in-progress]="step.state === 'in_progress'"
+               [class.upcoming]="step.state === 'upcoming'">
+            <span *ngIf="step.state === 'completed'">Completed</span>
+            <span *ngIf="step.state === 'in_progress'">In progress</span>
+            <span *ngIf="step.state === 'upcoming'">Upcoming</span>
+          </div>
+        </div>
+
+        <!-- Connector (except for last step) -->
         <div 
-          class="timeline-step"
-          *ngFor="let step of steps; let i = index"
-          [class.completed]="step.state === 'completed'"
-          [class.in-progress]="step.state === 'in_progress'"
-          [class.upcoming]="step.state === 'upcoming'"
-          [attr.aria-current]="step.state === 'in_progress' ? 'step' : null"
-          [attr.aria-label]="getAriaLabel(step)"
-          [class.clickable]="onStepClick"
-          (click)="onStepClick && handleStepClick(step)">
-          
-          <!-- Step dot/icon -->
-          <div class="step-indicator">
-            <div class="step-circle completed" *ngIf="step.state === 'completed'">
-              <svg width="12" height="12" viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 3L4.5 8.5L2 6" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
-            </div>
-            <div class="step-circle in-progress" *ngIf="step.state === 'in_progress'">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="white" xmlns="http://www.w3.org/2000/svg">
-                <path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>
-              </svg>
-            </div>
-            <div class="step-circle upcoming" *ngIf="step.state === 'upcoming'"></div>
-          </div>
-
-          <!-- Info content -->
-          <div class="card-content">
-            <div class="card-label">{{ step.label }}</div>
-            <h3 class="card-title" [title]="step.title">{{ step.title }}</h3>
-            <div class="card-date">{{ formatDateRange(step.startDate, step.endDate) }}</div>
-            <div class="card-status-pill" 
-                 [class.completed]="step.state === 'completed'"
-                 [class.in-progress]="step.state === 'in_progress'"
-                 [class.upcoming]="step.state === 'upcoming'">
-              <span *ngIf="step.state === 'completed'">Completed</span>
-              <span *ngIf="step.state === 'in_progress'">In progress</span>
-              <span *ngIf="step.state === 'upcoming'">Upcoming</span>
-            </div>
-          </div>
+          class="connector"
+          *ngIf="i < steps.length - 1"
+          [class.completed]="getConnectorState(i) === 'completed'"
+          [class.transition]="getConnectorState(i) === 'transition'"
+          [class.pending]="getConnectorState(i) === 'pending'">
         </div>
       </div>
     </div>
+  </div>
 </div>
