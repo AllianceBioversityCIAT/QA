@@ -5,7 +5,10 @@
   width: 100%;
   background-color: #f5f5f5;
   border-radius: 5px 5px 0 0;
-  margin-bottom: 2em;
+  margin-bottom: 2em !important;
+  margin-top: 0 !important;
+  display: block;
+  min-height: 200px; // Prevent layout shift on first load
 
   .timeline-header {
     display: flex;
@@ -133,7 +136,7 @@
 
       &.transition {
         background: repeating-linear-gradient(
-          to right,
+          120deg,
           #007bff 0,
           #007bff 8px,
           transparent 8px,

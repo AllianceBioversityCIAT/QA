@@ -67,9 +67,13 @@ export class AuthenticationService {
     console.log('user', user);
     const cookieName = user.crp == null ? this.usrCookie : this.crpUsrCookie;
 
+    // Clear previous user's cached data
+    this.userHeaders = [];
+    localStorage.removeItem('indicators');
+
     let currentUsr = this.parseIndicators(user);
     delete currentUsr.password;
-    this.userHeaders = user.indicators;
+    this.userHeaders = user.indicators || [];
     this.markCyclesEnd(currentUsr);
 
     localStorage.setItem(cookieName, JSON.stringify(currentUsr));
@@ -172,10 +176,23 @@ export class AuthenticationService {
   logout() {
     this.logOutTawtkTo();
 
+    // Clear all cached user data
+    this.userHeaders = [];
+    
+    // Remove all user-specific data from localStorage
     localStorage.removeItem('indicators');
+    localStorage.removeItem('indicatorsCRP');
     localStorage.removeItem(this.usrCookie);
+    localStorage.removeItem(this.crpUsrCookie);
+    
+    // Clear all localStorage (this ensures nothing is left behind)
     localStorage.clear();
+    
+    // Clear cookies
     this.cookiesService.delete(this.usrCookie);
+    this.cookiesService.delete(this.crpUsrCookie);
+    
+    // Clear user subject
     this.currentUserSubject.next(null);
   }
 

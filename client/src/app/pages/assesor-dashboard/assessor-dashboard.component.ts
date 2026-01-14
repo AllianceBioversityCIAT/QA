@@ -55,7 +55,7 @@ export default class AssessorDashboardComponent implements OnInit {
   selectedIndicator = 'qa_knowledge_product';
   dataSelected: any;
   indicatorData: any;
-  feedList: [];
+  feedList: any[];
   itemStatusByIndicator = {};
   indicator_status: string = 'indicators_status';
   highlightedData = [];
@@ -149,15 +149,22 @@ export default class AssessorDashboardComponent implements OnInit {
   }
 
   loadDashData() {
-    let responses = forkJoin([
+    const requests = [
       this.getDashData(),
       this.getCommentStats(),
       this.getAllTags(),
       this.getItemStatusByIndicatorService(this.selectedIndicator),
       this.dashService.getHighlightedData(this.selectedActionArea)
-    ]);
+    ];
+
+    // Add feed request if cycle is round 2
+    if (this.currentUser?.cycle?.id == 2) {
+      requests.push(this.getFeedTags(this.selectedIndicator));
+    }
+
+    let responses = forkJoin(requests);
     responses.subscribe(res => {
-      const [dashData, commentsStats, allTags, assessmentByField, highlightData] = res;
+      const [dashData, commentsStats, allTags, assessmentByField, highlightData, feedTags] = res;
       if (dashData.data) {
         this.dashboardData = this.dashService.groupData(dashData.data);
         this.dataSelected = this.dashboardData[this.selectedIndicator];
@@ -174,6 +181,10 @@ export default class AssessorDashboardComponent implements OnInit {
 
       if (highlightData) {
         this.highlightedData = highlightData.data;
+      }
+
+      if (feedTags && this.currentUser?.cycle?.id == 2) {
+        this.feedList = feedTags.data;
       }
 
       if (dashData.data && commentsStats.data && allTags.data) this.updateDataCharts();
@@ -198,16 +209,36 @@ export default class AssessorDashboardComponent implements OnInit {
     this.selectedActionArea = null;
     this.changeActionArea(null);
 
-    this.selectedIndicator = indicator?.viewname;
+    // Handle both object and string cases
+    if (typeof indicator === 'string') {
+      this.selectedIndicator = indicator;
+    } else if (indicator?.viewname) {
+      this.selectedIndicator = indicator.viewname;
+    } else {
+      // If indicator is the selected value from dropdown
+      this.selectedIndicator = indicator || this.selectedIndicator;
+    }
+
     this.dataSelected = this.dashboardData[this.selectedIndicator];
 
     this.showSpinner();
 
-    let responses = forkJoin([this.getItemStatusByIndicatorService(this.selectedIndicator)]);
+    const requests = [this.getItemStatusByIndicatorService(this.selectedIndicator)];
+    
+    // Add feed request if cycle is round 2
+    if (this.currentUser?.cycle?.id == 2) {
+      requests.push(this.getFeedTags(this.selectedIndicator));
+    }
+
+    let responses = forkJoin(requests);
     responses.subscribe(res => {
-      const [assessmentByField] = res;
+      const [assessmentByField, feedTags] = res;
 
       this.itemStatusByIndicator = assessmentByField.data;
+
+      if (feedTags && this.currentUser?.cycle?.id == 2) {
+        this.feedList = feedTags.data;
+      }
 
       this.updateDataCharts();
 

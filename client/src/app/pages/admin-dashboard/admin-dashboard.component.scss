@@ -1,5 +1,31 @@
 @import '@public/variables.scss';
 
+// Host component padding to prevent content from sticking to edges
+:host {
+  display: block;
+  padding: 2rem 1.5rem;
+  width: 100%;
+  box-sizing: border-box;
+
+  @media (max-width: 768px) {
+    padding: 1.5rem 1rem;
+  }
+}
+
+// Ensure timeline has proper spacing
+app-timeline {
+  display: block;
+  width: 100%;
+  margin-bottom: 2em;
+  margin-top: 0;
+  
+  // Ensure timeline container has proper spacing even on first load
+  .timeline-container {
+    margin-bottom: 2em !important;
+    margin-top: 0 !important;
+  }
+}
+
 .btn-assessors-chat {
   position: fixed;
   right: 2em;
