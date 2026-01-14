@@ -101,13 +101,15 @@ export class HeaderBarComponent implements OnInit {
   }
 
   ngOnInit() {
-    // this.indicators = [];
+    // Reset indicators when user changes
     if (this.currentUserID != this.currentUser?.id) {
-      this.currentUserID = this.currentUser.id;
-      // this.indicators = [];
+      this.currentUserID = this.currentUser?.id;
+      this.indicators = [];
+      // Clear cached indicators from previous user
+      this.authenticationService.userHeaders = [];
+      localStorage.removeItem('indicators');
       this.getHeaderLinks();
-    } else {
-      // this.currentUserID = this.currentUser.id;
+    } else if (this.currentUser) {
       this.getHeaderLinks();
     }
     // console.log('NAV INDICATORS', this.indicators);
@@ -145,8 +147,17 @@ export class HeaderBarComponent implements OnInit {
   getHeaderLinks() {
     // console.log('GET HEADER LINKS OUT');
 
-    // If indicators are already loaded from authentication service, use them
-    if (this.authenticationService.userHeaders && this.authenticationService.userHeaders.length > 0) {
+    // Verify that cached indicators belong to current user
+    const cachedIndicators = localStorage.getItem('indicators');
+    const currentUserId = this.currentUser?.id;
+    const shouldUseCache = cachedIndicators && 
+                          this.authenticationService.userHeaders && 
+                          this.authenticationService.userHeaders.length > 0 &&
+                          this.indicators && 
+                          this.indicators.length > 0;
+
+    // If indicators are already loaded from authentication service and belong to current user, use them
+    if (shouldUseCache && this.currentUserID === currentUserId) {
       this.indicators = [...this.authenticationService.userHeaders];
       // Save to localStorage for AvailableGuard
       localStorage.setItem('indicators', JSON.stringify(this.indicators));
@@ -155,7 +166,12 @@ export class HeaderBarComponent implements OnInit {
     }
 
     // Load indicators if not already loaded and user is not CRP
-    if (this.currentUser && !this.isCRP() && (!this.indicators || !this.indicators.length)) {
+    if (this.currentUser && !this.isCRP() && (!this.indicators || !this.indicators.length || this.currentUserID !== currentUserId)) {
+      // Clear old indicators before loading new ones
+      this.indicators = [];
+      this.authenticationService.userHeaders = [];
+      localStorage.removeItem('indicators');
+      
       this.indicatorService.getIndicatorsByUser(this.currentUser.id).subscribe(
         res => {
           // console.log("getHeaderLinks", res);
@@ -176,8 +192,8 @@ export class HeaderBarComponent implements OnInit {
           this.alertService.error(error);
         }
       );
-    } else if (this.indicators && this.indicators.length) {
-      // Save to localStorage if indicators are already loaded
+    } else if (this.indicators && this.indicators.length && this.currentUserID === currentUserId) {
+      // Save to localStorage if indicators are already loaded and belong to current user
       localStorage.setItem('indicators', JSON.stringify(this.indicators));
       this.groupIndicatorsByLevel();
     }
