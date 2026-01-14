@@ -1,12 +1,19 @@
+CREATE DEFINER = `prmsadmin` @`%` PROCEDURE `qadb`.`qa_update_indicator_ipsr`() BEGIN DECLARE start_time TIMESTAMP;
+
+SET
+    start_time = SYSDATE();
+
 SET
     SQL_SAFE_UPDATES = 0;
 
 SET
-    group_concat_max_len = 2000000;
+    SESSION group_concat_max_len = 2000000;
 
--- POLICY CHANGE
+-- * POLICY CHANGE
+CREATE TABLE qa_policy_change_data_tmp LIKE qa_policy_change_data;
+
 INSERT INTO
-    qa_policy_change_data_initial (
+    qa_policy_change_data_tmp (
         id,
         crp_id,
         phase_name,
@@ -86,21 +93,53 @@ SELECT
     cc.stage,
     cc.implementing_organizations
 FROM
-    qa_policy_change_view cc
+    qa_policy_change_view cc;
+
+DELETE FROM
+    qa_policy_change_data qa
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_policy_change'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_policy_change_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_policy_change_data
+SELECT
+    *
+FROM
+    qa_policy_change_data_tmp cc
+WHERE
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_policy_change_data_initial qa
+            qa_policy_change_data qa
         WHERE
             qa.id = cc.id
     );
 
--- INOOVATION USE
+DROP TABLE qa_policy_change_data_tmp;
+
+-- * INNO USE
+CREATE TABLE qa_innovation_use_data_tmp LIKE qa_innovation_use_data;
+
 INSERT INTO
-    qa_innovation_use_data_initial (
+    qa_innovation_use_data_tmp (
         id,
         crp_id,
         phase_name,
@@ -180,103 +219,53 @@ SELECT
     cc.other_quantitative,
     cc.innovation_linked
 FROM
-    qa_innovation_use_view cc
-WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
-        SELECT
-            1
-        FROM
-            qa_innovation_use_data_initial qa
-        WHERE
-            qa.id = cc.id
-    );
+    qa_innovation_use_view cc;
 
--- OTHER OUTCOME
-INSERT INTO
-    qa_other_outcome_data_initial (
-        id,
-        crp_id,
-        phase_name,
-        phase_year,
-        included_AR,
-        is_active,
-        submitted,
-        version,
-        is_replicated,
-        in_qa,
-        result_code,
-        result_level,
-        result_type,
-        new_or_updated_result,
-        title,
-        description,
-        lead_contact_person,
-        lead_center_or_partner,
-        gender_tag_level,
-        climate_change_level,
-        nutrition_tag_level,
-        environmental_biodiversity_tag_level,
-        poverty_tag_level,
-        contributing_initiatives,
-        contributing_non_pooled_project,
-        contributing_centers,
-        toc_planned,
-        partners,
-        geographic_focus,
-        regions,
-        countries,
-        evidence
+DELETE FROM
+    qa_innovation_use_data qa
+WHERE
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_innovation_use'
     )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_innovation_use_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_innovation_use_data
 SELECT
-    cc.id,
-    cc.crp_id,
-    cc.phase_name,
-    cc.phase_year,
-    cc.included_AR,
-    cc.is_active,
-    cc.submitted,
-    cc.version,
-    cc.is_replicated,
-    cc.in_qa,
-    cc.result_code,
-    cc.result_level,
-    cc.result_type,
-    cc.new_or_updated_result,
-    cc.title,
-    cc.description,
-    cc.lead_contact_person,
-    cc.lead_center_or_partner,
-    cc.gender_tag_level,
-    cc.climate_change_level,
-    cc.nutrition_tag_level,
-    cc.environmental_biodiversity_tag_level,
-    cc.poverty_tag_level,
-    cc.contributing_initiatives,
-    cc.contributing_non_pooled_project,
-    cc.contributing_centers,
-    cc.toc_planned,
-    cc.partners,
-    cc.geographic_focus,
-    cc.regions,
-    cc.countries,
-    cc.evidence
+    *
 FROM
-    qa_other_outcome_view cc
+    qa_innovation_use_data_tmp cc
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_other_outcome_data_initial qa
+            qa_innovation_use_data qa
         WHERE
             qa.id = cc.id
     );
 
--- CAP SHARING
+DROP TABLE qa_innovation_use_data_tmp;
+
+-- * CAP SHARING
+CREATE TABLE qa_capdev_data_tmp LIKE qa_capdev_data;
+
 INSERT INTO
-    qa_capdev_data_initial (
+    qa_capdev_data_tmp (
         id,
         crp_id,
         phase_name,
@@ -352,21 +341,53 @@ SELECT
     cc.capdev_delivery_method,
     cc.trainees_attending_on_behalf_of_an_organization
 FROM
-    qa_capdev_view cc
+    qa_capdev_view cc;
+
+DELETE FROM
+    qa_capdev_data qa
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_capdev'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_capdev_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_capdev_data
+SELECT
+    *
+FROM
+    qa_capdev_data_tmp cc
+WHERE
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_capdev_data_initial qa
+            qa_capdev_data qa
         WHERE
             qa.id = cc.id
     );
 
--- INNO DEV
+DROP TABLE qa_capdev_data_tmp;
+
+-- * INNO DEV
+CREATE TABLE qa_innovation_development_data_tmp LIKE qa_innovation_development_data;
+
 INSERT INTO
-    qa_innovation_development_data_initial (
+    qa_innovation_development_data_tmp (
         id,
         crp_id,
         phase_name,
@@ -411,6 +432,7 @@ INSERT INTO
         innovation_readiness_level_justification,
         questions,
         anticipated,
+        other_quantitative,
         initiatives_investment,
         npp_investment,
         partner_investment,
@@ -462,27 +484,60 @@ SELECT
     cc.innovation_readiness_level_justification,
     cc.questions,
     cc.anticipated,
+    cc.other_quantitative,
     cc.initiatives_investment,
     cc.npp_investment,
     cc.partner_investment,
     cc.pictures,
     cc.materials
 FROM
-    qa_innovation_development_view cc
+    qa_innovation_development_view cc;
+
+DELETE FROM
+    qa_innovation_development_data qa
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_innovation_development'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_innovation_development_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_innovation_development_data
+SELECT
+    *
+FROM
+    qa_innovation_development_data_tmp cc
+WHERE
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_innovation_development_data_initial qa
+            qa_innovation_development_data qa
         WHERE
             qa.id = cc.id
     );
 
--- OTHER OUTPUT
+DROP TABLE qa_innovation_development_data_tmp;
+
+-- * OTHER OUTPUT
+CREATE TABLE qa_other_output_data_tmp LIKE qa_other_output_data;
+
 INSERT INTO
-    qa_other_output_data_initial (
+    qa_other_output_data_tmp (
         id,
         crp_id,
         phase_name,
@@ -550,21 +605,53 @@ SELECT
     cc.countries,
     cc.evidence
 FROM
-    qa_other_output_view cc
+    qa_other_output_view cc;
+
+DELETE FROM
+    qa_other_output_data qa
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_other_output'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_other_output_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_other_output_data
+SELECT
+    *
+FROM
+    qa_other_output_data_tmp cc
+WHERE
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_other_output_data_initial qa
+            qa_other_output_data qa
         WHERE
             qa.id = cc.id
     );
 
--- IMPACT CONTRIBUTION
+DROP TABLE qa_other_output_data_tmp;
+
+-- * OTHER OUTCOME
+CREATE TABLE qa_other_outcome_data_tmp LIKE qa_other_outcome_data;
+
 INSERT INTO
-    qa_impact_contribution_data_initial (
+    qa_other_outcome_data_tmp (
         id,
         crp_id,
         phase_name,
@@ -632,21 +719,167 @@ SELECT
     cc.countries,
     cc.evidence
 FROM
-    qa_impact_contribution_view cc
+    qa_other_outcome_view cc;
+
+DELETE FROM
+    qa_other_outcome_data qa
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_other_outcome'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_other_outcome_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_other_outcome_data
+SELECT
+    *
+FROM
+    qa_other_outcome_data_tmp cc
+WHERE
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_impact_contribution_data_initial qa
+            qa_other_outcome_data qa
         WHERE
             qa.id = cc.id
     );
 
--- KNOWLEDGE PRODUCT
+DROP TABLE qa_other_outcome_data_tmp;
+
+-- * IMPACT CONTRIBUTION
+CREATE TABLE qa_impact_contribution_data_tmp LIKE qa_impact_contribution_data;
+
 INSERT INTO
-    qa_knowledge_product_data_initial (
+    qa_impact_contribution_data_tmp (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence
+FROM
+    qa_impact_contribution_view cc;
+
+DELETE FROM
+    qa_impact_contribution_data qa
+WHERE
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_impact_contribution'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_impact_contribution_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_impact_contribution_data
+SELECT
+    *
+FROM
+    qa_impact_contribution_data_tmp cc
+WHERE
+    NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_impact_contribution_data qa
+        WHERE
+            qa.id = cc.id
+    );
+
+DROP TABLE qa_impact_contribution_data_tmp;
+
+-- * KP
+CREATE TABLE qa_knowledge_product_data_tmp LIKE qa_knowledge_product_data;
+
+INSERT INTO
+    qa_knowledge_product_data_tmp (
         id,
         crp_id,
         phase_name,
@@ -748,20 +981,53 @@ SELECT
     cc.reusable,
     cc.online_date
 FROM
-    qa_knowledge_product_view cc
+    qa_knowledge_product_view cc;
+
+DELETE FROM
+    qa_knowledge_product_data qa
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    qa.phase_year = 2025
+    AND qa.id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_knowledge_product'
+    )
+    AND qa.id IN (
+        SELECT
+            cc.id
+        FROM
+            qa_knowledge_product_view cc
+        WHERE
+            cc.id = qa.id
+    );
+
+INSERT INTO
+    qa_knowledge_product_data
+SELECT
+    *
+FROM
+    qa_knowledge_product_data_tmp cc
+WHERE
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_knowledge_product_data_initial qa
+            qa_knowledge_product_data qa
         WHERE
             qa.id = cc.id
     );
 
+DROP TABLE qa_knowledge_product_data_tmp;
+
+-- * IPSR
+CREATE TABLE qa_innovation_use_ipsr_data_tmp LIKE qa_innovation_use_ipsr_data;
+
 INSERT INTO
-    qa_innovation_use_ipsr_data_initial (
+    qa_innovation_use_ipsr_data_tmp (
         phase_name,
         phase_year,
         included_AR,
@@ -811,7 +1077,7 @@ INSERT INTO
         core_innovation_measures
     )
 SELECT
-    DISTINCT cc.phase_name,
+    cc.phase_name,
     cc.phase_year,
     cc.included_AR,
     cc.is_active,
@@ -859,14 +1125,48 @@ SELECT
     cc.core_innovation_organizations,
     cc.core_innovation_measures
 FROM
-    qa_innovation_use_ipsr_view cc
+    qa_innovation_use_ipsr_view cc;
+
+DELETE FROM
+    qa_innovation_use_ipsr_data
 WHERE
-    cc.is_active = 1
-    AND NOT EXISTS (
+    phase_year = 2025
+    AND id IN (
+        SELECT
+            qe.indicator_view_id
+        FROM
+            qa_evaluations qe
+        WHERE
+            qe.batchDate >= actual_batch_date()
+            AND qe.indicator_view_name = 'qa_innovation_use_ipsr'
+    );
+
+INSERT INTO
+    qa_innovation_use_ipsr_data
+SELECT
+    *
+FROM
+    qa_innovation_use_ipsr_data_tmp cc
+WHERE
+    NOT EXISTS (
         SELECT
             1
         FROM
-            qa_innovation_use_ipsr_data_initial qa
+            qa_innovation_use_ipsr_data qa
         WHERE
             qa.id = cc.id
     );
+
+DROP TABLE qa_innovation_use_ipsr_data_tmp;
+
+-- Insert data logs
+INSERT INTO
+    qa_data_refresh_log
+SELECT
+    'result_ipsr_data',
+    start_time,
+    DATE_ADD(start_time, INTERVAL -5 HOUR),
+    null,
+    TIME_TO_SEC(TIMEDIFF(sysdate(), start_time)) diff;
+
+END

@@ -227,7 +227,6 @@ SELECT
     qa_innovation_development_data.innovation_readiness_level_justification AS innovation_readiness_level_justification,
     qa_innovation_development_data.questions AS questions,
     qa_innovation_development_data.anticipated AS anticipated,
-    qa_innovation_development_data.other_quantitative AS other_quantitative,
     qa_innovation_development_data.initiatives_investment AS initiatives_investment,
     qa_innovation_development_data.npp_investment AS npp_investment,
     qa_innovation_development_data.partner_investment AS partner_investment,
