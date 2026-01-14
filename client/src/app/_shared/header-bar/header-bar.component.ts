@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, HostListener } from '@angular/core';
 import { ActivatedRoute, NavigationEnd, NavigationStart, Router, RouterLink, RouterLinkActive } from '@angular/router';
 
 import { AuthenticationService } from '../../services/authentication.service';
@@ -11,6 +11,7 @@ import { GeneralStatus } from '../../_models/general-status.model';
 import { filter, pairwise } from 'rxjs/operators';
 import { CommonModule } from '@angular/common';
 import { TawkToComponent } from '../../tawk-to/tawk-to.component';
+import { ButtonModule } from 'primeng/button';
 
 // import { filter, pairwise } from 'rxjs'
 
@@ -36,6 +37,8 @@ export class HeaderBarComponent implements OnInit {
   assessorsChat = {
     isOpen: false
   };
+
+  userMenuOpen = false;
 
   indicatorsName = [
     { name: 'Impact Contribution', viewname: 'qa_impact_contribution' },
@@ -107,6 +110,27 @@ export class HeaderBarComponent implements OnInit {
 
   getIndicators() {
     // console.log('NAV INDICATORS', this.indicators);
+  }
+
+  toggleUserMenu() {
+    this.userMenuOpen = !this.userMenuOpen;
+  }
+
+  getInitials(name: string): string {
+    if (!name) return 'U';
+    const parts = name.trim().split(' ');
+    if (parts.length >= 2) {
+      return (parts[0][0] + parts[parts.length - 1][0]).toUpperCase();
+    }
+    return name.substring(0, 2).toUpperCase();
+  }
+
+  @HostListener('document:click', ['$event'])
+  onDocumentClick(event: MouseEvent) {
+    const target = event.target as HTMLElement;
+    if (!target.closest('.user-menu-container')) {
+      this.userMenuOpen = false;
+    }
   }
 
   goToAssessorsChat() {

@@ -1,50 +1,75 @@
 :root {
-  --background: #f3f1f1;
-  --background-contrast: #f9f9f9;
-  --white: #fff;
-  --white-gray: rgb(245, 245, 245);
-  --black: #121212;
-  --black-gray: #3f4446;
-  --input-gray: #f2f2f2;
+  // Background colors - más suaves y modernos
+  --background: #f8f9fa;
+  --background-contrast: #ffffff;
+  --white: #ffffff;
+  --white-gray: #f5f7fa;
+  --black: #1a1a1a;
+  --black-gray: #4a5568;
+  --input-gray: #f1f5f9;
 
-  --yellow-primary: #ffc84f;
-  --yellow-secondary: #ffca30;
-  --yellow-tertiary: #ffeeb9;
-  --yellow-quaternary: #c99a0f;
-  --green-primary: #2e7636;
-  --green-secondary: #61b33e;
-  --green-tertiary: #67be71;
-  --green-tertiary: #dcecdf;
-  --green-quaternary: #f2fff5;
-  --gray-primary: #e1dddd;
-  --gray-secondary: #707070;
-  --gray-tertiary: #989898;
-  --red-primary: #da4336;
-  --red-secondary: #b73428;
-  --red-tertiary: #f1b7b7;
-  --blue-primary: #0f8981;
-  --blue-secondary: #17a2b8;
-  --blue-tertiary: #03535f;
-  --blue-quaternary: rgb(168, 209, 255);
+  // Yellow palette - más vibrante pero elegante
+  --yellow-primary: #fbbf24;
+  --yellow-secondary: #fcd34d;
+  --yellow-tertiary: #fef3c7;
+  --yellow-quaternary: #d97706;
+  
+  // Green palette - más fresco
+  --green-primary: #059669;
+  --green-secondary: #10b981;
+  --green-tertiary: #d1fae5;
+  --green-quaternary: #ecfdf5;
+  
+  // Gray palette - más neutro y moderno
+  --gray-primary: #e2e8f0;
+  --gray-secondary: #64748b;
+  --gray-tertiary: #94a3b8;
+  
+  // Red palette - más suave
+  --red-primary: #ef4444;
+  --red-secondary: #dc2626;
+  --red-tertiary: #fee2e2;
+  
+  // Blue palette - más moderno
+  --blue-primary: #0891b2;
+  --blue-secondary: #06b6d4;
+  --blue-tertiary: #0e7490;
+  --blue-quaternary: #cffafe;
 
-  --color-pending: #f3da90;
-  --color-complete: #59ed9c;
-  --color-in-progress: #6db1ff;
-  --color-finalized: #00958e;
-  --color-answered: #00958e;
-  --color-solved-with-change-request: #59ed9c;
-  // --color-complete: #00958e;
-  --color-autochecked: #a64d79ff;
+  // Status colors - más consistentes
+  --color-pending: #fde68a;
+  --color-complete: #34d399;
+  --color-in-progress: #60a5fa;
+  --color-finalized: #0891b2;
+  --color-answered: #0891b2;
+  --color-solved-with-change-request: #34d399;
+  --color-autochecked: #a855f7;
 
-  --color-agree: #59ed9c;
-  --color-agree-wc: #268b50;
-  --color-disagree: #ed8b84;
-  --color-not-sure: rgb(109, 177, 255);
-  --color-clarification: #6db1ff;
-  --color-pending-gray: #cfcfcf;
+  // Interaction colors
+  --color-agree: #34d399;
+  --color-agree-wc: #059669;
+  --color-disagree: #f87171;
+  --color-not-sure: #60a5fa;
+  --color-clarification: #60a5fa;
+  --color-pending-gray: #cbd5e1;
 
-  --color-dark-text-btn: #073763;
-  --color-blue: #018dff;
+  --color-dark-text-btn: #0c4a6e;
+  --color-blue: #0284c7;
+
+  // Design tokens - nuevos para modernizar
+  --border-radius-sm: 6px;
+  --border-radius-md: 10px;
+  --border-radius-lg: 16px;
+  --border-radius-xl: 24px;
+  
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+  
+  --transition-fast: 150ms ease-in-out;
+  --transition-base: 250ms ease-in-out;
+  --transition-slow: 350ms ease-in-out;
 }
 
 // primary font
