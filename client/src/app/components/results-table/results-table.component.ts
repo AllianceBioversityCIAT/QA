@@ -1,4 +1,5 @@
 import { Component, EventEmitter, Output, inject, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TableModule } from 'primeng/table';
 import { CheckboxModule } from 'primeng/checkbox';
@@ -16,6 +17,7 @@ import { FilterByEvalstatusPipe } from './pipes/filter-by-evalstatus.pipe';
   selector: 'app-results-table',
   standalone: true,
   imports: [
+    CommonModule,
     TableModule,
     FormsModule,
     CheckboxModule,

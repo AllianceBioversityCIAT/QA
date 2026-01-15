@@ -1,40 +1,40 @@
+@import '@public/variables.scss';
+
 .filters {
-  // display: flex;
   display: grid;
-  // grid-template-columns: 1fr 2fr 1fr;
-  grid-template-columns: repeat(auto-fit, minmax(550px, 1fr));
-  gap: 2rem;
-  align-items: center;
-  padding: 3rem 1.5rem 2rem 1.5rem;
-  background-color: var(--white);
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+  align-items: flex-start;
+  padding: 2rem 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: var(--border-radius-lg);
+  box-shadow: var(--shadow-md);
   border: 1px solid var(--gray-primary);
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   position: relative;
-  flex-wrap: wrap;
 
   @media (max-width: 768px) {
-    display: grid;
     grid-template-columns: 1fr;
+    padding: 1.5rem 1rem;
+    gap: 1rem;
   }
 
   .filters_date {
     display: flex;
     flex-direction: column;
-    gap: 0.5em;
+    gap: 1rem;
 
     .filters_date_title {
-      font-size: 12px;
-      font-weight: 600;
-      position: absolute;
-      top: 13px;
-      left: 1.5rem;
+      font-size: $font-sm;
+      font-weight: $semibold;
+      color: var(--black);
+      margin: 0;
     }
 
     .filters_date_checkbox {
       display: flex;
       gap: 1rem;
+      flex-wrap: wrap;
     }
   }
 
@@ -42,24 +42,111 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    width: 550px;
-    // max-width: 550px;
-    // width: 100%;
+    width: 100%;
   }
 
   .filters_buttons {
     display: flex;
-    gap: 1rem;
+    gap: 0.75rem;
     justify-content: flex-start;
     align-items: center;
     flex-wrap: wrap;
   }
 }
 
+// Table container
+:host ::ng-deep {
+  .p-datatable {
+    background: var(--white);
+    border-radius: var(--border-radius-lg);
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--gray-primary);
+    overflow: hidden;
+
+    .p-datatable-header {
+      background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+      border-bottom: 2px solid var(--gray-primary);
+      padding: 1rem 1.5rem;
+    }
+
+    .p-datatable-thead > tr > th {
+      background: var(--white);
+      border-bottom: 2px solid var(--gray-primary);
+      padding: 1rem;
+      font-weight: $semibold;
+      font-size: $font-sm;
+      color: var(--black);
+      text-align: center;
+      transition: all var(--transition-base);
+
+      &:hover {
+        background-color: #f8f9fa;
+      }
+    }
+
+    .p-datatable-tbody > tr {
+      transition: all var(--transition-base);
+
+      &:hover {
+        background-color: #f8f9fa;
+      }
+
+      > td {
+        padding: 0.75rem 1rem;
+        text-align: center;
+        font-size: $font-sm;
+        border-bottom: 1px solid #e9ecef;
+
+        a {
+          color: var(--blue-primary);
+          text-decoration: none;
+          transition: all var(--transition-base);
+
+          &:hover {
+            color: var(--blue-secondary);
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+
+    .p-datatable-emptymessage {
+      padding: 3rem 1rem;
+      text-align: center;
+      color: var(--gray-secondary);
+      font-size: $font-md;
+    }
+
+    // Paginator
+    .p-paginator {
+      background: var(--white);
+      border-top: 1px solid var(--gray-primary);
+      padding: 1rem;
+      border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+
+      .p-paginator-element {
+        border-radius: var(--border-radius-md);
+        transition: all var(--transition-base);
+
+        &:hover:not(.p-disabled) {
+          background-color: #f8f9fa;
+          border-color: var(--yellow-primary);
+        }
+      }
+    }
+  }
+}
+
 .total {
-  margin: 1rem 0;
-  color: #666;
-  font-size: 13px;
+  margin: 1.5rem 0 0 0;
+  padding: 1rem 1.5rem;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: var(--border-radius-md);
+  border: 1px solid var(--gray-primary);
+  color: var(--black);
+  font-size: $font-sm;
+  font-weight: $semibold;
+  text-align: center;
 }
 
 p {
@@ -67,32 +154,224 @@ p {
   margin: 0;
 }
 
-::ng-deep .p-checkbox-label {
-  margin-bottom: 0 !important;
-}
+// PrimeNG Component Overrides
+::ng-deep {
+  .p-checkbox-label {
+    margin-bottom: 0 !important;
+    font-size: $font-sm;
+  }
 
-::ng-deep .p-multiselect .p-multiselect-label {
-  padding: 0.5rem 0.75rem;
-}
+  .p-multiselect {
+    width: 100%;
+    border: 1px solid var(--gray-primary);
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
 
-::ng-deep .p-button {
-  padding: 0.5rem 0.75rem;
-  border-radius: var(--border-radius-md);
-  box-shadow: var(--shadow-sm);
-  transition: all var(--transition-base);
-  &:hover {
-    box-shadow: var(--shadow-md);
-    transform: translateY(-1px);
+    &:hover {
+      border-color: var(--yellow-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    &:focus,
+    &.p-focus {
+      border-color: var(--yellow-primary);
+      box-shadow: 0 0 0 3px rgba(251, 191, 36, 0.1);
+    }
+
+    .p-multiselect-label {
+      padding: 0.75rem 1rem;
+      font-size: $font-sm;
+    }
+  }
+
+  .p-button {
+    padding: 0.75rem 1.25rem;
+    border-radius: var(--border-radius-md);
+    box-shadow: var(--shadow-sm);
+    transition: all var(--transition-base);
+    font-weight: $semibold;
+    font-size: $font-sm;
+
+    &:not(.p-button-outlined) {
+      border: none;
+    }
+
+    &:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    &.p-button-outlined {
+      background: transparent;
+      
+      &:hover {
+        background: rgba(251, 191, 36, 0.1);
+      }
+    }
+  }
+
+  .p-inputtext {
+    padding: 0.75rem 1rem;
+    border-radius: var(--border-radius-md);
+    border: 1px solid var(--gray-primary);
+    transition: all var(--transition-base);
+    font-size: $font-sm;
+    box-shadow: var(--shadow-sm);
+
+    &:hover {
+      border-color: var(--yellow-primary);
+    }
+
+    &:focus {
+      border-color: var(--blue-primary);
+      box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+      outline: none;
+    }
   }
 }
 
-::ng-deep .p-inputtext {
-  padding: 0.5rem 0.75rem;
+// Status icons
+.status-icon {
+  font-size: 1.5rem;
+  display: inline-block;
+}
+
+.require-second-assessment {
+  font-size: $font-xs;
+  color: var(--yellow-primary);
+  font-weight: $semibold;
+  margin-top: 0.25rem;
+}
+
+// File button
+.file-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
   border-radius: var(--border-radius-md);
-  border: 1px solid var(--gray-primary);
   transition: all var(--transition-base);
-  &:focus {
-    border-color: var(--blue-primary);
-    box-shadow: 0 0 0 3px rgba(8, 145, 178, 0.1);
+  cursor: pointer;
+
+  &:hover {
+    transform: scale(1.1);
+  }
+}
+
+// Evaluation Status Badge
+.evaluation-status-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 4px;
+  font-size: 0.65rem;
+  font-weight: $bold;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  white-space: nowrap;
+  transition: all var(--transition-base);
+  font-family: 'Poppins', sans-serif;
+  min-width: fit-content;
+  height: fit-content;
+  position: relative;
+  border-left: 4px solid transparent;
+  background-color: transparent;
+
+  // Added status (Warning/Yellow) - Orange/Amber style
+  &.status-added {
+    background-color: #fff7ed;
+    border-left-color: #f59e0b;
+    color: #d97706;
+    border-right: 1px solid #fde68a;
+    border-top: 1px solid #fde68a;
+    border-bottom: 1px solid #fde68a;
+    box-shadow: 0 1px 3px rgba(251, 146, 60, 0.2);
+    
+    &::before {
+      content: '+';
+      margin-right: 0.25rem;
+      font-weight: $bold;
+      font-size: 0.9em;
+    }
+  }
+
+  // Removed status (Danger/Red) - Red style
+  &.status-removed {
+    background-color: #fef2f2;
+    border-left-color: #ef4444;
+    color: #dc2626;
+    border-right: 1px solid #fecaca;
+    border-top: 1px solid #fecaca;
+    border-bottom: 1px solid #fecaca;
+    box-shadow: 0 1px 3px rgba(239, 68, 68, 0.2);
+    
+    &::before {
+      content: '−';
+      margin-right: 0.25rem;
+      font-weight: $bold;
+      font-size: 0.9em;
+    }
+  }
+
+  // Updated status (Purple/Indigo) - Different from blue links
+  &.status-updated {
+    background-color: #f5f3ff;
+    border-left-color: #8b5cf6;
+    color: #7c3aed;
+    border-right: 1px solid #ddd6fe;
+    border-top: 1px solid #ddd6fe;
+    border-bottom: 1px solid #ddd6fe;
+    box-shadow: 0 1px 3px rgba(139, 92, 246, 0.2);
+    
+    &::before {
+      content: '↻';
+      margin-right: 0.25rem;
+      font-weight: $bold;
+      font-size: 0.9em;
+    }
+  }
+
+  // Type Changed status (Teal/Cyan) - Distinctive color
+  &.status-type-changed {
+    background-color: #f0fdfa;
+    border-left-color: #14b8a6;
+    color: #0d9488;
+    border-right: 1px solid #99f6e4;
+    border-top: 1px solid #99f6e4;
+    border-bottom: 1px solid #99f6e4;
+    box-shadow: 0 1px 3px rgba(20, 184, 166, 0.2);
+    
+    &::before {
+      content: '⇄';
+      margin-right: 0.25rem;
+      font-weight: $bold;
+      font-size: 0.9em;
+    }
+  }
+
+  // New status (Success/Green) - Green style
+  &.status-new {
+    background-color: #f0fdf4;
+    border-left-color: #22c55e;
+    color: #16a34a;
+    border-right: 1px solid #bbf7d0;
+    border-top: 1px solid #bbf7d0;
+    border-bottom: 1px solid #bbf7d0;
+    box-shadow: 0 1px 3px rgba(34, 197, 94, 0.2);
+    
+    &::before {
+      content: '●';
+      margin-right: 0.25rem;
+      font-weight: $bold;
+      font-size: 0.8em;
+    }
+  }
+
+  // Hover effect
+  &:hover {
+    transform: translateX(2px);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
   }
 }
