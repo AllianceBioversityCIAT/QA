@@ -175,7 +175,7 @@
     <tr>
       @for (colItem of this.columnNames; track $index) {
         @if (colItem.showIf()) {
-          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr" style="text-align: center; font-size: 13px; font-weight: bold">
+          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr" style="text-align: center; font-size: 0.8rem; font-weight: bold">
             {{ colItem.name }} <p-sortIcon [field]="colItem.attr" />
           </th>
         }
@@ -210,7 +210,7 @@
               @case ('title') {
                 <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; align-items: center">
                   <a routerLink="./detail/{{ result.id }}">
-                    <p style="font-size: 13px; text-align: center; margin: 0">
+                    <p style="font-size: 0.8rem; text-align: center; margin: 0">
                       {{ result[colItem.attr] }}
                     </p>
                   </a>
