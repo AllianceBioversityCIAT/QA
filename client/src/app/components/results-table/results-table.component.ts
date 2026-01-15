@@ -50,6 +50,12 @@ export class ResultsTableComponent {
 
   selectedFilters = [];
 
+  // Filter section visibility states
+  showSearch = false;
+  showColumns = false;
+  showState = false;
+  showDates = false;
+
   columnsFiltersOptions = [
     { label: 'Accepted Comments', key: 'showAcceptedComments' },
     { label: 'Disagreed Comments', key: 'showDisagreedComments' },
@@ -203,12 +209,90 @@ export class ResultsTableComponent {
     }
   }
 
-  handleFilterChange(key: string) {
+  handleFilterChange(key: string | null) {
     if (this.evalStatusFilter === key) {
       this.evalStatusFilter = null;
+      this.showState = false;
       return;
     }
 
     this.evalStatusFilter = key;
+    if (key) {
+      // Auto-close state panel after selection
+      setTimeout(() => {
+        this.showState = false;
+      }, 300);
+    }
+  }
+
+  toggleSearch() {
+    this.showSearch = !this.showSearch;
+    if (this.showSearch) {
+      this.showColumns = false;
+      this.showState = false;
+      this.showDates = false;
+    }
+  }
+
+  toggleColumns() {
+    this.showColumns = !this.showColumns;
+    if (this.showColumns) {
+      this.showSearch = false;
+      this.showState = false;
+      this.showDates = false;
+    }
+  }
+
+  toggleState() {
+    this.showState = !this.showState;
+    if (this.showState) {
+      this.showSearch = false;
+      this.showColumns = false;
+      this.showDates = false;
+    }
+  }
+
+  toggleDates() {
+    this.showDates = !this.showDates;
+    if (this.showDates) {
+      this.showSearch = false;
+      this.showColumns = false;
+      this.showState = false;
+    }
+  }
+
+  hasActiveFilters(): boolean {
+    return !!(this.evalStatusFilter || 
+             (this.selectedDates && this.selectedDates.length > 0) || 
+             (this.selectedFilters && this.selectedFilters.length > 0));
+  }
+
+  removeDate(date: string) {
+    const index = this.selectedDates.indexOf(date);
+    if (index > -1) {
+      this.selectedDates.splice(index, 1);
+    }
+  }
+
+  removeColumnFilter(filter: any) {
+    const index = this.selectedFilters.findIndex(f => f.key === filter.key);
+    if (index > -1) {
+      this.selectedFilters.splice(index, 1);
+    }
+  }
+
+  isColumnSelected(key: string): boolean {
+    return !!this.selectedFilters.find(filter => filter.key === key);
+  }
+
+  toggleColumnFilter(option: any) {
+    const index = this.selectedFilters.findIndex(f => f.key === option.key);
+    if (index > -1) {
+      // Remove if already selected
+      this.selectedFilters.splice(index, 1);
+    } else {
+      // Add if not selected
+      this.selectedFilters.push(option);
+    }
   }
 }
