@@ -20,17 +20,24 @@
 </div> -->
 
 <div *ngIf="detailedData && detailedData[0]" class="row detail-header-container">
-  <div style="display: flex; align-items: center">
+  <div style="display: flex; align-items: center; gap: 1rem">
     <p class="indicator-item-name">
       {{ detailedData[0].crp_acronym }} / {{ currentType }} / QA-{{ params.type.charAt(0) }}{{ params.type.charAt(1).toUpperCase() }}-{{
         detailedData[0].result_code
       }}
     </p>
-    <div
+    <span
       *ngIf="gnralInfo.evaluation_status && gnralInfo.evaluation_status !== 'New'"
-      class="evaluation-status {{ gnralInfo.evaluation_status ? gnralInfo.evaluation_status.toLowerCase() : '' }}">
+      class="evaluation-status-badge"
+      [ngClass]="{
+        'status-added': gnralInfo.evaluation_status === 'Added',
+        'status-removed': gnralInfo.evaluation_status === 'Removed',
+        'status-updated': gnralInfo.evaluation_status === 'Updated',
+        'status-type-changed': gnralInfo.evaluation_status === 'Type Changed',
+        'status-new': gnralInfo.evaluation_status === 'New'
+      }">
       {{ gnralInfo.evaluation_status }}
-    </div>
+    </span>
   </div>
 
   <div class="dropdown-container">
@@ -69,19 +76,21 @@
 
   <div class="buttons" *ngIf="detailedData[0]">
     <a *ngIf="detailedData[0].public_link" [href]="detailedData[0].public_link" target="_blank">
-      <div pTooltip="{{ tooltips.public_link }}" container="body" placement="top" class="btn btn-primary file-button">
+      <div pTooltip="{{ tooltips.public_link }}" container="body" placement="bottom" [tooltipStyleClass]="'custom-tooltip'" class="btn btn-primary file-button">
         <i class="icon-public-link"></i>
       </div>
     </a>
 
-    <a pTooltip="{{ tooltips.redirectTo }}" [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer">
-      <img src="/img/logo.webp" alt="CGIAR Logo" class="cgiar-logo-img" />
+    <a pTooltip="{{ tooltips.redirectTo }}" container="body" placement="bottom" [tooltipStyleClass]="'custom-tooltip'" [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer">
+      <img src="/icons/cgiar_logo.svg" alt="CGIAR Logo" class="cgiar-logo-img" />
     </a>
 
     <div
       pTooltip="{{ tooltips.download_excel }}"
       container="body"
-      placement="top"
+      placement="left"
+      [tooltipStyleClass]="'custom-tooltip'"
+      [appendTo]="'body'"
       *ngIf="detailedData"
       (click)="getCommentsExcel(detailedData[0])"
       class="btn btn-primary file-button">
