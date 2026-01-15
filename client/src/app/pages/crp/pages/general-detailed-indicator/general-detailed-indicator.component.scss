@@ -740,30 +740,6 @@
         line-height: 1.5;
       }
 
-      .activate-messages-container.active {
-        background-color: var(--yellow-secondary);
-        border-color: var(--yellow-secondary);
-        cursor: pointer;
-
-        i {
-          content: url("@public/icons/comment_icon_added.svg");
-        }
-
-        .replies-count {
-          background-color: var(--red-primary);
-          color: var(--white);
-          border-radius: 50%;
-          // padding: 0.2em;
-          height: 1.5em;
-          width: 1.5em;
-          position: absolute;
-          text-align: center;
-          font-size: $font-sm;
-          margin-left: $size-md;
-          margin-top: $size-25;
-        }
-      }
-
       .activate-messages-container {
         border-radius: 50%;
         height: 3em;
@@ -772,11 +748,31 @@
         border: 1px solid var(--gray-primary);
         display: flex;
         justify-content: center;
+        align-items: center;
         margin-right: -2.75em;
+        transition: all var(--transition-base);
+        position: relative;
 
-        i {
-          height: 2em;
-          margin: auto;
+        .comment-icon-svg {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          width: 100%;
+          height: 100%;
+
+          svg {
+            width: 1.5em;
+            height: 1.5em;
+            stroke: var(--gray-secondary);
+            transition: all var(--transition-base);
+          }
+        }
+
+        &.inactive {
+          .comment-icon-svg svg {
+            stroke: var(--gray-secondary);
+            opacity: 0.5;
+          }
         }
 
         .replies-count {
@@ -784,7 +780,6 @@
           background-color: var(--red-primary);
           color: var(--white);
           border-radius: 50%;
-          // padding: 0.2em;
           height: 1.5em;
           width: 1.5em;
           position: absolute;
@@ -792,6 +787,54 @@
           font-size: $font-sm;
           margin-left: $size-md;
           margin-top: $size-25;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          font-weight: $semibold;
+        }
+
+        &:hover:not(.inactive) {
+          background-color: var(--white-gray);
+          border-color: var(--yellow-primary);
+          
+          .comment-icon-svg svg {
+            stroke: var(--yellow-primary);
+          }
+        }
+
+        &.active {
+          background-color: var(--yellow-primary);
+          border-color: var(--yellow-primary);
+          cursor: pointer;
+          box-shadow: 0 2px 8px rgba(251, 191, 36, 0.3);
+
+          .comment-icon-svg svg {
+            stroke: var(--white);
+            fill: none;
+          }
+
+          .replies-count {
+            opacity: 1;
+            background-color: var(--red-primary);
+            color: var(--white);
+            border-radius: 50%;
+            height: 1.5em;
+            width: 1.5em;
+            position: absolute;
+            text-align: center;
+            font-size: $font-sm;
+            margin-left: $size-md;
+            margin-top: $size-25;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: $semibold;
+          }
+
+          &:hover {
+            background-color: var(--yellow-secondary);
+            box-shadow: 0 4px 12px rgba(251, 191, 36, 0.4);
+          }
         }
       }
 

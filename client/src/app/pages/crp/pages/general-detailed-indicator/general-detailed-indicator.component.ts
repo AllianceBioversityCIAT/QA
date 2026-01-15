@@ -4,10 +4,7 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
-  FormControl,
   FormArray,
-  ValidatorFn,
-  AbstractControl,
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
@@ -168,7 +165,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   sanitizedCurrentValue: SafeHtml = '';
   AIMatchFields = ["gender_tag_level", "climate_change_level", "nutrition_tag_level", "environmental_biodiversity_tag_level", "poverty_tag_level", "innovation_readiness_level"]
   aiMatchIcon = 'content_copy';
-  
+
   constructor(
     private activeRoute: ActivatedRoute,
     private router: Router,
@@ -400,7 +397,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
       }
     }
   }
-  updateHighlight(e) {}
+  updateHighlight(e) { }
 
   changeStatus() {
     // this.selectedStatus = status;
@@ -504,7 +501,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     window.open(url, '_blank');
   }
 
-  goToList() {}
+  goToList() { }
 
   getLink(field) {
     return field.col_name === 'evidence_link' ? true : false;
@@ -554,7 +551,17 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   showComments(index: number, field: any, elementRef: any, e?) {
     this.fieldIndex = index;
     field.clicked = !field.clicked;
-    this.activeCommentArr[index] = !this.activeCommentArr[index];
+    
+    // Si el índice actual ya está activo, lo desactivamos
+    const wasActive = this.activeCommentArr[index];
+    
+    // Desactivar todos los demás indicadores
+    this.activeCommentArr = this.activeCommentArr.map((_, i) => false);
+    
+    // Si el índice actual no estaba activo, lo activamos
+    if (!wasActive) {
+      this.activeCommentArr[index] = true;
+    }
 
     // this.commentsElem.nativeElement.scrollIntoView({ behavior: "smooth"});
     if (e) {
@@ -815,14 +822,14 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   copyToClipboard() {
     this.aiMatchIcon = 'check_circle';
 
-    
+
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
       detail: 'Copied to clipboard',
     });
-    
-    
+
+
     setTimeout(() => {
       this.aiMatchIcon = 'content_copy';
     }, 300);
