@@ -1,4 +1,3 @@
-<div (click)="toggleAssessorsChat()" class="btn-assessors-chat">Assessors chat</div> -->
 <div class="row link-header">
   <a class="nav-item nav-link go-back" [routerLinkActive]="['active']"
     routerLink="/indicator/{{ params.type }}/{{ params.primary_column }}">
@@ -86,22 +85,6 @@
       }">
       <div *ngIf="currentUser.hasOwnProperty('cycle')">
         <div class="col data-container">
-          <!-- <div class="row assessment-info-r2" *ngIf="currentUser.cycle.cycle_stage != '1'"
-                        style="margin:0; margin-bottom: 2em;">
-                        <div *ngIf="gnralInfo.status !== statusHandler.Finalized" class="bton-container">
-                            <button type="button" class="btn btn-finalized"
-                                [disabled]="gnralInfo.status === statusHandler.Finalized"
-                                (click)="updateEvaluation('finalized',detailedData)">ASSESSED 2ND ROUND</button>
-                        </div>
-                        <div *ngIf="gnralInfo.status === statusHandler.Finalized" class="bton-container">
-                            <button type="button" class="btn btn-outline-info"
-                                (click)="updateEvaluation('complete',detailedData)">OPEN ASSESSMENT</button>
-                        </div>
-                        <div class="right-side">
-                            <p *ngIf="assessed_by_r1"> <div>Assessed (Round 1) by: </strong> {{assessed_by_r1}}</p>
-                            <p *ngIf="assessed_by_r2"> <strong>Assessed (Round 2) by: </strong> {{assessed_by_r2}}</p>
-                        </div>
-                    </div> -->
           <div class="assessment-info select-all" *ngIf="
               gnralInfo.status != statusHandler.Autochecked &&
               detailedData.length > 0 &&
