@@ -258,8 +258,15 @@
                 <div #commElement style="cursor: pointer"
                   *ngIf="validateCommentAvility(detailedData[i], true) && !summon.value.isChecked && gnralInfo.status != statusHandler.Autochecked"
                   (click)="showComments(i, detailedData[i], commElement, $event); comment.updateData(detailedData[i], params)"
-                  class="activate-messages-container {{ detailedData[i].replies_count == '0' ? '' : 'active' }}">
-                  <i #elRef *ngIf="!detailedData[i].loading" class="icon-message"></i>
+                  [ngClass]="{
+                    'activate-messages-container': true,
+                    'active': activeCommentArr[i] || detailedData[i].replies_count != '0'
+                  }">
+                  <span #elRef *ngIf="!detailedData[i].loading" class="comment-icon-svg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </span>
                   <span *ngIf="detailedData[i].loading" class="spinner-border spinner-border-sm mr-1"></span>
                   <!-- *ngIf="detailedData[i].is_highlight" -->
                   <div
@@ -273,8 +280,12 @@
                 </div>
 
                 <div *ngIf="!validateCommentAvility(detailedData[i]) || summon.value.isChecked"
-                  class="activate-messages-container">
-                  <i *ngIf="!detailedData[i].loading" class="icon-message-inactive"></i>
+                  class="activate-messages-container inactive">
+                  <span *ngIf="!detailedData[i].loading" class="comment-icon-svg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </span>
                   <span *ngIf="detailedData[i].loading" class="spinner-border spinner-border-sm mr-1"></span>
 
                   <div *ngIf="detailedData[i].replies_count != '0'" class="replies-count">
@@ -351,8 +362,15 @@
                 <!-- comments -->
                 <div #commentsElem style="cursor: pointer" *ngIf="detailedData[i].replies_count != '0'"
                   (click)="showComments(i, detailedData[i], commentsElem, $event); comment?.updateData(detailedData[i], params)"
-                  class="activate-messages-container {{ detailedData[i].replies_count == '0' ? '' : 'active' }}">
-                  <i #elRef *ngIf="!detailedData[i].loading" class="icon-message"></i>
+                  [ngClass]="{
+                    'activate-messages-container': true,
+                    'active': activeCommentArr[i] || detailedData[i].replies_count != '0'
+                  }">
+                  <span #elRef *ngIf="!detailedData[i].loading" class="comment-icon-svg">
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                    </svg>
+                  </span>
                   <span *ngIf="detailedData[i].loading" class="spinner-border spinner-border-sm mr-1"></span>
                   <div *ngIf="detailedData[i].is_highlight" class="highlighted-icon">
                     <img src="icons/bombillo.png" alt="" />
