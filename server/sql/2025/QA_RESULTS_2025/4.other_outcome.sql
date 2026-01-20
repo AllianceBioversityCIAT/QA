@@ -634,6 +634,15 @@ SELECT
                     ),
                     '<br>',
                     IF(
+                        e.description IS NOT NULL AND e.description != '',
+                        CONCAT(
+                            '<b>Description:</b> ',
+                            e.description,
+                            '<br>'
+                        ),
+                        ''
+                    ),
+                    IF(
                         e.is_sharepoint = 1,
                         CONCAT(
                             '<b>File name:</b> ',
