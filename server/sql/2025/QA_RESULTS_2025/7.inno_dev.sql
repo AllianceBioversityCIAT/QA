@@ -570,15 +570,15 @@ SELECT
                                 '<br>',
                                 '<b>Target contribution:</b> ',
                                 IFNULL(
-                                    IF(
-                                        rit.contributing_indicator IS NULL OR rit.contributing_indicator = '',
-                                        'N/A',
-                                        IF(
-                                            CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))),
-                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED),
+                                    CASE 
+                                        WHEN rit.contributing_indicator IS NULL 
+                                             OR CAST(rit.contributing_indicator AS CHAR) = '' 
+                                             OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED)
+                                        ELSE
                                             CAST(rit.contributing_indicator AS DECIMAL(10, 2))
-                                        )
-                                    ),
+                                    END,
                                     'N/A'
                                 ),
                                 '<br>',
@@ -826,14 +826,15 @@ SELECT
         ),
         '<Not applicable>'
     ) AS is_new_varieties,
-    IFNULL(
-        IF(
-            rind.is_new_variety = 0
-            OR rind.is_new_variety IS NULL,
-            '<Not applicable>',
-            rind.number_of_varieties
-        ),
-        '<Not applicable>'
+    IF(
+        rind.is_new_variety = 0
+        OR rind.is_new_variety IS NULL,
+        0,
+        CASE 
+            WHEN rind.number_of_varieties IS NULL 
+                 OR CAST(rind.number_of_varieties AS CHAR) = '' THEN 0
+            ELSE CAST(rind.number_of_varieties AS DECIMAL(10, 0))
+        END
     ) AS number_of_variety,
     IF(
         rind.innovation_user_to_be_determined = 0,

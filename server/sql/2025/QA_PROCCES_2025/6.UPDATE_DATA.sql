@@ -88,9 +88,7 @@ SET
     qa.evidence = cc.evidence,
     qa.current_core_innovation_use = cc.current_core_innovation_use,
     qa.current_use_level_of_the_innovation = cc.current_use_level_of_the_innovation,
-    qa.actors = cc.actors,
-    qa.organizations = cc.organizations,
-    qa.other_quantitative = cc.other_quantitative,
+    qa.actors_organizations_quantitative = cc.actors_organizations_quantitative,
     qa.innovation_linked = cc.innovation_linked
 WHERE
     qa.phase_year = 2025
@@ -188,7 +186,6 @@ SET
     qa.innovation_readiness_level_justification = cc.innovation_readiness_level_justification,
     qa.questions = cc.questions,
     qa.anticipated = cc.anticipated,
-    qa.other_quantitative = cc.other_quantitative,
     qa.initiatives_investment = cc.initiatives_investment,
     qa.npp_investment = cc.npp_investment,
     qa.partner_investment = cc.partner_investment,

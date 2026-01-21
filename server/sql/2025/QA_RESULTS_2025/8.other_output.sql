@@ -570,15 +570,15 @@ SELECT
                                 '<br>',
                                 '<b>Target contribution:</b> ',
                                 IFNULL(
-                                    IF(
-                                        rit.contributing_indicator IS NULL OR rit.contributing_indicator = '',
-                                        'N/A',
-                                        IF(
-                                            CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))),
-                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED),
+                                    CASE 
+                                        WHEN rit.contributing_indicator IS NULL 
+                                             OR CAST(rit.contributing_indicator AS CHAR) = '' 
+                                             OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED)
+                                        ELSE
                                             CAST(rit.contributing_indicator AS DECIMAL(10, 2))
-                                        )
-                                    ),
+                                    END,
                                     'N/A'
                                 ),
                                 '<br>',
