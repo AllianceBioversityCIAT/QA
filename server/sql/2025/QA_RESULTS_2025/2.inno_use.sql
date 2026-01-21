@@ -478,39 +478,117 @@ SELECT
                             rtr.planned_result = 0,
                             CONCAT(
                                 '<b>Unplanned</b><br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    'N/A'
+                                IF(
+                                    tr.category IS NOT NULL 
+                                    AND (tr.result_title IS NOT NULL OR tr.result_description IS NOT NULL)
+                                    AND (NULLIF(TRIM(tr.result_title), '') IS NOT NULL OR NULLIF(TRIM(tr.result_description), '') IS NOT NULL),
+                                    CONCAT(
+                                        '<b>',
+                                        IF(
+                                            tr.category = 'OUTCOME',
+                                            'Intermediate Outcome:',
+                                            IF(
+                                                tr.category = 'OUTPUT',
+                                                'HLO:',
+                                                IF(
+                                                    tr.category = 'EOI',
+                                                    '2030 Outcome:',
+                                                    IFNULL(tr.category, 'N/A')
+                                                )
+                                            )
+                                        ),
+                                        '</b>',
+                                        ' ',
+                                        CONCAT(
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_title), ''),
+                                                'N/A'
+                                            ),
+                                            ' - ',
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_description), ''),
+                                                'N/A'
+                                            )
+                                        ),
+                                        '<br>'
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
                                 )
                             ),
                             CONCAT(
                                 '<b>Planned</b><br>',
-                                '<b>WP:</b> ',
+                                '<b>',
                                 IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
-                                '<br>',
-                                '<b>ToC title:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(tr.result_title), ''),
-                                    'N/A'
+                                '</b>',
+                                IF(
+                                    wp.name IS NOT NULL AND wp.name != '' AND IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A') != 'N/A',
+                                    CONCAT(' - ', wp.name),
+                                    ''
                                 ),
                                 '<br>',
-                                '<b>Indicator:</b> ',
+                                '<b>',
+                                IF(
+                                    tr.category = 'OUTCOME',
+                                    'Intermediate Outcome:',
+                                    IF(
+                                        tr.category = 'OUTPUT',
+                                        'HLO:',
+                                        IF(
+                                            tr.category = 'EOI',
+                                            '2030 Outcome:',
+                                            IFNULL(tr.category, 'N/A')
+                                        )
+                                    )
+                                ),
+                                '</b>',
+                                ' ',
+                                CONCAT(
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_title), ''),
+                                        'N/A'
+                                    ),
+                                    ' - ',
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_description), ''),
+                                        'N/A'
+                                    )
+                                ),
+                                '<br>',
+                                '<b>Indicator name:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(tri.indicator_description), ''),
                                     'N/A'
                                 ),
                                 '<br>',
-                                '<b>Contribution:</b> ',
+                                '<b>Target contribution:</b> ',
                                 IFNULL(
-                                    NULLIF(TRIM(rit.contributing_indicator), ''),
+                                    CASE 
+                                        WHEN rit.contributing_indicator IS NULL 
+                                             OR CAST(rit.contributing_indicator AS CHAR) = '' 
+                                             OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED)
+                                        ELSE
+                                            CAST(rit.contributing_indicator AS DECIMAL(10, 2))
+                                    END,
                                     'N/A'
                                 ),
                                 '<br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    'N/A'
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
                                 )
                             )
                         ),
@@ -634,6 +712,15 @@ SELECT
                     ),
                     '<br>',
                     IF(
+                        e.description IS NOT NULL AND e.description != '',
+                        CONCAT(
+                            '<b>Description:</b> ',
+                            e.description,
+                            '<br>'
+                        ),
+                        ''
+                    ),
+                    IF(
                         e.is_sharepoint = 1,
                         CONCAT(
                             '<b>File name:</b> ',
@@ -700,135 +787,159 @@ SELECT
     IF(
         riu.innov_use_to_be_determined = 1,
         '<Not applicable>',
-        IFNULL(
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        '<b>',
-                        at.name,
-                        '</b>',
-                    IF(
-                        ra.actor_type_id = 5,
-                        CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            ra.other_actor_type
-                        ),
-                        ''
-                    ),
-                    IF(
-                        (ra.sex_and_age_disaggregation != 1),
-                        CONCAT(
-                            '<br>',
-                            'Women: ',
-                            IFNULL(ra.women, 0),
-                            ' - ',
-                            'Women youth: ',
-                            IFNULL(ra.women_youth, 0),
-                            '<br>',
-                            'Men: ',
-                            IFNULL(ra.men, 0),
-                            ' - ',
-                            'Men youth: ',
-                            IFNULL(ra.men_youth, 0),
-                            '<br>',
-                            'How many: ',
-                            IFNULL(ra.how_many, 0)
-                        ),
-                        CONCAT(
-                            '<br>',
-                            'Sex and age disaggregation does not apply',
-                            '<br>',
-                            'How many: ',
-                            IFNULL(ra.how_many, 0)
-                        )
-                    ),
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_actors ra
-                LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
-            WHERE
-                    ra.result_id = r.id
+        CONCAT(
+            IF(
+                EXISTS(
+                    SELECT 1
+                    FROM prdb.result_actors ra
+                    WHERE ra.result_id = r.id
                     AND ra.is_active = 1
-            ),
-            '<Not applicable>'
-        )
-    ) AS actors,
-    IF(
-        riu.innov_use_to_be_determined = 1,
-        '<Not applicable>',
-        IFNULL(
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        '<b>',
-                        cit.name,
-                        '</b>',
-                    IF(
-                        rbit.institution_types_id = 78,
-                        CONCAT(
-                            ' - ',
-                            'Other actor type: ',
-                            rbit.other_institution
-                        ),
-                        ''
-                    ),
-                    '<br>',
-                    'How many: ',
-                    rbit.how_many,
-                    IF(
-                        (
-                            rbit.graduate_students IS NOT NULL
-                        ),
-                        (
-                            CONCAT(
-                                '<br>',
-                                'Graduate students: ',
-                                rbit.graduate_students
+                ),
+                CONCAT(
+                    '<b>Actors:</b><br>',
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<li>',
+                                '<b>',
+                                at.name,
+                                '</b>',
+                                IF(
+                                    ra.actor_type_id = 5,
+                                    CONCAT(
+                                        ' - ',
+                                        'Other actor type: ',
+                                        ra.other_actor_type
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    (ra.sex_and_age_disaggregation != 1),
+                                    CONCAT(
+                                        '<br>',
+                                        'Women: ',
+                                        IFNULL(ra.women, 0),
+                                        ' - ',
+                                        'Women youth: ',
+                                        IFNULL(ra.women_youth, 0),
+                                        '<br>',
+                                        'Men: ',
+                                        IFNULL(ra.men, 0),
+                                        ' - ',
+                                        'Men youth: ',
+                                        IFNULL(ra.men_youth, 0),
+                                        '<br>',
+                                        'How many: ',
+                                        IFNULL(ra.how_many, 0)
+                                    ),
+                                    CONCAT(
+                                        '<br>',
+                                        'Sex and age disaggregation does not apply',
+                                        '<br>',
+                                        'How many: ',
+                                        IFNULL(ra.how_many, 0)
+                                    )
+                                ),
+                                '</li>' SEPARATOR '<br>'
                             )
-                        ),
-                        ''
+                        FROM
+                            prdb.result_actors ra
+                            LEFT JOIN prdb.actor_type at ON ra.actor_type_id = at.actor_type_id
+                        WHERE
+                            ra.result_id = r.id
+                            AND ra.is_active = 1
                     ),
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.results_by_institution_type rbit
-                LEFT JOIN prdb.clarisa_institution_types cit ON rbit.institution_types_id = cit.code
-            WHERE
-                rbit.results_id = r.id
-                AND rbit.is_active = 1
-                AND rbit.institution_roles_id = 5
+                    '<br><br>'
+                ),
+                ''
             ),
-            '<Not applicable>'
-        )
-    ) AS organizations,
-    IF(
-        riu.innov_use_to_be_determined = 1,
-        '<Not applicable>',
-        IFNULL(
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<li>',
-                        'Unit of measures: ',
-                        rim.unit_of_measure,
-                    '<br>',
-                    'Quantity: ',
-                    rim.quantity,
-                    '</li>' SEPARATOR '<br>'
-                )
-            FROM
-                prdb.result_ip_measure rim
-            WHERE
-                rim.result_id = r.id
-                AND rim.is_active = 1
+            IF(
+                EXISTS(
+                    SELECT 1
+                    FROM prdb.results_by_institution_type rbit
+                    WHERE rbit.results_id = r.id
+                    AND rbit.is_active = 1
+                    AND rbit.institution_roles_id = 5
+                ),
+                CONCAT(
+                    '<b>Organizations:</b><br>',
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<li>',
+                                '<b>',
+                                cit.name,
+                                '</b>',
+                                IF(
+                                    rbit.institution_types_id = 78,
+                                    CONCAT(
+                                        ' - ',
+                                        'Other actor type: ',
+                                        rbit.other_institution
+                                    ),
+                                    ''
+                                ),
+                                '<br>',
+                                'How many: ',
+                                rbit.how_many,
+                                IF(
+                                    (
+                                        rbit.graduate_students IS NOT NULL
+                                    ),
+                                    (
+                                        CONCAT(
+                                            '<br>',
+                                            'Graduate students: ',
+                                            rbit.graduate_students
+                                        )
+                                    ),
+                                    ''
+                                ),
+                                '</li>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.results_by_institution_type rbit
+                            LEFT JOIN prdb.clarisa_institution_types cit ON rbit.institution_types_id = cit.code
+                        WHERE
+                            rbit.results_id = r.id
+                            AND rbit.is_active = 1
+                            AND rbit.institution_roles_id = 5
+                    ),
+                    '<br><br>'
+                ),
+                ''
             ),
-            '<Not applicable>'
+            IF(
+                EXISTS(
+                    SELECT 1
+                    FROM prdb.result_ip_measure rim
+                    WHERE rim.result_id = r.id
+                    AND rim.is_active = 1
+                ),
+                CONCAT(
+                    '<b>Other Quantitative:</b><br>',
+                    (
+                        SELECT
+                            GROUP_CONCAT(
+                                '<li>',
+                                'Unit of measures: ',
+                                rim.unit_of_measure,
+                                '<br>',
+                                'Quantity: ',
+                                rim.quantity,
+                                '</li>' SEPARATOR '<br>'
+                            )
+                        FROM
+                            prdb.result_ip_measure rim
+                        WHERE
+                            rim.result_id = r.id
+                            AND rim.is_active = 1
+                    )
+                ),
+                ''
+            )
         )
-    ) AS other_quantitative,
+    ) AS actors_organizations_quantitative,
     IF(
         riu.has_innovation_link IS NULL OR riu.has_innovation_link = 0,
         'No',

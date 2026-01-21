@@ -135,9 +135,7 @@ INSERT INTO
         evidence,
         current_core_innovation_use,
         current_use_level_of_the_innovation,
-        actors,
-        organizations,
-        other_quantitative,
+        actors_organizations_quantitative,
         innovation_linked
     )
 SELECT
@@ -175,9 +173,7 @@ SELECT
     cc.evidence,
     cc.current_core_innovation_use,
     cc.current_use_level_of_the_innovation,
-    cc.actors,
-    cc.organizations,
-    cc.other_quantitative,
+    cc.actors_organizations_quantitative,
     cc.innovation_linked
 FROM
     qa_innovation_use_view cc

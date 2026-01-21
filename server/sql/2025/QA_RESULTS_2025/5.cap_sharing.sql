@@ -478,39 +478,117 @@ SELECT
                             rtr.planned_result = 0,
                             CONCAT(
                                 '<b>Unplanned</b><br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    'N/A'
+                                IF(
+                                    tr.category IS NOT NULL 
+                                    AND (tr.result_title IS NOT NULL OR tr.result_description IS NOT NULL)
+                                    AND (NULLIF(TRIM(tr.result_title), '') IS NOT NULL OR NULLIF(TRIM(tr.result_description), '') IS NOT NULL),
+                                    CONCAT(
+                                        '<b>',
+                                        IF(
+                                            tr.category = 'OUTCOME',
+                                            'Intermediate Outcome:',
+                                            IF(
+                                                tr.category = 'OUTPUT',
+                                                'HLO:',
+                                                IF(
+                                                    tr.category = 'EOI',
+                                                    '2030 Outcome:',
+                                                    IFNULL(tr.category, 'N/A')
+                                                )
+                                            )
+                                        ),
+                                        '</b>',
+                                        ' ',
+                                        CONCAT(
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_title), ''),
+                                                'N/A'
+                                            ),
+                                            ' - ',
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_description), ''),
+                                                'N/A'
+                                            )
+                                        ),
+                                        '<br>'
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
                                 )
                             ),
                             CONCAT(
                                 '<b>Planned</b><br>',
-                                '<b>WP:</b> ',
+                                '<b>',
                                 IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
-                                '<br>',
-                                '<b>ToC title:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(tr.result_title), ''),
-                                    'N/A'
+                                '</b>',
+                                IF(
+                                    wp.name IS NOT NULL AND wp.name != '' AND IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A') != 'N/A',
+                                    CONCAT(' - ', wp.name),
+                                    ''
                                 ),
                                 '<br>',
-                                '<b>Indicator:</b> ',
+                                '<b>',
+                                IF(
+                                    tr.category = 'OUTCOME',
+                                    'Intermediate Outcome:',
+                                    IF(
+                                        tr.category = 'OUTPUT',
+                                        'HLO:',
+                                        IF(
+                                            tr.category = 'EOI',
+                                            '2030 Outcome:',
+                                            IFNULL(tr.category, 'N/A')
+                                        )
+                                    )
+                                ),
+                                '</b>',
+                                ' ',
+                                CONCAT(
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_title), ''),
+                                        'N/A'
+                                    ),
+                                    ' - ',
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_description), ''),
+                                        'N/A'
+                                    )
+                                ),
+                                '<br>',
+                                '<b>Indicator name:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(tri.indicator_description), ''),
                                     'N/A'
                                 ),
                                 '<br>',
-                                '<b>Contribution:</b> ',
+                                '<b>Target contribution:</b> ',
                                 IFNULL(
-                                    NULLIF(TRIM(rit.contributing_indicator), ''),
+                                    CASE 
+                                        WHEN rit.contributing_indicator IS NULL 
+                                             OR CAST(rit.contributing_indicator AS CHAR) = '' 
+                                             OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED)
+                                        ELSE
+                                            CAST(rit.contributing_indicator AS DECIMAL(10, 2))
+                                    END,
                                     'N/A'
                                 ),
                                 '<br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    'N/A'
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
                                 )
                             )
                         ),
@@ -633,6 +711,15 @@ SELECT
                         'Link'
                     ),
                     '<br>',
+                    IF(
+                        e.description IS NOT NULL AND e.description != '',
+                        CONCAT(
+                            '<b>Description:</b> ',
+                            e.description,
+                            '<br>'
+                        ),
+                        ''
+                    ),
                     IF(
                         e.is_sharepoint = 1,
                         CONCAT(

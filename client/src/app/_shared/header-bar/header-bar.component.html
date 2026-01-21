@@ -1,8 +1,9 @@
 <nav class="navbar navbar-expand header-bar" *ngIf="headerAvailable()">
   <!-- Logo Section -->
-  <div routerLink="/dashboard" class="logo-container">
-    <img src="/img/logo.webp" alt="CGIAR Logo" class="cgiar-logo-img" />
-  </div>
+  <a [routerLink]="['/dashboard']" class="logo-container" [attr.aria-label]="'Go to dashboard'">
+    <img src="icons/cgiar_logo.svg" alt="CGIAR Logo" class="cgiar-logo-svg" />
+    <img src="img/logo.png" alt="CGIAR Logo" class="cgiar-logo-img" onerror="this.style.display='none'" />
+  </a>
 
   <!-- Navigation Section -->
   <div class="nav navbar-nav-wrapper">
