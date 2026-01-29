@@ -174,6 +174,10 @@ export class AiHelper {
   @Column({ type: "varchar", length: 50, nullable: true })
   innovation_use_number_ai_evidence_level: string | null;
 
+  // Complementary innovation (only for IPSR)
+  @Column({ type: "json", nullable: true })
+  complementary_innovation: string | null;
+
   @CreateDateColumn()
   created_at: Date;
 

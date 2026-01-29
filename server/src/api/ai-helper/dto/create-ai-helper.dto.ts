@@ -109,3 +109,29 @@ export class CreateAiHelperDto {
   innovation_use_number: InnovationUseNumber;
   innovation_readiness_tag_level?: InnovationReadinessTagLevel;
 }
+
+// DTOs for IPSR
+export class CoreInnovation {
+  innovation_readiness_level: InnovationReadinessLevel;
+  innovation_use_level: InnovationUseLevel;
+  innovation_use_number: InnovationUseNumber;
+}
+
+export class ComplementaryInnovation {
+  complementary_innovation_result_code: number;
+  innovation_readiness_level: InnovationReadinessLevel;
+  innovation_use_level: InnovationUseLevel;
+}
+
+export class CreateAiHelperIpsrDto {
+  result_code: number; // Note: In JSON it's called "ipsr_code" but it's the same as result_code
+  phase_year: number;
+  gender_tag_level: GenderTagLevel;
+  climate_tag_level: ClimateTagLevel;
+  nutrition_tag_level: NutritionTagLevel;
+  environmental_tag_level: EnvironmentalTagLevel;
+  poverty_tag_level: PovertyTagLevel;
+  is_this_an_innovation_result_type: IsThisAnInnovationResultType;
+  core_innovation: CoreInnovation;
+  complementary_innovation?: ComplementaryInnovation[];
+}

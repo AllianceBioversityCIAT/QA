@@ -1,5 +1,5 @@
 import { HttpStatus, Injectable, Logger } from '@nestjs/common';
-import { CreateAiHelperDto } from './dto/create-ai-helper.dto';
+import { CreateAiHelperDto, CreateAiHelperIpsrDto } from './dto/create-ai-helper.dto';
 import { UpdateAiHelperDto } from './dto/update-ai-helper.dto';
 import { ResponseUtils } from '../../utils/response.utils';
 import { AiHelperRepository } from './ai-helper.repository';
@@ -11,9 +11,32 @@ export class AiHelperService {
 
   constructor(private readonly _aiHelperRepository: AiHelperRepository) {}
 
-  async create(createAiHelperDto: CreateAiHelperDto[]) {
+  async create(createAiHelperDto: (CreateAiHelperDto | CreateAiHelperIpsrDto)[]) {
     try {
       for (const dto of createAiHelperDto) {
+        // Detect if it's IPSR (has core_innovation) or Result (has innovation_readiness_level directly)
+        const isIpsr = 'core_innovation' in dto;
+        
+        // Map innovation fields - from core_innovation if IPSR, or directly if Result
+        const innovationReadinessLevel = isIpsr 
+          ? (dto as CreateAiHelperIpsrDto).core_innovation?.innovation_readiness_level
+          : (dto as CreateAiHelperDto).innovation_readiness_level;
+        
+        const innovationUseLevel = isIpsr
+          ? (dto as CreateAiHelperIpsrDto).core_innovation?.innovation_use_level
+          : (dto as CreateAiHelperDto).innovation_use_level;
+        
+        const innovationUseNumber = isIpsr
+          ? (dto as CreateAiHelperIpsrDto).core_innovation?.innovation_use_number
+          : (dto as CreateAiHelperDto).innovation_use_number;
+
+        // Map complementary_innovation for IPSR
+        const complementaryInnovation = isIpsr
+          ? (dto as CreateAiHelperIpsrDto).complementary_innovation
+            ? JSON.stringify((dto as CreateAiHelperIpsrDto).complementary_innovation)
+            : null
+          : null;
+
         const payload = {
           result_code: dto.result_code,
           phase_year: dto.phase_year,
@@ -69,50 +92,50 @@ export class AiHelperService {
             dto.is_this_an_innovation_result_type?.is_this_an_innovation_ai_matching || null,
           is_this_an_innovation_ai_evidence_level:
             dto.is_this_an_innovation_result_type?.is_this_an_innovation_ai_evidence_level || null,
-          // Innovation readiness level
+          // Innovation readiness level (mapped from core_innovation if IPSR)
           innovation_readiness_level_ai_prediction:
-            dto.innovation_readiness_level?.innovation_readiness_level_ai_prediction || null,
+            innovationReadinessLevel?.innovation_readiness_level_ai_prediction || null,
           innovation_readiness_level_ai_tag:
-            dto.innovation_readiness_level?.innovation_readiness_level_ai_tag || null,
+            innovationReadinessLevel?.innovation_readiness_level_ai_tag || null,
           innovation_readiness_level_ai_description:
-            dto.innovation_readiness_level?.innovation_readiness_level_ai_description || null,
+            innovationReadinessLevel?.innovation_readiness_level_ai_description || null,
           innovation_readiness_level_ai_matching:
-            dto.innovation_readiness_level?.innovation_readiness_level_ai_matching || null,
+            innovationReadinessLevel?.innovation_readiness_level_ai_matching || null,
           innovation_readiness_level_ai_evidence_level:
-            dto.innovation_readiness_level?.innovation_readiness_level_ai_evidence_level || null,
-          // Innovation use level
+            innovationReadinessLevel?.innovation_readiness_level_ai_evidence_level || null,
+          // Innovation use level (mapped from core_innovation if IPSR)
           innovation_use_level_ai_prediction:
-            dto.innovation_use_level?.innovation_use_level_ai_prediction || null,
+            innovationUseLevel?.innovation_use_level_ai_prediction || null,
           innovation_use_level_ai_tag:
-            dto.innovation_use_level?.innovation_use_level_ai_tag || null,
+            innovationUseLevel?.innovation_use_level_ai_tag || null,
           innovation_use_level_ai_description:
-            dto.innovation_use_level?.innovation_use_level_ai_description || null,
+            innovationUseLevel?.innovation_use_level_ai_description || null,
           innovation_use_level_ai_matching:
-            dto.innovation_use_level?.innovation_use_level_ai_matching || null,
+            innovationUseLevel?.innovation_use_level_ai_matching || null,
           innovation_use_level_ai_evidence_level:
-            dto.innovation_use_level?.innovation_use_level_ai_evidence_level || null,
-          // Innovation use number
+            innovationUseLevel?.innovation_use_level_ai_evidence_level || null,
+          // Innovation use number (mapped from core_innovation if IPSR)
           innovation_use_number_ai_tag:
-            dto.innovation_use_number?.innovation_use_level_ai_tag
-              ? JSON.stringify(dto.innovation_use_number.innovation_use_level_ai_tag)
+            innovationUseNumber?.innovation_use_level_ai_tag
+              ? JSON.stringify(innovationUseNumber.innovation_use_level_ai_tag)
               : null,
           innovation_use_number_ai_description:
-            dto.innovation_use_number?.innovation_use_level_ai_description || null,
+            innovationUseNumber?.innovation_use_level_ai_description || null,
           innovation_use_number_ai_matching:
-            dto.innovation_use_number?.innovation_use_level_ai_matching || null,
+            innovationUseNumber?.innovation_use_level_ai_matching || null,
           innovation_use_number_ai_evidence_level:
-            dto.innovation_use_number?.innovation_use_level_ai_evidence_level || null,
-          // Legacy innovation_readiness_tag_level (for backward compatibility)
+            innovationUseNumber?.innovation_use_level_ai_evidence_level || null,
+          // Complementary innovation (only for IPSR)
+          complementary_innovation: complementaryInnovation,
+          // Legacy innovation_readiness_tag_level (for backward compatibility - only for Results)
           innovation_ai_prediction:
-            dto.innovation_readiness_tag_level?.innovation_ai_prediction ||
-            null,
+            !isIpsr ? (dto as CreateAiHelperDto).innovation_readiness_tag_level?.innovation_ai_prediction || null : null,
           innovation_ai_tag:
-            dto.innovation_readiness_tag_level?.innovation_ai_tag || null,
+            !isIpsr ? (dto as CreateAiHelperDto).innovation_readiness_tag_level?.innovation_ai_tag || null : null,
           innovation_ai_description:
-            dto.innovation_readiness_tag_level?.innovation_ai_description ||
-            null,
+            !isIpsr ? (dto as CreateAiHelperDto).innovation_readiness_tag_level?.innovation_ai_description || null : null,
           innovation_ai_matching:
-            dto.innovation_readiness_tag_level?.innovation_ai_matching || null,
+            !isIpsr ? (dto as CreateAiHelperDto).innovation_readiness_tag_level?.innovation_ai_matching || null : null,
         };
 
         const result = await this._aiHelperRepository.findOne({

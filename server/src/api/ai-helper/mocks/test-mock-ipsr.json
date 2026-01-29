@@ -1,0 +1,137 @@
+[
+  {
+    "result_code": 1001,
+    "phase_year": 2025,
+    "gender_tag_level": {
+      "gender_ai_prediction": 0.85,
+      "gender_ai_tag": "(2) Principal",
+      "gender_ai_component": "Gender Equality",
+      "gender_ai_description": "The AI identified Gender as a Principal focus with a strong match to the defined criteria.",
+      "gender_ai_matching": "Match",
+      "gender_ai_evidence_level": "Partial"
+    },
+    "climate_tag_level": {
+      "climate_ai_prediction": 0.92,
+      "climate_ai_tag": "(2) Principal",
+      "climate_ai_component": "Adaptation",
+      "climate_ai_description": "The AI detected Climate Change as a Principal focus, but flagged a mismatch with the expected alignment.",
+      "climate_ai_matching": "Mismatch",
+      "climate_ai_evidence_level": "Full"
+    },
+    "nutrition_tag_level": {
+      "nutrition_ai_prediction": 1,
+      "nutrition_ai_tag": "(1) Significant",
+      "nutrition_ai_component": "Food Security",
+      "nutrition_ai_description": "Nutrition is considered Significant, and the AI determined a strong alignment with the criteria.",
+      "nutrition_ai_matching": "Match",
+      "nutrition_ai_evidence_level": "Full"
+    },
+    "environmental_tag_level": {
+      "environmental_ai_prediction": 0.78,
+      "environmental_ai_tag": "(2) Principal",
+      "environmental_ai_component": "Environmental Health",
+      "environmental_ai_description": "The AI classified Environment as Significant with a high level of relevance to the project goals.",
+      "environmental_ai_matching": "Match",
+      "environmental_ai_evidence_level": "Full"
+    },
+    "poverty_tag_level": {
+      "poverty_ai_prediction": 0,
+      "poverty_ai_tag": "(0) Not Targeted",
+      "poverty_ai_component": null,
+      "poverty_ai_description": "Poverty was flagged as Not Targeted, indicating a mismatch with the current criteria and focus areas.",
+      "poverty_ai_matching": "Mismatch",
+      "poverty_ai_evidence_level": "Partial"
+    },
+    "is_this_an_innovation_result_type": {
+      "is_this_an_innovation_ai_prediction": null,
+      "is_this_an_innovation_ai_tag": null,
+      "is_this_an_innovation_ai_description": null,
+      "is_this_an_innovation_ai_matching": null,
+      "is_this_an_innovation_ai_evidence_level": null
+    },
+    "core_innovation": {
+      "innovation_readiness_level": {
+        "innovation_readiness_level_ai_prediction": 8,
+        "innovation_readiness_level_ai_tag": "8 - Uncontrolled Testing",
+        "innovation_readiness_level_ai_description": "The AI identified an Uncontrolled Testing phase for Innovation Readiness, indicating a high level of risk and uncertainty.",
+        "innovation_readiness_level_ai_matching": "Mismatch",
+        "innovation_readiness_level_ai_evidence_level": "Partial"
+      },
+      "innovation_use_level": {
+        "innovation_use_level_ai_prediction": 7,
+        "innovation_use_level_ai_tag": "7 - Prototype Validation",
+        "innovation_use_level_ai_description": "The AI identified a Prototype Validation phase for Innovation Use, confirming external use under semi-controlled conditions.",
+        "innovation_use_level_ai_matching": "Mismatch",
+        "innovation_use_level_ai_evidence_level": "Partial"
+      },
+      "innovation_use_number": {
+        "innovation_use_level_ai_prediction": null,
+        "innovation_use_level_ai_tag": [
+          {
+            "user": "actors",
+            "user_type": "Researchers",
+            "user_subtype": null,
+            "quantity": 1,
+            "women": null,
+            "youth_women": null,
+            "non_youth_women": null,
+            "men": null,
+            "youth_men": null,
+            "non_youth_men": null
+          },
+          {
+            "user": "organizations",
+            "user_type": "Government",
+            "user_subtype": "Government (National)",
+            "quantity": 1,
+            "women": null,
+            "youth_women": null,
+            "non_youth_women": null,
+            "men": null,
+            "youth_men": null,
+            "non_youth_men": null
+          }
+        ],
+        "innovation_use_level_ai_description": "In Ethiopia, the evidence states that there is 1 Researcher and 1 National Government organization using the innovation.",
+        "innovation_use_level_ai_matching": null,
+        "innovation_use_level_ai_evidence_level": "Full"
+      }
+    },
+    "complementary_innovation": [
+      {
+        "complementary_innovation_result_code": 9872,
+        "innovation_readiness_level": {
+          "innovation_readiness_level_ai_prediction": 8,
+          "innovation_readiness_level_ai_tag": "8 - Uncontrolled Testing",
+          "innovation_readiness_level_ai_description": "The AI identified an Uncontrolled Testing phase for Innovation Readiness, indicating a high level of risk and uncertainty.",
+          "innovation_readiness_level_ai_matching": "Mismatch",
+          "innovation_readiness_level_ai_evidence_level": "Partial"
+        },
+        "innovation_use_level": {
+          "innovation_use_level_ai_prediction": 7,
+          "innovation_use_level_ai_tag": "7 - Prototype Validation",
+          "innovation_use_level_ai_description": "The AI identified a Prototype Validation phase for Innovation Use, confirming external use under semi-controlled conditions.",
+          "innovation_use_level_ai_matching": "Mismatch",
+          "innovation_use_level_ai_evidence_level": "Partial"
+        }
+      },
+      {
+        "complementary_innovation_result_code": 9873,
+        "innovation_readiness_level": {
+          "innovation_readiness_level_ai_prediction": 8,
+          "innovation_readiness_level_ai_tag": "8 - Uncontrolled Testing",
+          "innovation_readiness_level_ai_description": "The AI identified an Uncontrolled Testing phase for Innovation Readiness, indicating a high level of risk and uncertainty.",
+          "innovation_readiness_level_ai_matching": "Mismatch",
+          "innovation_readiness_level_ai_evidence_level": "Partial"
+        },
+        "innovation_use_level": {
+          "innovation_use_level_ai_prediction": 7,
+          "innovation_use_level_ai_tag": "7 - Prototype Validation",
+          "innovation_use_level_ai_description": "The AI identified a Prototype Validation phase for Innovation Use, confirming external use under semi-controlled conditions.",
+          "innovation_use_level_ai_matching": "Mismatch",
+          "innovation_use_level_ai_evidence_level": "Partial"
+        }
+      }
+    ]
+  }
+]
