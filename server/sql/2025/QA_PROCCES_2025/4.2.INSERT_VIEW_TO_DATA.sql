@@ -751,7 +751,7 @@ WHERE
         SELECT
             1
         FROM
-            qa_knowledge_product_data_initial qa
+            qa_knowledge_product_data qa
         WHERE
             qa.id = cc.id
     );
