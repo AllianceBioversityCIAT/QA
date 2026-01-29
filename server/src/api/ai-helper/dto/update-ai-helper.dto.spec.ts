@@ -52,12 +52,16 @@ describe('UpdateAiHelperDto', () => {
     updateDto.gender_tag_level = {
       gender_ai_prediction: 0.90,
       gender_ai_tag: 'very_high',
+      gender_ai_component: 'Gender Equality',
       gender_ai_description: 'Very high gender relevance',
       gender_ai_matching: 'matched',
+      gender_ai_evidence_level: 'Full',
     };
 
     expect(updateDto.gender_tag_level).toBeDefined();
     expect(updateDto.gender_tag_level?.gender_ai_prediction).toBe(0.90);
+    expect(updateDto.gender_tag_level?.gender_ai_component).toBe('Gender Equality');
+    expect(updateDto.gender_tag_level?.gender_ai_evidence_level).toBe('Full');
     expect(updateDto.result_code).toBeUndefined();
   });
 
@@ -68,13 +72,17 @@ describe('UpdateAiHelperDto', () => {
     updateDto.gender_tag_level = {
       gender_ai_prediction: 0.85,
       gender_ai_tag: 'high',
+      gender_ai_component: 'Gender Equality',
       gender_ai_description: 'High gender relevance',
       gender_ai_matching: 'matched',
+      gender_ai_evidence_level: 'Partial',
     };
 
     expect(updateDto.result_code).toBe(3);
     expect(updateDto.phase_year).toBe(2025);
     expect(updateDto.gender_tag_level).toBeDefined();
+    expect(updateDto.gender_tag_level?.gender_ai_component).toBe('Gender Equality');
+    expect(updateDto.gender_tag_level?.gender_ai_evidence_level).toBe('Partial');
   });
 
   it('should allow updating innovation_readiness_tag_level', () => {
