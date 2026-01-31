@@ -313,7 +313,10 @@ export class EvaluationsService {
           prefix: "environmental",
         },
         { col_name: "poverty_tag_level", prefix: "poverty" },
-        { col_name: "innovation_readiness_level", prefix: "innovation" },
+        { col_name: "innovation_readiness_level", prefix: "innovation_readiness_level" },
+        { col_name: "is_this_an_innovation_result_type", prefix: "is_this_an_innovation" },
+        { col_name: "current_use_level_of_the_innovation", prefix: "innovation_use_level" },
+        { col_name: "actors_organizations_quantitative", prefix: "innovation_use_number" },
       ];
 
       mappedData.forEach((item) => {
@@ -321,24 +324,97 @@ export class EvaluationsService {
           (field) => field.col_name === item.col_name
         );
         if (fieldToMap && aiHelperData) {
-          if (fieldToMap.prefix === "innovation") {
-            if (aiHelperData[`${fieldToMap.prefix}_ai_prediction`] !== null) {
+          // Special handling for innovation_readiness_level (supports both legacy and new format)
+          if (fieldToMap.prefix === "innovation_readiness_level") {
+            // Try new format first (innovation_readiness_level_ai_*)
+            if (aiHelperData[`innovation_readiness_level_ai_prediction`] !== null || 
+                aiHelperData[`innovation_readiness_level_ai_tag`] !== null) {
+              if (aiHelperData[`innovation_readiness_level_ai_prediction`] !== null) {
+                item["ai_prediction"] =
+                  aiHelperData[`innovation_readiness_level_ai_prediction`];
+              }
+              item["ai_tag"] = aiHelperData[`innovation_readiness_level_ai_tag`];
+              item["ai_description"] =
+                aiHelperData[`innovation_readiness_level_ai_description`];
+              item["ai_matching"] =
+                aiHelperData[`innovation_readiness_level_ai_matching`];
+              if (aiHelperData[`innovation_readiness_level_ai_evidence_level`] !== null) {
+                item["ai_evidence_level"] =
+                  aiHelperData[`innovation_readiness_level_ai_evidence_level`];
+              }
+            }
+            // Fallback to legacy format (innovation_ai_*) for backward compatibility
+            else if (aiHelperData[`innovation_ai_prediction`] !== null) {
               item["ai_prediction"] =
-                aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
+                aiHelperData[`innovation_ai_prediction`];
+              item["ai_tag"] = aiHelperData[`innovation_ai_tag`];
+              item["ai_description"] =
+                aiHelperData[`innovation_ai_description`];
+              item["ai_matching"] =
+                aiHelperData[`innovation_ai_matching`];
+            }
+          }
+          // Special handling for innovation_use_number (no prediction, has JSON tag)
+          else if (fieldToMap.prefix === "innovation_use_number") {
+            const jsonTag = aiHelperData[`innovation_use_number_ai_tag`];
+            const aiDescription = aiHelperData[`innovation_use_number_ai_description`];
+            const aiMatching = aiHelperData[`innovation_use_number_ai_matching`];
+            const aiEvidenceLevel = aiHelperData[`innovation_use_number_ai_evidence_level`];
+            
+            // Always set description and evidence_level if they exist, even if tag is null
+            if (aiDescription !== null && aiDescription !== undefined) {
+              item["ai_description"] = aiDescription;
+            }
+            if (aiEvidenceLevel !== null && aiEvidenceLevel !== undefined) {
+              item["ai_evidence_level"] = aiEvidenceLevel;
+            }
+            
+            if (jsonTag !== null && jsonTag !== undefined) {
+              // Parse JSON - handle case where it's stored as string containing JSON
+              try {
+                let parsed = jsonTag;
+                if (typeof jsonTag === 'string') {
+                  // Try parsing once
+                  parsed = JSON.parse(jsonTag);
+                  // If result is still a string (double-escaped), parse again
+                  if (typeof parsed === 'string') {
+                    parsed = JSON.parse(parsed);
+                  }
+                }
+                item["ai_tag"] = parsed;
+              } catch (e) {
+                // If parsing fails, use as-is (might already be parsed object)
+                item["ai_tag"] = jsonTag;
+              }
+            }
+            
+            // For innovation_use_number, if matching is null but we have description, show it
+            // Set matching to empty string instead of null to allow display
+            item["ai_matching"] = aiMatching !== null && aiMatching !== undefined ? aiMatching : "";
+          }
+          // Standard fields with prediction, tag, description, matching, and optionally component/evidence_level
+          else {
+            if (aiHelperData[`${fieldToMap.prefix}_ai_prediction`] !== null || 
+                aiHelperData[`${fieldToMap.prefix}_ai_tag`] !== null) {
+              if (aiHelperData[`${fieldToMap.prefix}_ai_prediction`] !== null) {
+                item["ai_prediction"] =
+                  aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
+              }
               item["ai_tag"] = aiHelperData[`${fieldToMap.prefix}_ai_tag`];
               item["ai_description"] =
                 aiHelperData[`${fieldToMap.prefix}_ai_description`];
               item["ai_matching"] =
                 aiHelperData[`${fieldToMap.prefix}_ai_matching`];
+              // Map component and evidence_level if they exist
+              if (aiHelperData[`${fieldToMap.prefix}_ai_component`] !== null) {
+                item["ai_component"] =
+                  aiHelperData[`${fieldToMap.prefix}_ai_component`];
+              }
+              if (aiHelperData[`${fieldToMap.prefix}_ai_evidence_level`] !== null) {
+                item["ai_evidence_level"] =
+                  aiHelperData[`${fieldToMap.prefix}_ai_evidence_level`];
+              }
             }
-          } else {
-            item["ai_prediction"] =
-              aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
-            item["ai_tag"] = aiHelperData[`${fieldToMap.prefix}_ai_tag`];
-            item["ai_description"] =
-              aiHelperData[`${fieldToMap.prefix}_ai_description`];
-            item["ai_matching"] =
-              aiHelperData[`${fieldToMap.prefix}_ai_matching`];
           }
         }
       });

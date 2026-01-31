@@ -163,10 +163,10 @@
 
                       @if(AIMatchFields.includes(detailedData[i].col_name)) {
                       <div class="ai-match-card"
-                        [ngClass]="{'ai-match-true': detailedData[i].ai_matching === 'Match', 'ai-match-false': detailedData[i].ai_matching === 'Mismatch', 'ai-match-null': !detailedData[i].ai_matching }"
+                        [ngClass]="{'ai-match-true': detailedData[i].ai_matching === 'Match', 'ai-match-false': detailedData[i].ai_matching === 'Mismatch', 'ai-match-null': !detailedData[i].ai_matching || detailedData[i].ai_matching === '' }"
                         [pTooltip]="detailedData[i].ai_description ? tooltipContent : null" tooltipPosition="top"
                         [tooltipStyleClass]="'ai-match-tooltip'" [autoHide]="false">
-                        @if(detailedData[i].ai_matching) {
+                        @if(detailedData[i].ai_matching && detailedData[i].ai_matching !== '') {
 
                         <span class="material-icons-round ai-match-icon"
                           [ngStyle]="{'color': detailedData[i].ai_matching === 'Match' ? '#4caf50' : '#F44336'}">auto_awesome</span>
@@ -175,7 +175,7 @@
                         } @else {
                         <span class="material-symbols-rounded" style="font-size: 20px; color: #e88a2b !important"> info
                         </span>
-                        <p class="ai-match-card-title">AI Matching not provided</p>
+                        <p class="ai-match-card-title">{{detailedData[i].ai_description || 'AI Matching not provided'}}</p>
                         }
                       </div>
                       <ng-template #tooltipContent>
