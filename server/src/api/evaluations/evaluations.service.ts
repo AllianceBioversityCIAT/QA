@@ -401,14 +401,22 @@ export class EvaluationsService {
                   aiHelperData[`${fieldToMap.prefix}_ai_prediction`];
               }
               item["ai_tag"] = aiHelperData[`${fieldToMap.prefix}_ai_tag`];
-              item["ai_description"] =
-                aiHelperData[`${fieldToMap.prefix}_ai_description`];
+              
+              // Build description - include component if it exists
+              let description = aiHelperData[`${fieldToMap.prefix}_ai_description`] || "";
+              const component = aiHelperData[`${fieldToMap.prefix}_ai_component`];
+              if (component !== null && component !== undefined && component !== "") {
+                description = description 
+                  ? `${description} (Component: ${component})`
+                  : `Component: ${component}`;
+              }
+              item["ai_description"] = description;
+              
               item["ai_matching"] =
                 aiHelperData[`${fieldToMap.prefix}_ai_matching`];
-              // Map component and evidence_level if they exist
-              if (aiHelperData[`${fieldToMap.prefix}_ai_component`] !== null) {
-                item["ai_component"] =
-                  aiHelperData[`${fieldToMap.prefix}_ai_component`];
+              // Map component separately as well for potential future use
+              if (component !== null && component !== undefined) {
+                item["ai_component"] = component;
               }
               if (aiHelperData[`${fieldToMap.prefix}_ai_evidence_level`] !== null) {
                 item["ai_evidence_level"] =

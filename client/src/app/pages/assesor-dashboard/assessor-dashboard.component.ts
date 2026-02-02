@@ -65,7 +65,7 @@ export default class AssessorDashboardComponent implements OnInit {
   descriptionCharts = {
     generalStatus: 'This shows the progress of assessment of a specific indicator. ',
     assessorsInteractions: "This presents assessors' interactions with existing comments on an item being already evaluated by other assessors. ",
-    responseToComments: 'This shows the status of Initiatives responses to comments made by assessors during the first round.',
+    responseToComments: 'This shows the status of SP/A responses to comments made by assessors during the first round.',
     assessmentByField: 'This shows the status of assessment for each field of an item.',
     highlightComment: 'This shows the status of pending highlighted comments'
   };

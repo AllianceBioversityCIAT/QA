@@ -848,6 +848,7 @@ SELECT
                         WHERE
                             ra.result_id = r.id
                             AND ra.is_active = 1
+                            AND ra.section_id = 1
                     ),
                     '<br><br>'
                 ),
@@ -904,6 +905,7 @@ SELECT
                             rbit.results_id = r.id
                             AND rbit.is_active = 1
                             AND rbit.institution_roles_id = 5
+                            AND rbit.section_id = 1
                     ),
                     '<br><br>'
                 ),
@@ -934,6 +936,7 @@ SELECT
                         WHERE
                             rim.result_id = r.id
                             AND rim.is_active = 1
+                            AND rim.section_id = 1
                     )
                 ),
                 ''
