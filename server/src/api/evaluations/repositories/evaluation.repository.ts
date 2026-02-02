@@ -228,7 +228,6 @@ export class EvaluationRepository extends Repository<Evaluations> {
                     AND is_visible = 1
                     AND detail IS NOT NULL
                     AND cycleId = 1
-                    AND createdAt >= actual_batch_date()
             ) AS comments_count,
             (
                 SELECT
