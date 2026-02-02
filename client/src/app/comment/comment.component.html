@@ -133,7 +133,7 @@
                   <textarea maxlength="{{ totalChar }}" formControlName="comment"
                     placeholder="Leaving a comment when {{ this.is_approved ? 'accepting is optional...' : 'disagreeing is mandatory' }}"></textarea>
                 </form>
-                <button type="button" class="btn accept" (click)="confirm(comment)">Send comment</button>
+                <button type="button" class="btn accept" (click)="confirm(comment)">Accept comment</button>
                 <button type="button" class="btn btn-white" (click)="this.showDialog = false">Cancel</button>
               </div>
             </p-dialog>
