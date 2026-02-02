@@ -70,5 +70,5 @@ export enum StatusNames {
 
 export enum StatusNamesCRP {
     pending = 'Pending',
-    complete = 'Answered / No action needed',
+    complete = 'Validated / Result status',
 }

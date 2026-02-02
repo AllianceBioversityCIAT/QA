@@ -163,7 +163,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   sanitizedOldValue: SafeHtml = '';
   sanitizedInitialValue: SafeHtml = '';
   sanitizedCurrentValue: SafeHtml = '';
-  AIMatchFields = ["gender_tag_level", "climate_change_level", "nutrition_tag_level", "environmental_biodiversity_tag_level", "poverty_tag_level", "innovation_readiness_level"]
+  AIMatchFields = ["gender_tag_level", "climate_change_level", "nutrition_tag_level", "environmental_biodiversity_tag_level", "poverty_tag_level", "innovation_readiness_level", "is_this_an_innovation_result_type", "current_use_level_of_the_innovation", "actors_organizations_quantitative"]
   aiMatchIcon = 'content_copy';
 
   constructor(

@@ -111,7 +111,7 @@ export class ResultsTableComponent {
       showIf: () => true
     },
     {
-      name: 'Comments answered by initiatives',
+      name: 'Comments answered by SP/A',
       attr: 'comments_replies_count',
       showIf: () => true
     },
