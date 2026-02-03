@@ -17,7 +17,7 @@
 
   .field-title {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
     width: 100%;
@@ -28,14 +28,13 @@
       font-size: 1rem;
       font-weight: $semibold;
       line-height: 1.5;
-      vertical-align: baseline;
+      vertical-align: middle;
     }
 
     .core-field {
       display: inline-flex;
-      align-items: baseline;
+      align-items: center;
       margin: 0;
-      vertical-align: baseline;
     }
 
     .core-tag {
@@ -49,7 +48,6 @@
       display: inline-block;
       line-height: 1.5;
       margin: 0;
-      vertical-align: baseline;
     }
 
     .core-tag:hover {
@@ -58,9 +56,50 @@
     }
 
     .changed-previous-field {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       margin: 0;
-      vertical-align: baseline;
+      flex-shrink: 0;
+    }
+
+    .btn-updates {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      font-size: $font-xs;
+      font-weight: $semibold;
+      font-family: $primary_font;
+      color: var(--yellow-quaternary);
+      background-color: var(--yellow-tertiary);
+      border: 1px solid var(--yellow-secondary);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .btn-updates:hover {
+      background-color: var(--yellow-secondary);
+      border-color: var(--yellow-primary);
+      color: var(--black);
+    }
+
+    .btn-updates:focus-visible {
+      outline: 2px solid var(--yellow-primary);
+      outline-offset: 2px;
+    }
+
+    .btn-updates__icon {
+      flex-shrink: 0;
+      width: 1.125rem;
+      height: 1.125rem;
+      stroke: currentColor;
+    }
+
+    .btn-updates__label {
+      white-space: nowrap;
     }
 
     .custom-button {

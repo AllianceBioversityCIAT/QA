@@ -89,7 +89,6 @@ FROM
     qa_policy_change_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -263,7 +262,6 @@ FROM
     qa_other_outcome_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -354,7 +352,6 @@ FROM
     qa_capdev_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -471,7 +468,6 @@ FROM
     qa_innovation_development_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -554,7 +550,6 @@ FROM
     qa_other_output_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -753,7 +748,6 @@ FROM
     qa_knowledge_product_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -865,7 +859,6 @@ FROM
     qa_innovation_use_ipsr_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
