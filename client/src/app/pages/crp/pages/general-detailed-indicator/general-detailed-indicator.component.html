@@ -141,35 +141,10 @@
                       </div>
                       }
 
-                      @if ((detailedData[i]?.hasChanged || detailedData[i]?.hasChangePrevious) &&
-                      currentUser.cycle?.cycle_stage == '2') {
+                      @if (detailedData[i]?.hasChanged || detailedData[i]?.hasChangePrevious) {
                       <div class="changed-previous-field">
                         <button class="custom-button" (click)="showDialog(detailedData[i])">See updates</button>
                       </div>
-
-                      <p-dialog header="Data updates" [modal]="true" [draggable]="false" [(visible)]="visible"
-                        [style]="{ width: '75%' }">
-                        <div class="flex align-items-center gap-3 mb-3">
-                          @if (detailedData[i]?.changes_updated && detailedData[i]?.hasChangePrevious) {
-                          <label for="old-data" class="font-semibold w-6rem">Previous Year:</label>
-                          <div id="old-data" class="flex-auto" [innerHTML]="sanitizedOldValue"></div>
-                          }
-
-                          @if (detailedData[i]?.hasChanged) {
-                          <label for="on-initial" class="font-semibold w-6rem">On Initial QA Submission:</label>
-                          <div id="on-initial" class="flex-auto" [innerHTML]="sanitizedInitialValue"></div>
-                          }
-
-                          @if (detailedData[i]?.value) {
-                          <label for="current-value" class="font-semibold w-6rem">Current value:</label>
-                          <div id="current-value" class="flex-auto" [innerHTML]="sanitizedCurrentValue"></div>
-                          }
-                        </div>
-
-                        <div class="flex justify-content-end gap-2">
-                          <p-button label="Close" severity="secondary" (onClick)="visible = false"></p-button>
-                        </div>
-                      </p-dialog>
                       }
 
                       @if(AIMatchFields.includes(detailedData[i].col_name)) {
@@ -416,5 +391,46 @@
   </div>
 </form>
 
+<!-- See updates modal (single instance, uses currentData) -->
+<p-dialog
+  [modal]="true"
+  [draggable]="false"
+  [(visible)]="visible"
+  [style]="{ width: 'min(90vw, 720px)' }"
+  styleClass="updates-modal"
+  [contentStyle]="{ padding: '0 1.5rem 1.5rem' }"
+  (onHide)="visible = false">
+  <ng-template pTemplate="header">
+    <div class="updates-modal__header">
+      <h2 class="updates-modal__title">Data updates</h2>
+      @if (currentData?.display_name) {
+        <p class="updates-modal__subtitle" [innerHTML]="currentData.display_name"></p>
+      }
+    </div>
+  </ng-template>
+  <div class="updates-modal__body">
+    @if (currentData?.changes_updated && currentData?.hasChangePrevious) {
+      <section class="updates-modal__section">
+        <h3 class="updates-modal__section-title">Previous year</h3>
+        <div class="updates-modal__content" [innerHTML]="sanitizedOldValue"></div>
+      </section>
+    }
+    @if (currentData?.hasChanged) {
+      <section class="updates-modal__section">
+        <h3 class="updates-modal__section-title">On initial QA submission</h3>
+        <div class="updates-modal__content" [innerHTML]="sanitizedInitialValue"></div>
+      </section>
+    }
+    @if (currentData?.value) {
+      <section class="updates-modal__section updates-modal__section--current">
+        <h3 class="updates-modal__section-title">Current value</h3>
+        <div class="updates-modal__content" [innerHTML]="sanitizedCurrentValue"></div>
+      </section>
+    }
+  </div>
+  <ng-template pTemplate="footer">
+    <button type="button" class="btn btn-primary updates-modal__close" (click)="visible = false">Close</button>
+  </ng-template>
+</p-dialog>
 
 <p-toast position="bottom-right" />
