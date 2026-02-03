@@ -22,7 +22,7 @@ export class StatusChartComponent implements OnInit {
   @ViewChild('barCanvas') barCanvas: ElementRef;
   chart: any;
   legendLabels = [
-    { name: 'Answered / No action needed', class: 'answered', value: 0 },
+    { name: 'Validated / Result Status', class: 'answered', value: 0 },
     { name: 'Pending', class: 'pending', value: 0 }
   ];
   results: any[];
@@ -48,7 +48,7 @@ export class StatusChartComponent implements OnInit {
   formatIndicator() {
     this.results = [{ name: this.indicator[0].name, series: [] }];
     this.indicator[0].series.forEach(element => {
-      let status = element.status == 'complete' ? 'Answered / No action needed' : 'Pending';
+      let status = element.status == 'complete' ? 'Validated / Result Status' : 'Pending';
       this.legendLabels.find(el => el.name == status).value = element.value;
       this.results[0].series.push({
         name: status,
@@ -56,7 +56,7 @@ export class StatusChartComponent implements OnInit {
       });
     });
     this.results[0].series.reverse();
-    const isAllPending = this.results[0].series.find(el => el.name == 'Answered / No action needed' && el.value == 0);
+    const isAllPending = this.results[0].series.find(el => el.name == 'Validated / Result Status' && el.value == 0);
 
     if (this.results[0].series.find(el => el.name == 'Pending' && el.value == this.total)) {
       this.colorScheme.domain.shift();
@@ -68,8 +68,8 @@ export class StatusChartComponent implements OnInit {
     const labels = this.results[0].series.map(item => item.name);
     const dataValues = this.results[0].series.map(item => item.value);
     const backgroundColors = this.results[0].series.map(item => {
-      if (item.name === 'Answered / No action needed') {
-        return ChartColors.CHART_COLORS['Answered / No action needed'];
+      if (item.name === 'Validated / Result Status') {
+        return ChartColors.CHART_COLORS['Validated / Result Status'];
       } else {
         return ChartColors.CHART_COLORS['Pending'];
       }
