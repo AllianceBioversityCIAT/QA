@@ -60,8 +60,9 @@ export class CommentService {
   // get comments excel
   getCommentsExcel(params) {
     // return this.http.get(`${environment.apiBaseUrl}comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}`, { responseType: HttpRequest })
+    const crpId = params.crp_id ?? '';
     return this.http.get(
-      `${environment.apiBaseUrl}comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}&crp_id=${params.crp_id}&indicatorName=${params.indicatorName}`
+      `${environment.apiBaseUrl}comment/excel/${params.evaluationId}?userId=${params.id}&name=${params.name}&crp_id=${crpId}&indicatorName=${params.indicatorName}`
     );
   }
 

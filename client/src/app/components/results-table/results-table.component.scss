@@ -1,5 +1,39 @@
 @import '@public/variables.scss';
 
+.results-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 280px;
+  padding: 2rem;
+  background: var(--background, #f8f9fa);
+  border-radius: 8px;
+  border: 1px solid var(--gray-primary, #e2e8f0);
+
+  &__spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--gray-primary, #e2e8f0);
+    border-top-color: var(--green-primary, #059669);
+    border-radius: 50%;
+    animation: results-loading-spin 0.8s linear infinite;
+  }
+
+  &__text {
+    margin: 1rem 0 0;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--gray-secondary, #64748b);
+  }
+}
+
+@keyframes results-loading-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .filters {
   padding: 1rem;
   background: #fafafa;

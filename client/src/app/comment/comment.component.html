@@ -2,7 +2,8 @@
   <!-- <app-on-boarding *ngIf="currentUser.roles[0].id != 3"></app-on-boarding> -->
   <button class="close-button" (click)="closeComments()" type="button" aria-label="Close comments">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <path d="M18 6L6 18M6 6L18 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" />
     </svg>
   </button>
   <div *ngIf="commentsByCol.length && !availableComment && currentUser.hasOwnProperty('cycle')">
@@ -133,7 +134,9 @@
                   <textarea maxlength="{{ totalChar }}" formControlName="comment"
                     placeholder="Leaving a comment when {{ this.is_approved ? 'accepting is optional...' : 'disagreeing is mandatory' }}"></textarea>
                 </form>
-                <button type="button" class="btn accept" (click)="confirm(comment)">Accept comment</button>
+                <button type="button" [class]="is_approved ? 'btn accept' : 'btn disagree'" (click)="confirm(comment)">
+                  {{ is_approved ? 'Accept comment' : 'Disagree comment' }}
+                </button>
                 <button type="button" class="btn btn-white" (click)="this.showDialog = false">Cancel</button>
               </div>
             </p-dialog>
@@ -266,7 +269,8 @@
     <h2 class="title-section">COMMENTS ON {{ dataFromItem.display_name }}</h2>
     <div class="no-comments-message">
       <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" stroke-width="2"
+          stroke-linecap="round" stroke-linejoin="round" />
       </svg>
       <p>No comments made</p>
     </div>

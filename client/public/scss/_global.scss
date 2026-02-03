@@ -169,6 +169,20 @@
   border-color: var(--yellow-primary);
 }
 
+// Botón Download Excel: verde (sobrescribe .btn-primary amarillo)
+.btn-primary.file-button--excel,
+.file-button--excel.btn-primary {
+  background-color: var(--green-primary) !important;
+  border-color: var(--green-primary) !important;
+  color: var(--white) !important;
+}
+.btn-primary.file-button--excel:hover,
+.file-button--excel.btn-primary:hover {
+  background-color: var(--green-secondary) !important;
+  border-color: var(--green-secondary) !important;
+  color: var(--white) !important;
+}
+
 .btn-green-secondary,
 .btn-green-secondary:hover,
 .btn-green-secondary:not(:disabled):not(.disabled).active,

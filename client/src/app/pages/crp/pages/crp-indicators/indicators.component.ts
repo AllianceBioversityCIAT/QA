@@ -59,22 +59,21 @@ export default class CRPIndicatorsComponent implements OnInit {
     });
   }
 
+  listLoading = false;
+
   getEvaluationsList(params) {
-    console.log('getEvaluationsList');
-    console.log(this.currentUser);
+    this.listLoading = true;
     this.dashService
       .geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column, this.currentUser.crp?.crp_id)
       .subscribe({
         next: res => {
-          console.log(res);
-          // this.evaluationList = this.orderPipe.transform(res.data, this.reverse ? 'asc' : 'desc', this.order);
-          // this.returnedArray = this.evaluationList.slice(0, 10);
           this.evaluationList = res.data;
           this.returnedArray = this.evaluationList.slice(0, 10);
-          console.log(this.evaluationList);
+          this.listLoading = false;
         },
         error: error => {
           this.returnedArray = [];
+          this.listLoading = false;
           this.alertService.error(error);
         }
       });

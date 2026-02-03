@@ -17,7 +17,7 @@
 
   .field-title {
     display: flex;
-    align-items: baseline;
+    align-items: center;
     flex-wrap: wrap;
     gap: 0.5rem;
     width: 100%;
@@ -28,14 +28,13 @@
       font-size: 1rem;
       font-weight: $semibold;
       line-height: 1.5;
-      vertical-align: baseline;
+      vertical-align: middle;
     }
 
     .core-field {
       display: inline-flex;
-      align-items: baseline;
+      align-items: center;
       margin: 0;
-      vertical-align: baseline;
     }
 
     .core-tag {
@@ -49,7 +48,6 @@
       display: inline-block;
       line-height: 1.5;
       margin: 0;
-      vertical-align: baseline;
     }
 
     .core-tag:hover {
@@ -58,9 +56,50 @@
     }
 
     .changed-previous-field {
-      display: inline-block;
+      display: inline-flex;
+      align-items: center;
       margin: 0;
-      vertical-align: baseline;
+      flex-shrink: 0;
+    }
+
+    .btn-updates {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.4rem 0.75rem;
+      font-size: $font-xs;
+      font-weight: $semibold;
+      font-family: $primary_font;
+      color: var(--yellow-quaternary);
+      background-color: var(--yellow-tertiary);
+      border: 1px solid var(--yellow-secondary);
+      border-radius: var(--border-radius-sm);
+      cursor: pointer;
+      transition: background-color var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+      line-height: 1.3;
+      margin: 0;
+    }
+
+    .btn-updates:hover {
+      background-color: var(--yellow-secondary);
+      border-color: var(--yellow-primary);
+      color: var(--black);
+    }
+
+    .btn-updates:focus-visible {
+      outline: 2px solid var(--yellow-primary);
+      outline-offset: 2px;
+    }
+
+    .btn-updates__icon {
+      flex-shrink: 0;
+      width: 1.125rem;
+      height: 1.125rem;
+      stroke: currentColor;
+    }
+
+    .btn-updates__label {
+      white-space: nowrap;
     }
 
     .custom-button {
@@ -366,11 +405,11 @@
     border-left: 4px solid transparent;
     background-color: transparent;
 
-    // Added status (Warning/Yellow) - Orange/Amber style
+    // Added status (Warning/Yellow) - Orange/Amber style (text meets WCAG AA on #fff7ed)
     &.status-added {
       background-color: #fff7ed;
       border-left-color: #f59e0b;
-      color: #d97706;
+      color: #92400e;
       border-right: 1px solid #fde68a;
       border-top: 1px solid #fde68a;
       border-bottom: 1px solid #fde68a;
@@ -384,11 +423,11 @@
       }
     }
 
-    // Removed status (Danger/Red) - Red style
+    // Removed status (Danger/Red) - Red style (text meets WCAG AA on #fef2f2)
     &.status-removed {
       background-color: #fef2f2;
       border-left-color: #ef4444;
-      color: #dc2626;
+      color: #b91c1c;
       border-right: 1px solid #fecaca;
       border-top: 1px solid #fecaca;
       border-bottom: 1px solid #fecaca;
@@ -420,11 +459,11 @@
       }
     }
 
-    // Type Changed status (Teal/Cyan) - Distinctive color
+    // Type Changed status (Teal/Cyan) - Distinctive color (text meets WCAG AA on #f0fdfa)
     &.status-type-changed {
       background-color: #f0fdfa;
       border-left-color: #14b8a6;
-      color: #0d9488;
+      color: #0f766e;
       border-right: 1px solid #99f6e4;
       border-top: 1px solid #99f6e4;
       border-bottom: 1px solid #99f6e4;
@@ -438,11 +477,11 @@
       }
     }
 
-    // New status (Success/Green) - Green style
+    // New status (Success/Green) - Green style (text meets WCAG AA on #f0fdf4)
     &.status-new {
       background-color: #f0fdf4;
       border-left-color: #22c55e;
-      color: #16a34a;
+      color: #166534;
       border-right: 1px solid #bbf7d0;
       border-top: 1px solid #bbf7d0;
       border-bottom: 1px solid #bbf7d0;
@@ -509,6 +548,14 @@
   width: 0.75em;
 }
 
+// Override global .file-button (width: 3em) so labeled buttons fit their text
+.buttons .file-button {
+  width: auto !important;
+  min-width: 40px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
 .file-button {
   display: inline-flex;
   align-items: center;
@@ -541,8 +588,9 @@
   }
 
   &--labeled {
-    padding: 0.625rem 1rem;
+    padding: 0.625rem 1.25rem;
     min-height: 44px;
+    min-width: max-content !important; // fit icon + label, override global 3em
 
     .file-button__label {
       white-space: nowrap;
@@ -553,6 +601,37 @@
 
 .file-button__label {
   line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.file-button__icon-svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  flex-shrink: 0;
+  display: block;
+  stroke: currentColor;
+  color: inherit;
+}
+
+// Mayor especificidad para ganar a .btn-primary (amarillo) global
+.buttons .file-button.file-button--excel,
+.buttons .btn-primary.file-button--excel {
+  background-color: var(--green-primary) !important;
+  border-color: var(--green-primary) !important;
+  color: #fff !important;
+
+  &:hover {
+    background-color: var(--green-secondary) !important;
+    border-color: var(--green-secondary) !important;
+    color: #fff !important;
+  }
+
+  .file-button__icon-excel {
+    stroke: currentColor;
+    color: inherit;
+  }
 }
 
 .detail-container {
@@ -1016,10 +1095,16 @@
 
 .buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
   flex-shrink: 0;
   flex-wrap: wrap;
+
+  > a,
+  > div,
+  > button {
+    flex-shrink: 0 !important;
+  }
 }
 
 // Custom tooltip styles to prevent overlapping with icons
@@ -1196,5 +1281,121 @@
         }
       }
     }
+  }
+}
+
+// See updates modal
+.updates-modal__header {
+  padding: 0.25rem 0 0.5rem;
+}
+
+.updates-modal__title {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: $bold;
+  color: var(--black);
+}
+
+.updates-modal__subtitle {
+  margin: 0.5rem 0 0;
+  font-size: $font-sm;
+  font-weight: $semibold;
+  color: var(--gray-secondary);
+  line-height: 1.4;
+}
+
+.updates-modal__body {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+.updates-modal__section {
+  padding: 1rem 1.25rem;
+  background: var(--background, #f8f9fa);
+  border: 1px solid var(--gray-primary, #e2e8f0);
+  border-radius: var(--border-radius-md, 10px);
+  min-width: 0;
+  overflow-wrap: break-word;
+  word-break: break-word;
+
+  &--current {
+    background: var(--green-quaternary, #ecfdf5);
+    border-color: var(--green-tertiary, #d1fae5);
+  }
+}
+
+.updates-modal__section-title {
+  margin: 0 0 0.75rem;
+  font-size: $font-sm;
+  font-weight: $bold;
+  color: var(--black-gray, #4a5568);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+}
+
+.updates-modal__content {
+  font-size: $font-sm;
+  line-height: 1.6;
+  color: var(--black);
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
+
+  ::ng-deep p {
+    margin: 0 0 0.5rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  ::ng-deep ul,
+  ::ng-deep ol {
+    margin: 0.5rem 0;
+    padding-left: 1.25rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  ::ng-deep a {
+    color: var(--blue-primary, #0891b2);
+    text-decoration: underline;
+    overflow-wrap: break-word;
+    word-break: break-word;
+  }
+
+  ::ng-deep * {
+    max-width: 100%;
+  }
+}
+
+.updates-modal__close {
+  min-width: 6rem;
+}
+
+::ng-deep .updates-modal {
+  .p-dialog-header {
+    padding: 1.25rem 1.5rem 0.5rem;
+    overflow-wrap: break-word;
+    word-break: break-word;
+    min-width: 0;
+  }
+
+  .p-dialog-content {
+    padding: 0 1.5rem 1rem;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  .p-dialog-footer {
+    padding: 0.75rem 1.5rem 1.25rem;
+    border-top: 1px solid var(--gray-primary, #e2e8f0);
+  }
+
+  .p-dialog {
+    max-width: 100%;
   }
 }

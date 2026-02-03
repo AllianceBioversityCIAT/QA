@@ -76,6 +76,7 @@ export default class IndicatorsComponent implements OnInit {
 
   submission_dates: any[] = [];
   selectedDates = [];
+  listLoading = false;
 
   constructor(
     private readonly activeRoute: ActivatedRoute,
@@ -160,32 +161,22 @@ export default class IndicatorsComponent implements OnInit {
   }
 
   getEvaluationsList(params) {
+    this.listLoading = true;
     this.showSpinner();
 
     this.dashService.geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column).subscribe({
       next: res => {
         this.order = 'status';
         this.evaluationList = res.data;
-        // this.evaluationList = this.orderPipe.transform(res.data, this.order);
-
-        // this.collectionSize = this.evaluationList.length;
-        // this.returnedArray = this.evaluationList.slice(0, 10);
-
-        // this.hasTemplate = !!this.currentUser.config[0][`${params.type}_guideline`];
-
-        // this.evaluationList = this.orderPipe.transform(
-        //   res.data.filter((shi: any) => this.submission_dates.some(sub => sub.date === moment(shi.submission_date).format('ll') && sub.checked)),
-        //   this.order
-        // );
-
         this.evaluationList.forEach(evaluation => {
           evaluation.full_title = evaluation.initiative + ' - ' + evaluation.short_name;
         });
         this.returnedArray = this.evaluationList.slice(0, 10);
-
-        console.log(this.evaluationList);
+        this.listLoading = false;
+        this.hideSpinner();
       },
       error: error => {
+        this.listLoading = false;
         this.hideSpinner();
         this.returnedArray = [];
         this.alertService.error(error);

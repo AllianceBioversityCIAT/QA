@@ -40,6 +40,7 @@ export class ResultsTableComponent {
   @Input() currentUser: any;
   @Input() isCRP: boolean;
   @Input() selectedDates = [];
+  @Input() loading = false;
   @Output() generateExcel = new EventEmitter<any>();
 
   statusIcon = StatusIcon;

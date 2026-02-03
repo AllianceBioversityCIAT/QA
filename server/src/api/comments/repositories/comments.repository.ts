@@ -584,8 +584,10 @@ export class CommentsRepository extends Repository<Comments> {
         AND comments.is_visible = 1
         AND comments.is_deleted = 0
         AND comments.approved_no_comment IS NULL
-      GROUP BY evaluations.phase_year, comments.detail, comments.id,
-        replies.createdAt, replies.updatedAt, replies.detail, replies.userId
+      GROUP BY evaluations.crp_id, qcd.result_code, evaluations.indicator_view_id,
+        evaluations.phase_year, evaluations.id, meta.id, comments.original_field,
+        comments.detail, comments.id, comments.createdAt, comments.replyTypeId, comments.cycleId,
+        users.id, replies.createdAt, replies.updatedAt, replies.detail, replies.userId
       ORDER BY evaluations.phase_year ASC, comments.createdAt ASC`;
 
     return await this.query(query, [evaluationId]);
