@@ -157,7 +157,11 @@
             *ngIf="validateCommentAvility(field, true) && field.approved_no_comment == null && field.replies_count != '0'"
             (click)="showComments(i, field, commElement, $event); comment.updateData(field, params)"
             class="activate-messages-container {{ field.replies_count == '0' ? '' : 'active' }}">
-            <i *ngIf="!field.loading" class="icon-message"></i>
+            <span *ngIf="!field.loading" class="comment-icon-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </span>
             <span *ngIf="field.loading" class="spinner-border spinner-border-sm mr-1"></span>
             <div *ngIf="detailedData[i].require_changes > 0" class="requires-icon">
               <img src="../../../assets/icons/require-changes.svg" alt="" />
@@ -184,8 +188,12 @@
             </ng-template>
           </div>
 
-          <div *ngIf="!validateCommentAvility(field, null) || field.approved_no_comment" class="activate-messages-container">
-            <i *ngIf="!field.loading" class="icon-message-inactive"></i>
+          <div *ngIf="!validateCommentAvility(field, null) || field.approved_no_comment" class="activate-messages-container inactive">
+            <span *ngIf="!field.loading" class="comment-icon-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </span>
             <span *ngIf="field.loading" class="spinner-border spinner-border-sm mr-1"></span>
           </div>
         </div>
@@ -267,7 +275,11 @@
             *ngIf="field.replies_count != '0'"
             (click)="showComments(i, field, commElement, $event); comment.updateData(field, params)"
             class="activate-messages-container {{ field.replies_count == '0' ? '' : 'active' }}">
-            <i *ngIf="!field.loading" class="icon-message"></i>
+            <span *ngIf="!field.loading" class="comment-icon-svg">
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+              </svg>
+            </span>
             <span *ngIf="field.loading" class="spinner-border spinner-border-sm mr-1"></span>
             <!-- *ngIf="validateCommentAvility(field,true) && field.approved_no_comment == null " -->
 
