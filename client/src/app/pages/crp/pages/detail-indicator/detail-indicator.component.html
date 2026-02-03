@@ -43,22 +43,21 @@
       </svg>
       <span class="file-button__label">Go to Result</span>
     </a>
-    <div
+    <button type="button"
       pTooltip="{{ tooltips.download_excel }}"
       container="body"
       placement="top"
       [tooltipStyleClass]="'custom-tooltip'"
       *ngIf="detailedData"
       (click)="getCommentsExcel(detailedData[0])"
-      class="btn btn-primary file-button file-button--labeled file-button--excel"
-      role="button" tabindex="0">
+      class="btn btn-primary file-button file-button--labeled file-button--excel">
       <svg class="file-button__icon file-button__icon-svg file-button__icon-excel" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" [attr.stroke-linecap]="'round'" [attr.stroke-linejoin]="'round'">
         <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
         <polyline points="7 10 12 15 17 10"/>
         <line x1="12" y1="15" x2="12" y2="3"/>
       </svg>
       <span class="file-button__label">Download Excel</span>
-    </div>
+    </button>
     <!-- <button (click)="getEvaluationStatus()">testing</button> -->
   </div>
 </div>

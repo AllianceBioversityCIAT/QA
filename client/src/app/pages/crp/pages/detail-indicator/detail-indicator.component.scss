@@ -66,7 +66,8 @@
     flex-wrap: wrap;
 
     > a,
-    > div {
+    > div,
+    > button {
       flex-shrink: 0 !important;
     }
 
