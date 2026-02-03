@@ -254,17 +254,27 @@ export default class DetailIndicatorComponent implements OnInit {
     // let filename = `QA-${this.indicatorType.charAt(0).toUpperCase()}${this.indicatorType.charAt(1).toUpperCase()}${(item) ? '-' + item.id : ''}`
     // this.commentService.getCommentsExcel({ evaluationId: (item) ? item.evaluation_id : undefined, id: this.currentUser.id, name: filename, indicatorName: all ? `qa_${this.indicatorType}` : undefined, crp_id: all ? this.currentUser.crp.crp_id : undefined }).subscribe(
 
+    const crpId =
+      this.detailedData[0]?.crp_acronym ??
+      this.currentUser.crp?.crp_id ??
+      this.activeRoute.snapshot.queryParamMap.get('crp_id');
     this.commentService
       .getCommentsExcel({
         evaluationId,
         id: this.currentUser.id,
         name: filename,
+        crp_id: crpId,
         indicatorName: `qa_${this.params.type}`
       })
       .subscribe(
-        res => {
-          console.log(res);
-          this._exportTableSE.exportExcel(res, filename);
+        (res: any) => {
+          const data = res?.data ?? [];
+          if (!data.length) {
+            this.alertService.success('No hay comentarios para exportar.');
+            this.hideSpinner('spinner1');
+            return;
+          }
+          this._exportTableSE.exportExcel(data, filename);
           this.hideSpinner('spinner1');
         },
         error => {
