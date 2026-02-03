@@ -509,6 +509,14 @@
   width: 0.75em;
 }
 
+// Override global .file-button (width: 3em) so labeled buttons fit their text
+.buttons .file-button {
+  width: auto !important;
+  min-width: 40px;
+  box-sizing: border-box;
+  flex-shrink: 0;
+}
+
 .file-button {
   display: inline-flex;
   align-items: center;
@@ -541,8 +549,9 @@
   }
 
   &--labeled {
-    padding: 0.625rem 1rem;
+    padding: 0.625rem 1.25rem;
     min-height: 44px;
+    min-width: max-content !important; // fit icon + label, override global 3em
 
     .file-button__label {
       white-space: nowrap;
@@ -553,6 +562,38 @@
 
 .file-button__label {
   line-height: 1.2;
+  flex-shrink: 0;
+}
+
+.file-button__icon-svg {
+  width: 1.25rem;
+  height: 1.25rem;
+  min-width: 1.25rem;
+  min-height: 1.25rem;
+  flex-shrink: 0;
+  display: block;
+  stroke: currentColor;
+  color: inherit;
+  vertical-align: middle;
+}
+
+// Mayor especificidad para ganar a .btn-primary (amarillo) global
+.buttons .file-button.file-button--excel,
+.buttons .btn-primary.file-button--excel {
+  background-color: var(--green-primary) !important;
+  border-color: var(--green-primary) !important;
+  color: #fff !important;
+
+  &:hover {
+    background-color: var(--green-secondary) !important;
+    border-color: var(--green-secondary) !important;
+    color: #fff !important;
+  }
+
+  .file-button__icon-excel {
+    stroke: currentColor;
+    color: inherit;
+  }
 }
 
 .detail-container {
@@ -1016,10 +1057,15 @@
 
 .buttons {
   display: flex;
-  gap: 1rem;
+  gap: 1.5rem;
   align-items: center;
   flex-shrink: 0;
   flex-wrap: wrap;
+
+  > a,
+  > div {
+    flex-shrink: 0 !important;
+  }
 }
 
 // Custom tooltip styles to prevent overlapping with icons

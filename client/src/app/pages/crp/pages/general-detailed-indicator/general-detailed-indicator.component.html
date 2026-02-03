@@ -56,23 +56,34 @@
   </p>
 
   <div class="buttons" *ngIf="detailedData[0]">
-    <a *ngIf="detailedData[0].public_link" [href]="detailedData[0].public_link" target="_blank" rel="noopener noreferrer"
-      class="btn btn-primary file-button file-button--labeled"
-      pTooltip="{{ tooltips.public_link }}" container="body" placement="bottom"
-      [tooltipStyleClass]="'custom-tooltip'">
-      <i class="icon-public-link" aria-hidden="true"></i>
-      <span class="file-button__label">Go to Result</span>
+    <a *ngIf="detailedData[0].public_link" [href]="detailedData[0].public_link" target="_blank">
+      <div pTooltip="{{ tooltips.public_link }}" container="body" placement="bottom"
+        [tooltipStyleClass]="'custom-tooltip'" class="btn btn-primary file-button">
+        <i class="icon-public-link"></i>
+      </div>
     </a>
 
     <a pTooltip="{{ tooltips.redirectTo }}" container="body" placement="bottom" [tooltipStyleClass]="'custom-tooltip'"
-      [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer">
-      <img src="/icons/cgiar_logo.svg" alt="CGIAR Logo" class="cgiar-logo-img" />
+      [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer"
+      class="btn btn-primary file-button file-button--labeled">
+      <svg class="file-button__icon file-button__icon-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" [attr.stroke-linecap]="'round'" [attr.stroke-linejoin]="'round'">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        <polyline points="15 3 21 3 21 9"/>
+        <line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+      <span class="file-button__label">Go to Result</span>
     </a>
 
     <div pTooltip="{{ tooltips.download_excel }}" container="body" placement="left"
       [tooltipStyleClass]="'custom-tooltip'" [appendTo]="'body'" *ngIf="detailedData"
-      (click)="getCommentsExcel(detailedData[0])" class="btn btn-primary file-button">
-      <i class="icon-download-excel"></i>
+      (click)="getCommentsExcel(detailedData[0])" class="btn btn-primary file-button file-button--labeled file-button--excel"
+      role="button" tabindex="0">
+      <svg class="file-button__icon file-button__icon-svg file-button__icon-excel" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" [attr.stroke-linecap]="'round'" [attr.stroke-linejoin]="'round'">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span class="file-button__label">Download Excel</span>
     </div>
   </div>
 </div>

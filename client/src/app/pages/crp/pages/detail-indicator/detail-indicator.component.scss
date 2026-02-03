@@ -57,10 +57,86 @@
     }
   }
   .buttons {
-    width: 10vw;
+    width: auto;
+    min-width: 10vw;
     display: flex;
     justify-content: flex-end;
     align-items: center;
+    gap: 1.5rem;
+    flex-wrap: wrap;
+
+    > a,
+    > div {
+      flex-shrink: 0 !important;
+    }
+
+    // Override global .file-button (width: 3em) so labeled buttons fit their text
+    .file-button {
+      width: auto !important;
+      min-width: 40px;
+      box-sizing: border-box;
+      flex-shrink: 0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.5rem;
+      padding: 0.625rem 1.25rem;
+      border-radius: 6px;
+      text-decoration: none;
+      color: inherit;
+      font-size: 0.875rem;
+      font-weight: 600;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      min-height: 44px;
+
+      &:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+      }
+
+      &--labeled {
+        min-width: max-content !important;
+        .file-button__label {
+          white-space: nowrap;
+          flex-shrink: 0;
+        }
+      }
+
+      .file-button__icon-svg {
+        width: 1.25rem;
+        height: 1.25rem;
+        min-width: 1.25rem;
+        min-height: 1.25rem;
+        flex-shrink: 0;
+        display: block;
+        stroke: currentColor;
+        color: inherit;
+      }
+
+      .file-button.file-button--excel,
+      .btn-primary.file-button--excel {
+        background-color: var(--green-primary) !important;
+        border-color: var(--green-primary) !important;
+        color: #fff !important;
+
+        &:hover {
+          background-color: var(--green-secondary) !important;
+          border-color: var(--green-secondary) !important;
+          color: #fff !important;
+        }
+
+        .file-button__icon-excel {
+          stroke: currentColor;
+          color: inherit;
+        }
+      }
+    }
+
+    .file-button__label {
+      line-height: 1.2;
+    }
+
     .btn-mis {
       i {
         max-height: 40px;

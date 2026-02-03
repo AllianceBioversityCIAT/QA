@@ -33,18 +33,31 @@
     <p class="indicator-item-name text-danger" style="text-transform: initial; text-align: center">The quality assessment process has ended.</p>
   </div>
   <div *ngIf="detailedData[0]" class="buttons">
-    <a pTooltip="{{ tooltips.redirectTo }}" [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer">
-      <span class="material-icons goTo"> launch </span>
+    <a pTooltip="{{ tooltips.redirectTo }}" container="body" placement="bottom" [tooltipStyleClass]="'custom-tooltip'"
+      [href]="getCurrentTypeUrl()" target="_blank" rel="noopener noreferrer"
+      class="btn btn-primary file-button file-button--labeled">
+      <svg class="file-button__icon file-button__icon-svg" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" [attr.stroke-linecap]="'round'" [attr.stroke-linejoin]="'round'">
+        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/>
+        <polyline points="15 3 21 3 21 9"/>
+        <line x1="10" y1="14" x2="21" y2="3"/>
+      </svg>
+      <span class="file-button__label">Go to Result</span>
     </a>
     <div
-      style="margin-right: 1em"
       pTooltip="{{ tooltips.download_excel }}"
       container="body"
       placement="top"
+      [tooltipStyleClass]="'custom-tooltip'"
       *ngIf="detailedData"
       (click)="getCommentsExcel(detailedData[0])"
-      class="btn btn-primary file-button">
-      <i class="icon-download-excel"></i>
+      class="btn btn-primary file-button file-button--labeled file-button--excel"
+      role="button" tabindex="0">
+      <svg class="file-button__icon file-button__icon-svg file-button__icon-excel" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" [attr.stroke-width]="2" [attr.stroke-linecap]="'round'" [attr.stroke-linejoin]="'round'">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="7 10 12 15 17 10"/>
+        <line x1="12" y1="15" x2="12" y2="3"/>
+      </svg>
+      <span class="file-button__label">Download Excel</span>
     </div>
     <!-- <button (click)="getEvaluationStatus()">testing</button> -->
   </div>
