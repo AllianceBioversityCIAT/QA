@@ -829,7 +829,9 @@ SELECT
                     AND rbi3.institution_roles_id = 3
             )
         )
-    ) AS trainees_attending_on_behalf_of_an_organization
+    ) AS trainees_attending_on_behalf_of_an_organization,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -839,6 +841,7 @@ FROM
     AND e.is_active = 1
     LEFT JOIN prdb.results_capacity_developments rcd ON rcd.result_id = r.id
     AND rcd.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY

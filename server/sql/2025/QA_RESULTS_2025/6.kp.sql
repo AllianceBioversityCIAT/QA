@@ -1208,13 +1208,16 @@ SELECT
             rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
             AND rkpm2.is_active = 1
             AND rkpm2.source = 'Unpaywall'
-    ) AS unpaywall_year
+    ) AS unpaywall_year,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_knowledge_product rkp ON rkp.results_id = r.id
     AND rkp.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.result_type_id = 6
     AND r.source = 'Result'

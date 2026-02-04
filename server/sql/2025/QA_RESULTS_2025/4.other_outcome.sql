@@ -772,7 +772,9 @@ SELECT
                 AND e.is_active = 1
         ),
         '<Not applicable>'
-    ) AS evidence
+    ) AS evidence,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -780,6 +782,7 @@ FROM
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.evidence e ON e.result_id = r.id
     AND e.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY

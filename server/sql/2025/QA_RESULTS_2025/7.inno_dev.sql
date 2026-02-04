@@ -1181,7 +1181,9 @@ SELECT
             )
         ),
         'This is yet to be determinated'
-    ) AS anticipated
+    ) AS anticipated,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -1189,6 +1191,7 @@ FROM
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_innovations_dev rind ON rind.results_id = r.id
     AND rind.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY

@@ -794,6 +794,7 @@ SELECT
                     FROM prdb.result_actors ra
                     WHERE ra.result_id = r.id
                     AND ra.is_active = 1
+                    AND ra.section_id = 1
                 ),
                 CONCAT(
                     '<b>Actors:</b><br>',
@@ -861,6 +862,7 @@ SELECT
                     WHERE rbit.results_id = r.id
                     AND rbit.is_active = 1
                     AND rbit.institution_roles_id = 5
+                    AND rbit.section_id = 1
                 ),
                 CONCAT(
                     '<b>Organizations:</b><br>',
@@ -917,6 +919,7 @@ SELECT
                     FROM prdb.result_ip_measure rim
                     WHERE rim.result_id = r.id
                     AND rim.is_active = 1
+                    AND rim.section_id = 1
                 ),
                 CONCAT(
                     '<b>Other Quantitative:</b><br>',
@@ -974,7 +977,9 @@ SELECT
                 ''
             )
         )
-    ) AS innovation_linked
+    ) AS innovation_linked,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -982,6 +987,7 @@ FROM
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_innovations_use riu ON riu.results_id = r.id
     AND riu.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY

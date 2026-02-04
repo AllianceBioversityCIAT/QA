@@ -1465,7 +1465,9 @@ SELECT
                 AND rirm.is_active = 1
         ),
         '<Not applicable>'
-    ) AS core_innovation_measures
+    ) AS core_innovation_measures,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -1476,6 +1478,7 @@ FROM
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.`version` v ON v.id = r.version_id
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY

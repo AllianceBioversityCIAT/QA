@@ -850,7 +850,9 @@ SELECT
                 AND rbi4.institution_roles_id = 4
         ),
         '<Not applicable>'
-    ) AS implementing_organizations
+    ) AS implementing_organizations,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -858,6 +860,7 @@ FROM
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_policy_changes rpc ON rpc.result_id = r.id
     AND rpc.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY
