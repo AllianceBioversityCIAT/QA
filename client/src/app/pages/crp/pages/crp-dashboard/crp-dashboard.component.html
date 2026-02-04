@@ -1,4 +1,17 @@
 <div class="dashboard-page" *ngIf="currentUser">
+  <!-- Dashboard loader (shown via NgxSpinnerService while data loads) -->
+  <div class="dashboard-loading" *ngIf="loadingDashboard">
+    <ngx-spinner
+      name="dashboard-loader"
+      [fullScreen]="true"
+      bdColor="rgba(0, 0, 0, 0.7)"
+      color="#fff"
+      type="square-jelly-box"
+      size="default">
+    </ngx-spinner>
+    <p class="dashboard-loading__text">Loading...</p>
+  </div>
+
   <!-- Cycle ended message -->
   <div class="dashboard-banner dashboard-banner--ended" *ngIf="!currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended">
     <p class="dashboard-banner__text">The quality assessment process has ended.</p>
@@ -8,7 +21,7 @@
     <!-- Page header -->
     <header class="dashboard-header">
       <h1 class="dashboard-header__title">Initiative dashboard</h1>
-      <button
+      <!-- <button
         type="button"
         class="btn btn-primary file-button file-button--labeled file-button--excel"
         (click)="exportExcel()"
@@ -19,7 +32,7 @@
           <line x1="12" y1="15" x2="12" y2="3"/>
         </svg>
         <span class="file-button__label">Export all comments</span>
-      </button>
+      </button> -->
     </header>
 
     <!-- Empty state -->

@@ -6,6 +6,25 @@
   padding: 1.5rem 1rem;
 }
 
+.dashboard-loading {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  background: rgba(0, 0, 0, 0.7);
+
+  &__text {
+    margin: 0;
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #fff;
+  }
+}
+
 .dashboard-banner {
   padding: 1rem 1.25rem;
   border-radius: var(--border-radius-md);
@@ -132,8 +151,9 @@
   &__charts {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    min-height: 200px;
+    gap: 1.25rem;
+    min-height: 260px;
+    align-items: start;
 
     @media (max-width: 900px) {
       grid-template-columns: 1fr;
@@ -142,11 +162,15 @@
 
   &__section {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     &.status-chart app-status-chart,
     &.comments-chart app-comments-chart {
       display: block;
       max-width: 100%;
+      width: 100%;
     }
 
     ::ng-deep .container {
@@ -155,6 +179,11 @@
 
     ::ng-deep .chart-container {
       max-width: 100%;
+    }
+
+    ::ng-deep .chart-title {
+      font-size: 0.875rem;
+      color: var(--black-gray);
     }
   }
 

@@ -63,6 +63,34 @@ export class StatusChartComponent implements OnInit {
     }
   }
 
+  /** Plugin para mostrar el total en el centro del doughnut */
+  private get centerTotalPlugin() {
+    const total = this.total ?? 0;
+    return {
+      id: 'centerTotal',
+      afterDraw(chart: Chart) {
+        if ((chart.config as { type?: string })?.type !== 'doughnut' || !chart.ctx) return;
+        const ctx = chart.ctx;
+        const a = chart.chartArea;
+        if (!a) return;
+        const cx = (a.left + a.right) / 2;
+        const cy = (a.top + a.bottom) / 2;
+        const size = Math.min(a.right - a.left, a.bottom - a.top);
+        const fontSize = Math.max(14, size / 6);
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = `600 ${fontSize}px Poppins, sans-serif`;
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillText(String(total), cx, cy - fontSize * 0.25);
+        ctx.font = `500 ${fontSize * 0.45}px Poppins, sans-serif`;
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('total', cx, cy + fontSize * 0.35);
+        ctx.restore();
+      },
+    };
+  }
+
   createChart() {
     const ctx = this.barCanvas.nativeElement.getContext('2d');
     const labels = this.results[0].series.map(item => item.name);
@@ -70,32 +98,62 @@ export class StatusChartComponent implements OnInit {
     const backgroundColors = this.results[0].series.map(item => {
       if (item.name === 'Validated / Result Status') {
         return ChartColors.CHART_COLORS['Validated / Result Status'];
-      } else {
-        return ChartColors.CHART_COLORS['Pending'];
       }
+      return ChartColors.CHART_COLORS['Pending'];
     });
 
-
     this.chart = new Chart(ctx, {
-      type: 'doughnut'  ,
+      type: 'doughnut',
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
             label: 'Status',
             data: dataValues,
-            backgroundColor: backgroundColors
-          }
-        ]
+            backgroundColor: backgroundColors,
+            borderColor: '#fff',
+            borderWidth: 2,
+            hoverOffset: 10,
+            borderRadius: 8,
+          },
+        ],
       },
+      plugins: [this.centerTotalPlugin],
       options: {
         responsive: true,
+        maintainAspectRatio: true,
+        cutout: '55%',
+        layout: {
+          padding: 8,
+        },
+        animation: {
+          duration: 600,
+        },
         plugins: {
           legend: {
-            display: true
-          }
-        }
-      }
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 12,
+              font: { family: 'Poppins, sans-serif', size: 11 },
+            },
+          },
+          tooltip: {
+            backgroundColor: 'rgba(26, 26, 26, 0.9)',
+            padding: 10,
+            titleFont: { size: 12 },
+            bodyFont: { size: 12 },
+            callbacks: {
+              label: (ctx) => {
+                const total = (ctx.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                const pct = total ? Math.round((Number(ctx.raw) / total) * 100) : 0;
+                return ` ${ctx.label}: ${Number(ctx.raw)} (${pct}%)`;
+              },
+            },
+          },
+        },
+      } as Chart['options'],
     });
   }
 
