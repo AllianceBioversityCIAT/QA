@@ -69,7 +69,7 @@ export class StatusChartComponent implements OnInit {
     return {
       id: 'centerTotal',
       afterDraw(chart: Chart) {
-        if (chart.config.type !== 'doughnut' || !chart.ctx) return;
+        if ((chart.config as { type?: string })?.type !== 'doughnut' || !chart.ctx) return;
         const ctx = chart.ctx;
         const a = chart.chartArea;
         if (!a) return;
@@ -153,7 +153,7 @@ export class StatusChartComponent implements OnInit {
             },
           },
         },
-      },
+      } as Chart['options'],
     });
   }
 
