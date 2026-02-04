@@ -774,7 +774,9 @@ SELECT
         '<Not applicable>'
     ) AS evidence,
     r.created_by AS created_user_id,
-    u.email AS created_user_email
+    u.email AS created_user_email,
+    (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) AS submitter_user_id,
+    (SELECT u2.email FROM prdb.users u2 WHERE u2.id = (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) LIMIT 1) AS submitter_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
