@@ -104,13 +104,19 @@ export class EvaluationRepository extends Repository<Evaluations> {
                         AND metaId IS NOT NULL
                         AND is_deleted = 0
                         AND is_visible = 1
+                        AND detail IS NOT NULL
                         AND cycleId = 1
                     ) AS comments_count,
-                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1 AND crp_approved = 1) AS comments_accepted_count,
-                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1 AND replyTypeId = 4) AS comments_accepted_with_comment_count,
-					(SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1 AND replyTypeId = 2) AS comments_disagreed_count,
-                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1 AND replyTypeId = 3) AS comments_clarification_count,
-                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1 AND highlight_comment = 1) AS comments_highlight_count,
+                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
+                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 4) AS comments_accepted_with_comment_count,
+					(SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 2) AS comments_disagreed_count,
+                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND replyTypeId = 3) AS comments_clarification_count,
+                    (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS
+                    NOT NULL AND is_deleted = 0 AND is_visible = 1 AND highlight_comment = 1) AS comments_highlight_count,
                         (
                             SELECT
                                 COUNT(id)
@@ -139,7 +145,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
                         ) AS comments_ppu_count,
                     ( SELECT kp.is_melia FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS is_melia,
                     ( SELECT kp.knowledge_product_type FROM qa_knowledge_product_data kp WHERE evaluations.indicator_view_id = kp.id ) AS knowledge_product_type,
-                    ( SELECT COUNT(DISTINCT c.id) FROM qa_comments c WHERE c.evaluationId = evaluations.id AND c.metaId IS NOT NULL AND c.is_deleted = 0 AND c.is_visible = 1 AND c.cycleId = 1 AND ( c.id IN (SELECT r.commentId FROM qa_comments_replies r WHERE r.is_deleted = 0) OR c.approved_no_comment IS NOT NULL ) ) AS comments_replies_count,
+                    ( SELECT COUNT(id) FROM qa_comments_replies WHERE commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) AND is_deleted = 0 ) AS comments_replies_count,
                     (
                         SELECT title FROM ${viewName} ${viewName} WHERE ${viewName}.id = evaluations.indicator_view_id
                     ) AS title,
@@ -220,6 +226,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
                     AND metaId IS NOT NULL
                     AND is_deleted = 0
                     AND is_visible = 1
+                    AND detail IS NOT NULL
                     AND cycleId = 1
             ) AS comments_count,
             (
@@ -233,8 +240,8 @@ export class EvaluationRepository extends Repository<Evaluations> {
                     AND metaId IS NOT NULL
                     AND is_deleted = 0
                     AND is_visible = 1
-                    AND cycleId = 1
                     AND replyTypeId = 2
+                    AND createdAt >= actual_batch_date()
             ) AS comments_disagreed_count,
             (
                 SELECT
@@ -247,8 +254,8 @@ export class EvaluationRepository extends Repository<Evaluations> {
                     AND metaId IS NOT NULL
                     AND is_deleted = 0
                     AND is_visible = 1
-                    AND cycleId = 1
                     AND crp_approved = 1
+                    AND createdAt >= actual_batch_date()
             ) AS comments_accepted_count,
             (
                 SELECT
@@ -295,14 +302,26 @@ export class EvaluationRepository extends Repository<Evaluations> {
                     1
             ) AS comments_ppu_count,
             (
-                SELECT COUNT(DISTINCT c.id)
-                FROM qa_comments c
-                WHERE c.evaluationId = evaluations.id
-                AND c.metaId IS NOT NULL
-                AND c.is_deleted = 0
-                AND c.is_visible = 1
-                AND c.cycleId = 1
-                AND ( c.id IN (SELECT r.commentId FROM qa_comments_replies r WHERE r.is_deleted = 0) OR c.approved_no_comment IS NOT NULL )
+                SELECT
+                    COUNT(id)
+                FROM
+                    qa_comments_replies
+                WHERE
+                    is_deleted = 0
+                    AND commentId IN (
+                        SELECT
+                            id
+                        FROM
+                            qa_comments
+                        WHERE
+                            qa_comments.evaluationId = evaluations.id
+                            AND approved_no_comment IS NULL
+                            AND metaId IS NOT NULL
+                            AND is_deleted = 0
+                            AND is_visible = 1
+                            AND cycleId = 1
+                            AND createdAt >= actual_batch_date()
+                    )
             ) AS comments_replies_count,
             (
               SELECT title FROM ${viewName} ${viewName} WHERE ${viewName}.id = evaluations.indicator_view_id
@@ -316,7 +335,42 @@ export class EvaluationRepository extends Repository<Evaluations> {
             ) AS result_code,
             indicator_user.indicatorId,
             IF(
-                (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1 AND approved_no_comment IS NULL AND createdAt >= actual_batch_date() AND id NOT IN (SELECT commentId FROM qa_comments_replies WHERE is_deleted = 0)) = 0,
+                (
+                    SELECT
+                        COUNT(id)
+                    FROM
+                        qa_comments
+                    WHERE
+                        qa_comments.evaluationId = evaluations.id
+                        AND approved_no_comment IS NULL
+                        AND metaId IS NOT NULL
+                        AND is_deleted = 0
+                        AND is_visible = 1
+                        AND detail IS NOT NULL
+                        AND cycleId = 1
+                        AND createdAt >= actual_batch_date()
+                ) = (
+                    SELECT
+                        COUNT(id)
+                    FROM
+                        qa_comments_replies
+                    WHERE
+                        is_deleted = 0
+                        AND commentId IN (
+                            SELECT
+                                id
+                            FROM
+                                qa_comments
+                            WHERE
+                                qa_comments.evaluationId = evaluations.id
+                                AND approved_no_comment IS NULL
+                                AND metaId IS NOT NULL
+                                AND is_deleted = 0
+                                AND is_visible = 1
+                                AND cycleId = 1
+                                AND createdAt >= actual_batch_date()
+                        )
+                ),
                 "complete",
                 "pending"
             ) AS evaluations_status_round_1,
@@ -475,7 +529,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
                         NOT NULL AND is_deleted = 0 AND is_visible = 1 AND crp_approved = 1) AS comments_accepted_count,
 
 
-                        ( SELECT COUNT(DISTINCT c.id) FROM qa_comments c WHERE c.evaluationId = evaluations.id AND c.metaId IS NOT NULL AND c.is_deleted = 0 AND c.is_visible = 1 AND c.cycleId = 1 AND ( c.id IN (SELECT r.commentId FROM qa_comments_replies r WHERE r.is_deleted = 0) OR c.approved_no_comment IS NOT NULL ) ) AS comments_replies_count,
+                        ( SELECT COUNT(id) FROM qa_comments_replies WHERE commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) AND is_deleted = 0 ) AS comments_replies_count,
                         (
                             SELECT title FROM ${viewName} ${viewName} WHERE ${viewName}.id = evaluations.indicator_view_id
                         ) AS title,
@@ -723,10 +777,10 @@ export class EvaluationRepository extends Repository<Evaluations> {
         (SELECT qc.original_field FROM qa_comments qc WHERE qc.evaluationId = evaluations.id and qc.metaId  = meta.id AND is_deleted = 0 AND qc.approved_no_comment IS NULL LIMIT 1) as original_field, evaluations.status AS evaluations_status,
         evaluations.require_second_assessment,
         IF(
-            (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1 AND approved_no_comment IS NULL AND id NOT IN (SELECT commentId FROM qa_comments_replies WHERE is_deleted = 0)) = 0,
-            "complete",
-            "pending"
-        ) AS response_status,
+            (SELECT COUNT(id) FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id  AND approved_no_comment IS NULL AND metaId IS NOT NULL AND detail IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1)
+                =
+            ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id  AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1 AND cycleId = 1) ), "complete", "pending")
+        AS response_status,
     ( SELECT enable_assessor FROM qa_comments_meta WHERE indicatorId = indicators.id ) AS enable_assessor,
     ( SELECT highlight_comment FROM qa_comments WHERE evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 LIMIT 1) AS is_highlight,
     ( SELECT COUNT(id) FROM qa_comments WHERE require_changes = 1 AND evaluationId = evaluations.id AND metaId = meta.id AND is_deleted = 0 ) AS require_changes,
@@ -736,7 +790,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
     ( SELECT user_.username FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_user,
     ( SELECT user_.updatedAt FROM qa_comments comments LEFT JOIN qa_users user_ ON user_.id = comments.userId WHERE metaId IS NULL  AND evaluationId = evaluations.id  AND is_deleted = 0 AND approved_no_comment IS NULL LIMIT 1 ) AS general_comment_updatedAt,
     ( SELECT approved_no_comment FROM qa_comments WHERE metaId = meta.id AND evaluationId = evaluations.id 	AND is_deleted = 0 AND approved_no_comment IS NOT NULL LIMIT 1) AS approved_no_comment,
-    ( SELECT COUNT(DISTINCT c.id) FROM qa_comments c WHERE c.evaluationId = evaluations.id AND c.metaId = meta.id AND c.metaId IS NOT NULL AND c.is_deleted = 0 AND c.is_visible = 1 AND c.cycleId = 1 AND ( c.id IN (SELECT r.commentId FROM qa_comments_replies r WHERE r.is_deleted = 0) OR c.approved_no_comment IS NOT NULL ) ) AS comments_replies_count,
+    ( SELECT COUNT(id) FROM qa_comments_replies WHERE is_deleted = 0 AND commentId IN (SELECT id FROM qa_comments WHERE qa_comments.evaluationId = evaluations.id AND qa_comments.metaId = meta.id AND approved_no_comment IS NULL AND metaId IS NOT NULL AND is_deleted = 0 AND is_visible = 1) ) AS comments_replies_count,
     ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL ) AS replies_count,
     ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND approved_no_comment IS NULL AND tpb = 1 AND ppu = 1) AS tpb_count,
     ( SELECT COUNT(DISTINCT id) FROM qa_comments WHERE metaId = meta.id  AND evaluationId = evaluations.id  AND is_visible = 1 AND is_deleted = 0 AND evaluationId = evaluations.id AND approved_no_comment IS NULL  AND replyTypeId = 1) AS accepted_comments,
@@ -943,15 +997,25 @@ export class EvaluationRepository extends Repository<Evaluations> {
                 1
         ) AS approved_no_comment,
         (
-            SELECT COUNT(DISTINCT c.id)
-            FROM qa_comments c
-            WHERE c.evaluationId = evaluations.id
-            AND c.metaId = meta.id
-            AND c.metaId IS NOT NULL
-            AND c.is_deleted = 0
-            AND c.is_visible = 1
-            AND c.cycleId = 1
-            AND ( c.id IN (SELECT r.commentId FROM qa_comments_replies r WHERE r.is_deleted = 0) OR c.approved_no_comment IS NOT NULL )
+            SELECT
+                COUNT(id)
+            FROM
+                qa_comments_replies
+            WHERE
+                is_deleted = 0
+                AND commentId IN (
+                    SELECT
+                        id
+                    FROM
+                        qa_comments
+                    WHERE
+                        qa_comments.evaluationId = evaluations.id
+                        AND qa_comments.metaId = meta.id
+                        AND approved_no_comment IS NULL
+                        AND metaId IS NOT NULL
+                        AND is_deleted = 0
+                        AND is_visible = 1
+                )
         ) AS comments_replies_count,
         (
             SELECT
@@ -1227,15 +1291,25 @@ export class EvaluationRepository extends Repository<Evaluations> {
                 1
         ) AS approved_no_comment,
         (
-            SELECT COUNT(DISTINCT c.id)
-            FROM qa_comments c
-            WHERE c.evaluationId = evaluations.id
-            AND c.metaId = meta.id
-            AND c.metaId IS NOT NULL
-            AND c.is_deleted = 0
-            AND c.is_visible = 1
-            AND c.cycleId = 1
-            AND ( c.id IN (SELECT r.commentId FROM qa_comments_replies r WHERE r.is_deleted = 0) OR c.approved_no_comment IS NOT NULL )
+            SELECT
+                COUNT(id)
+            FROM
+                qa_comments_replies
+            WHERE
+                is_deleted = 0
+                AND commentId IN (
+                    SELECT
+                        id
+                    FROM
+                        qa_comments
+                    WHERE
+                        qa_comments.evaluationId = evaluations.id
+                        AND qa_comments.metaId = meta.id
+                        AND approved_no_comment IS NULL
+                        AND metaId IS NOT NULL
+                        AND is_deleted = 0
+                        AND is_visible = 1
+                )
         ) AS comments_replies_count,
         (
             SELECT
