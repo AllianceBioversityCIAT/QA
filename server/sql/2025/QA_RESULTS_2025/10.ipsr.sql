@@ -607,10 +607,10 @@ SELECT
                                         WHEN rit.contributing_indicator IS NULL 
                                              OR CAST(rit.contributing_indicator AS CHAR) = '' 
                                              OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
-                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))) THEN
-                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED)
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(12, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(12, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(12, 2)) AS UNSIGNED)
                                         ELSE
-                                            CAST(rit.contributing_indicator AS DECIMAL(10, 2))
+                                            CAST(rit.contributing_indicator AS DECIMAL(12, 2))
                                     END,
                                     'N/A'
                                 ),
