@@ -151,8 +151,9 @@
   &__charts {
     display: grid;
     grid-template-columns: 1fr 1fr;
-    gap: 1rem;
-    min-height: 200px;
+    gap: 1.25rem;
+    min-height: 260px;
+    align-items: start;
 
     @media (max-width: 900px) {
       grid-template-columns: 1fr;
@@ -161,11 +162,15 @@
 
   &__section {
     min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 
     &.status-chart app-status-chart,
     &.comments-chart app-comments-chart {
       display: block;
       max-width: 100%;
+      width: 100%;
     }
 
     ::ng-deep .container {
@@ -174,6 +179,11 @@
 
     ::ng-deep .chart-container {
       max-width: 100%;
+    }
+
+    ::ng-deep .chart-title {
+      font-size: 0.875rem;
+      color: var(--black-gray);
     }
   }
 

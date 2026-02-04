@@ -21,9 +21,11 @@
     }
   }
   .chart-container {
-    width: 350px;
-    height: 200px;
-    margin: 0;
+    width: 100%;
+    max-width: 320px;
+    height: 220px;
+    margin: 0 auto;
+    position: relative;
   }
   .title-indicator {
     text-transform: uppercase;
