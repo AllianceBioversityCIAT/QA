@@ -18,6 +18,7 @@ import ChartDataLabels from 'chartjs-plugin-datalabels';
 
 import { ExportTablesService } from '@services/export-tables.service';
 import moment from 'moment';
+import { finalize } from 'rxjs/operators';
 import { IndicatorsService } from '@services/indicators.service';
 import { CommonModule } from '@angular/common';
 import { SortByPipe } from '../../../../pipes/sort-by.pipe';
@@ -77,6 +78,10 @@ export default class CrpDashboardComponent implements OnInit {
 
   currentUser: User;
   indicatorsName = GeneralIndicatorName;
+
+  /** Loader: true until both getEvaluationsStats and getCommentStats have completed */
+  loadingDashboard = false;
+  private _dashboardLoadPending = 0;
 
   dashboardModalData: any[];
   // modalRef: BsModalRef;
@@ -141,6 +146,17 @@ export default class CrpDashboardComponent implements OnInit {
       this.authenticationService.currentUser.subscribe(x => {
         this.currentUser = x;
 
+        // Solo mostrar loader y cargar datos si el usuario tiene crp (evita spinner colgado si no hay ciclo)
+        if (!this.currentUser?.crp) {
+          this.loadingDashboard = false;
+          this._dashboardLoadPending = 0;
+          this.spinner.hide('dashboard-loader');
+          return;
+        }
+
+        this.loadingDashboard = true;
+        this._dashboardLoadPending = 2;
+        this.spinner.show('dashboard-loader');
         this.getEvaluationsStats();
         this.getCommentStats();
       });
@@ -213,31 +229,46 @@ export default class CrpDashboardComponent implements OnInit {
     console.log('getEvaluationsStats');
 
     this.showSpinner(this.spinner2);
-    this.dashService.getAllDashboardEvaluationsByCRP(this.currentUser.crp.crp_id).subscribe(
-      res => {
-        this.dashboardData = this.dashService.groupData(res.data);
+    this.dashService
+      .getAllDashboardEvaluationsByCRP(this.currentUser.crp.crp_id)
+      .pipe(finalize(() => {
         this.hideSpinner(this.spinner2);
-      },
-      error => {
-        this.hideSpinner(this.spinner2);
-        this.alertService.error(error);
-      }
-    );
+        this._finishDashboardLoad();
+      }))
+      .subscribe({
+        next: res => {
+          this.dashboardData = this.dashService.groupData(res.data);
+        },
+        error: err => {
+          this.alertService.error(err);
+        }
+      });
   }
 
   getCommentStats() {
     this.showSpinner(this.spinner1);
-    this.commentService.getCommentCRPStats({ crp_id: this.currentUser.crp.crp_id }).subscribe(
-      res => {
-        this.dashboardCommentsData = this.dashService.groupData(res.data);
+    this.commentService
+      .getCommentCRPStats({ crp_id: this.currentUser.crp.crp_id })
+      .pipe(finalize(() => {
+        this.hideSpinner(this.spinner1);
+        this._finishDashboardLoad();
+      }))
+      .subscribe({
+        next: res => {
+          this.dashboardCommentsData = this.dashService.groupData(res.data);
+        },
+        error: err => {
+          this.alertService.error(err);
+        }
+      });
+  }
 
-        this.hideSpinner(this.spinner1);
-      },
-      error => {
-        this.hideSpinner(this.spinner1);
-        this.alertService.error(error);
-      }
-    );
+  private _finishDashboardLoad(): void {
+    this._dashboardLoadPending = Math.max(0, this._dashboardLoadPending - 1);
+    if (this._dashboardLoadPending === 0) {
+      this.loadingDashboard = false;
+      this.spinner.hide('dashboard-loader');
+    }
   }
 
   getRawComments(crp_id?) {
