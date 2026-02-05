@@ -74,6 +74,26 @@
         </button>
       </div>
 
+      @if (showNoUserResultsMessage) {
+        <div class="crp-no-user-results-alert" role="alert">
+          <span class="material-icons-round crp-no-user-results-alert__icon" aria-hidden="true">info</span>
+          <div class="crp-no-user-results-alert__content">
+            <strong>No results under your name</strong>
+            <p>
+              You have no results
+              {{ userFilter === 'my_created' ? 'created' : 'submitted' }}
+              by you for this indicator. To see all Science Program results, select All results above.
+            </p>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              (click)="setUserFilter(null)">
+              Show All results
+            </button>
+          </div>
+        </div>
+      }
+
       <app-results-table
         (generateExcel)="exportComments($event)"
         [resulList]="evaluationList"

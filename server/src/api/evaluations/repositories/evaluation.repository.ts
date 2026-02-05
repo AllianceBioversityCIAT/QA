@@ -210,7 +210,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
      SELECT
             evaluations.id AS evaluation_id,
             evaluations.indicator_view_name,
-            evaluations.indicator_view_id,
+            ANY_VALUE(evaluations.indicator_view_id) AS indicator_view_id,
             evaluations.evaluation_status,
             evaluations.status as assessment_status,
             evaluations.batchDate as submission_date,
@@ -336,19 +336,6 @@ export class EvaluationRepository extends Repository<Evaluations> {
             (
               SELECT result_code FROM ${viewName} ${viewName} WHERE ${viewName}.id = evaluations.indicator_view_id
             ) AS result_code,
-            (
-              SELECT created_user_id FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS created_user_id,
-            (
-              SELECT created_user_email FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS created_user_email,
-            (
-              SELECT submitter_user_id FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS submitter_user_id,
-            (
-              SELECT submitter_user_email FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS submitter_user_email,
-            indicator_user.indicatorId,
             IF(
                 (
                     SELECT
@@ -436,11 +423,9 @@ export class EvaluationRepository extends Repository<Evaluations> {
             ) AS knowledge_product_type
         FROM
             qa_evaluations evaluations
-            LEFT JOIN qa_indicators indicators ON indicators.view_name = evaluations.indicator_view_name
             LEFT JOIN qa_crp crp ON crp.crp_id = evaluations.crp_id
             AND crp.active = 1
             AND crp.qa_active = 'open'
-            LEFT JOIN qa_indicator_user indicator_user ON indicator_user.indicatorId = indicators.id
             LEFT JOIN qa_knowledge_product_data kp ON kp.id = evaluations.indicator_view_id
         WHERE
             (
@@ -455,8 +440,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
             ${filterType === 'my_submissions' ? `AND ( (SELECT submitter_user_id FROM ${viewName} v_f WHERE v_f.id = evaluations.indicator_view_id) = :user_id_str OR (SELECT submitter_user_email FROM ${viewName} v_f WHERE v_f.id = evaluations.indicator_view_id) = :user_email )` : ''}
         GROUP BY
             crp.crp_id,
-            evaluations.id,
-            indicator_user.indicatorId;
+            evaluations.id;
     `;
     const queryRunner = this.dataSource.createQueryRunner();
     const params: Record<string, unknown> = { view_name: viewName, crp_id: crpId };

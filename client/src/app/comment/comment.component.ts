@@ -248,6 +248,12 @@ export class CommentComponent implements OnInit {
     this.commentsByColSelected = [];
     Object.assign(this.dataFromItem, data, params);
     this.availableComment = false;
+    if (this.dataFromItem.evaluation_id == null || this.dataFromItem.evaluation_id === '' ||
+        this.dataFromItem.field_id == null || this.dataFromItem.field_id === '') {
+      this.hideSpinner(this.spinner_comment);
+      this.alertService.error('Cannot load comments: missing evaluation or field data.');
+      return;
+    }
     this.showSpinner(this.spinner_comment);
     this.getItemCommentData(false);
   }
@@ -448,6 +454,10 @@ export class CommentComponent implements OnInit {
   }
 
   getItemCommentData(validateFields?: boolean) {
+    if (this.dataFromItem?.evaluation_id == null || this.dataFromItem?.field_id == null) {
+      this.hideSpinner(this.spinner_comment);
+      return;
+    }
     let params = {
       evaluationId: this.dataFromItem.evaluation_id,
       metaId: this.dataFromItem.field_id
