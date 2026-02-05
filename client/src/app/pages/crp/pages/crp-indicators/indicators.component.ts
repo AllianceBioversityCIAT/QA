@@ -17,6 +17,9 @@ import { FormsModule } from '@angular/forms';
 import { ExportTablesService } from 'src/app/services/export-tables.service';
 import { CommonModule } from '@angular/common';
 import { ResultsTableComponent } from '../../../../components/results-table/results-table.component';
+
+export type UserResultsFilter = 'my_created' | 'my_submissions' | null;
+
 @Component({
   selector: 'app-indicators',
   standalone: true,
@@ -31,6 +34,8 @@ export default class CRPIndicatorsComponent implements OnInit {
   evaluationList: any[];
   returnedArray: any[];
   currentUser: User;
+  /** Filter for CRP list: My Created results / My Submissions */
+  userFilter: UserResultsFilter = null;
 
   // order: string = 'status';
   // reverse: boolean = false;
@@ -61,10 +66,17 @@ export default class CRPIndicatorsComponent implements OnInit {
 
   listLoading = false;
 
-  getEvaluationsList(params) {
+  getEvaluationsList(params, filter?: UserResultsFilter) {
     this.listLoading = true;
+    const filterType = filter ?? this.userFilter;
     this.dashService
-      .geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column, this.currentUser.crp?.crp_id)
+      .geListDashboardEvaluations(
+        this.currentUser.id,
+        `qa_${params.type}`,
+        params.primary_column,
+        this.currentUser.crp?.crp_id,
+        filterType ?? undefined
+      )
       .subscribe({
         next: res => {
           this.evaluationList = res.data;
@@ -77,6 +89,12 @@ export default class CRPIndicatorsComponent implements OnInit {
           this.alertService.error(error);
         }
       });
+  }
+
+  setUserFilter(filter: UserResultsFilter) {
+    this.userFilter = filter;
+    const routeParams = this.activeRoute.snapshot.params;
+    this.getEvaluationsList(routeParams, filter);
   }
 
   exportComments(item, all?) {

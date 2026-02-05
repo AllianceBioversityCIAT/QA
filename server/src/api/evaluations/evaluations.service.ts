@@ -93,7 +93,8 @@ export class EvaluationsService {
     viewName: string,
     viewPrimaryField: string,
     crpId: string | undefined,
-    user: TokenDto
+    user: TokenDto,
+    filterType?: 'my_created' | 'my_submissions'
   ): Promise<any> {
     try {
       const userEntity = await this._evaluationsRepository.getUser(user.userId);
@@ -109,7 +110,10 @@ export class EvaluationsService {
         rawData =
           await this._evaluationsRepository.getEvaluationsByCrpIdAndView(
             viewName,
-            crpId
+            crpId,
+            filterType,
+            user.userId,
+            userEntity.email
           );
         this._logger.log("CRP - getListEvaluationsDash");
       } else {

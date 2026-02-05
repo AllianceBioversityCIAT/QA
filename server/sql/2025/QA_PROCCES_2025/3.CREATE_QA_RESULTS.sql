@@ -40,7 +40,11 @@ SELECT
     qa_policy_change_data.status AS status,
     qa_policy_change_data.result_related AS result_related,
     qa_policy_change_data.stage AS stage,
-    qa_policy_change_data.implementing_organizations AS implementing_organizations
+    qa_policy_change_data.implementing_organizations AS implementing_organizations,
+    qa_policy_change_data.created_user_id AS created_user_id,
+    qa_policy_change_data.created_user_email AS created_user_email,
+    qa_policy_change_data.submitter_user_id AS submitter_user_id,
+    qa_policy_change_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_policy_change_data
 WHERE
@@ -87,7 +91,11 @@ SELECT
     qa_innovation_use_data.actors AS actors,
     qa_innovation_use_data.organizations AS organizations,
     qa_innovation_use_data.other_quantitative AS other_quantitative,
-    qa_innovation_use_data.innovation_linked AS innovation_linked
+    qa_innovation_use_data.innovation_linked AS innovation_linked,
+    qa_innovation_use_data.created_user_id AS created_user_id,
+    qa_innovation_use_data.created_user_email AS created_user_email,
+    qa_innovation_use_data.submitter_user_id AS submitter_user_id,
+    qa_innovation_use_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_innovation_use_data
 WHERE
@@ -128,7 +136,11 @@ SELECT
     qa_other_outcome_data.geographic_focus AS geographic_focus,
     qa_other_outcome_data.regions AS regions,
     qa_other_outcome_data.countries AS countries,
-    qa_other_outcome_data.evidence AS evidence
+    qa_other_outcome_data.evidence AS evidence,
+    qa_other_outcome_data.created_user_id AS created_user_id,
+    qa_other_outcome_data.created_user_email AS created_user_email,
+    qa_other_outcome_data.submitter_user_id AS submitter_user_id,
+    qa_other_outcome_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_other_outcome_data
 WHERE
@@ -173,7 +185,11 @@ SELECT
     qa_capdev_data.number_of_people_trained AS number_of_people_trained,
     qa_capdev_data.long_term_short_term AS long_term_short_term,
     qa_capdev_data.capdev_delivery_method AS capdev_delivery_method,
-    qa_capdev_data.trainees_attending_on_behalf_of_an_organization AS trainees_attending_on_behalf_of_an_organization
+    qa_capdev_data.trainees_attending_on_behalf_of_an_organization AS trainees_attending_on_behalf_of_an_organization,
+    qa_capdev_data.created_user_id AS created_user_id,
+    qa_capdev_data.created_user_email AS created_user_email,
+    qa_capdev_data.submitter_user_id AS submitter_user_id,
+    qa_capdev_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_capdev_data
 WHERE
@@ -231,7 +247,11 @@ SELECT
     qa_innovation_development_data.npp_investment AS npp_investment,
     qa_innovation_development_data.partner_investment AS partner_investment,
     qa_innovation_development_data.pictures AS pictures,
-    qa_innovation_development_data.materials AS materials
+    qa_innovation_development_data.materials AS materials,
+    qa_innovation_development_data.created_user_id AS created_user_id,
+    qa_innovation_development_data.created_user_email AS created_user_email,
+    qa_innovation_development_data.submitter_user_id AS submitter_user_id,
+    qa_innovation_development_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_innovation_development_data
 WHERE
@@ -272,7 +292,11 @@ SELECT
     qa_other_output_data.geographic_focus AS geographic_focus,
     qa_other_output_data.regions AS regions,
     qa_other_output_data.countries AS countries,
-    qa_other_output_data.evidence AS evidence
+    qa_other_output_data.evidence AS evidence,
+    qa_other_output_data.created_user_id AS created_user_id,
+    qa_other_output_data.created_user_email AS created_user_email,
+    qa_other_output_data.submitter_user_id AS submitter_user_id,
+    qa_other_output_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_other_output_data
 WHERE
@@ -313,7 +337,11 @@ SELECT
     qa_impact_contribution_data.geographic_focus AS geographic_focus,
     qa_impact_contribution_data.regions AS regions,
     qa_impact_contribution_data.countries AS countries,
-    qa_impact_contribution_data.evidence AS evidence
+    qa_impact_contribution_data.evidence AS evidence,
+    qa_impact_contribution_data.created_user_id AS created_user_id,
+    qa_impact_contribution_data.created_user_email AS created_user_email,
+    qa_impact_contribution_data.submitter_user_id AS submitter_user_id,
+    qa_impact_contribution_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_impact_contribution_data
 WHERE
@@ -371,7 +399,11 @@ SELECT
     qa_knowledge_product_data.accesible AS accesible,
     qa_knowledge_product_data.interoperable AS interoperable,
     qa_knowledge_product_data.reusable AS reusable,
-    qa_knowledge_product_data.online_date AS online_date
+    qa_knowledge_product_data.online_date AS online_date,
+    qa_knowledge_product_data.created_user_id AS created_user_id,
+    qa_knowledge_product_data.created_user_email AS created_user_email,
+    qa_knowledge_product_data.submitter_user_id AS submitter_user_id,
+    qa_knowledge_product_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_knowledge_product_data
 WHERE
@@ -427,7 +459,11 @@ SELECT
     qa_innovation_use_ipsr_data.complementary_innovation_evidence_based_assessment AS complementary_innovation_evidence_based_assessment,
     qa_innovation_use_ipsr_data.core_innovation_actors AS core_innovation_actors,
     qa_innovation_use_ipsr_data.core_innovation_organizations AS core_innovation_organizations,
-    qa_innovation_use_ipsr_data.core_innovation_measures AS core_innovation_measures
+    qa_innovation_use_ipsr_data.core_innovation_measures AS core_innovation_measures,
+    qa_innovation_use_ipsr_data.created_user_id AS created_user_id,
+    qa_innovation_use_ipsr_data.created_user_email AS created_user_email,
+    qa_innovation_use_ipsr_data.submitter_user_id AS submitter_user_id,
+    qa_innovation_use_ipsr_data.submitter_user_email AS submitter_user_email
 FROM
     qadb.qa_innovation_use_ipsr_data
 WHERE

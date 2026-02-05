@@ -15,12 +15,13 @@ export class DashboardService {
   }
 
   // get list dash data (evaluations)
-  geListDashboardEvaluations(id, view_name, view_primary_field, crp_id?) {
+  geListDashboardEvaluations(id, view_name, view_primary_field, crp_id?, filter_type?: 'my_created' | 'my_submissions') {
     let params = {
       view_name: view_name,
       view_primary_field: view_primary_field
     };
-    return this.http.post<any>(`${environment.apiBaseUrl}evaluation/${id}/list?crp_id=${crp_id}`, params);
+    const filterQuery = filter_type ? `&filter_type=${filter_type}` : '';
+    return this.http.post<any>(`${environment.apiBaseUrl}evaluation/${id}/list?crp_id=${crp_id ?? ''}${filterQuery}`, params);
   }
 
   /**
