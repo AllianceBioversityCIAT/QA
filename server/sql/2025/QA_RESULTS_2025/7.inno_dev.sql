@@ -574,10 +574,10 @@ SELECT
                                         WHEN rit.contributing_indicator IS NULL 
                                              OR CAST(rit.contributing_indicator AS CHAR) = '' 
                                              OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
-                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(10, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(10, 2))) THEN
-                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(10, 2)) AS UNSIGNED)
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(12, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(12, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(12, 2)) AS UNSIGNED)
                                         ELSE
-                                            CAST(rit.contributing_indicator AS DECIMAL(10, 2))
+                                            CAST(rit.contributing_indicator AS DECIMAL(12, 2))
                                     END,
                                     'N/A'
                                 ),
@@ -1181,7 +1181,11 @@ SELECT
             )
         ),
         'This is yet to be determinated'
-    ) AS anticipated
+    ) AS anticipated,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email,
+    (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) AS submitter_user_id,
+    (SELECT u2.email FROM prdb.users u2 WHERE u2.id = (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) LIMIT 1) AS submitter_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -1189,6 +1193,7 @@ FROM
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_innovations_dev rind ON rind.results_id = r.id
     AND rind.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY
