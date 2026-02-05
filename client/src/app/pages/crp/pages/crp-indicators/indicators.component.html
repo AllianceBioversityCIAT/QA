@@ -50,6 +50,30 @@
         </div>
       </div>
 
+      <div class="user-filter-buttons">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm"
+          [class.active]="userFilter === null"
+          (click)="setUserFilter(null)">
+          All results
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm"
+          [class.active]="userFilter === 'my_created'"
+          (click)="setUserFilter('my_created')">
+          My Created results
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm"
+          [class.active]="userFilter === 'my_submissions'"
+          (click)="setUserFilter('my_submissions')">
+          My Submissions
+        </button>
+      </div>
+
       <app-results-table
         (generateExcel)="exportComments($event)"
         [resulList]="evaluationList"

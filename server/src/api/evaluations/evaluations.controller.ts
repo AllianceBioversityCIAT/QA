@@ -109,6 +109,7 @@ export class EvaluationsController {
     @Param('id') id: number,
     @Body() getListEvaluationsDto: GetListEvaluationsDto,
     @Query('crp_id') crpId?: string | undefined,
+    @Query('filter_type') filterType?: 'my_created' | 'my_submissions',
   ) {
     const { view_name: viewName, view_primary_field: viewPrimaryField } =
       getListEvaluationsDto;
@@ -119,6 +120,7 @@ export class EvaluationsController {
       viewPrimaryField,
       crpId,
       user,
+      filterType,
     );
   }
 

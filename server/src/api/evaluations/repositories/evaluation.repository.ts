@@ -201,7 +201,10 @@ export class EvaluationRepository extends Repository<Evaluations> {
 
   async getEvaluationsByCrpIdAndView(
     viewName: string,
-    crpId: string
+    crpId: string,
+    filterType?: 'my_created' | 'my_submissions',
+    userId?: number,
+    userEmail?: string
   ): Promise<any> {
     const sqlQuery = `
      SELECT
@@ -333,6 +336,18 @@ export class EvaluationRepository extends Repository<Evaluations> {
             (
               SELECT result_code FROM ${viewName} ${viewName} WHERE ${viewName}.id = evaluations.indicator_view_id
             ) AS result_code,
+            (
+              SELECT created_user_id FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
+            ) AS created_user_id,
+            (
+              SELECT created_user_email FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
+            ) AS created_user_email,
+            (
+              SELECT submitter_user_id FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
+            ) AS submitter_user_id,
+            (
+              SELECT submitter_user_email FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
+            ) AS submitter_user_email,
             indicator_user.indicatorId,
             IF(
                 (
@@ -436,16 +451,23 @@ export class EvaluationRepository extends Repository<Evaluations> {
             AND evaluations.crp_id = :crp_id
             AND evaluations.phase_year = actual_phase_year()
             AND evaluations.batchDate >= actual_batch_date()
+            ${filterType === 'my_created' ? `AND ( (SELECT created_user_id FROM ${viewName} v_f WHERE v_f.id = evaluations.indicator_view_id) = :user_id_str OR (SELECT created_user_email FROM ${viewName} v_f WHERE v_f.id = evaluations.indicator_view_id) = :user_email )` : ''}
+            ${filterType === 'my_submissions' ? `AND ( (SELECT submitter_user_id FROM ${viewName} v_f WHERE v_f.id = evaluations.indicator_view_id) = :user_id_str OR (SELECT submitter_user_email FROM ${viewName} v_f WHERE v_f.id = evaluations.indicator_view_id) = :user_email )` : ''}
         GROUP BY
             crp.crp_id,
             evaluations.id,
             indicator_user.indicatorId;
     `;
     const queryRunner = this.dataSource.createQueryRunner();
+    const params: Record<string, unknown> = { view_name: viewName, crp_id: crpId };
+    if (filterType && (userId != null || userEmail != null)) {
+      params.user_id_str = userId != null ? String(userId) : '';
+      params.user_email = userEmail ?? '';
+    }
     const [query, parameters] =
       queryRunner.connection.driver.escapeQueryWithParameters(
         sqlQuery,
-        { view_name: viewName, crp_id: crpId },
+        params,
         {}
       );
     return await queryRunner.connection.query(query, parameters);
@@ -1828,6 +1850,10 @@ export class EvaluationRepository extends Repository<Evaluations> {
         submission_date: moment(element["submission_date"]).format(
           "MMM D, YYYY"
         ),
+        created_user_id: element["created_user_id"],
+        created_user_email: element["created_user_email"],
+        submitter_user_id: element["submitter_user_id"],
+        submitter_user_email: element["submitter_user_email"],
       });
     } else {
       response = Object.assign(response, {

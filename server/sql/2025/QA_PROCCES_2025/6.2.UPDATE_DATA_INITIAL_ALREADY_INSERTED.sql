@@ -52,12 +52,13 @@ SET
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_policy_change'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- INNO USE
@@ -98,17 +99,17 @@ SET
     qa.evidence = cc.evidence,
     qa.current_core_innovation_use = cc.current_core_innovation_use,
     qa.current_use_level_of_the_innovation = cc.current_use_level_of_the_innovation,
-    qa.actors_organizations_quantitative = cc.actors_organizations_quantitative,
-    qa.innovation_linked = cc.innovation_linked
+    qa.actors_organizations_quantitative = cc.actors_organizations_quantitative
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_use'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- CAP DEV
@@ -154,12 +155,13 @@ SET
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_capdev'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- INNO DEV
@@ -214,16 +216,17 @@ SET
     qa.npp_investment = cc.npp_investment,
     qa.partner_investment = cc.partner_investment,
     qa.pictures = cc.pictures,
-    qa.materials = cc.materials
+    qa.materials = cc.materials,
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_development'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- OTHER OUTPUT
@@ -265,12 +268,13 @@ SET
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_other_output'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- OTHER OUTCOME
@@ -312,12 +316,13 @@ SET
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_other_outcome'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- IMPACT CONTRIBUTION
@@ -359,12 +364,13 @@ SET
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_impact_contribution'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- KNOWLEDGE PRODUCT
@@ -423,12 +429,13 @@ SET
 WHERE
     v.phase_year = 2025
     AND v.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = v.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_knowledge_product'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- IPSR
@@ -485,10 +492,11 @@ SET
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_use_ipsr'
+          AND e.createdAt >= '2026-02-04'
     );

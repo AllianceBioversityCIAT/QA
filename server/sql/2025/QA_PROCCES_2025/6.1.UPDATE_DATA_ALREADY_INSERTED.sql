@@ -48,16 +48,21 @@ SET
     qa.status = cc.status,
     qa.result_related = cc.result_related,
     qa.stage = cc.stage,
-    qa.implementing_organizations = cc.implementing_organizations
+    qa.implementing_organizations = cc.implementing_organizations,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_policy_change'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- INNO USE
@@ -99,16 +104,21 @@ SET
     qa.current_core_innovation_use = cc.current_core_innovation_use,
     qa.current_use_level_of_the_innovation = cc.current_use_level_of_the_innovation,
     qa.actors_organizations_quantitative = cc.actors_organizations_quantitative,
-    qa.innovation_linked = cc.innovation_linked
+    qa.innovation_linked = cc.innovation_linked,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_use'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- CAP DEV
@@ -150,16 +160,21 @@ SET
     qa.number_of_people_trained = cc.number_of_people_trained,
     qa.long_term_short_term = cc.long_term_short_term,
     qa.capdev_delivery_method = cc.capdev_delivery_method,
-    qa.trainees_attending_on_behalf_of_an_organization = cc.trainees_attending_on_behalf_of_an_organization
+    qa.trainees_attending_on_behalf_of_an_organization = cc.trainees_attending_on_behalf_of_an_organization,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_capdev'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- INNO DEV
@@ -214,16 +229,21 @@ SET
     qa.npp_investment = cc.npp_investment,
     qa.partner_investment = cc.partner_investment,
     qa.pictures = cc.pictures,
-    qa.materials = cc.materials
+    qa.materials = cc.materials,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_development'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- OTHER OUTPUT
@@ -261,16 +281,21 @@ SET
     qa.geographic_focus = cc.geographic_focus,
     qa.regions = cc.regions,
     qa.countries = cc.countries,
-    qa.evidence = cc.evidence
+    qa.evidence = cc.evidence,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_other_output'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- OTHER OUTCOME
@@ -308,16 +333,21 @@ SET
     qa.geographic_focus = cc.geographic_focus,
     qa.regions = cc.regions,
     qa.countries = cc.countries,
-    qa.evidence = cc.evidence
+    qa.evidence = cc.evidence,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_other_outcome'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- IMPACT CONTRIBUTION
@@ -355,16 +385,21 @@ SET
     qa.geographic_focus = cc.geographic_focus,
     qa.regions = cc.regions,
     qa.countries = cc.countries,
-    qa.evidence = cc.evidence
+    qa.evidence = cc.evidence,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_impact_contribution'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- KNOWLEDGE PRODUCT
@@ -419,16 +454,21 @@ SET
     d.accesible = v.accesible,
     d.interoperable = v.interoperable,
     d.reusable = v.reusable,
-    d.online_date = v.online_date
+    d.online_date = v.online_date,
+    d.created_user_id = v.created_user_id,
+    d.created_user_email = v.created_user_email,
+    d.submitter_user_id = v.submitter_user_id,
+    d.submitter_user_email = v.submitter_user_email
 WHERE
     v.phase_year = 2025
     AND v.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = v.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_knowledge_product'
+          AND e.createdAt >= '2026-02-04'
     );
 
 -- IPSR
@@ -481,14 +521,19 @@ SET
     qa.complementary_innovation_evidence_based_assessment = cc.complementary_innovation_evidence_based_assessment,
     qa.core_innovation_actors = cc.core_innovation_actors,
     qa.core_innovation_organizations = cc.core_innovation_organizations,
-    qa.core_innovation_measures = cc.core_innovation_measures
+    qa.core_innovation_measures = cc.core_innovation_measures,
+    qa.created_user_id = cc.created_user_id,
+    qa.created_user_email = cc.created_user_email,
+    qa.submitter_user_id = cc.submitter_user_id,
+    qa.submitter_user_email = cc.submitter_user_email
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
-    AND NOT EXISTS (
+    AND EXISTS (
         SELECT 1
         FROM qa_evaluations e
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_use_ipsr'
+          AND e.createdAt >= '2026-02-04'
     );

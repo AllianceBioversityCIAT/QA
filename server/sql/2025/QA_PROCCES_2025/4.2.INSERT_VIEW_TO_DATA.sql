@@ -44,7 +44,11 @@ INSERT INTO
         status,
         result_related,
         stage,
-        implementing_organizations
+        implementing_organizations,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -84,7 +88,11 @@ SELECT
     cc.status,
     cc.result_related,
     cc.stage,
-    cc.implementing_organizations
+    cc.implementing_organizations,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_policy_change_view cc
 WHERE
@@ -136,7 +144,11 @@ INSERT INTO
         current_core_innovation_use,
         current_use_level_of_the_innovation,
         actors_organizations_quantitative,
-        innovation_linked
+        innovation_linked,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -174,12 +186,15 @@ SELECT
     cc.current_core_innovation_use,
     cc.current_use_level_of_the_innovation,
     cc.actors_organizations_quantitative,
-    cc.innovation_linked
+    cc.innovation_linked,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_innovation_use_view cc
 WHERE
     cc.is_active = 1
-    AND cc.in_qa = 1
     AND NOT EXISTS (
         SELECT
             1
@@ -223,7 +238,11 @@ INSERT INTO
         geographic_focus,
         regions,
         countries,
-        evidence
+        evidence,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -257,7 +276,11 @@ SELECT
     cc.geographic_focus,
     cc.regions,
     cc.countries,
-    cc.evidence
+    cc.evidence,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_other_outcome_view cc
 WHERE
@@ -309,7 +332,11 @@ INSERT INTO
         number_of_people_trained,
         long_term_short_term,
         capdev_delivery_method,
-        trainees_attending_on_behalf_of_an_organization
+        trainees_attending_on_behalf_of_an_organization,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -347,7 +374,11 @@ SELECT
     cc.number_of_people_trained,
     cc.long_term_short_term,
     cc.capdev_delivery_method,
-    cc.trainees_attending_on_behalf_of_an_organization
+    cc.trainees_attending_on_behalf_of_an_organization,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_capdev_view cc
 WHERE
@@ -412,7 +443,11 @@ INSERT INTO
         npp_investment,
         partner_investment,
         pictures,
-        materials
+        materials,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -463,7 +498,11 @@ SELECT
     cc.npp_investment,
     cc.partner_investment,
     cc.pictures,
-    cc.materials
+    cc.materials,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_innovation_development_view cc
 WHERE
@@ -511,7 +550,11 @@ INSERT INTO
         geographic_focus,
         regions,
         countries,
-        evidence
+        evidence,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -545,7 +588,11 @@ SELECT
     cc.geographic_focus,
     cc.regions,
     cc.countries,
-    cc.evidence
+    cc.evidence,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_other_output_view cc
 WHERE
@@ -593,7 +640,11 @@ INSERT INTO
         geographic_focus,
         regions,
         countries,
-        evidence
+        evidence,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -627,7 +678,11 @@ SELECT
     cc.geographic_focus,
     cc.regions,
     cc.countries,
-    cc.evidence
+    cc.evidence,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_impact_contribution_view cc
 WHERE
@@ -692,7 +747,11 @@ INSERT INTO
         accesible,
         interoperable,
         reusable,
-        online_date
+        online_date,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     cc.id,
@@ -743,7 +802,11 @@ SELECT
     cc.accesible,
     cc.interoperable,
     cc.reusable,
-    cc.online_date
+    cc.online_date,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_knowledge_product_view cc
 WHERE
@@ -805,7 +868,11 @@ INSERT INTO
         complementary_innovation_evidence_based_assessment,
         core_innovation_actors,
         core_innovation_organizations,
-        core_innovation_measures
+        core_innovation_measures,
+        created_user_id,
+        created_user_email,
+        submitter_user_id,
+        submitter_user_email
     )
 SELECT
     DISTINCT cc.phase_name,
@@ -854,7 +921,11 @@ SELECT
     cc.complementary_innovation_evidence_based_assessment,
     cc.core_innovation_actors,
     cc.core_innovation_organizations,
-    cc.core_innovation_measures
+    cc.core_innovation_measures,
+    cc.created_user_id,
+    cc.created_user_email,
+    cc.submitter_user_id,
+    cc.submitter_user_email
 FROM
     qa_innovation_use_ipsr_view cc
 WHERE
