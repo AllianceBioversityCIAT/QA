@@ -336,18 +336,6 @@ export class EvaluationRepository extends Repository<Evaluations> {
             (
               SELECT result_code FROM ${viewName} ${viewName} WHERE ${viewName}.id = evaluations.indicator_view_id
             ) AS result_code,
-            (
-              SELECT created_user_id FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS created_user_id,
-            (
-              SELECT created_user_email FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS created_user_email,
-            (
-              SELECT submitter_user_id FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS submitter_user_id,
-            (
-              SELECT submitter_user_email FROM ${viewName} v_usr WHERE v_usr.id = evaluations.indicator_view_id
-            ) AS submitter_user_email,
             indicator_user.indicatorId,
             IF(
                 (
