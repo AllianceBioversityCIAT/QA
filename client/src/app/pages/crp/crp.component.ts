@@ -1,15 +1,18 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, OnDestroy } from '@angular/core';
 import { AuthenticationService } from '@services/authentication.service';
 import { IndicatorsService } from '@services/indicators.service';
-import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { ActivatedRoute, Router, RouterModule, NavigationStart, NavigationEnd, NavigationError } from '@angular/router';
 import { NgxSpinnerModule, NgxSpinnerService } from 'ngx-spinner';
 import { AlertService } from '@services/alert.service';
+import { filter } from 'rxjs/operators';
 
 import { User } from '@models/user.model';
 import { Role } from '@models/roles.model';
 import { environment } from 'src/environments/environment';
 import { CookieService } from 'ngx-cookie-service';
 import { CommonModule } from '@angular/common';
+
+const NAV_SPINNER = 'crpNavigating';
 
 @Component({
   selector: 'app-crp',
@@ -18,7 +21,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './crp.component.html',
   styleUrls: ['./crp.component.scss']
 })
-export default class CrpComponent implements OnInit {
+export default class CrpComponent implements OnInit, OnDestroy {
   crp_id = null;
   crp = null;
   currentUser: User;
@@ -27,6 +30,7 @@ export default class CrpComponent implements OnInit {
   spinner_name = 'sp1';
   allRoles = Role;
   env = environment;
+  private navSubscription: any;
 
   constructor(
     private authenticationService: AuthenticationService,
@@ -53,6 +57,20 @@ export default class CrpComponent implements OnInit {
 
   ngOnInit() {
     this.indicators = JSON.parse(localStorage.getItem('indicatorsCRP')) || [];
+    this.navSubscription = this.router.events.pipe(
+      filter(e => e instanceof NavigationStart || e instanceof NavigationEnd || e instanceof NavigationError)
+    ).subscribe(e => {
+      if (e instanceof NavigationStart) {
+        if (e.url.includes('/detail/')) this.spinner.show(NAV_SPINNER);
+      } else {
+        this.spinner.hide(NAV_SPINNER);
+      }
+    });
+  }
+
+  ngOnDestroy() {
+    if (this.navSubscription) this.navSubscription.unsubscribe();
+    this.spinner.hide(NAV_SPINNER);
   }
 
   validateToken(params: {}) {

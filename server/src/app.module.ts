@@ -29,8 +29,8 @@ import { AuthMicroserviceModule } from './shared/microservice/auth-microservice/
   imports: [
     ThrottlerModule.forRoot([
       {
-        ttl: 60000,
-        limit: 100,
+        ttl: 120000,  // 2 minutes
+        limit: 300,   // 300 requests per window
       },
     ]),
     AuthModule,

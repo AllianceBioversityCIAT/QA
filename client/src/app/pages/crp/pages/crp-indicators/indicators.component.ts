@@ -34,8 +34,8 @@ export default class CRPIndicatorsComponent implements OnInit {
   evaluationList: any[];
   returnedArray: any[];
   currentUser: User;
-  /** Filter for CRP list: My Created results / My Submissions */
-  userFilter: UserResultsFilter = null;
+  /** Filter for CRP list: default to user's created results */
+  userFilter: UserResultsFilter = 'my_created';
 
   // order: string = 'status';
   // reverse: boolean = false;
@@ -79,11 +79,12 @@ export default class CRPIndicatorsComponent implements OnInit {
       )
       .subscribe({
         next: res => {
-          this.evaluationList = res.data;
+          this.evaluationList = res.data ?? [];
           this.returnedArray = this.evaluationList.slice(0, 10);
           this.listLoading = false;
         },
         error: error => {
+          this.evaluationList = [];
           this.returnedArray = [];
           this.listLoading = false;
           this.alertService.error(error);
@@ -95,6 +96,13 @@ export default class CRPIndicatorsComponent implements OnInit {
     this.userFilter = filter;
     const routeParams = this.activeRoute.snapshot.params;
     this.getEvaluationsList(routeParams, filter);
+  }
+
+  /** True when list is empty and current filter is "my created" or "my submissions" */
+  get showNoUserResultsMessage(): boolean {
+    if (this.listLoading || !this.evaluationList) return false;
+    if (this.evaluationList.length > 0) return false;
+    return this.userFilter === 'my_created' || this.userFilter === 'my_submissions';
   }
 
   exportComments(item, all?) {
