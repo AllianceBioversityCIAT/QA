@@ -6,7 +6,7 @@
         stroke-linejoin="round" />
     </svg>
   </button>
-  <div *ngIf="commentsByCol.length && !availableComment && currentUser.hasOwnProperty('cycle')">
+  <div *ngIf="commentsByCol.length && !availableComment && (currentUser?.hasOwnProperty('cycle') || crpComment)">
     <h2 class="title-section">COMMENTS ON {{ dataFromItem.display_name }}</h2>
     <div>
       <!-- <a>Comment highlighted by {{ dataFromItem }}</a> -->
@@ -15,7 +15,7 @@
       <ng-container *ngFor="let comment of commentsByCol">
         <div class="highlight-view-section" *ngIf="comment.highlight_comment && !comment.is_deleted">
           <img class="fa-shake" src="icons/highlight.svg" alt="" srcset="" />
-          <p class="highligt-header">Comment highlighted by {{ comment.replies[0].highlight_by }}</p>
+          <p class="highligt-header">Comment highlighted by {{ comment.replies?.[0]?.highlight_by ?? comment.replies?.highlight_by }}</p>
         </div>
         <div class="comment-body {{ comment.replyType?.id === 1 || comment.replyType?.id === 4 ? 'approved' : '' }} {{
             comment.replyType?.id === 2 ? 'declined' : ''
@@ -39,7 +39,7 @@
               </div>
               <div>
                 <i *ngIf="
-                    (comment.obj_user.id === currentUser.id || currentUser.roles[0].description === allRoles.admin || userIsLeader) &&
+                    (comment.obj_user.id === currentUser.id || currentUser?.roles?.[0]?.description === allRoles.admin || userIsLeader) &&
                     !comment.loaded_replies.length &&
                     !crpComment
                   " (click)="updateComment('is_deleted', comment, dataFromItem.general_comment_id)"
@@ -50,7 +50,7 @@
             <p class="comment">
               {{ comment.detail }}
             </p>
-            <app-tags-bar *ngIf="currentUser.roles[0].id != 3 && !tpbUser?.isTPB && !comment.tpb" [comment]="comment"
+            <app-tags-bar *ngIf="currentUser?.roles?.[0]?.id != 3 && !tpbUser?.isTPB && !comment.tpb" [comment]="comment"
               [currentUser]="currentUser" (tagEvent)="toggleTag($event)"></app-tags-bar>
 
             <!-- currentUser.indicators.isTPB != 1 -->
@@ -88,7 +88,7 @@
           </div>
 
           <div
-            *ngIf="currentUser.roles[0].description === allRoles.admin || !tpbUser?.isTPB || (userIsLeader && dataFromItem.is_core)"
+            *ngIf="currentUser?.roles?.[0]?.description === allRoles.admin || !tpbUser?.isTPB || (userIsLeader && dataFromItem.is_core)"
             class="highlight-section">
             <button *ngIf="
                 comment.highlight_comment == false && currentUser?.cycle?.cycle_stage == 2 && !isCRP && dataFromItem?.is_core == 1 && comment?.tpb == 0
@@ -110,7 +110,7 @@
 
           <!-- crpComment && comment.crp_approved === null && comment.tpb == 0 -->
           <div
-            *ngIf="crpComment && comment?.crp_approved === null && comment?.tpb == 0 && currentUser?.cycle?.cycle_stage == 1"
+            *ngIf="crpComment && comment?.crp_approved === null && comment?.tpb == 0 && (currentUser?.cycle?.cycle_stage == 1 || isCRP)"
             style="flex-direction: row" class="add-comment-container">
             <button type="button" class="btn accept"
               (click)="this.showDialog = true; this.is_approved = true">ACCEPT</button>
@@ -171,7 +171,7 @@
           </div>
 
           <div
-            *ngIf="crpComment && comment?.replies?.replies_count == '0' && comment?.replyTypeId != 1 && comment?.replyTypeId != 4"
+            *ngIf="crpComment && comment?.replies?.replies_count == '0' && (comment?.replyTypeId === 2 || comment?.replyTypeId === 3)"
             class="add-comment-container reply-comment" [ngClass]="{
               approved: comment?.replyTypeId == 1,
               declined: comment?.replyTypeId == 2,
@@ -205,7 +205,7 @@
   </div>
   <!-- VIEW ONLY -->
   <div
-    *ngIf="commentsByCol.length && !availableComment && !currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended">
+    *ngIf="commentsByCol.length && !availableComment && currentUser && !currentUser.hasOwnProperty('cycle') && currentUser.cycle_ended">
     <h2>COMMENTS ON {{ dataFromItem.display_name }}</h2>
     <div class="comment-container">
       <ng-container *ngFor="let comment of commentsByCol">
@@ -277,7 +277,7 @@
   </div>
   <!-- ADD COMMENT -->
 
-  <div class="main-required" *ngIf="currentUser.roles[0].description === allRoles.admin || tpbUser?.isTPB">
+  <div class="main-required" *ngIf="currentUser?.roles?.[0]?.description === allRoles.admin || tpbUser?.isTPB">
     <input *ngIf="
         dataFromItem?.require_changes != 1 &&
         commentsByColSelected?.require_changes != 1 &&
@@ -303,7 +303,7 @@
   </div> -->
   <div *ngIf="
       isCommentAvailable() ||
-      currentUser.roles[0].description === allRoles.admin ||
+      currentUser?.roles?.[0]?.description === allRoles.admin ||
       (tpbUser?.isTPB && commentsByColSelected?.tpb != 1 && dataFromItem.is_core)
     " class="add-comment-container">
     <!-- commentsByCol?.replies.replies_count > 0 -->

@@ -157,8 +157,8 @@ export class CommentComponent implements OnInit {
     // console.log("IS_CRP", this.isCRP);
     this.istpbUser();
 
-    if (this.isCRP && this.currentUser.roles[0].description == this.allRoles.admin) {
-      this.currentUser.roles.shift();
+    if (this.isCRP && this.currentUser?.roles?.[0]?.description === this.allRoles.admin) {
+      this.currentUser.roles?.shift();
       // console.log(this.currentUser);
     }
     if (!this.isCRP) {
@@ -168,7 +168,7 @@ export class CommentComponent implements OnInit {
   }
 
   findAdminUser() {
-    const adminUser = this.currentUser.config.find(res => res.roleId == 1);
+    const adminUser = this.currentUser?.config?.find(res => res.roleId == 1);
     this.adminUser = adminUser != undefined ? true : false;
   }
 
@@ -248,12 +248,6 @@ export class CommentComponent implements OnInit {
     this.commentsByColSelected = [];
     Object.assign(this.dataFromItem, data, params);
     this.availableComment = false;
-    if (this.dataFromItem.evaluation_id == null || this.dataFromItem.evaluation_id === '' ||
-        this.dataFromItem.field_id == null || this.dataFromItem.field_id === '') {
-      this.hideSpinner(this.spinner_comment);
-      this.alertService.error('Cannot load comments: missing evaluation or field data.');
-      return;
-    }
     this.showSpinner(this.spinner_comment);
     this.getItemCommentData(false);
   }
@@ -454,10 +448,6 @@ export class CommentComponent implements OnInit {
   }
 
   getItemCommentData(validateFields?: boolean) {
-    if (this.dataFromItem?.evaluation_id == null || this.dataFromItem?.field_id == null) {
-      this.hideSpinner(this.spinner_comment);
-      return;
-    }
     let params = {
       evaluationId: this.dataFromItem.evaluation_id,
       metaId: this.dataFromItem.field_id
@@ -480,28 +470,26 @@ export class CommentComponent implements OnInit {
           validateFields
         });
 
-        switch (this.currentUser.roles[0].description) {
+        switch (this.currentUser?.roles?.[0]?.description) {
           case this.allRoles.crp:
             this.commentsByCol = res.data.filter(data => data.approved);
-            console.log('🚀 ~ getItemCommentData ~ commentsByCol:', this.commentsByCol);
-
             this.currentComment = this.commentsByCol.find(comment => comment.approved);
             this.crpComment = true;
-            // this.commentsByCol.forEach(comment => {
-            //   console.log(comment)
-            //   if (comment.replies.replies_count != '0') {
-            //     comment.isCollapsed = true;
-            //     this.getCommentReplies(comment)
-            //   }
-            // });
             break;
           default:
             this.commentsByCol = res.data;
             break;
         }
 
+        // Normalize replies when API returns array (e.g. CRP endpoint)
         this.commentsByCol.forEach(comment => {
-          if (comment.replies.replies_count != '0') {
+          if (Array.isArray(comment.replies) && comment.replies.length > 0) {
+            comment.replies = comment.replies[0];
+          }
+        });
+
+        this.commentsByCol.forEach(comment => {
+          if (comment.replies?.replies_count != null && comment.replies.replies_count != '0') {
             comment.isCollapsed = true;
             this.getCommentReplies(comment);
           }
