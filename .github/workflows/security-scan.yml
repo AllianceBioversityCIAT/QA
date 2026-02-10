@@ -3,15 +3,15 @@ name: Security Scan (Snyk → S3)
 on:
   push:
     branches:
-      - master
-      - dev
-      - staging
+      - master-v2
+      - dev-v2
+      - staging-v2
       - staging-security-scanning
   pull_request:
     branches:
-      - master
-      - dev
-      - staging
+      - master-v2
+      - dev-v2
+      - staging-v2
   workflow_dispatch:
 
 permissions:
