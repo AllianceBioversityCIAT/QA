@@ -96,14 +96,27 @@ export class UserRepository extends Repository<Users> {
       });
     }
 
+    // Reload user with relations so roles/crps are populated (e.g. after first-time create)
+    user = await this.findOne({
+      where: { id: user.id },
+      relations: {
+        roles: { role: true },
+        crps: true,
+        crp: true,
+      },
+    });
+
+    const roleIds = (user.roles ?? []).map((userRole) => userRole.role?.id).filter(Boolean);
     const [generalConfig, currentCycle] = await Promise.all([
-      this._generalConfigRepository.find({
-        where: {
-          roleId: In(user.roles.map((userRole) => userRole.role.id)),
-          start_date: LessThanOrEqual(new Date()),
-          end_date: MoreThan(new Date()),
-        },
-      }),
+      roleIds.length > 0
+        ? this._generalConfigRepository.find({
+            where: {
+              roleId: In(roleIds),
+              start_date: LessThanOrEqual(new Date()),
+              end_date: MoreThan(new Date()),
+            },
+          })
+        : [],
 
       this._cycleRepository.find({
         where: {
@@ -132,18 +145,18 @@ export class UserRepository extends Repository<Users> {
     
     const formattedUser = {
       ...newUser,
-      roles: user.roles.map((userRole) => ({
-        id: userRole.role.id,
-        description: userRole.role.description,
-        createdAt: userRole.role.createdAt,
-        updatedAt: userRole.role.updatedAt,
-        acronym: userRole.role.acronym,
-        is_active: userRole.role.is_active,
-        permissions: userRole.role.permissions,
-      })),
+      roles: (user.roles ?? []).map((userRole) => ({
+        id: userRole.role?.id,
+        description: userRole.role?.description,
+        createdAt: userRole.role?.createdAt,
+        updatedAt: userRole.role?.updatedAt,
+        acronym: userRole.role?.acronym,
+        is_active: userRole.role?.is_active,
+        permissions: userRole.role?.permissions,
+      })).filter((r) => r.id != null),
       token,
-      config: generalConfig,
-      cycle: currentCycle[0],
+      config: generalConfig ?? [],
+      cycle: currentCycle?.[0],
     };
 
     return formattedUser;
