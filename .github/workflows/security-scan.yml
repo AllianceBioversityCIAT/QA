@@ -61,7 +61,7 @@ jobs:
         env:
           SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
         run: |
-          # Scan server project: run Snyk test inside server directory
+          # Scan server project: run Snyk test inside server directory.
           # This ensures we analyze the correct package.json and dependencies
           # Use absolute path to repository root for reliable file output
           OUTPUT_FILE="${GITHUB_WORKSPACE}/snyk-server.json"
