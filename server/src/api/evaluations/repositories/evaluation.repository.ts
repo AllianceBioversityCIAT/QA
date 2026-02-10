@@ -257,8 +257,8 @@ export class EvaluationRepository extends Repository<Evaluations> {
                     AND metaId IS NOT NULL
                     AND is_deleted = 0
                     AND is_visible = 1
-                    AND crp_approved = 1
-                    AND createdAt >= actual_batch_date()
+                    AND cycleId = 1
+                    AND replyTypeId IN (1, 4)
             ) AS comments_accepted_count,
             (
                 SELECT
@@ -306,7 +306,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
             ) AS comments_ppu_count,
             (
                 SELECT
-                    COUNT(id)
+                    COUNT(DISTINCT commentId)
                 FROM
                     qa_comments_replies
                 WHERE
@@ -323,7 +323,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
                             AND is_deleted = 0
                             AND is_visible = 1
                             AND cycleId = 1
-                            AND createdAt >= actual_batch_date()
+                            AND detail IS NOT NULL
                     )
             ) AS comments_replies_count,
             (
@@ -350,10 +350,9 @@ export class EvaluationRepository extends Repository<Evaluations> {
                         AND is_visible = 1
                         AND detail IS NOT NULL
                         AND cycleId = 1
-                        AND createdAt >= actual_batch_date()
                 ) = (
                     SELECT
-                        COUNT(id)
+                        COUNT(DISTINCT commentId)
                     FROM
                         qa_comments_replies
                     WHERE
@@ -370,7 +369,7 @@ export class EvaluationRepository extends Repository<Evaluations> {
                                 AND is_deleted = 0
                                 AND is_visible = 1
                                 AND cycleId = 1
-                                AND createdAt >= actual_batch_date()
+                                AND detail IS NOT NULL
                         )
                 ),
                 "complete",
@@ -384,10 +383,11 @@ export class EvaluationRepository extends Repository<Evaluations> {
                         qa_comments
                     WHERE
                         qa_comments.evaluationId = evaluations.id
+                        AND approved_no_comment IS NULL
                         AND metaId IS NOT NULL
                         AND is_deleted = 0
                         AND is_visible = 1
-                      AND createdAt >= actual_batch_date()
+                        AND cycleId = 1
                 ) = (
                     SELECT
                         COUNT(id)
@@ -399,8 +399,8 @@ export class EvaluationRepository extends Repository<Evaluations> {
                         AND qa_comments.metaId IS NOT NULL
                         AND qa_comments.is_deleted = 0
                         AND qa_comments.is_visible = 1
-                        AND qa_comments.crp_approved IS NOT NULL
-                        AND createdAt >= actual_batch_date()
+                        AND qa_comments.cycleId = 1
+                        AND (qa_comments.crp_approved IS NOT NULL OR qa_comments.replyTypeId IS NOT NULL)
                 ),
                 "complete",
                 "pending"
