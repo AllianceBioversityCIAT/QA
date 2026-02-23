@@ -71,3 +71,51 @@ h2 {
   width: 22px;
   height: 22px;
 }
+
+.user-filter-buttons {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+  flex-wrap: wrap;
+
+  .btn.active {
+    font-weight: 600;
+  }
+}
+
+.crp-no-user-results-alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 1rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1.5rem;
+  background-color: #e7f1fa;
+  border: 1px solid #0d6efd;
+  border-radius: 6px;
+  color: #084298;
+
+  .crp-no-user-results-alert__icon {
+    font-size: 1.5rem;
+    flex-shrink: 0;
+  }
+
+  .crp-no-user-results-alert__content {
+    flex: 1;
+
+    strong {
+      display: block;
+      margin-bottom: 0.35rem;
+      font-size: 1rem;
+    }
+
+    p {
+      margin: 0 0 0.75rem;
+      font-size: 0.9375rem;
+      line-height: 1.4;
+    }
+
+    .btn {
+      margin-top: 0.25rem;
+    }
+  }
+}

@@ -1,0 +1,877 @@
+SET
+    SQL_SAFE_UPDATES = 0;
+
+SET
+    group_concat_max_len = 2000000;
+
+-- POLICY CHANGE
+INSERT INTO
+    qa_policy_change_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence,
+        policy_type,
+        usd_amount,
+        status,
+        result_related,
+        stage,
+        implementing_organizations
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence,
+    cc.policy_type,
+    cc.usd_amount,
+    cc.status,
+    cc.result_related,
+    cc.stage,
+    cc.implementing_organizations
+FROM
+    qa_policy_change_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_policy_change_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- INOOVATION USE
+INSERT INTO
+    qa_innovation_use_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence,
+        current_core_innovation_use,
+        current_use_level_of_the_innovation,
+        actors_organizations_quantitative,
+        innovation_linked
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence,
+    cc.current_core_innovation_use,
+    cc.current_use_level_of_the_innovation,
+    cc.actors_organizations_quantitative,
+    cc.innovation_linked
+FROM
+    qa_innovation_use_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_innovation_use_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- OTHER OUTCOME
+INSERT INTO
+    qa_other_outcome_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence
+FROM
+    qa_other_outcome_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_other_outcome_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- CAP SHARING
+INSERT INTO
+    qa_capdev_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence,
+        number_of_people_trained,
+        long_term_short_term,
+        capdev_delivery_method,
+        trainees_attending_on_behalf_of_an_organization
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence,
+    cc.number_of_people_trained,
+    cc.long_term_short_term,
+    cc.capdev_delivery_method,
+    cc.trainees_attending_on_behalf_of_an_organization
+FROM
+    qa_capdev_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_capdev_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- INNO DEV
+INSERT INTO
+    qa_innovation_development_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence,
+        short_title,
+        typology,
+        is_new_varieties,
+        number_of_variety,
+        innovation_developers,
+        innovation_collaborators,
+        innovation_acknowledgement,
+        innovation_characterization,
+        innovation_readiness_level,
+        innovation_readiness_level_justification,
+        questions,
+        anticipated,
+        initiatives_investment,
+        npp_investment,
+        partner_investment,
+        pictures,
+        materials
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence,
+    cc.short_title,
+    cc.typology,
+    cc.is_new_varieties,
+    cc.number_of_variety,
+    cc.innovation_developers,
+    cc.innovation_collaborators,
+    cc.innovation_acknowledgement,
+    cc.innovation_characterization,
+    cc.innovation_readiness_level,
+    cc.innovation_readiness_level_justification,
+    cc.questions,
+    cc.anticipated,
+    cc.initiatives_investment,
+    cc.npp_investment,
+    cc.partner_investment,
+    cc.pictures,
+    cc.materials
+FROM
+    qa_innovation_development_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_innovation_development_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- OTHER OUTPUT
+INSERT INTO
+    qa_other_output_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence
+FROM
+    qa_other_output_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_other_output_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- IMPACT CONTRIBUTION
+INSERT INTO
+    qa_impact_contribution_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence
+FROM
+    qa_impact_contribution_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_impact_contribution_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- KNOWLEDGE PRODUCT
+INSERT INTO
+    qa_knowledge_product_data_initial (
+        id,
+        crp_id,
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        version,
+        is_replicated,
+        in_qa,
+        result_code,
+        result_level,
+        result_type,
+        new_or_updated_result,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        contributing_initiatives,
+        contributing_non_pooled_project,
+        contributing_centers,
+        toc_planned,
+        partners,
+        geographic_focus,
+        regions,
+        countries,
+        evidence,
+        is_melia,
+        melia_previous_submitted,
+        handle,
+        issue_date,
+        authors,
+        knowledge_product_type,
+        peer_reviewed,
+        wos_isi,
+        accesibility,
+        license,
+        keywords,
+        altmetrics,
+        findable,
+        accesible,
+        interoperable,
+        reusable,
+        online_date
+    )
+SELECT
+    cc.id,
+    cc.crp_id,
+    cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.version,
+    cc.is_replicated,
+    cc.in_qa,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.new_or_updated_result,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.contributing_initiatives,
+    cc.contributing_non_pooled_project,
+    cc.contributing_centers,
+    cc.toc_planned,
+    cc.partners,
+    cc.geographic_focus,
+    cc.regions,
+    cc.countries,
+    cc.evidence,
+    cc.is_melia,
+    cc.melia_previous_submitted,
+    cc.handle,
+    cc.issue_date,
+    cc.authors,
+    cc.knowledge_product_type,
+    cc.peer_reviewed,
+    cc.wos_isi,
+    cc.accesibility,
+    cc.license,
+    cc.keywords,
+    cc.altmetrics,
+    cc.findable,
+    cc.accesible,
+    cc.interoperable,
+    cc.reusable,
+    cc.online_date
+FROM
+    qa_knowledge_product_view cc
+WHERE
+    cc.is_active = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_knowledge_product_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );
+
+-- INNOVATION USE IPSR
+INSERT INTO
+    qa_innovation_use_ipsr_data_initial (
+        phase_name,
+        phase_year,
+        included_AR,
+        is_active,
+        submitted,
+        is_replicated,
+        version,
+        in_qa,
+        submission_date,
+        crp_id,
+        id,
+        result_code,
+        result_level,
+        result_type,
+        lead_initiative,
+        core_innovation,
+        geo_scope,
+        geo_focus,
+        reported_year,
+        title,
+        description,
+        lead_contact_person,
+        lead_center_or_partner,
+        gender_tag_level,
+        climate_change_level,
+        nutrition_tag_level,
+        environmental_biodiversity_tag_level,
+        poverty_tag_level,
+        is_krs,
+        lead_initiative_toc,
+        contributing_initiative,
+        contributing_npp,
+        partners,
+        contributing_centers,
+        actors,
+        organizations,
+        other_quantity,
+        specify_scaling_partners,
+        existing_complementary_innovation,
+        new_complementary_innovation,
+        workshop_list_of_participants,
+        what_was_assessed_during_the_workshop,
+        core_innovation_evidence_based_assessment,
+        complementary_innovation_evidence_based_assessment,
+        core_innovation_actors,
+        core_innovation_organizations,
+        core_innovation_measures
+    )
+SELECT
+    DISTINCT cc.phase_name,
+    cc.phase_year,
+    cc.included_AR,
+    cc.is_active,
+    cc.submitted,
+    cc.is_replicated,
+    cc.version,
+    cc.in_qa,
+    cc.submission_date,
+    cc.crp_id,
+    cc.id,
+    cc.result_code,
+    cc.result_level,
+    cc.result_type,
+    cc.lead_initiative,
+    cc.core_innovation,
+    cc.geo_scope,
+    cc.geo_focus,
+    cc.reported_year,
+    cc.title,
+    cc.description,
+    cc.lead_contact_person,
+    cc.lead_center_or_partner,
+    cc.gender_tag_level,
+    cc.climate_change_level,
+    cc.nutrition_tag_level,
+    cc.environmental_biodiversity_tag_level,
+    cc.poverty_tag_level,
+    cc.is_krs,
+    cc.lead_initiative_toc,
+    cc.contributing_initiative,
+    cc.contributing_npp,
+    cc.partners,
+    cc.contributing_centers,
+    cc.actors,
+    cc.organizations,
+    cc.other_quantity,
+    cc.specify_scaling_partners,
+    cc.existing_complementary_innovation,
+    cc.new_complementary_innovation,
+    cc.workshop_list_of_participants,
+    cc.what_was_assessed_during_the_workshop,
+    cc.core_innovation_evidence_based_assessment,
+    cc.complementary_innovation_evidence_based_assessment,
+    cc.core_innovation_actors,
+    cc.core_innovation_organizations,
+    cc.core_innovation_measures
+FROM
+    qa_innovation_use_ipsr_view cc
+WHERE
+    cc.is_active = 1
+    AND cc.in_qa = 1
+    AND NOT EXISTS (
+        SELECT
+            1
+        FROM
+            qa_innovation_use_ipsr_data_initial qa
+        WHERE
+            qa.id = cc.id
+    );

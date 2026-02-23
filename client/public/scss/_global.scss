@@ -124,9 +124,10 @@
   height: 1.1em;
   margin-left: 0.5em;
 }
-.cgiar-logo {
-  content: url('@public/icons/cgiar_logo.svg');
-}
+// Logo antiguo - ahora se usa logo.webp directamente en los componentes
+// .cgiar-logo {
+//   content: url('@public/icons/cgiar_logo.svg');
+// }
 
 .chat-icon {
   content: url('@public/icons/chat-icon.svg');
@@ -166,6 +167,20 @@
 .btn-primary:disabled {
   background-color: var(--yellow-primary);
   border-color: var(--yellow-primary);
+}
+
+// Botón Download Excel: verde (sobrescribe .btn-primary amarillo)
+.btn-primary.file-button--excel,
+.file-button--excel.btn-primary {
+  background-color: var(--green-primary) !important;
+  border-color: var(--green-primary) !important;
+  color: var(--white) !important;
+}
+.btn-primary.file-button--excel:hover,
+.file-button--excel.btn-primary:hover {
+  background-color: var(--green-secondary) !important;
+  border-color: var(--green-secondary) !important;
+  color: var(--white) !important;
 }
 
 .btn-green-secondary,

@@ -1,44 +1,171 @@
+@if (loading) {
+  <div class="results-loading">
+    <div class="results-loading__spinner" aria-hidden="true"></div>
+    <p class="results-loading__text">Loading results...</p>
+  </div>
+} @else {
 <div class="filters">
-  @if (!this.isCRP) {
-    <div class="filters_date">
-      <p class="filters_date_title">Filter by submission date</p>
+  <!-- Compact Filter Bar -->
+  <div class="filters-compact-bar">
+    <!-- Search Button -->
+    <button 
+      class="filter-toggle-btn" 
+      (click)="toggleSearch()"
+      [class.active]="showSearch">
+      <span class="material-icons-round">search</span>
+      <span class="btn-label">Search</span>
+    </button>
 
-      <div class="filters_date_checkbox">
-        @for (item of submissionDates; track $index) {
-          <p-checkbox [label]="item.date" [value]="item.date" [(ngModel)]="selectedDates" />
+    <!-- Columns Button -->
+    <button 
+      class="filter-toggle-btn" 
+      (click)="toggleColumns()"
+      [class.active]="showColumns">
+      <span class="material-icons-round">view_column</span>
+      <span class="btn-label">Columns</span>
+      @if (selectedFilters && selectedFilters.length > 0) {
+        <span class="badge-count">{{ selectedFilters.length }}</span>
+      }
+    </button>
+
+    <!-- State Button -->
+    <button 
+      class="filter-toggle-btn" 
+      (click)="toggleState()"
+      [class.active]="showState || evalStatusFilter">
+      <span class="material-icons-round">filter_list</span>
+      <span class="btn-label">State</span>
+      @if (evalStatusFilter) {
+        <span class="badge-count">1</span>
+      }
+    </button>
+
+    <!-- Dates Button -->
+    @if (!this.isCRP) {
+      <button 
+        class="filter-toggle-btn" 
+        (click)="toggleDates()"
+        [class.active]="showDates || (selectedDates && selectedDates.length > 0)">
+        <span class="material-icons-round">calendar_today</span>
+        <span class="btn-label">Dates</span>
+        @if (selectedDates && selectedDates.length > 0) {
+          <span class="badge-count">{{ selectedDates.length }}</span>
         }
+      </button>
+    }
+  </div>
+
+  <!-- Search Input (Collapsible) -->
+  <div class="filter-section" [class.expanded]="showSearch" [class.collapsed]="!showSearch">
+    <input 
+      type="text" 
+      pInputText 
+      [(ngModel)]="searchText" 
+      placeholder="Search here..." 
+      class="search-input"
+      (focus)="showSearch = true" />
+  </div>
+
+  <!-- Columns Filter (Collapsible) - Buttons instead of dropdown -->
+  <div class="filter-section" [class.expanded]="showColumns" [class.collapsed]="!showColumns">
+    <div class="columns-options">
+      @for (option of columnsFiltersOptions; track option.key) {
+        <button 
+          class="column-option" 
+          [class.active]="isColumnSelected(option.key)"
+          (click)="toggleColumnFilter(option)">
+          @if (isColumnSelected(option.key)) {
+            <span class="material-icons-round check-icon">check_circle</span>
+          } @else {
+            <span class="material-icons-round unchecked-icon">radio_button_unchecked</span>
+          }
+          {{ option.label }}
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- State Filter (Collapsible) -->
+  <div class="filter-section" [class.expanded]="showState" [class.collapsed]="!showState">
+    <div class="state-options">
+      <button 
+        class="state-option" 
+        [class.active]="evalStatusFilter === 'Added'"
+        (click)="handleFilterChange('Added')">
+        Added items
+      </button>
+      <button 
+        class="state-option" 
+        [class.active]="evalStatusFilter === 'Removed'"
+        (click)="handleFilterChange('Removed')">
+        Removed items
+      </button>
+      <button 
+        class="state-option" 
+        [class.active]="evalStatusFilter === 'Updated'"
+        (click)="handleFilterChange('Updated')">
+        Updated items
+      </button>
+      <button 
+        class="state-option" 
+        [class.active]="evalStatusFilter === 'Type Changed'"
+        (click)="handleFilterChange('Type Changed')">
+        Type Changed
+      </button>
+      @if (evalStatusFilter) {
+        <button 
+          class="state-option clear-state" 
+          (click)="handleFilterChange(null)">
+          Clear Filter
+        </button>
+      }
+    </div>
+  </div>
+
+  <!-- Dates Filter (Collapsible) -->
+  @if (!this.isCRP) {
+    <div class="filter-section" [class.expanded]="showDates" [class.collapsed]="!showDates">
+      <div class="dates-options">
+        <p class="filters_date_title">Filter by submission date</p>
+        <div class="filters_date_checkbox">
+          @for (item of submissionDates; track $index) {
+            <p-checkbox [label]="item.date" [value]="item.date" [(ngModel)]="selectedDates" />
+          }
+        </div>
       </div>
     </div>
   }
 
-  <p-multiSelect
-    [options]="columnsFiltersOptions"
-    [(ngModel)]="selectedFilters"
-    optionLabel="label"
-    [style]="{ width: '100%' }"
-    placeholder="Select Filters"
-    [selectedItemsLabel]="selectedFilters.length + ' filters selected'"
-    [showToggleAll]="true"
-    [filter]="false">
-    <ng-template let-country pTemplate="footer">
-      <div class="py-2 px-3">
-        <b>
-          {{ selectedFilters ? selectedFilters.length : 0 }}
-        </b>
-        filter{{ (selectedFilters ? selectedFilters.length : 0) > 1 ? 's' : '' }}
-        selected.
+  <!-- Selected Items Display -->
+  @if (hasActiveFilters()) {
+    <div class="selected-items-display">
+      <div class="selected-items-title">Active Filters:</div>
+      <div class="selected-items-list">
+        @if (evalStatusFilter) {
+          <span class="selected-item-chip">
+            State: {{ evalStatusFilter }}
+            <span class="material-icons-round remove-icon" (click)="handleFilterChange(null)">close</span>
+          </span>
+        }
+        @if (selectedDates && selectedDates.length > 0) {
+          @for (date of selectedDates; track date) {
+            <span class="selected-item-chip">
+              {{ date }}
+              <span class="material-icons-round remove-icon" (click)="removeDate(date)">close</span>
+            </span>
+          }
+        }
+        @if (selectedFilters && selectedFilters.length > 0) {
+          @for (filter of selectedFilters; track filter.key) {
+            <span class="selected-item-chip">
+              {{ filter.label }}
+              <span class="material-icons-round remove-icon" (click)="removeColumnFilter(filter)">close</span>
+            </span>
+          }
+        }
       </div>
-    </ng-template>
-  </p-multiSelect>
-
-  <div class="filters_buttons">
-    <p-button label="Added items" [outlined]="evalStatusFilter !== 'Added'" (click)="handleFilterChange('Added')" severity="warning" />
-    <p-button label="Removed items" [outlined]="evalStatusFilter !== 'Removed'" (click)="handleFilterChange('Removed')" severity="danger" />
-    <p-button label="Updated items" [outlined]="evalStatusFilter !== 'Updated'" (click)="handleFilterChange('Updated')" />
-    <p-button label="Type Changed" [outlined]="evalStatusFilter !== 'Type Changed'" (click)="handleFilterChange('Type Changed')" severity="secondary" />
-  </div>
-
-  <input type="text" pInputText [(ngModel)]="searchText" placeholder="Search here" style="width: 100%" />
+    </div>
+  }
 </div>
 
 <p-table
@@ -54,7 +181,7 @@
     <tr>
       @for (colItem of this.columnNames; track $index) {
         @if (colItem.showIf()) {
-          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr" style="text-align: center; font-size: 13px; font-weight: bold">
+          <th [pSortableColumn]="colItem.attr" [id]="colItem.attr" style="text-align: center; font-size: 0.8rem; font-weight: bold">
             {{ colItem.name }} <p-sortIcon [field]="colItem.attr" />
           </th>
         }
@@ -66,7 +193,7 @@
     <tr>
       @for (colItem of this.columnNames; track $index) {
         @if (colItem.showIf()) {
-          <td style="text-align: center">
+          <td>
             @switch (colItem.attr) {
               @case ('status') {
                 <i style="width: 30px" class="icon-{{ isCRP ? StatusIconCRP[result.status] : statusIcon[result.status] }} status-icon"></i>
@@ -87,16 +214,23 @@
                 </a>
               }
               @case ('title') {
-                <!-- <div style="display: flex; justify-content: space-between; align-items: flex-start"> -->
-                <div style="display: grid; grid-template-columns: 1fr 50px">
+                <div style="display: grid; grid-template-columns: 1fr auto; gap: 0.5rem; align-items: center">
                   <a routerLink="./detail/{{ result.id }}">
-                    <p style="font-size: 13px; text-align: center">
+                    <p style="font-size: 0.8rem; text-align: center; margin: 0">
                       {{ result[colItem.attr] }}
                     </p>
                   </a>
-                  <p style="font-size: 10px; text-align: center">
+                  <span 
+                    class="evaluation-status-badge" 
+                    [ngClass]="{
+                      'status-added': result.evaluation_status === 'Added',
+                      'status-removed': result.evaluation_status === 'Removed',
+                      'status-updated': result.evaluation_status === 'Updated',
+                      'status-type-changed': result.evaluation_status === 'Type Changed',
+                      'status-new': result.evaluation_status === 'New'
+                    }">
                     {{ result.evaluation_status }}
-                  </p>
+                  </span>
                 </div>
               }
               @default {
@@ -120,3 +254,4 @@
   Total items:
   {{ (this.resulList | appFilterByEvalstatus: evalStatusFilter | appFilterByDates: selectedDates | appFilterTableBySearch: searchText).length }}
 </p>
+}

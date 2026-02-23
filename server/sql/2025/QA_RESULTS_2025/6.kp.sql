@@ -47,6 +47,72 @@ SELECT
     ) AS new_or_updated_result,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
+    r.lead_contact_person AS lead_contact_person,
+    IFNULL(
+        IF(
+            r.is_lead_by_partner = 1,
+            (
+                SELECT
+                    CONCAT(
+                        '<b>Lead by Partner:</b><br>',
+                        '<b>',
+                        ci.name,
+                        '</b>',
+                        '<br>',
+                        '<b>Institution type: </b>',
+                        cit.name,
+                        '<br>',
+                        '<b>Role: </b>',
+                        IFNULL(
+                            (
+                                SELECT
+                                    GROUP_CONCAT(
+                                        pdt.name SEPARATOR '; '
+                                    )
+                                FROM
+                                    prdb.result_by_institutions_by_deliveries_type rbibd
+                                    LEFT JOIN prdb.partner_delivery_type pdt ON pdt.id = rbibd.partner_delivery_type_id
+                                WHERE
+                                    rbibd.result_by_institution_id = rbi_lead.id
+                                    AND rbibd.is_active = 1
+                            ),
+                            '<Not applicable>'
+                        )
+                    )
+                FROM
+                    prdb.results_by_institution rbi_lead
+                    LEFT JOIN prdb.clarisa_institutions ci ON rbi_lead.institutions_id = ci.id
+                    INNER JOIN prdb.clarisa_institution_types cit ON ci.institution_type_code = cit.code
+                WHERE
+                    rbi_lead.result_id = r.id
+                    AND rbi_lead.is_active = 1
+                    AND rbi_lead.institution_roles_id = 2
+                    AND rbi_lead.is_leading_result = 1
+                LIMIT 1
+            ),
+            (
+                SELECT
+                    CONCAT(
+                        '<b>Lead by Center:</b><br>',
+                        '<b>',
+                        ci9.acronym,
+                        '</b>',
+                        ' - ',
+                        ci9.name
+                    )
+                FROM
+                    prdb.results_center rc9
+                    LEFT JOIN prdb.clarisa_center cc9 ON rc9.center_id = cc9.code
+                    LEFT JOIN prdb.clarisa_institutions ci9 ON ci9.id = cc9.institutionId
+                WHERE
+                    rc9.result_id = r.id
+                    AND rc9.is_active = 1
+                    AND rc9.is_leading_result = 1
+                LIMIT 1
+            )
+        ),
+        '<Not applicable>'
+    ) AS lead_center_or_partner,
     (
         SELECT
             CONCAT(
@@ -370,11 +436,7 @@ SELECT
         ),
         'Data not provided.'
     ) AS contributing_centers,
-    IF (
-        r.result_level_id = 1
-        OR r.result_level_id = 2,
-        '<Not applicable>',
-        IFNULL(
+    IFNULL(
             (
                 SELECT
                     GROUP_CONCAT(
@@ -383,39 +445,117 @@ SELECT
                             rtr.planned_result = 0,
                             CONCAT(
                                 '<b>Unplanned</b><br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    '<Not applicable>'
+                                IF(
+                                    tr.category IS NOT NULL 
+                                    AND (tr.result_title IS NOT NULL OR tr.result_description IS NOT NULL)
+                                    AND (NULLIF(TRIM(tr.result_title), '') IS NOT NULL OR NULLIF(TRIM(tr.result_description), '') IS NOT NULL),
+                                    CONCAT(
+                                        '<b>',
+                                        IF(
+                                            tr.category = 'OUTCOME',
+                                            'Intermediate Outcome:',
+                                            IF(
+                                                tr.category = 'OUTPUT',
+                                                'HLO:',
+                                                IF(
+                                                    tr.category = 'EOI',
+                                                    '2030 Outcome:',
+                                                    IFNULL(tr.category, 'N/A')
+                                                )
+                                            )
+                                        ),
+                                        '</b>',
+                                        ' ',
+                                        CONCAT(
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_title), ''),
+                                                'N/A'
+                                            ),
+                                            ' - ',
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_description), ''),
+                                                'N/A'
+                                            )
+                                        ),
+                                        '<br>'
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
                                 )
                             ),
                             CONCAT(
                                 '<b>Planned</b><br>',
-                                '<b>WP:</b> ',
-                                IFNULL(NULLIF(TRIM(wp.acronym), ''), '<Not applicable>'),
-                                '<br>',
-                                '<b>ToC title:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(tr.result_title), ''),
-                                    '<Not applicable>'
+                                '<b>',
+                                IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
+                                '</b>',
+                                IF(
+                                    wp.name IS NOT NULL AND wp.name != '' AND IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A') != 'N/A',
+                                    CONCAT(' - ', wp.name),
+                                    ''
                                 ),
                                 '<br>',
-                                '<b>Indicator:</b> ',
+                                '<b>',
+                                IF(
+                                    tr.category = 'OUTCOME',
+                                    'Intermediate Outcome:',
+                                    IF(
+                                        tr.category = 'OUTPUT',
+                                        'HLO:',
+                                        IF(
+                                            tr.category = 'EOI',
+                                            '2030 Outcome:',
+                                            IFNULL(tr.category, 'N/A')
+                                        )
+                                    )
+                                ),
+                                '</b>',
+                                ' ',
+                                CONCAT(
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_title), ''),
+                                        'N/A'
+                                    ),
+                                    ' - ',
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_description), ''),
+                                        'N/A'
+                                    )
+                                ),
+                                '<br>',
+                                '<b>Indicator name:</b> ',
                                 IFNULL(
                                     NULLIF(TRIM(tri.indicator_description), ''),
-                                    '<Not applicable>'
+                                    'N/A'
                                 ),
                                 '<br>',
-                                '<b>Contribution:</b> ',
+                                '<b>Target contribution:</b> ',
                                 IFNULL(
-                                    NULLIF(TRIM(rit.contributing_indicator), ''),
-                                    '<Not applicable>'
+                                    CASE 
+                                        WHEN rit.contributing_indicator IS NULL 
+                                             OR CAST(rit.contributing_indicator AS CHAR) = '' 
+                                             OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(12, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(12, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(12, 2)) AS UNSIGNED)
+                                        ELSE
+                                            CAST(rit.contributing_indicator AS DECIMAL(12, 2))
+                                    END,
+                                    'N/A'
                                 ),
                                 '<br>',
-                                '<b>Why is the result being reported?:</b> ',
-                                IFNULL(
-                                    NULLIF(TRIM(rtr.toc_progressive_narrative), ''),
-                                    '<Not applicable>'
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
                                 )
                             )
                         ),
@@ -444,7 +584,6 @@ SELECT
                     rtri.result_toc_result_indicator_id
             ),
             '<Not applicable>'
-        )
     ) AS toc_planned,
     IF (
         r.no_applicable_partner = 1,
@@ -540,8 +679,32 @@ SELECT
                     ),
                     '<br>',
                     IF(
+                        e.description IS NOT NULL AND e.description != '',
+                        CONCAT(
+                            '<b>Description:</b> ',
+                            e.description,
+                            '<br>'
+                        ),
+                        ''
+                    ),
+                    IF(
                         e.is_sharepoint = 1,
                         CONCAT(
+                            '<b>File name:</b> ',
+                            IFNULL(
+                                (
+                                    SELECT
+                                        es.file_name
+                                    FROM
+                                        prdb.evidence_sharepoint es
+                                    WHERE
+                                        es.evidence_id = e.id
+                                        AND es.is_active = 1
+                                    LIMIT 1
+                                ),
+                                '<Not applicable>'
+                            ),
+                            '<br>',
                             '<b>Is this a public file?: </b>',
                             (
                                 SELECT
@@ -555,6 +718,7 @@ SELECT
                                 WHERE
                                     es.evidence_id = e.id
                                     AND es.is_active = 1
+                                LIMIT 1
                             ),
                             '<br>'
                         ),
@@ -1044,13 +1208,18 @@ SELECT
             rkpm2.result_knowledge_product_id = rkp.result_knowledge_product_id
             AND rkpm2.is_active = 1
             AND rkpm2.source = 'Unpaywall'
-    ) AS unpaywall_year
+    ) AS unpaywall_year,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email,
+    (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) AS submitter_user_id,
+    (SELECT u2.email FROM prdb.users u2 WHERE u2.id = (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) LIMIT 1) AS submitter_user_email
 FROM
     prdb.result r
     LEFT JOIN prdb.results_by_inititiative rbi ON rbi.result_id = r.id
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_knowledge_product rkp ON rkp.results_id = r.id
     AND rkp.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.result_type_id = 6
     AND r.source = 'Result'

@@ -17,6 +17,9 @@ import { FormsModule } from '@angular/forms';
 import { ExportTablesService } from 'src/app/services/export-tables.service';
 import { CommonModule } from '@angular/common';
 import { ResultsTableComponent } from '../../../../components/results-table/results-table.component';
+
+export type UserResultsFilter = 'my_created' | 'my_submissions' | null;
+
 @Component({
   selector: 'app-indicators',
   standalone: true,
@@ -31,6 +34,8 @@ export default class CRPIndicatorsComponent implements OnInit {
   evaluationList: any[];
   returnedArray: any[];
   currentUser: User;
+  /** Filter for CRP list: default to user's created results */
+  userFilter: UserResultsFilter = 'my_created';
 
   // order: string = 'status';
   // reverse: boolean = false;
@@ -59,25 +64,45 @@ export default class CRPIndicatorsComponent implements OnInit {
     });
   }
 
-  getEvaluationsList(params) {
-    console.log('getEvaluationsList');
-    console.log(this.currentUser);
+  listLoading = false;
+
+  getEvaluationsList(params, filter?: UserResultsFilter) {
+    this.listLoading = true;
+    const filterType = filter ?? this.userFilter;
     this.dashService
-      .geListDashboardEvaluations(this.currentUser.id, `qa_${params.type}`, params.primary_column, this.currentUser.crp?.crp_id)
+      .geListDashboardEvaluations(
+        this.currentUser.id,
+        `qa_${params.type}`,
+        params.primary_column,
+        this.currentUser.crp?.crp_id,
+        filterType ?? undefined
+      )
       .subscribe({
         next: res => {
-          console.log(res);
-          // this.evaluationList = this.orderPipe.transform(res.data, this.reverse ? 'asc' : 'desc', this.order);
-          // this.returnedArray = this.evaluationList.slice(0, 10);
-          this.evaluationList = res.data;
+          this.evaluationList = res.data ?? [];
           this.returnedArray = this.evaluationList.slice(0, 10);
-          console.log(this.evaluationList);
+          this.listLoading = false;
         },
         error: error => {
+          this.evaluationList = [];
           this.returnedArray = [];
+          this.listLoading = false;
           this.alertService.error(error);
         }
       });
+  }
+
+  setUserFilter(filter: UserResultsFilter) {
+    this.userFilter = filter;
+    const routeParams = this.activeRoute.snapshot.params;
+    this.getEvaluationsList(routeParams, filter);
+  }
+
+  /** True when list is empty and current filter is "my created" or "my submissions" */
+  get showNoUserResultsMessage(): boolean {
+    if (this.listLoading || !this.evaluationList) return false;
+    if (this.evaluationList.length > 0) return false;
+    return this.userFilter === 'my_created' || this.userFilter === 'my_submissions';
   }
 
   exportComments(item, all?) {

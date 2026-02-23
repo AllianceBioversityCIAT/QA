@@ -1,71 +1,142 @@
 <app-timeline></app-timeline>
-<div class="asesor-dashboard row col col-xl-12">
-  <div class="row col col-xl-12 icons-header">
-    <h4>Progress on Quality Assessment</h4>
-    <div class="text-left">
-      <!-- <button class="css-button-3d--sand" (click)="goToPDF('AR')">
-        <span class="material-icons-round icon">description</span>Technical report guidance
-      </button> -->
-      <button class="css-button-3d--sand" (click)="goToPDF('ASSESSORS_GUIDANCE')">
-        <span class="material-icons-round icon">description</span>2024 Assessor Guidance
-      </button>
-    </div>
-    <button type="button" class="btn btn-success" (click)="downloadRawComments()">Download comments and assessment status</button>
-  </div>
-  <div class="dashboard-container row w-100">
-    <div class="card-body dashboard-container-charts col" [ngClass]="{ 'col-sm-12': currentUser.cycle.cycle_stage == '1' }">
-      <div class="w-100 dashboard-header mb-2">
-        <div class="h-100 title">Dashboard {{ getIndicatorName(selectedIndicator) }}</div>
-
-        <div class="w-100 dropdowns">
-          <div class="dropdown">
-            <label for="indicator">Indicator</label>
-            <p-dropdown
-              [style]="{ width: '100%', backgroundColor: 'white' }"
-              [options]="this.indicatorsNameDropdwon"
-              [(ngModel)]="selectedIndicator"
-              optionLabel="name"
-              [placeholder]="getIndicatorName(selectedIndicator)"
-              (ngModelChange)="actualIndicator($event)" />
-          </div>
-
-          @if (this.istpbUser()) {
-            <div class="dropdown">
-              <label for="actionArea">Action Area</label>
-              <p-dropdown
-                [style]="{ width: '100%', backgroundColor: 'white' }"
-                [options]="this.actionAreaList()"
-                [(ngModel)]="selectedActionArea"
-                optionLabel="action_area"
-                optionValue="action_area"
-                placeholder="Select Action Area"
-                showClear="true"
-                (ngModelChange)="changeActionArea($event)" />
-            </div>
-          }
+<div class="row justify-content-center dashboard-container">
+  <div class="col col-progress">
+    <div class="dashboard-top-section">
+      <div class="dashboard-top-content">
+        <div class="dashboard-title-section">
+          <h2 class="dashboard-main-title">Progress on Quality Assessment</h2>
+        </div>
+        <div class="dashboard-actions-section">
+          <button class="btn-top-action" (click)="goToPDF('ASSESSORS_GUIDANCE')">
+            <span class="material-icons-round icon">description</span>
+            <span>2024 Assessor Guidance</span>
+          </button>
+          <button type="button" class="btn-download-primary" (click)="downloadRawComments()">
+            <span class="material-icons-round icon">download</span>
+            <span>Download Comments</span>
+          </button>
         </div>
       </div>
-      <div *ngIf="isDataNull" class="no-data-container">
-        <div class="no-data-message">No results available at the moment.</div>
-      </div>
-      <div *ngIf="dashboardData && (dashboardData | json) != ({} | json) && !isDataNull" class="w-100">
-        @if (
-          (this.dataCharts.generalStatus ||
-            this.dataCharts.assessorsInteractions ||
-            this.dataCharts.responseToComments ||
-            this.dataCharts.assessmentByField ||
-            this.dataCharts.highlitedPendingComments) &&
-          !isDataNull
-        ) {
-          <app-dashboard [dataCharts]="this.dataCharts" [cycle_stage]="currentUser.cycle.cycle_stage"></app-dashboard>
-        }
-      </div>
-      <div class="no-data" *ngIf="(dashboardData | json) == ({} | json)">
-        You don't have any indicator assingned. Please contact your Administrator.
+    </div>
+    <div class="card dashboard-card">
+      <div class="card-body">
+        <div class="dashboard-container row w-100">
+          <div class="card-body dashboard-container-charts col" [ngClass]="{ 'col-sm-12': currentUser.cycle.cycle_stage == '1' }">
+            <div class="w-100 dashboard-header mb-4">
+              <div class="dashboard-header-content">
+                <div class="dashboard-title-wrapper">
+                  <h2 class="dashboard-title">Dashboard</h2>
+                  <span class="dashboard-subtitle">{{ getIndicatorName(selectedIndicator) }}</span>
+                </div>
+                <div class="dashboard-selector-wrapper">
+                  <label class="selector-label">Select Indicator</label>
+                  <p-dropdown
+                    class="dashboard-dropdown"
+                    [options]="indicatorsNameDropdwon"
+                    [(ngModel)]="selectedIndicator"
+                    optionLabel="name"
+                    optionValue="viewname"
+                    [placeholder]="getIndicatorName(selectedIndicator)"
+                    (ngModelChange)="actualIndicator($event)" />
+                  
+                  @if (this.istpbUser()) {
+                    <label class="selector-label" style="margin-top: 1rem;">Select Action Area</label>
+                    <p-dropdown
+                      class="dashboard-dropdown"
+                      [options]="this.actionAreaList()"
+                      [(ngModel)]="selectedActionArea"
+                      optionLabel="action_area"
+                      optionValue="action_area"
+                      placeholder="Select Action Area"
+                      showClear="true"
+                      (ngModelChange)="changeActionArea($event)" />
+                  }
+                </div>
+              </div>
+            </div>
+            <div *ngIf="isDataNull" class="no-data-container">
+              <div class="no-data-icon">
+                <span class="material-icons-round">bar_chart</span>
+              </div>
+              <div class="no-data-message">No results available at the moment</div>
+              <div class="no-data-description">Please check back later or select a different indicator</div>
+            </div>
+
+            @if (
+              (this.dataCharts.generalStatus ||
+                this.dataCharts.assessorsInteractions ||
+                this.dataCharts.responseToComments ||
+                this.dataCharts.assessmentByField ||
+                this.dataCharts.highlitedPendingComments) &&
+              !isDataNull
+            ) {
+              <div class="charts-wrapper">
+                <app-dashboard [dataCharts]="this.dataCharts" [cycle_stage]="currentUser.cycle.cycle_stage"></app-dashboard>
+              </div>
+            }
+
+            <div class="no-data no-indicator-assigned" *ngIf="(dashboardData | json) == ({} | json)">
+              <div class="no-data-icon">
+                <span class="material-icons-round">info</span>
+              </div>
+              <div class="no-data-message">You don't have any indicator assigned</div>
+              <div class="no-data-description">Please contact your Administrator</div>
+            </div>
+          </div>
+          <div class="card-body feed col col-sm-3" *ngIf="this.currentUser.cycle?.id == 2">
+            <div class="feed-container w-100 h-100">
+              <div class="feed-title">Feed</div>
+              <ul class="notifications">
+                <li
+                  class="notification"
+                  *ngFor="let item of feedList"
+                  [routerLinkActive]="['active']"
+                  routerLink="../../indicator/{{ item.indicator_view_name.split('qa_')[1] }}/id/detail/{{ item.indicator_view_id }}">
+                  <div class="datetime">
+                    {{ item.updatedAt | date: 'long' : '+0530' }}
+                  </div>
+                  <div class="content-action">
+                    <div
+                      [ngClass]="{
+                        agree: item.tagName == 'agree',
+                        notsure: item.tagName == 'notsure',
+                        disagree: item.tagName == 'disagree'
+                      }"
+                      class="tag-color"></div>
+                    <p>
+                      <strong>{{ item.name }}</strong>
+                      {{ tagMessages[item.tagName] }}
+                      <strong> QA-{{ item.indicator_view_name.split('qa_')[1].substring(0, 2).toUpperCase() }}-{{ item.indicator_view_id }}</strong>
+                    </p>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-    <div class="card-body feed col col-sm-3" *ngIf="this.currentUser.cycle?.id == 2"></div>
   </div>
+  <ngx-spinner bdColor="rgba(0, 0, 0, 0.8)" color="#fff" type="square-jelly-box" [fullScreen]="true">
+    <p style="color: white">Loading...</p>
+  </ngx-spinner>
+
+  <ng-template #chartD style="max-width: 1800px">
+    <div class="options-modal">
+      <button type="button" class="close pull-right" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+      </button>
+    </div>
+    <div class="modal-content modal-lg">
+      <div class="chart-modal-container" *ngIf="dataCharts.assessmentByField">
+        <!-- <app-line-chart
+          [indicatorName]="selectedIndicator"
+          [total]="dataSelected.total"
+          [data]="dataCharts.assessmentByField"
+          [isModal]="true"></app-line-chart> -->
+      </div>
+    </div>
+  </ng-template>
 </div>
 <ng-template #chartD style="max-width: 1800px">
   <div class="options-modal">

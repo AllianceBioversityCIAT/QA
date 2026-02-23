@@ -42,7 +42,7 @@ async function bootstrap() {
     .addSecurity("Authorization", {
       type: "apiKey",
       "x-tokenName": "auth",
-      name: "auth",
+      name: "authorization",
       in: "header",
       description: "JWT Token",
     })

@@ -4,10 +4,7 @@ import {
   FormBuilder,
   FormGroup,
   Validators,
-  FormControl,
   FormArray,
-  ValidatorFn,
-  AbstractControl,
   FormsModule,
   ReactiveFormsModule
 } from '@angular/forms';
@@ -166,9 +163,9 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   sanitizedOldValue: SafeHtml = '';
   sanitizedInitialValue: SafeHtml = '';
   sanitizedCurrentValue: SafeHtml = '';
-  AIMatchFields = ["gender_tag_level", "climate_change_level", "nutrition_tag_level", "environmental_biodiversity_tag_level", "poverty_tag_level", "innovation_readiness_level"]
+  AIMatchFields = ["gender_tag_level", "climate_change_level", "nutrition_tag_level", "environmental_biodiversity_tag_level", "poverty_tag_level", "innovation_readiness_level", "is_this_an_innovation_result_type", "current_use_level_of_the_innovation", "actors_organizations_quantitative"]
   aiMatchIcon = 'content_copy';
-  
+
   constructor(
     private activeRoute: ActivatedRoute,
     private router: Router,
@@ -400,7 +397,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
       }
     }
   }
-  updateHighlight(e) {}
+  updateHighlight(e) { }
 
   changeStatus() {
     // this.selectedStatus = status;
@@ -481,16 +478,27 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     let title = this.detailedData.find(data => data.col_name === 'title');
     let filename = `QA-${this.params.type.charAt(0).toUpperCase()}${this.params.type.charAt(1).toUpperCase()}-${this.detailedData[0].result_code}_${moment().format('YYYYMMDD_HHmm')}`;
 
+    const crpId =
+      this.detailedData[0]?.crp_acronym ??
+      this.currentUser.crp?.crp_id ??
+      this.activeRoute.snapshot.queryParamMap.get('crp_id');
     this.commentService
       .getCommentsExcel({
         evaluationId,
         id: this.currentUser.id,
         name: filename,
+        crp_id: crpId,
         indicatorName: `qa_${this.params.type}`
       })
       .subscribe(
         (res: any) => {
-          this._exportTableSE.exportExcel(res?.data || [], filename);
+          const data = res?.data ?? [];
+          if (!data.length) {
+            this.alertService.success('No hay comentarios para exportar.');
+            this.hideSpinner('spinner1');
+            return;
+          }
+          this._exportTableSE.exportExcel(data, filename);
           this.hideSpinner('spinner1');
         },
         error => {
@@ -504,7 +512,7 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
     window.open(url, '_blank');
   }
 
-  goToList() {}
+  goToList() { }
 
   getLink(field) {
     return field.col_name === 'evidence_link' ? true : false;
@@ -554,7 +562,17 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   showComments(index: number, field: any, elementRef: any, e?) {
     this.fieldIndex = index;
     field.clicked = !field.clicked;
-    this.activeCommentArr[index] = !this.activeCommentArr[index];
+    
+    // Si el índice actual ya está activo, lo desactivamos
+    const wasActive = this.activeCommentArr[index];
+    
+    // Desactivar todos los demás indicadores
+    this.activeCommentArr = this.activeCommentArr.map((_, i) => false);
+    
+    // Si el índice actual no estaba activo, lo activamos
+    if (!wasActive) {
+      this.activeCommentArr[index] = true;
+    }
 
     // this.commentsElem.nativeElement.scrollIntoView({ behavior: "smooth"});
     if (e) {
@@ -815,14 +833,14 @@ export default class GeneralDetailedIndicatorComponent implements OnInit {
   copyToClipboard() {
     this.aiMatchIcon = 'check_circle';
 
-    
+
     this.messageService.add({
       severity: 'success',
       summary: 'Success',
       detail: 'Copied to clipboard',
     });
-    
-    
+
+
     setTimeout(() => {
       this.aiMatchIcon = 'content_copy';
     }, 300);

@@ -23,8 +23,10 @@
   .chart-container {
     display: flex;
     justify-self: flex-start;
-    width: 350px;
-    height: 200px;
+    width: 100%;
+    max-width: 320px;
+    height: 220px;
+    margin: 0 auto;
   }
   .title-indicator {
     text-transform: uppercase;

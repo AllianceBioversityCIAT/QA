@@ -14,7 +14,7 @@ export const ChartColors = {
     notsure: "rgba(255, 206, 86)",
     agree: "rgba(75, 192, 192)",
     disagree: "rgb(255, 32, 78)",
-    "Answered / No action needed": "rgb(37, 139, 81)",
+    "Validated / Result status": "rgb(37, 139, 81)",
   },
   generateRandomColor: function () {
     const r = Math.floor(Math.random() * 255);

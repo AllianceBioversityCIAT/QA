@@ -66,14 +66,15 @@ export class CommentsChartComponent implements OnInit {
     const colors = this.data.dataset.map(item => {
       if (ChartColors.CHART_COLORS[item.name]) {
         return ChartColors.CHART_COLORS[item.name];
-      } else {
-        const randomColor = ChartColors.generateRandomColor();
-        ChartColors.CHART_COLORS[item.name] = randomColor;
-        return randomColor;
       }
+      const randomColor = ChartColors.generateRandomColor();
+      (ChartColors.CHART_COLORS as Record<string, string>)[item.name] = randomColor;
+      return randomColor;
     });
 
     const ctx = this.doughnutCanvas.nativeElement.getContext('2d');
+    const total = this.data.dataset.reduce((sum, item) => sum + item.value, 0);
+
     this.chart = new Chart(ctx, {
       type: 'pie',
       data: {
@@ -81,24 +82,47 @@ export class CommentsChartComponent implements OnInit {
         datasets: [
           {
             data: this.data.dataset.map(item => item.value),
-            backgroundColor: colors
-          }
-        ]
+            backgroundColor: colors,
+            borderColor: '#fff',
+            borderWidth: 2,
+            hoverOffset: 10,
+            borderRadius: 8,
+          },
+        ],
       },
       options: {
         responsive: true,
+        maintainAspectRatio: true,
+        layout: {
+          padding: 8,
+        },
+        animation: {
+          duration: 600,
+        },
         plugins: {
-          // legend: {
-          //   display: this.showLegend,
-          //   position: this.legendPosition,
-          // },
+          legend: {
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 10,
+              font: { family: 'Poppins, sans-serif', size: 11 },
+            },
+          },
           tooltip: {
+            backgroundColor: 'rgba(26, 26, 26, 0.9)',
+            padding: 10,
+            titleFont: { size: 12 },
+            bodyFont: { size: 12 },
             callbacks: {
-              label: context => `${context.label}: ${context.raw}`
-            }
-          }
-        }
-      }
+              label: (context) => {
+                const pct = total ? Math.round((Number(context.raw) / total) * 100) : 0;
+                return ` ${context.label}: ${context.raw} (${pct}%)`;
+              },
+            },
+          },
+        },
+      },
     });
   }
 

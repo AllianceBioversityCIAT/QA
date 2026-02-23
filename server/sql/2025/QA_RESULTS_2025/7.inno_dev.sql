@@ -10,13 +10,26 @@ WITH phase_versions AS (
         AND v1.is_active = 1
 ),
 valid_results AS (
-    SELECT
-        r.id
+    SELECT DISTINCT r.id
     FROM
         prdb.result r
-        INNER JOIN phase_versions pv ON r.version_id IN (pv.current_phase_id, pv.previous_phase)
+        INNER JOIN phase_versions pv ON (
+            r.version_id = pv.current_phase_id
+            OR (
+                r.version_id = pv.previous_phase
+                AND EXISTS (
+                    SELECT 1
+                    FROM prdb.result r2
+                    WHERE r2.result_code = r.result_code
+                    AND r2.version_id = pv.current_phase_id
+                    AND r2.is_replicated = 1
+                    AND r2.is_active = 1
+                )
+            )
+        )
     WHERE
         r.result_type_id = 7
+        AND r.is_active = 1
 )
 SELECT
     DISTINCT r.id AS id,
@@ -67,6 +80,72 @@ SELECT
     ) AS new_or_updated_result,
     r.title,
     IFNULL(r.description, 'Data not provided.') AS description,
+    r.lead_contact_person AS lead_contact_person,
+    IFNULL(
+        IF(
+            r.is_lead_by_partner = 1,
+            (
+                SELECT
+                    CONCAT(
+                        '<b>Lead by Partner:</b><br>',
+                        '<b>',
+                        ci.name,
+                        '</b>',
+                        '<br>',
+                        '<b>Institution type: </b>',
+                        cit.name,
+                        '<br>',
+                        '<b>Role: </b>',
+                        IFNULL(
+                            (
+                                SELECT
+                                    GROUP_CONCAT(
+                                        pdt.name SEPARATOR '; '
+                                    )
+                                FROM
+                                    prdb.result_by_institutions_by_deliveries_type rbibd
+                                    LEFT JOIN prdb.partner_delivery_type pdt ON pdt.id = rbibd.partner_delivery_type_id
+                                WHERE
+                                    rbibd.result_by_institution_id = rbi_lead.id
+                                    AND rbibd.is_active = 1
+                            ),
+                            '<Not applicable>'
+                        )
+                    )
+                FROM
+                    prdb.results_by_institution rbi_lead
+                    LEFT JOIN prdb.clarisa_institutions ci ON rbi_lead.institutions_id = ci.id
+                    INNER JOIN prdb.clarisa_institution_types cit ON ci.institution_type_code = cit.code
+                WHERE
+                    rbi_lead.result_id = r.id
+                    AND rbi_lead.is_active = 1
+                    AND rbi_lead.institution_roles_id = 2
+                    AND rbi_lead.is_leading_result = 1
+                LIMIT 1
+            ),
+            (
+                SELECT
+                    CONCAT(
+                        '<b>Lead by Center:</b><br>',
+                        '<b>',
+                        ci9.acronym,
+                        '</b>',
+                        ' - ',
+                        ci9.name
+                    )
+                FROM
+                    prdb.results_center rc9
+                    LEFT JOIN prdb.clarisa_center cc9 ON rc9.center_id = cc9.code
+                    LEFT JOIN prdb.clarisa_institutions ci9 ON ci9.id = cc9.institutionId
+                WHERE
+                    rc9.result_id = r.id
+                    AND rc9.is_active = 1
+                    AND rc9.is_leading_result = 1
+                LIMIT 1
+            )
+        ),
+        '<Not applicable>'
+    ) AS lead_center_or_partner,
     (
         SELECT
             CONCAT(
@@ -345,55 +424,26 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '<li>',
-                    'Founder name: ',
-                    (
-                        SELECT
-                            CONCAT(
-                                '<b>',
-                                ci.acronym,
-                                ' - ',
-                                ci.name,
-                                '</b>'
-                            )
-                        FROM
-                            prdb.clarisa_institutions ci
-                        WHERE
-                            ci.id = npp.funder_institution_id
-                    ),
-                    '<br>',
-                    'Title: ',
                     '<b>',
-                    npp.grant_title,
+                    TRIM(cp.short_name),
                     '</b>',
                     '<br>',
-                    'Center grant ID: ',
-                    '<b>',
-                    npp.center_grant_id,
-                    '</b>',
-                    '<br>',
-                    'Lead/Contract center: ',
-                    (
-                        SELECT
-                            CONCAT(
-                                '<b>',
-                                ci3.acronym,
-                                ' - ',
-                                ci3.name,
-                                '</b>'
-                            )
-                        FROM
-                            prdb.clarisa_center cc
-                            LEFT JOIN prdb.clarisa_institutions ci3 ON ci3.id = cc.institutionId
-                        WHERE
-                            cc.code = npp.lead_center_id
+                    '<span>',
+                    IFNULL(
+                        NULLIF(TRIM(cp.description), ''),
+                        'Data not provided.'
                     ),
+                    '</span>',
                     '</li>' SEPARATOR '<br>'
                 )
             FROM
-                prdb.non_pooled_project npp
+                prdb.results_by_projects rbp
+                INNER JOIN prdb.clarisa_projects cp ON cp.id = rbp.project_id
             WHERE
-                npp.results_id = r.id
-                AND npp.is_active = 1
+                rbp.result_id = r.id
+                AND rbp.is_active = 1
+            ORDER BY
+                TRIM(cp.short_name)
         ),
         '<Not applicable>'
     ) AS contributing_non_pooled_project,
@@ -419,205 +469,155 @@ SELECT
         ),
         'Data not provided.'
     ) AS contributing_centers,
-    IF (
-        r.result_level_id = 1
-        OR r.result_level_id = 2,
-        '<Not applicable>',
-        (
-            SELECT
-                CONCAT(
-                    IF(
-                        (
-                            SELECT
-                                COUNT(1)
-                            FROM
-                                `Integration_information`.toc_results tr
-                                LEFT JOIN prdb.results_toc_result rtr ON rtr.toc_result_id = tr.id
-                            WHERE
-                                rtr.results_id = r.id
-                                AND rtr.is_active = 1
-                                AND tr.result_type = 3
-                        ) > 0,
-                        CONCAT(
-                            '<div style="background-color: #3AABA0; color: #ffffff; ',
-                            'border: 1px solid #c8e6c9; padding: 10px; margin-bottom: 15px; ',
-                            'border-radius: 5px; font-family: Arial, sans-serif; font-size: 16px; ',
-                            'font-weight: bold; display: inline-block;">',
-                            'EOI Outcome map</div><br>'
-                        ),
-                        ''
-                    ),
+    IFNULL(
+            (
+                SELECT
                     GROUP_CONCAT(
                         '<li>',
-                        ci9.official_code,
-                        ' - ',
-                        ci9.name,
-                        '<br>',
-                        '<b><a href="https://toc.mel.cgiar.org/toc/',
-                        ci9.toc_id,
-                        '" target="_blank" style="text-decoration: none; color: #1976d2;">See ToC</a></b><br>',
-                        IFNULL(
-                            (
-                                SELECT
-                                    CONCAT('<b>', wp.acronym, '</b> - ', wp.name)
-                                FROM
-                                    Integration_information.work_packages wp
-                                WHERE
-                                    wp.id = tr.work_packages_id
-                            ),
-                            ''
-                        ),
-                        '<br><b>Title: </b>',
-                        tr.result_title,
-                        '<br>',
                         IF(
-                            tr.result_description IS NULL
-                            OR tr.result_description = '',
-                            '',
-                            CONCAT('<b>Description: </b>', tr.result_description)
+                            rtr.planned_result = 0,
+                            CONCAT(
+                                '<b>Unplanned</b><br>',
+                                IF(
+                                    tr.category IS NOT NULL 
+                                    AND (tr.result_title IS NOT NULL OR tr.result_description IS NOT NULL)
+                                    AND (NULLIF(TRIM(tr.result_title), '') IS NOT NULL OR NULLIF(TRIM(tr.result_description), '') IS NOT NULL),
+                                    CONCAT(
+                                        '<b>',
+                                        IF(
+                                            tr.category = 'OUTCOME',
+                                            'Intermediate Outcome:',
+                                            IF(
+                                                tr.category = 'OUTPUT',
+                                                'HLO:',
+                                                IF(
+                                                    tr.category = 'EOI',
+                                                    '2030 Outcome:',
+                                                    IFNULL(tr.category, 'N/A')
+                                                )
+                                            )
+                                        ),
+                                        '</b>',
+                                        ' ',
+                                        CONCAT(
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_title), ''),
+                                                'N/A'
+                                            ),
+                                            ' - ',
+                                            IFNULL(
+                                                NULLIF(TRIM(tr.result_description), ''),
+                                                'N/A'
+                                            )
+                                        ),
+                                        '<br>'
+                                    ),
+                                    ''
+                                ),
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
+                                )
+                            ),
+                            CONCAT(
+                                '<b>Planned</b><br>',
+                                '<b>',
+                                IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A'),
+                                '</b>',
+                                IF(
+                                    wp.name IS NOT NULL AND wp.name != '' AND IFNULL(NULLIF(TRIM(wp.acronym), ''), 'N/A') != 'N/A',
+                                    CONCAT(' - ', wp.name),
+                                    ''
+                                ),
+                                '<br>',
+                                '<b>',
+                                IF(
+                                    tr.category = 'OUTCOME',
+                                    'Intermediate Outcome:',
+                                    IF(
+                                        tr.category = 'OUTPUT',
+                                        'HLO:',
+                                        IF(
+                                            tr.category = 'EOI',
+                                            '2030 Outcome:',
+                                            IFNULL(tr.category, 'N/A')
+                                        )
+                                    )
+                                ),
+                                '</b>',
+                                ' ',
+                                CONCAT(
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_title), ''),
+                                        'N/A'
+                                    ),
+                                    ' - ',
+                                    IFNULL(
+                                        NULLIF(TRIM(tr.result_description), ''),
+                                        'N/A'
+                                    )
+                                ),
+                                '<br>',
+                                '<b>Indicator name:</b> ',
+                                IFNULL(
+                                    NULLIF(TRIM(tri.indicator_description), ''),
+                                    'N/A'
+                                ),
+                                '<br>',
+                                '<b>Target contribution:</b> ',
+                                IFNULL(
+                                    CASE 
+                                        WHEN rit.contributing_indicator IS NULL 
+                                             OR CAST(rit.contributing_indicator AS CHAR) = '' 
+                                             OR TRIM(CAST(rit.contributing_indicator AS CHAR)) = '' THEN 'N/A'
+                                        WHEN CAST(rit.contributing_indicator AS DECIMAL(12, 2)) = FLOOR(CAST(rit.contributing_indicator AS DECIMAL(12, 2))) THEN
+                                            CAST(CAST(rit.contributing_indicator AS DECIMAL(12, 2)) AS UNSIGNED)
+                                        ELSE
+                                            CAST(rit.contributing_indicator AS DECIMAL(12, 2))
+                                    END,
+                                    'N/A'
+                                ),
+                                '<br>',
+                                IF(
+                                    rtr.toc_progressive_narrative IS NOT NULL AND NULLIF(TRIM(rtr.toc_progressive_narrative), '') IS NOT NULL,
+                                    CONCAT(
+                                        '<b>Why is the result being reported?:</b> ',
+                                        rtr.toc_progressive_narrative
+                                    ),
+                                    ''
+                                )
+                            )
                         ),
                         '</li>' SEPARATOR '<br>'
                     )
-                )
-            FROM
-                `Integration_information`.toc_results tr
-                LEFT JOIN prdb.results_toc_result rtr ON rtr.toc_result_id = tr.id
-                AND rtr.is_active = 1
-                LEFT JOIN prdb.clarisa_initiatives ci9 ON ci9.id = rtr.initiative_id
-            WHERE
-                rtr.results_id = r.id
-        )
+                FROM
+                    prdb.results_toc_result rtr
+                    INNER JOIN prdb.clarisa_initiatives ci ON ci.id = rtr.initiative_id
+                    AND ci.active > 0
+                    LEFT JOIN Integration_information.toc_results tr ON tr.id = rtr.toc_result_id
+                    AND tr.is_active > 0
+                    LEFT JOIN Integration_information.toc_work_packages wp ON wp.toc_id = tr.wp_id
+                    LEFT JOIN prdb.results_toc_result_indicators rtri ON rtri.results_toc_results_id = rtr.result_toc_result_id
+                    AND rtri.is_active = 1
+                    AND rtri.is_not_aplicable = 0
+                    LEFT JOIN Integration_information.toc_results_indicators tri ON tri.related_node_id = rtri.toc_results_indicator_id
+                    AND tri.is_active = 1
+                    LEFT JOIN prdb.result_indicators_targets rit ON rit.result_toc_result_indicator_id = rtri.result_toc_result_indicator_id
+                    AND rit.is_active = 1
+                WHERE
+                    rtr.results_id = r.id
+                    AND rtr.is_active = 1
+                ORDER BY
+                    rtr.initiative_id,
+                    rtr.result_toc_result_id,
+                    rtri.result_toc_result_indicator_id
+            ),
+            '<Not applicable>'
     ) AS toc_planned,
-    IFNULL(
-        IF(
-            r.result_level_id != 1,
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        (
-                            SELECT
-                                CONCAT(
-                                    '<b>',
-                                    caa.name,
-                                    '</b>'
-                                )
-                            FROM
-                                prdb.clarisa_action_area caa
-                            WHERE
-                                caa.id = caao.actionAreaId
-                        ),
-                        ' (',
-                        caao.outcomeSMOcode,
-                        ')',
-                        ' - ',
-                        caao.outcomeStatement SEPARATOR '<br>'
-                    )
-                FROM
-                    prdb.result_toc_action_area rtaa
-                    LEFT JOIN prdb.clarisa_action_area_outcome caao ON caao.id = rtaa.action_area_outcome
-                    LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
-                    AND rtr.is_active = 1
-                WHERE
-                    rtaa.result_toc_result_id = rtr.result_toc_result_id
-                    AND rtaa.is_active = 1
-            ),
-            NULL
-        ),
-        '<Not applicable>'
-    ) AS action_area,
-    IFNULL (
-        IF (
-            r.result_level_id = 1
-            OR r.result_level_id = 2,
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<b>',
-                        cia.name,
-                        '</b>' ' - ' SEPARATOR '<br>'
-                    )
-                FROM
-                    prdb.results_impact_area_target riat
-                    LEFT JOIN prdb.clarisa_global_targets cgt ON cgt.targetId = riat.impact_area_target_id
-                    LEFT JOIN prdb.clarisa_impact_areas cia ON cia.id = cgt.impactAreaId
-                WHERE
-                    riat.result_id = r.id
-                    AND riat.is_active = 1
-                ORDER BY
-                    cgt.targetId ASC
-            ),
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<b>',
-                        subquery.name,
-                        '</b>',
-                        ' - ',
-                        subquery.target SEPARATOR '<br>'
-                    )
-                FROM
-                    (
-                        SELECT
-                            DISTINCT rtiat.impact_area_indicator_id,
-                            cia.name,
-                            cgt.target
-                        FROM
-                            prdb.result_toc_impact_area_target rtiat
-                            LEFT JOIN prdb.clarisa_global_targets cgt ON cgt.targetId = rtiat.impact_area_indicator_id
-                            LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
-                            AND rtr.is_active = 1
-                            LEFT JOIN prdb.clarisa_impact_areas cia ON cia.id = cgt.impactAreaId
-                        WHERE
-                            rtiat.result_toc_result_id = rtr.result_toc_result_id
-                            AND rtiat.is_active = 1
-                    ) AS subquery
-                ORDER BY
-                    subquery.impact_area_indicator_id ASC
-            )
-        ),
-        '<Not applicable>'
-    ) AS impact_area_targets,
-    IFNULL (
-        IF (
-            r.result_level_id = 1
-            OR r.result_level_id = 2,
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<b>',
-                        cst.sdg_target_code,
-                        '</b>',
-                        ' - ',
-                        cst.sdg_target SEPARATOR '<br>'
-                    )
-                FROM
-                    prdb.result_sdg_targets rst
-                    LEFT JOIN prdb.clarisa_sdgs_targets cst ON rst.clarisa_sdg_target_id = cst.id
-                WHERE
-                    rst.result_id = r.id
-                    AND rst.is_active = 1
-            ),
-            (
-                SELECT
-                    GROUP_CONCAT(
-                        '<b>',
-                        cst.sdg_target_code,
-                        '</b>',
-                        ' - ',
-                        cst.sdg_target SEPARATOR '<br>'
-                    )
-                FROM
-                    prdb.result_toc_sdg_targets rtst
-                    LEFT JOIN prdb.clarisa_sdgs_targets cst ON rtst.clarisa_sdg_target_id = cst.id
-                    LEFT JOIN prdb.results_toc_result rtr ON rtr.results_id = r.id
-                    AND rtr.is_active = 1
-                WHERE
-                    rtst.result_toc_result_id = rtr.result_toc_result_id
-                    AND rtst.is_active = 1
-            )
-        ),
-        '<Not applicable>'
-    ) AS sdg,
     IF (
         r.no_applicable_partner = 1,
         '<Not applicable>',
@@ -712,23 +712,46 @@ SELECT
                     ),
                     '<br>',
                     IF(
+                        e.description IS NOT NULL AND e.description != '',
+                        CONCAT(
+                            '<b>Description:</b> ',
+                            e.description,
+                            '<br>'
+                        ),
+                        ''
+                    ),
+                    IF(
                         e.is_sharepoint = 1,
                         CONCAT(
+                            '<b>File name:</b> ',
+                            IFNULL(
+                                (
+                                    SELECT
+                                        es.file_name
+                                    FROM
+                                        prdb.evidence_sharepoint es
+                                    WHERE
+                                        es.evidence_id = e.id
+                                        AND es.is_active = 1
+                                    LIMIT 1
+                                ),
+                                '<Not applicable>'
+                            ),
+                            '<br>',
                             '<b>Is this a public file?: </b>',
                             (
                                 SELECT
-                                    GROUP_CONCAT(
-                                        IF(
-                                            es.is_public_file = 1,
-                                            'Yes',
-                                            'No'
-                                        )
+                                    IF(
+                                        es.is_public_file = 1,
+                                        'Yes',
+                                        'No'
                                     )
                                 FROM
                                     prdb.evidence_sharepoint es
                                 WHERE
                                     es.evidence_id = e.id
                                     AND es.is_active = 1
+                                LIMIT 1
                             ),
                             '<br>'
                         ),
@@ -803,14 +826,15 @@ SELECT
         ),
         '<Not applicable>'
     ) AS is_new_varieties,
-    IFNULL(
-        IF(
-            rind.is_new_variety = 0
-            OR rind.is_new_variety IS NULL,
-            '<Not applicable>',
-            rind.number_of_varieties
-        ),
-        '<Not applicable>'
+    IF(
+        rind.is_new_variety = 0
+        OR rind.is_new_variety IS NULL,
+        0,
+        CASE 
+            WHEN rind.number_of_varieties IS NULL 
+                 OR CAST(rind.number_of_varieties AS CHAR) = '' THEN 0
+            ELSE CAST(rind.number_of_varieties AS DECIMAL(10, 0))
+        END
     ) AS number_of_variety,
     IF(
         rind.innovation_user_to_be_determined = 0,
@@ -1157,7 +1181,11 @@ SELECT
             )
         ),
         'This is yet to be determinated'
-    ) AS anticipated
+    ) AS anticipated,
+    r.created_by AS created_user_id,
+    u.email AS created_user_email,
+    (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) AS submitter_user_id,
+    (SELECT u2.email FROM prdb.users u2 WHERE u2.id = (SELECT s.user_id FROM prdb.submission s WHERE s.results_id = r.id AND s.status = 1 AND s.is_active = 1 ORDER BY s.created_date DESC LIMIT 1) LIMIT 1) AS submitter_user_email
 FROM
     valid_results vr
     LEFT JOIN prdb.result r ON r.id = vr.id
@@ -1165,6 +1193,7 @@ FROM
     AND rbi.initiative_role_id = 1
     LEFT JOIN prdb.results_innovations_dev rind ON rind.results_id = r.id
     AND rind.is_active = 1
+    LEFT JOIN prdb.users u ON u.id = r.created_by
 WHERE
     r.source = 'Result'
 ORDER BY

@@ -50,7 +50,7 @@ export class IndicatorsRepository extends Repository<Indicators> {
     const [query, parameters] =
       queryRunner.connection.driver.escapeQueryWithParameters(
         `
-      SELECT DISTINCT name, description, primary_field, view_name, qa_indicators.order AS indicator_order
+      SELECT DISTINCT name, description, primary_field, view_name, qa_indicators.order AS indicator_order, indicator_level
       FROM qa_indicators
       WHERE qa_indicators.is_active = 1
       ORDER BY indicator_order ASC
@@ -66,7 +66,7 @@ export class IndicatorsRepository extends Repository<Indicators> {
     const [query, parameters] =
       queryRunner.connection.driver.escapeQueryWithParameters(
         `
-      SELECT DISTINCT evaluations.indicator_view_name, indicators.name, indicators.description, indicators.primary_field, indicators.order AS indicator_order, indicators.view_name, comment_meta.enable_crp
+      SELECT DISTINCT evaluations.indicator_view_name, indicators.name, indicators.description, indicators.primary_field, indicators.order AS indicator_order, indicators.view_name, comment_meta.enable_crp, indicators.indicator_level
       FROM qa_indicators indicators
       LEFT JOIN qa_comments_meta comment_meta ON comment_meta.indicatorId = indicators.id
       LEFT JOIN qa_evaluations evaluations ON evaluations.indicator_view_name = indicators.view_name
@@ -84,7 +84,7 @@ export class IndicatorsRepository extends Repository<Indicators> {
     const [query, parameters] =
       queryRunner.connection.driver.escapeQueryWithParameters(
         `
-      SELECT indicators.name, indicators.description, indicators.primary_field, indicators.order AS indicator_order, indicators.view_name, meta.enable_assessor, qa_indicator_user.isLeader as is_leader, qa_indicator_user.isTPB as is_tpb, qa_indicator_user.isPPU as is_ppu
+      SELECT indicators.name, indicators.description, indicators.primary_field, indicators.order AS indicator_order, indicators.view_name, indicators.indicator_level, meta.enable_assessor, qa_indicator_user.isLeader as is_leader, qa_indicator_user.isTPB as is_tpb, qa_indicator_user.isPPU as is_ppu
       FROM qa_indicator_user qa_indicator_user
       LEFT JOIN qa_indicators indicators ON indicators.id = qa_indicator_user.indicatorId
       LEFT JOIN qa_comments_meta meta ON meta.indicatorId = qa_indicator_user.indicatorId

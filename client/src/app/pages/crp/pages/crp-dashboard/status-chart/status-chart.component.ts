@@ -22,7 +22,7 @@ export class StatusChartComponent implements OnInit {
   @ViewChild('barCanvas') barCanvas: ElementRef;
   chart: any;
   legendLabels = [
-    { name: 'Answered / No action needed', class: 'answered', value: 0 },
+    { name: 'Validated / Result Status', class: 'answered', value: 0 },
     { name: 'Pending', class: 'pending', value: 0 }
   ];
   results: any[];
@@ -48,7 +48,7 @@ export class StatusChartComponent implements OnInit {
   formatIndicator() {
     this.results = [{ name: this.indicator[0].name, series: [] }];
     this.indicator[0].series.forEach(element => {
-      let status = element.status == 'complete' ? 'Answered / No action needed' : 'Pending';
+      let status = element.status == 'complete' ? 'Validated / Result Status' : 'Pending';
       this.legendLabels.find(el => el.name == status).value = element.value;
       this.results[0].series.push({
         name: status,
@@ -56,11 +56,39 @@ export class StatusChartComponent implements OnInit {
       });
     });
     this.results[0].series.reverse();
-    const isAllPending = this.results[0].series.find(el => el.name == 'Answered / No action needed' && el.value == 0);
+    const isAllPending = this.results[0].series.find(el => el.name == 'Validated / Result Status' && el.value == 0);
 
     if (this.results[0].series.find(el => el.name == 'Pending' && el.value == this.total)) {
       this.colorScheme.domain.shift();
     }
+  }
+
+  /** Plugin para mostrar el total en el centro del doughnut */
+  private get centerTotalPlugin() {
+    const total = this.total ?? 0;
+    return {
+      id: 'centerTotal',
+      afterDraw(chart: Chart) {
+        if ((chart.config as { type?: string })?.type !== 'doughnut' || !chart.ctx) return;
+        const ctx = chart.ctx;
+        const a = chart.chartArea;
+        if (!a) return;
+        const cx = (a.left + a.right) / 2;
+        const cy = (a.top + a.bottom) / 2;
+        const size = Math.min(a.right - a.left, a.bottom - a.top);
+        const fontSize = Math.max(14, size / 6);
+        ctx.save();
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+        ctx.font = `600 ${fontSize}px Poppins, sans-serif`;
+        ctx.fillStyle = '#1a1a1a';
+        ctx.fillText(String(total), cx, cy - fontSize * 0.25);
+        ctx.font = `500 ${fontSize * 0.45}px Poppins, sans-serif`;
+        ctx.fillStyle = '#64748b';
+        ctx.fillText('total', cx, cy + fontSize * 0.35);
+        ctx.restore();
+      },
+    };
   }
 
   createChart() {
@@ -68,34 +96,64 @@ export class StatusChartComponent implements OnInit {
     const labels = this.results[0].series.map(item => item.name);
     const dataValues = this.results[0].series.map(item => item.value);
     const backgroundColors = this.results[0].series.map(item => {
-      if (item.name === 'Answered / No action needed') {
-        return ChartColors.CHART_COLORS['Answered / No action needed'];
-      } else {
-        return ChartColors.CHART_COLORS['Pending'];
+      if (item.name === 'Validated / Result Status') {
+        return ChartColors.CHART_COLORS['Validated / Result Status'];
       }
+      return ChartColors.CHART_COLORS['Pending'];
     });
 
-
     this.chart = new Chart(ctx, {
-      type: 'doughnut'  ,
+      type: 'doughnut',
       data: {
-        labels: labels,
+        labels,
         datasets: [
           {
             label: 'Status',
             data: dataValues,
-            backgroundColor: backgroundColors
-          }
-        ]
+            backgroundColor: backgroundColors,
+            borderColor: '#fff',
+            borderWidth: 2,
+            hoverOffset: 10,
+            borderRadius: 8,
+          },
+        ],
       },
+      plugins: [this.centerTotalPlugin],
       options: {
         responsive: true,
+        maintainAspectRatio: true,
+        cutout: '55%',
+        layout: {
+          padding: 8,
+        },
+        animation: {
+          duration: 600,
+        },
         plugins: {
           legend: {
-            display: true
-          }
-        }
-      }
+            display: true,
+            position: 'bottom',
+            labels: {
+              usePointStyle: true,
+              padding: 12,
+              font: { family: 'Poppins, sans-serif', size: 11 },
+            },
+          },
+          tooltip: {
+            backgroundColor: 'rgba(26, 26, 26, 0.9)',
+            padding: 10,
+            titleFont: { size: 12 },
+            bodyFont: { size: 12 },
+            callbacks: {
+              label: (ctx) => {
+                const total = (ctx.dataset.data as number[]).reduce((a, b) => a + b, 0);
+                const pct = total ? Math.round((Number(ctx.raw) / total) * 100) : 0;
+                return ` ${ctx.label}: ${Number(ctx.raw)} (${pct}%)`;
+              },
+            },
+          },
+        },
+      } as Chart['options'],
     });
   }
 

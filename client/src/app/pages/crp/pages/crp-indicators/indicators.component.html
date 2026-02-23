@@ -43,12 +43,56 @@
             <p>Automatically validated</p>
           }
           <i class="icon-quality-assessed icon-32"></i>
-          <p>Answered / No action needed</p>
+          <p>Validated / Result status</p>
 
           <i class="icon-pending icon-32"></i>
           <p>Pending</p>
         </div>
       </div>
+
+      <div class="user-filter-buttons">
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm"
+          [class.active]="userFilter === null"
+          (click)="setUserFilter(null)">
+          All results
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm"
+          [class.active]="userFilter === 'my_created'"
+          (click)="setUserFilter('my_created')">
+          My Created results
+        </button>
+        <button
+          type="button"
+          class="btn btn-outline-primary btn-sm"
+          [class.active]="userFilter === 'my_submissions'"
+          (click)="setUserFilter('my_submissions')">
+          My Submissions
+        </button>
+      </div>
+
+      @if (showNoUserResultsMessage) {
+        <div class="crp-no-user-results-alert" role="alert">
+          <span class="material-icons-round crp-no-user-results-alert__icon" aria-hidden="true">info</span>
+          <div class="crp-no-user-results-alert__content">
+            <strong>No results under your name</strong>
+            <p>
+              You have no results
+              {{ userFilter === 'my_created' ? 'created' : 'submitted' }}
+              by you for this indicator. To see all Science Program results, select All results above.
+            </p>
+            <button
+              type="button"
+              class="btn btn-primary btn-sm"
+              (click)="setUserFilter(null)">
+              Show All results
+            </button>
+          </div>
+        </div>
+      }
 
       <app-results-table
         (generateExcel)="exportComments($event)"
@@ -56,7 +100,8 @@
         [returnedArray]="returnedArray"
         [indicatorType]="indicatorType"
         [currentUser]="currentUser"
-        [isCRP]="true"></app-results-table>
+        [isCRP]="true"
+        [loading]="listLoading"></app-results-table>
     </div>
   </div>
 </div>
