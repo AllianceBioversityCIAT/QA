@@ -63,7 +63,7 @@ describe('DashboardService', () => {
     it('should handle undefined crp_id', () => {
       service.geListDashboardEvaluations(1, 'view', 'field').subscribe();
 
-      const req = httpMock.expectOne(`${environment.apiBaseUrl}evaluation/1/list?crp_id=undefined`);
+      const req = httpMock.expectOne(`${environment.apiBaseUrl}evaluation/1/list?crp_id=`);
       expect(req.request.method).toBe('POST');
       req.flush({});
     });

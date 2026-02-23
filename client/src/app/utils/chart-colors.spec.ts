@@ -7,54 +7,46 @@ describe('ChartColors', () => {
   });
 
   it('should contain correct color values', () => {
-    expect(ChartColors.CHART_COLORS['Quality Assessed']).toBe('rgb(5, 146, 18)');
-    expect(ChartColors.CHART_COLORS['Automatically validated']).toBe('rgb(5, 12, 156)');
-    expect(ChartColors.CHART_COLORS['Pending']).toBe('rgba(251, 200, 79)');
-    expect(ChartColors.CHART_COLORS['pending']).toBe('rgba(251, 200, 79)');
-    expect(ChartColors.CHART_COLORS['Accepted']).toBe('rgb(5, 146, 18)');
-    expect(ChartColors.CHART_COLORS['Accepted with comment']).toBe('rgb(6, 208, 1)');
-    expect(ChartColors.CHART_COLORS['Disagree']).toBe('rgb(255, 32, 78)');
-    expect(ChartColors.CHART_COLORS['Assessed 1st round']).toBe('rgb(0, 103, 105)');
-    expect(ChartColors.CHART_COLORS['Assessed 2nd round']).toBe('rgb(64, 165, 120)');
-    expect(ChartColors.CHART_COLORS['AcceptedWC']).toBe('rgb(6, 208, 1)');
-    expect(ChartColors.CHART_COLORS['Clarification']).toBe('rgb(53, 114, 239)');
-    expect(ChartColors.CHART_COLORS['notsure']).toBe('rgba(255, 206, 86)');
-    expect(ChartColors.CHART_COLORS['agree']).toBe('rgba(75, 192, 192)');
-    expect(ChartColors.CHART_COLORS['disagree']).toBe('rgb(255, 32, 78)');
-    expect(ChartColors.CHART_COLORS['Answered / No action needed']).toBe('rgb(37, 139, 81)');
+    expect(ChartColors.CHART_COLORS['Quality Assessed']).toBe('#059669');
+    expect(ChartColors.CHART_COLORS['Automatically validated']).toBe('#0284c7');
+    expect(ChartColors.CHART_COLORS['Pending']).toBe('#fde68a');
+    expect(ChartColors.CHART_COLORS['pending']).toBe('#fde68a');
+    expect(ChartColors.CHART_COLORS['Accepted']).toBe('#34d399');
+    expect(ChartColors.CHART_COLORS['Accepted with comment']).toBe('#059669');
+    expect(ChartColors.CHART_COLORS['Disagree']).toBe('#f87171');
+    expect(ChartColors.CHART_COLORS['Assessed 1st round']).toBe('#0891b2');
+    expect(ChartColors.CHART_COLORS['Assessed 2nd round']).toBe('#34d399');
+    expect(ChartColors.CHART_COLORS['AcceptedWC']).toBe('#059669');
+    expect(ChartColors.CHART_COLORS['Clarification']).toBe('#60a5fa');
+    expect(ChartColors.CHART_COLORS['notsure']).toBe('#60a5fa');
+    expect(ChartColors.CHART_COLORS['agree']).toBe('#34d399');
+    expect(ChartColors.CHART_COLORS['disagree']).toBe('#f87171');
   });
 
   describe('generateRandomColor', () => {
-    it('should generate a valid rgba color string', () => {
+    it('should generate a valid hsl color string', () => {
       const color = ChartColors.generateRandomColor();
-      expect(color).toMatch(/^rgba\(\d+, \d+, \d+, 0\.8\)$/);
+      expect(color).toMatch(/^hsl\(\d+, 65%, 55%\)$/);
     });
 
-    it('should generate color with values between 0 and 255', () => {
-      const color = ChartColors.generateRandomColor();
-      const matches = color.match(/rgba\((\d+), (\d+), (\d+), 0\.8\)/);
-
-      expect(matches).not.toBeNull();
-      if (matches) {
-        const r = parseInt(matches[1]);
-        const g = parseInt(matches[2]);
-        const b = parseInt(matches[3]);
-
-        expect(r).toBeGreaterThanOrEqual(0);
-        expect(r).toBeLessThan(255);
-        expect(g).toBeGreaterThanOrEqual(0);
-        expect(g).toBeLessThan(255);
-        expect(b).toBeGreaterThanOrEqual(0);
-        expect(b).toBeLessThan(255);
+    it('should generate color with one of the predefined hues', () => {
+      const validHues = [200, 160, 280, 30, 340];
+      for (let i = 0; i < 20; i++) {
+        const color = ChartColors.generateRandomColor();
+        const match = color.match(/^hsl\((\d+), 65%, 55%\)$/);
+        expect(match).not.toBeNull();
+        if (match) {
+          const hue = parseInt(match[1]);
+          expect(validHues).toContain(hue);
+        }
       }
     });
 
     it('should generate different colors on multiple calls', () => {
       const colors = new Set();
-      for (let i = 0; i < 10; i++) {
+      for (let i = 0; i < 20; i++) {
         colors.add(ChartColors.generateRandomColor());
       }
-      // With high probability, at least some colors should be different
       expect(colors.size).toBeGreaterThan(1);
     });
   });
