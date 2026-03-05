@@ -1,5 +1,5 @@
 #################### BUILD STAGE ####################
-FROM node:20-bookworm-slim AS build
+FROM node:20.13.1-bookworm-slim AS build
 
 WORKDIR /usr/src/app
 
@@ -12,7 +12,7 @@ COPY . .
 RUN npm run build
 
 #################### TESTING STAGE ####################
-FROM node:20-bookworm-slim AS test
+FROM node:20.13.1-bookworm-slim AS test
 
 WORKDIR /usr/src/app
 
