@@ -1,6 +1,7 @@
-UUPDATE qa_evaluations AS ev
+UPDATE qa_evaluations AS ev
 SET
-    ev.status = 'pending'
+    ev.status = 'pending',
+    ev.updatedAt = CURRENT_TIMESTAMP()
 WHERE
     ev.id IN (
         SELECT
