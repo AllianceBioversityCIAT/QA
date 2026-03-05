@@ -8,10 +8,15 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
-# Force clean install to ensure optional dependencies (e.g., @rollup/rollup-linux-x64-gnu) are resolved for Linux
-RUN rm -rf node_modules package-lock.json && \
-    npm install --include=optional && \
-    npm list @rollup/rollup-linux-x64-gnu || npm install --save-optional @rollup/rollup-linux-x64-gnu@4.22.4
+# Install dependencies using npm ci (respects lockfile, reliable)
+RUN rm -rf node_modules && npm ci
+
+# Explicitly ensure rollup Linux binary is installed (npm's optional deps can be unreliable on Linux)
+# npm ci may skip optional deps, so we install it explicitly if missing
+# Use --no-save to avoid modifying package.json, --legacy-peer-deps to avoid peer dependency conflicts
+RUN npm list @rollup/rollup-linux-x64-gnu >/dev/null 2>&1 || \
+    (echo "Installing rollup Linux binary (optional dependency)..." && \
+    npm install --no-save --legacy-peer-deps @rollup/rollup-linux-x64-gnu@4.22.4)
 
 # Verification step: confirm rollup Linux binary is available (remove after confirming fix works)
 RUN node -e "require('@rollup/rollup-linux-x64-gnu'); console.log('✓ Rollup Linux x64 binary verified')" || \
