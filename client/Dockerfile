@@ -8,7 +8,7 @@ RUN apt-get update \
     && rm -rf /var/lib/apt/lists/*
 
 COPY package*.json ./
-RUN npm ci
+RUN npm install --include=optional || (rm -rf node_modules package-lock.json && npm install --include=optional)
 
 COPY . .
 
