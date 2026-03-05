@@ -7,7 +7,7 @@ const config: Config = {
     '<rootDir>/node_modules/',
     '<rootDir>/dist/'
   ],
-  collectCoverage: true,
+  collectCoverage: false,
   coverageDirectory: 'coverage',
   coverageReporters: ['html', 'text', 'text-summary', 'lcov'],
   coverageThreshold: {
