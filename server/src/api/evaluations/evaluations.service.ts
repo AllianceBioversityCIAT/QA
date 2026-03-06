@@ -318,7 +318,7 @@ export class EvaluationsService {
         },
         { col_name: "poverty_tag_level", prefix: "poverty" },
         { col_name: "innovation_readiness_level", prefix: "innovation_readiness_level" },
-        { col_name: "is_this_an_innovation_result_type", prefix: "is_this_an_innovation" },
+        { col_name: "result_type", prefix: "is_this_an_innovation" },
         { col_name: "current_use_level_of_the_innovation", prefix: "innovation_use_level" },
         { col_name: "actors_organizations_quantitative", prefix: "innovation_use_number" },
       ];

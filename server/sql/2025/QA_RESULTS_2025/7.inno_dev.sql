@@ -936,7 +936,7 @@ SELECT
             SELECT
                 GROUP_CONCAT(
                     '<li>',
-                    npp.grant_title,
+                    cp.short_name ,
                     '<br>',
                     IF(
                         nppb.is_determined = 1,
@@ -950,14 +950,15 @@ SELECT
                 )
             FROM
                 prdb.non_pooled_projetct_budget nppb
-                LEFT JOIN prdb.non_pooled_project npp ON npp.id = nppb.non_pooled_projetct_id
+                LEFT JOIN prdb.results_by_projects rbp ON rbp.id = nppb.result_project_id
+                JOIN prdb.clarisa_projects cp ON cp.id = rbp.project_id 
             WHERE
                 nppb.is_active = 1
-                AND npp.is_active = 1
-                AND npp.results_id = r.id
+                AND rbp.is_active = 1
+                AND rbp.result_id = r.id
         ),
         '<Not applicable>'
-    ) AS npp_investment,
+    ) AS bilateral_project_investment,
     IFNULL(
         (
             SELECT
