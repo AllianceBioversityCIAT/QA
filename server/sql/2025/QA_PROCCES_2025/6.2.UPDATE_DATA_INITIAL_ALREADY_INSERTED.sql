@@ -58,7 +58,7 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_policy_change'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- INNO USE
@@ -109,7 +109,7 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_use'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- CAP DEV
@@ -161,7 +161,7 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_capdev'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- INNO DEV
@@ -216,7 +216,7 @@ SET
     qa.npp_investment = cc.npp_investment,
     qa.partner_investment = cc.partner_investment,
     qa.pictures = cc.pictures,
-    qa.materials = cc.materials,
+    qa.materials = cc.materials
 WHERE
     qa.phase_year = 2025
     AND cc.in_qa = 1
@@ -226,7 +226,7 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_development'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- OTHER OUTPUT
@@ -274,7 +274,7 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_other_output'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- OTHER OUTCOME
@@ -322,7 +322,7 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_other_outcome'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- IMPACT CONTRIBUTION
@@ -370,7 +370,7 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_impact_contribution'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- KNOWLEDGE PRODUCT
@@ -435,7 +435,7 @@ WHERE
         WHERE e.indicator_view_id = v.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_knowledge_product'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
 
 -- IPSR
@@ -498,5 +498,5 @@ WHERE
         WHERE e.indicator_view_id = cc.id
           AND e.phase_year = 2025
           AND e.indicator_view_name = 'qa_innovation_use_ipsr'
-          AND e.createdAt >= '2026-02-04'
+          AND e.createdAt >= '2026-03-08 12:00:00'
     );
