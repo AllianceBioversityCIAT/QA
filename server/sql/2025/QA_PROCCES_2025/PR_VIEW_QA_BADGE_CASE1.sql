@@ -1,0 +1,23 @@
+-- =============================================================================
+-- QA Badge: integración en vista result_phase_2025 (prdb)
+-- Caso 1 y resto de casos se resuelven con la función get_qa_info().
+-- =============================================================================
+--
+-- 1) Crear primero la función (ejecutar PR_FUNCTION_GET_QA_INFO.sql en prdb).
+--
+-- 2) En la vista result_phase_2025, añadir UNA columna al final del SELECT
+--    (después de project_name), antes del FROM:
+--
+--    get_qa_info(r.id) AS qa_info
+--
+-- Con esto la vista devuelve el objeto qa_info completo para todos los casos:
+--   1 in-progress, 2 kp, 3 mqap, 4 two-assessors, 5 senior, 4B/4C senior-innovation.
+--
+-- 3) En reportBasicInfoByResultCode (bloque phase_year = 2025), en el JSON_OBJECT
+--    añadir después de "project_name":
+--
+--    "qa_info", q1.qa_info
+--
+-- El PDF recibirá qa_info con la estructura definida en la US (badge, title,
+-- description, qa_url y adjustments cuando aplique).
+-- =============================================================================
